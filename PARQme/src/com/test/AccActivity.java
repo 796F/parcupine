@@ -11,7 +11,7 @@ public class AccActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 	    TextView textview = new TextView(this);
-        textview.setText("This is the song tab");
+        textview.setText("This is the Account tab.  Layout is account.xml, will contain userinfo.");
         setContentView(textview);
 	}
 

@@ -11,9 +11,8 @@ public class MapActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 	    TextView textview = new TextView(this);
-        textview.setText("This is the album tab");
+        textview.setText("This is the map tab.  will have google map view, help users find parking spots");
         setContentView(textview);
-	    // TODO Auto-generated method stub
 	}
 
 }

@@ -1,50 +1,18 @@
 package com.test;
 
-import android.app.TabActivity;
-import android.content.Intent;
-import android.content.res.Resources;
+import android.app.Activity;
 import android.os.Bundle;
-import android.widget.TabHost;
+import android.widget.TextView;
 
-public class ParqActivity extends TabActivity {
-    /** Called when the activity is first created. */
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+public class ParqActivity extends Activity {
 
-        Resources res = getResources(); // Resource object to get Drawables
-        TabHost tabHost = getTabHost();  // The activity TabHost
-        TabHost.TabSpec spec;  // Resusable TabSpec for each tab
-        Intent intent;  // Reusable Intent for each tab
+	/** Called when the activity is first created. */
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+	    super.onCreate(savedInstanceState);
+	    TextView textview = new TextView(this);
+        textview.setText("This is the PARQ tab, main tab.  Will take picture of QR code, and load subsequent activities");
+        setContentView(textview);
+	}
 
-        // Create an Intent to launch an Activity for the tab (to be reused)
-        intent = new Intent().setClass(this, ArtistActivity.class);
-
-        // Initialize a TabSpec for each tab and add it to the TabHost
-        spec = tabHost.newTabSpec("parq").setIndicator("PARQ",
-                          res.getDrawable(R.drawable.ic_tab_account))
-                      .setContent(intent);
-        tabHost.addTab(spec);
-
-        // Do the same for the other tabs
-        intent = new Intent().setClass(this, MapActivity.class);
-        spec = tabHost.newTabSpec("map").setIndicator("Map",
-                          res.getDrawable(R.drawable.ic_tab_account))
-                      .setContent(intent);
-        tabHost.addTab(spec);
-
-        intent = new Intent().setClass(this, AccActivity.class);
-        spec = tabHost.newTabSpec("info").setIndicator("Account",
-                          res.getDrawable(R.drawable.ic_tab_account))
-                      .setContent(intent);
-        tabHost.addTab(spec);
-        
-        intent = new Intent().setClass(this, HelpActivity.class);
-        spec = tabHost.newTabSpec("test").setIndicator("Help",
-                          res.getDrawable(R.drawable.ic_tab_account))
-                      .setContent(intent);
-        tabHost.addTab(spec);
-        tabHost.setCurrentTab(2);
-    }
 }

@@ -11,7 +11,7 @@ public class HelpActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 	    TextView textview = new TextView(this);
-        textview.setText("This is the Artists tab");
+        textview.setText("This is the Help tab, our rendition of PARQme for dummies");
         setContentView(textview);
 	}
 
