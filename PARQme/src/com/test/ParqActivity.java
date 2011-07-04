@@ -10,9 +10,11 @@ public class ParqActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
-	    TextView textview = new TextView(this);
+	    setContentView(R.layout.relative_parq);
+	    //load correct layout which has the time selector and camera view.  
+	    /*TextView textview = new TextView(this);
         textview.setText("This is the PARQ tab, main tab.  Will take picture of QR code, and load subsequent activities");
-        setContentView(textview);
+        setContentView(textview);*/
 	}
 
 }

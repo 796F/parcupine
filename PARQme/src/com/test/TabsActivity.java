@@ -23,14 +23,14 @@ public class TabsActivity extends TabActivity {
 
         // Initialize a TabSpec for each tab and add it to the TabHost
         spec = tabHost.newTabSpec("parq").setIndicator("PARQ",
-                          res.getDrawable(R.drawable.ic_tab_account))
+                          res.getDrawable(R.drawable.ic_tab_camera))
                       .setContent(intent);
         tabHost.addTab(spec);
 
         // Do the same for the other tabs
-        intent = new Intent().setClass(this, MapActivity.class);
+        intent = new Intent().setClass(this, MapViewActivity.class);
         spec = tabHost.newTabSpec("map").setIndicator("Map",
-                          res.getDrawable(R.drawable.ic_tab_account))
+                          res.getDrawable(R.drawable.ic_tab_map))
                       .setContent(intent);
         tabHost.addTab(spec);
 
@@ -42,7 +42,7 @@ public class TabsActivity extends TabActivity {
         
         intent = new Intent().setClass(this, HelpActivity.class);
         spec = tabHost.newTabSpec("test").setIndicator("Help",
-                          res.getDrawable(R.drawable.ic_tab_account))
+                          res.getDrawable(R.drawable.ic_tab_help))
                       .setContent(intent);
         tabHost.addTab(spec);
         tabHost.setCurrentTab(0);

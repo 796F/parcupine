@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent">
+    <ImageView android:id="@+id/imageView1" android:layout_height="wrap_content" android:src="@drawable/testqr" android:layout_alignParentLeft="true" android:layout_width="match_parent"></ImageView>
+    <android.widget.NumberPicker 
+    	android:layout_below="@id/imageView1" 
+    	android:id="@+id/numberPicker1" 
+    	android:layout_height="wrap_content" 
+    	android:layout_width="wrap_content" 
+    	android:layout_alignParentLeft="true"
+    	android:layout_marginLeft="120px"></android.widget.NumberPicker>
+    <android.widget.NumberPicker 
+    android:id="@+id/numberPicker2" 
+    android:layout_height="wrap_content" 
+    android:layout_width="wrap_content" 
+    android:layout_toRightOf="@+id/numberPicker1" 
+    android:layout_alignTop="@+id/numberPicker1" 
+    android:layout_alignBottom="@+id/numberPicker1"></android.widget.NumberPicker>
+    <Button 
+    android:layout_below="@id/numberPicker1" android:id="@+id/button1" android:layout_height="wrap_content" android:layout_alignParentLeft="true" android:layout_width="match_parent" android:text="@string/parqnow"></Button>
+    
+</RelativeLayout>

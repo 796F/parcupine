@@ -2,4 +2,5 @@
 <resources>
     <string name="hello">Hello World, HelloTabWidgetActivity!</string>
     <string name="app_name">HelloTabWidget</string>
+    <string name="parqnow">PARQ NOW</string>
 </resources>
