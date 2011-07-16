@@ -21,6 +21,7 @@
         <activity android:name=".MapViewActivity"></activity>
         <activity android:name=".HelpActivity"></activity>
         <activity android:name="TimeLeft"></activity>
+        <activity android:name="WebRegister"></activity>
 
     </application>
 </manifest>
