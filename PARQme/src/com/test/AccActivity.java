@@ -11,7 +11,7 @@ public class AccActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 	    
-        setContentView(R.layout.timeleft);
+        setContentView(R.layout.account);
 	}
 
 }
