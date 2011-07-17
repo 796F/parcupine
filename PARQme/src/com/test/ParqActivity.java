@@ -1,5 +1,10 @@
 package com.test;
 
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.URL;
+import java.net.URLConnection;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
@@ -9,8 +14,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.TimePicker;
-
-import com.google.zxing.client.android.CaptureActivity;
 
 /**
  * Test ZXing, confirm working.  
@@ -43,7 +46,7 @@ public class ParqActivity extends Activity {
 	    
 	    testButton.setOnClickListener(new View.OnClickListener() {
 	    	public void onClick(View v) {
-	    		Intent intent = new Intent("com.google.zxing.client.android.MYSCAN");
+	    		Intent intent = new Intent("com.google.zxing.client.android.SCAN");
 	    		//Intent intent = new Intent(ParqActivity.this, CaptureActivity.class);
 	    		intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
 	    		startActivityForResult(intent, 0);
@@ -70,21 +73,7 @@ public class ParqActivity extends Activity {
 				startActivity(myIntent);
 			}});
 	}
-	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-		   if (requestCode == 0) {
-		      if (resultCode == RESULT_OK) {
-		         String contents = intent.getStringExtra("SCAN_RESULT");
-		         String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
-		         
-		         priceDisplay.setText("RESULT_OKAY GOT");
-		         
-		         // Handle successful scan
-		      } else if (resultCode == RESULT_CANCELED) {
-		    	  priceDisplay.setText("RESULT BAD GOT :(");
-		         // Handle cancel
-		      }
-		   }
-		}
+	
 
 	
 	private void updateDisplay() {
@@ -138,5 +127,66 @@ public class ParqActivity extends Activity {
 	        }
 	        return null;
 	    }
+	    
+	    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+			   if (requestCode == 0) {
+			      if (resultCode == RESULT_OK) {
+			    	 int contentInt = intent.getIntExtra("SCAN_RESULT", Global.BAD_RESULT_CODE);
+			         String contents = intent.getStringExtra("SCAN_RESULT");
+			         String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
+			         
+			         /*scan results will contain an integer number, which represents a park location*/
+			         
+			         priceDisplay.setText(contentInt);
+			        
+			         /*send request to server with email + contentInt + time*/
+			         try {
+			 			URL url = new URL("http://localhost:8080/UserBounce/UpdateDatabase");
+			 			
+			 			URLConnection servletConnection = url.openConnection();
+			 			
+			 			// inform the connection that we will send output and accept input
+			         	servletConnection.setDoInput(true);
+			         	servletConnection.setDoOutput(true);
+			         	
+			         	// Don't use a cached version of URL connection.
+			         	servletConnection.setUseCaches(false);
+			         	servletConnection.setDefaultUseCaches(false);
+			         	
+			         	// Specify the content type that we will send binary data
+			         	servletConnection.setRequestProperty("Content-Type", "application/x-java-serialized-object");
+			         	
+			         	// get input and output streams on servlet
+			         	ObjectOutputStream os = new ObjectOutputStream(servletConnection.getOutputStream());
+			         	
+			         	// send your data to the servlet
+			         	os.writeObject("TESTEMAIL@JA.COM" +","+contentInt+","+parkMinutes);
+			         	os.flush();
+			         	os.close();
+			         	
+			         	ObjectInputStream iStream = new ObjectInputStream(servletConnection.getInputStream());
+			         	int responseCode = iStream.readInt();
+			         	
+			         	if(responseCode==0){
+			         		//spot taken
+			         	}else if(responseCode==1){
+			         		//spot okay
+			         	}else if(responseCode==2){
+			         		//jus tin case.  
+			         	}else{
+			         		//spoof code.  easter egg ascii art
+			         	}
+			         	
+			         }catch (Exception e){
+			        	 e.printStackTrace();
+			         }
+						
+
+			      } else if (resultCode == RESULT_CANCELED) {
+			    	  priceDisplay.setText("RESULT BAD GOT :(");
+			         // Handle cancel
+			      }
+			   }
+			}
 	    
 }
