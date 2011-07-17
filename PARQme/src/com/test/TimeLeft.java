@@ -1,5 +1,7 @@
 package com.test;
 
+import java.util.Timer;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
@@ -10,7 +12,13 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+/**
+ * Include Yes/No Dialogues
+ * Create Timer
+ * */
+
 public class TimeLeft extends Activity {
+	private Timer mytimer;
 	private TextView timeDisplay;
     private Button unparqButton;
     private Button refillButton;
@@ -20,7 +28,7 @@ public class TimeLeft extends Activity {
     private int timeleft;
     static final int TIME_DIALOG_ID = 0;
     
-	/** Called when the activity is first created. */
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
@@ -55,11 +63,6 @@ public class TimeLeft extends Activity {
 	    		//increase session cost
 				showDialog(TIME_DIALOG_ID);
 			}});
-	    
-	    
-	    
-	
-	
 	}
 	private void updateDisplay() {
 	    timeDisplay.setText("The minutes left = " +timeleft);

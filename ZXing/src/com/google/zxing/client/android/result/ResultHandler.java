@@ -22,7 +22,6 @@ import com.google.zxing.client.android.Intents;
 import com.google.zxing.client.android.LocaleManager;
 import com.google.zxing.client.android.PreferencesActivity;
 import com.google.zxing.client.android.R;
-import com.google.zxing.client.android.book.SearchBookContentsActivity;
 import com.google.zxing.client.android.wifi.WifiActivity;
 import com.google.zxing.client.result.ParsedResult;
 import com.google.zxing.client.result.ParsedResultType;
@@ -346,12 +345,6 @@ public abstract class ResultHandler {
     launchIntent(new Intent(Intent.ACTION_VIEW, uri));
   }
 
-  final void searchBookContents(String isbn) {
-    Intent intent = new Intent(Intents.SearchBookContents.ACTION);
-    intent.setClassName(activity, SearchBookContentsActivity.class.getName());
-    putExtra(intent, Intents.SearchBookContents.ISBN, isbn);
-    launchIntent(intent);
-  }
 
   final void wifiConnect(WifiParsedResult wifiResult) {
     Intent intent = new Intent(Intents.WifiConnect.ACTION);
