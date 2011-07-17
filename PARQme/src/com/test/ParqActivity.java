@@ -32,7 +32,15 @@ public class ParqActivity extends Activity {
 	    priceDisplay = (TextView) findViewById(R.id.textView1);
 	    parqButton = (Button) findViewById(R.id.firstparq);
 	    parqButton2 = (Button) findViewById(R.id.secondparq);
+	    Button testButton = (Button) findViewById(R.id.testbutton);
 	    
+	    testButton.setOnClickListener(new View.OnClickListener() {
+	    	public void onClick(View v) {
+	    		Intent intent = new Intent("com.google.zxing.client.android.SCAN");
+	    		intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
+	    		startActivityForResult(intent, 0);
+	    		
+			}});
 	    
 	    parqButton.setOnClickListener(new View.OnClickListener() {
 	    	public void onClick(View v) {
@@ -53,6 +61,18 @@ public class ParqActivity extends Activity {
 				
 			}});
 	}
+	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+		   if (requestCode == 0) {
+		      if (resultCode == RESULT_OK) {
+		         String contents = intent.getStringExtra("SCAN_RESULT");
+		         String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
+		         // Handle successful scan
+		      } else if (resultCode == RESULT_CANCELED) {
+		         // Handle cancel
+		      }
+		   }
+		}
+
 	
 	private void updateDisplay() {
 	    priceDisplay.setText(getPrice(parkMinutes));
