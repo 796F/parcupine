@@ -176,6 +176,8 @@ public class ParqActivity extends Activity {
 			         	}else{
 			         		//spoof code.  easter egg ascii art
 			         	}
+
+			         	/*read response code and interprit*/
 			         	
 			         }catch (Exception e){
 			        	 e.printStackTrace();
