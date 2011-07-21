@@ -4,14 +4,17 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 
 import android.app.Activity;
+import android.app.ActivityGroup;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -19,9 +22,10 @@ import android.widget.TimePicker;
  * Test ZXing, confirm working.  
  * Add time and charge logic.
  * Add servlet calls for rates.
+ * currently crashing on parqButton after user comes back from TimeLeft Activity.  
  * */
 	
-public class ParqActivity extends Activity {
+public class ParqActivity extends ActivityGroup {
 	private TextView priceDisplay;
     private Button parqButton;
     private Button parqButton2;
@@ -30,7 +34,8 @@ public class ParqActivity extends Activity {
     private int parkMinutes;
     static final int TIME_DIALOG_ID = 0;
     static final int OKAY_DIALOGUE_ID = 1;
-    
+    public static ParqActivity group;
+    private ArrayList<View> history;
     
 	/** Called when the activity is first created. */
 	@Override
@@ -50,13 +55,13 @@ public class ParqActivity extends Activity {
 	    		//Intent intent = new Intent(ParqActivity.this, CaptureActivity.class);
 	    		intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
 	    		startActivityForResult(intent, 0);
-	    		
+	    		/*ZXING_src/res/layout/capture is the camera layout*/
 			}});
 	    
 	    parqButton.setOnClickListener(new View.OnClickListener() {
 	    	public void onClick(View v) {
 				parqButton.setVisibility(-1);
-				parqButton2.setVisibility(0);
+				parqButton2.setVisibility(1);
 				showDialog(TIME_DIALOG_ID);
 			}});
 	    
@@ -65,12 +70,20 @@ public class ParqActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				Intent myIntent = new Intent(ParqActivity.this, TimeLeft.class);
+				myIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				
 				Bundle time = new Bundle();
 				time.putInt("time",  parkMinutes );  //Bundle parktime with intent.
-				
-				
 				myIntent.putExtras(time);
-				startActivity(myIntent);
+				
+				parqButton.setVisibility(1);
+				parqButton2.setVisibility(-1);
+				
+				
+				View view = getLocalActivityManager().startActivity("TimeLeft",myIntent).getDecorView();
+				//replaceView(view); //THERE IS AN ERROR when calling history.add(view);
+				
+				setContentView(view);
 			}});
 	}
 	
@@ -79,6 +92,8 @@ public class ParqActivity extends Activity {
 	private void updateDisplay() {
 	    priceDisplay.setText("park costs = cents in" +costToText(getCost(parkMinutes)));
 	}
+	
+	
 	
 	private static boolean pingDB(){
 		
@@ -115,6 +130,7 @@ public class ParqActivity extends Activity {
 	            //Are you sure you want to add time?  (Yes/No)
 	            updateDisplay();
 	        }
+	        /*ON CANCEL OR NO FROM DIALOGUE RESET VISIBLITY OF BUTTONS*/
 	    };
 
 	    protected Dialog onCreateDialog(int id) {
@@ -137,51 +153,10 @@ public class ParqActivity extends Activity {
 			         
 			         /*scan results will contain an integer number, which represents a park location*/
 			         
-			         priceDisplay.setText(contentInt);
-			        
+			         priceDisplay.setText(contents);
+			         priceDisplay.setText(UserObject.email);
 			         /*send request to server with email + contentInt + time*/
-			         try {
-			 			URL url = new URL("http://localhost:8080/UserBounce/UpdateDatabase");
-			 			
-			 			URLConnection servletConnection = url.openConnection();
-			 			
-			 			// inform the connection that we will send output and accept input
-			         	servletConnection.setDoInput(true);
-			         	servletConnection.setDoOutput(true);
-			         	
-			         	// Don't use a cached version of URL connection.
-			         	servletConnection.setUseCaches(false);
-			         	servletConnection.setDefaultUseCaches(false);
-			         	
-			         	// Specify the content type that we will send binary data
-			         	servletConnection.setRequestProperty("Content-Type", "application/x-java-serialized-object");
-			         	
-			         	// get input and output streams on servlet
-			         	ObjectOutputStream os = new ObjectOutputStream(servletConnection.getOutputStream());
-			         	
-			         	// send your data to the servlet
-			         	os.writeObject("TESTEMAIL@JA.COM" +","+contentInt+","+parkMinutes);
-			         	os.flush();
-			         	os.close();
-			         	
-			         	ObjectInputStream iStream = new ObjectInputStream(servletConnection.getInputStream());
-			         	int responseCode = iStream.readInt();
-			         	
-			         	if(responseCode==0){
-			         		//spot taken
-			         	}else if(responseCode==1){
-			         		//spot okay
-			         	}else if(responseCode==2){
-			         		//jus tin case.  
-			         	}else{
-			         		//spoof code.  easter egg ascii art
-			         	}
-
-			         	/*read response code and interprit*/
-			         	
-			         }catch (Exception e){
-			        	 e.printStackTrace();
-			         }
+			         contactServer("test", contentInt, parkMinutes);
 						
 
 			      } else if (resultCode == RESULT_CANCELED) {
@@ -190,5 +165,71 @@ public class ParqActivity extends Activity {
 			      }
 			   }
 			}
+	    
+	    
+	    public int contactServer(String email, int contentInt, int time){
+	    	try {
+	 			URL url = new URL("http://192.268.1.57:8080/UserBounce/UpdateDatabase");
+	 			
+	 			URLConnection servletConnection = url.openConnection();
+	 			
+	 			// inform the connection that we will send output and accept input
+	         	servletConnection.setDoInput(true);
+	         	servletConnection.setDoOutput(true);
+	         	
+	         	// Don't use a cached version of URL connection.
+	         	servletConnection.setUseCaches(false);
+	         	servletConnection.setDefaultUseCaches(false);
+	         	
+	         	// Specify the content type that we will send binary data
+	         	servletConnection.setRequestProperty("Content-Type", "application/x-java-serialized-object");
+	         	
+	         	// get input and output streams on servlet
+	         	ObjectOutputStream os = new ObjectOutputStream(servletConnection.getOutputStream());
+	         	
+	         	// send your data to the servlet
+	         	os.writeObject("TESTEMAIL@JA.COM" +","+contentInt+","+parkMinutes);
+	         	os.flush();
+	         	os.close();
+	         	
+	         	ObjectInputStream iStream = new ObjectInputStream(servletConnection.getInputStream());
+	         	int responseCode = iStream.readInt();
+	         	
+	         	if(responseCode==0){
+	         		//spot taken
+	         	}else if(responseCode==1){
+	         		//spot okay
+	         	}else if(responseCode==2){
+	         		//jus tin case.  
+	         	}else{
+	         		//spoof code.  easter egg ascii art
+	         	}
+
+	         	/*read response code and interprit*/
+	         	return 1;
+	         }catch (Exception e){
+	        	 e.printStackTrace();
+	         }
+	         return 1;
+	    }
+	    public void back() {  
+	        if(history.size() > 0) {  
+	            history.remove(history.size()-1);  
+	            setContentView(history.get(history.size()-1));  
+	        }else {  
+	            finish();  
+	        }  
+	    }  
+	    public void replaceView(View v) {  
+            // Adds the old one to history  
+	    	history.add(v);  
+            // Changes this Groups View to the new View.  
+	    	setContentView(v);  
+	    }
+	    @Override  
+	    public void onBackPressed() {  
+	        ParqActivity.group.back();  
+	        return;  
+	    }
 	    
 }

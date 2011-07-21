@@ -23,7 +23,7 @@ public class TabsActivity extends TabActivity {
         		res.getDrawable(R.drawable.ic_tab_camera))
                       .setContent(intent);
         tabHost.addTab(spec);
-
+        
         intent = new Intent().setClass(this, MapViewActivity.class);
         spec = tabHost.newTabSpec("map").setIndicator("Map",
                           res.getDrawable(R.drawable.ic_tab_map))

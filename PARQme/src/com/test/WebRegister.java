@@ -25,8 +25,9 @@ public class WebRegister extends Activity {
             goAppButton = (Button) findViewById(R.id.goApp);
             goAppButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    Intent myIntent = new Intent(WebRegister.this, TabsActivity.class);
-                    startActivity(myIntent);
+                	  finish();
+//                    Intent myIntent = new Intent(WebRegister.this, TabsActivity.class);
+//                    startActivity(myIntent);
                     
                 }});
     }
