@@ -6,6 +6,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Timer;
 
 import com.quietlycoding.android.picker.NumberPickerDialog;
 
@@ -22,6 +23,7 @@ import android.widget.Button;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.ViewFlipper;
 
 /**
  * 
@@ -36,69 +38,76 @@ import android.widget.TimePicker;
  * On restore should take us back to unparq/refill page.  use sql lite to store time, and resume on boot
  * */
 
-public class ParqActivity extends ActivityGroup {
+public class MainActivity extends Activity {
 
 	private TextView priceDisplay;
+	private TextView timeDisplay;
+	
 	private Button setTimeButton;
-	private Button parqButton2;
+	private Button parqButton;
+	private Button unparqButton;
+	private Button refillButton;
+	private Button hideButton;
+	
 	private int parkMinutes;
-	private String parkPrice;
-	static final int TIME_DIALOG_ID = 0;
-	static final int OKAY_DIALOGUE_ID = 1;
+	
 	static final int NUM_PICKER_ID = 2;
-	public static ParqActivity group;
-	private ArrayList<View> history;
+	private static final int REFILL_PICKER_ID = 0;
+	private ViewFlipper vf;
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.relative_parq);
+		
+		setContentView(R.layout.flipper);
+		vf = (ViewFlipper) findViewById(R.id.flipper);
 
 		//load correct layout which has the time selector and camera view.  
 		priceDisplay = (TextView) findViewById(R.id.textView1);
+		timeDisplay = (TextView) findViewById(R.id.textView5);
+		
+		
 		setTimeButton = (Button) findViewById(R.id.firstparq);
-		parqButton2 = (Button) findViewById(R.id.secondparq);
-
-
 		setTimeButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				showDialog(2);
 			}
 		});
-
-
-		parqButton2.setOnClickListener(new View.OnClickListener() {
-
+		
+		parqButton = (Button) findViewById(R.id.secondparq);
+		parqButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				Intent intent = new Intent("com.google.zxing.client.android.MYSCAN");
+				intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
+				startActivityForResult(intent, 0);
+				vf.showNext();
+				startService(new Intent(MainActivity.this, Background.class).putExtra("time", parkMinutes));
 				
-
-				startService(new Intent(ParqActivity.this, Background.class).putExtra("time", parkMinutes));
-				
-//				Intent intent = new Intent("com.google.zxing.client.android.MYSCAN");
-//				//Intent intent = new Intent(ParqActivity.this, CaptureActivity.class);
-//				intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
-//				startActivityForResult(intent, 0);
-
-				Intent myIntent = new Intent(ParqActivity.this, TimeLeft.class);
-				myIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-				Bundle time = new Bundle();
-				time.putInt("time",  parkMinutes );  //Bundle parktime with intent.
-				myIntent.putExtras(time);
-				
-				//startActivity(myIntent);
-				View view = getLocalActivityManager().startActivity("TimeLeft",myIntent).getDecorView();
-				setContentView(view);
 			}});
+
+		
+		unparqButton = (Button) findViewById(R.id.unparqbutton);
+		unparqButton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+
+				//	    		are you sure? dialogue
+				//	    				if sure start summary activity
+				//	    				          this has time parked, amount spent, 
+				stopService(new Intent(MainActivity.this, Background.class));
+				vf.showPrevious();
+			}});
+		
+
+		refillButton = (Button) findViewById(R.id.refillbutton);
+		
+		refillButton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				showDialog(REFILL_PICKER_ID);
+			}});
+
 	}
-
-
-
-
-
-
 
 	private static int getRates(int LOCATION_CODE){
 		//CENTS PER 15 MINUTS
@@ -113,10 +122,6 @@ public class ParqActivity extends ActivityGroup {
 		return 25;
 	}
 
-	private static String costToText(int mins){
-		return "$ 2.00";
-		//return "" + mins *getRates(0); //0 = location code
-	}
 
 	private static int getCostInCents(int mins) {
 		return mins/15 * getRates(0);
@@ -131,8 +136,17 @@ public class ParqActivity extends ActivityGroup {
 
 		}
 	};
+	private NumberPickerDialog.OnNumberSetListener mRefillListener =
+		new NumberPickerDialog.OnNumberSetListener() {
+			@Override
+			public void onNumberSet(int selectedNumber) {
+				parkMinutes+=selectedNumber;
+				updateDisplay();
+			}
+		};
 	private void updateDisplay() {
 		priceDisplay.setText(parkMinutes +" Minutes"+" : " +moneyConverter(getCostInCents(parkMinutes)));
+		timeDisplay.setText("time left =" + parkMinutes);
 	}
 
 	protected Dialog onCreateDialog(int id) {
@@ -141,6 +155,11 @@ public class ParqActivity extends ActivityGroup {
 			NumberPickerDialog x =new NumberPickerDialog(this, 0, 0);
 			x.setOnNumberSetListener(mNumberSetListener);
 			return x;
+		
+		case REFILL_PICKER_ID:
+			NumberPickerDialog y = new NumberPickerDialog(this, 0,0);
+			y.setOnNumberSetListener(mRefillListener);
+			return y;
 		}
 		return null;
 	}
@@ -153,10 +172,11 @@ public class ParqActivity extends ActivityGroup {
 				int contentInt = intent.getIntExtra("SCAN_RESULT", Global.BAD_RESULT_CODE);
 				String contents = intent.getStringExtra("SCAN_RESULT");
 				String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
-
+				
 				/*scan results will contain an integer number, which represents a park location*/
 
 				/*send request to server with email + contentInt + time*/
+				timeDisplay.setText("RESULT GOT" + contents);
 				contactServer("test", contentInt, parkMinutes);
 
 
@@ -237,24 +257,5 @@ public class ParqActivity extends ActivityGroup {
 			
 		}
 	}
-	//	    public void back() {  
-	//	        if(history.size() > 0) {  
-	//	            history.remove(history.size()-1);  
-	//	            setContentView(history.get(history.size()-1));  
-	//	        }else {  
-	//	            finish();  
-	//	        }  
-	//	    }  
-	//	    public void replaceView(View v) {  
-	//            // Adds the old one to history  
-	//	    	history.add(v);  
-	//            // Changes this Groups View to the new View.  
-	//	    	setContentView(v);  
-	//	    }
-	//	    @Override  
-	//	    public void onBackPressed() {  
-	//	        ParqActivity.group.back();  
-	//	        return;  
-	//	    }
 
 }

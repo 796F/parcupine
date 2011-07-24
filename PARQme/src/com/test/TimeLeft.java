@@ -3,6 +3,8 @@ package com.test;
 import java.util.ArrayList;
 import java.util.Timer;
 
+import com.quietlycoding.android.picker.NumberPickerDialog;
+
 import android.app.Activity;
 import android.app.ActivityGroup;
 import android.app.Dialog;
@@ -16,10 +18,11 @@ import android.widget.TimePicker;
 
 /**
  * Include Yes/No Dialogues
- * Create Timer
  * onFinish(), how to end activity and return bundled instance info.
  * Currently crashing on refill when trying to show the dialog box.  works when you start via startActivity w/o extras
  * Currently exiting on unparq, have it return to other view.  
+ * 
+ * LOCK BACK BUTTON HERE
  * */
 
 public class TimeLeft extends ActivityGroup {
@@ -28,12 +31,11 @@ public class TimeLeft extends ActivityGroup {
 	private Button unparqButton;
 	private Button refillButton;
 	private Bundle b;
-	private int mHour=0;
-	private int mMinute=0;
-	private int timeleft;
+	private int parkMinutes;
 	static final int TIME_DIALOG_ID = 0;
+	private static final int NUM_PICKER_ID = 0;
 	public static TimeLeft group;
-	private ArrayList<View> history;
+	private TimeLeft z =this;
 
 	@Override
 
@@ -41,13 +43,14 @@ public class TimeLeft extends ActivityGroup {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.timeleft);
+		z = this;
 
 		unparqButton = (Button) findViewById(R.id.unparqbutton);
 		timeDisplay = (TextView) findViewById(R.id.textView5);
 
 		b = getIntent().getExtras();
-		timeleft = b.getInt("time", 0);
-		timeDisplay.setText("The minutes left = " + timeleft);
+		parkMinutes = b.getInt("time", 0);
+		timeDisplay.setText("The minutes left = " + parkMinutes);
 
 		unparqButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
@@ -56,16 +59,17 @@ public class TimeLeft extends ActivityGroup {
 				//	    				if sure start summary activity
 				//	    				          this has time parked, amount spent, 
 				stopService(new Intent(TimeLeft.this, Background.class));
-				
+
 				
 				Intent myIntent = new Intent(TimeLeft.this, TabsActivity.class);
 				myIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 				View view = getLocalActivityManager().startActivity("TimeLeft",myIntent).getDecorView();
 				Bundle time = new Bundle();
-				time.putInt("time",  timeleft );  //Bundle parktime with intent.
+				time.putInt("time",  parkMinutes );  //Bundle parktime with intent.
 				myIntent.putExtras(time);
 				startActivity(myIntent);
-				//replaceView(view);
+				
+				//UNPARQ should maybe take us to goodbye screen, which then goes back to start activity
 				//setContentView(view);
 			}});
 
@@ -78,46 +82,32 @@ public class TimeLeft extends ActivityGroup {
 				//prompt a dialogue
 				//increase time on timer
 				//increase session cost
-				showDialog(TIME_DIALOG_ID);
+				showDialog(NUM_PICKER_ID);
+				//timeDisplay.setText();
 			}});
 	}
+	
 	private void updateDisplay() {
-		timeDisplay.setText("The minutes left = " +timeleft);
+		timeDisplay.setText("The minutes left = " +parkMinutes);
 	}
 
-	private TimePickerDialog.OnTimeSetListener mTimeSetListener =
-		new TimePickerDialog.OnTimeSetListener() {
-		public void onTimeSet(TimePicker view, int hours, int minute) {
-			timeleft += (hours*60) + minute;
+	private NumberPickerDialog.OnNumberSetListener mNumberSetListener = 
+		new NumberPickerDialog.OnNumberSetListener() {
+		public void onNumberSet(int selectedNumber) {
+			parkMinutes = selectedNumber;
 			updateDisplay();
+
 		}
 	};
 
 	protected Dialog onCreateDialog(int id) {
 		switch (id) {
-		case TIME_DIALOG_ID:
-			return new TimePickerDialog(this,
-					mTimeSetListener, mHour, mMinute, false);
+		case NUM_PICKER_ID:
+			//this.getApplicationContext();
+			NumberPickerDialog x =new NumberPickerDialog(z.getApplicationContext(), 1, 0);
+			x.setOnNumberSetListener(mNumberSetListener);
+			return x;
 		}
 		return null;
-	}
-	public void back() {  
-		if(history.size() > 0) {  
-			history.remove(history.size()-1);  
-			setContentView(history.get(history.size()-1));  
-		}else {  
-			finish();  
-		}  
-	}  
-	public void replaceView(View v) {  
-		// Adds the old one to history  
-		history.add(v);  
-		// Changes this Groups View to the new View.  
-		setContentView(v);  
-	}
-	@Override  
-	public void onBackPressed() {  
-		TimeLeft.group.back();  
-		return;  
 	}
 }

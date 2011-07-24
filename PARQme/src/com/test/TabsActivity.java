@@ -18,7 +18,7 @@ public class TabsActivity extends TabActivity {
         TabHost.TabSpec spec;  
         Intent intent;  
 
-        intent = new Intent().setClass(this, ParqActivity.class);
+        intent = new Intent().setClass(this, MainActivity.class);
         spec = tabHost.newTabSpec("parq").setIndicator("PARQ",
         		res.getDrawable(R.drawable.ic_tab_camera))
                       .setContent(intent);
