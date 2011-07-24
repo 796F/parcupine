@@ -17,12 +17,12 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              android:layout_width="fill_parent"
              android:layout_height="fill_parent">
-
+<!-- Contorls entire survace, decreasing widtha nd height creates blackspace -->
   <SurfaceView android:id="@+id/preview_view"
                android:layout_width="fill_parent"
                android:layout_height="fill_parent"
                android:layout_centerInParent="true"/>
-
+<!-- controls the layter containing the red line and tint, does not effect operation -->
   <com.google.zxing.client.android.ViewfinderView
       android:id="@+id/viewfinder_view"
       android:layout_width="fill_parent"
