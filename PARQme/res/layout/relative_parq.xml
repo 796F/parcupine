@@ -2,15 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:orientation="vertical" android:layout_width="match_parent"
 	android:layout_height="match_parent">
-
-	<Button android:layout_below="@id/textView1" android:id="@+id/firstparq"
-		android:layout_height="wrap_content" android:layout_alignParentLeft="true"
-		android:layout_width="match_parent" android:text="SELECT TIME"></Button>
-	
-	<Button android:layout_below="@id/textView1" android:id="@+id/secondparq"
-		android:layout_height="wrap_content" android:layout_alignParentLeft="true"
-		android:layout_width="match_parent" android:text="SNAP QR CODE"
-		android:visibility="invisible"></Button>
-	<TextView android:id="@+id/textView1" android:text="$ 0.00" android:layout_height="wrap_content" android:height="80px" android:layout_width="match_parent" android:textAppearance="?android:attr/textAppearanceLarge" android:layout_alignParentTop="true" android:layout_alignParentLeft="true" android:layout_marginTop="116dp"></TextView>
+	<Button android:id="@+id/secondparq" android:layout_height="wrap_content" android:text="PARQ NOW" android:layout_width="match_parent" android:layout_centerVertical="true" android:layout_alignParentLeft="true"></Button>
+	<TextView android:textAppearance="?android:attr/textAppearanceLarge" android:layout_height="wrap_content" android:height="80px" android:layout_width="wrap_content" android:text="  0 Minutes : $ 0.00" android:id="@+id/textView1" android:layout_above="@+id/secondparq" android:layout_centerHorizontal="true" android:layout_marginBottom="52dp"></TextView>
+	<Button android:id="@+id/firstparq" android:layout_height="wrap_content" android:text="SET PARQ TIME" android:layout_width="match_parent" android:layout_above="@+id/secondparq" android:layout_alignParentLeft="true"></Button>
 
 </RelativeLayout>

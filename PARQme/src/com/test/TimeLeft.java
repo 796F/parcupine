@@ -55,15 +55,18 @@ public class TimeLeft extends ActivityGroup {
 				//	    		are you sure? dialogue
 				//	    				if sure start summary activity
 				//	    				          this has time parked, amount spent, 
-				Intent myIntent = new Intent(TimeLeft.this, ParqActivity.class);
+				stopService(new Intent(TimeLeft.this, Background.class));
+				
+				
+				Intent myIntent = new Intent(TimeLeft.this, TabsActivity.class);
 				myIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 				View view = getLocalActivityManager().startActivity("TimeLeft",myIntent).getDecorView();
 				Bundle time = new Bundle();
 				time.putInt("time",  timeleft );  //Bundle parktime with intent.
 				myIntent.putExtras(time);
-
+				startActivity(myIntent);
 				//replaceView(view);
-				setContentView(view);
+				//setContentView(view);
 			}});
 
 
