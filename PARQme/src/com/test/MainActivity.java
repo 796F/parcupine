@@ -12,9 +12,11 @@ import com.quietlycoding.android.picker.NumberPickerDialog;
 
 import android.app.Activity;
 import android.app.ActivityGroup;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.os.Bundle;
@@ -54,19 +56,19 @@ public class MainActivity extends Activity {
 	static final int NUM_PICKER_ID = 2;
 	private static final int REFILL_PICKER_ID = 0;
 	private ViewFlipper vf;
+	public static final String SAVED_INFO = "ParqMeInfo";
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
 		setContentView(R.layout.flipper);
 		vf = (ViewFlipper) findViewById(R.id.flipper);
 
 		//load correct layout which has the time selector and camera view.  
 		priceDisplay = (TextView) findViewById(R.id.textView1);
 		timeDisplay = (TextView) findViewById(R.id.textView5);
-		
+		final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 		
 		setTimeButton = (Button) findViewById(R.id.firstparq);
 		setTimeButton.setOnClickListener(new View.OnClickListener() {
@@ -79,12 +81,23 @@ public class MainActivity extends Activity {
 		parqButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent("com.google.zxing.client.android.MYSCAN");
-				intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
-				startActivityForResult(intent, 0);
-				vf.showNext();
-				startService(new Intent(MainActivity.this, Background.class).putExtra("time", parkMinutes));
-				
+				if(check.getBoolean("loginState", false)){
+					Intent intent = new Intent("com.google.zxing.client.android.MYSCAN");
+					intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
+					startActivityForResult(intent, 0);
+					vf.showNext();
+					startService(new Intent(MainActivity.this, Background.class).putExtra("time", parkMinutes));
+				}else{
+					AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this);
+					alert.setMessage("You Must Login First");
+					alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.cancel();
+						}
+					});
+					AlertDialog a = alert.create();
+					a.show();
+				}
 			}});
 
 		

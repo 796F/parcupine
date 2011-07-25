@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ViewFlipper xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_width="match_parent"
+	android:layout_height="match_parent" android:id="@+id/reg_flip">
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_width="match_parent"
+	android:layout_height="match_parent">
+	<EditText android:id="@+id/emailForm" android:text="Email and Password" android:inputType="textEmailAddress" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_alignParentTop="true" android:layout_alignParentLeft="true" android:layout_marginTop="132dp"></EditText>
+	<EditText android:id="@+id/passwordForm" android:inputType="textPassword" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_below="@+id/emailForm" android:layout_alignParentLeft="true"></EditText>
+	<Button android:text="Log In" android:layout_width="match_parent" android:id="@+id/loginButton" android:layout_height="wrap_content" android:layout_below="@+id/passwordForm" android:layout_alignParentLeft="true" android:layout_marginTop="51dp"></Button>
+	<Button android:text="Register" android:layout_width="match_parent" android:id="@+id/registerbutton" android:layout_height="wrap_content" android:layout_below="@+id/loginButton" android:layout_alignParentLeft="true"></Button>
+	<CheckBox android:id="@+id/checkBox1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Remember Me" android:layout_below="@+id/passwordForm" android:layout_alignParentLeft="true" android:layout_marginLeft="72dp"></CheckBox>
+
+</RelativeLayout>
+
+<RelativeLayout android:id="@+id/LinearLayout1"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	>
+	<Button android:text="Logout" android:layout_width="match_parent"
+		android:id="@+id/logoutbutton" android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true"
+		android:layout_alignParentLeft="true"></Button>
+	<TextView android:textAppearance="?android:attr/textAppearanceLarge"
+		android:layout_width="wrap_content" android:text="Account Information"
+		android:layout_height="wrap_content" android:id="@+id/textView1"
+		android:layout_alignParentTop="true" android:layout_centerHorizontal="true"
+		android:layout_marginTop="97dp"></TextView>
+	<TextView android:textAppearance="?android:attr/textAppearanceLarge"
+		android:layout_width="wrap_content" android:text="Email: "
+		android:layout_height="wrap_content" android:id="@+id/textView2"
+		android:layout_below="@+id/textView1" android:layout_alignParentLeft="true"></TextView>
+	<TextView android:textAppearance="?android:attr/textAppearanceMedium" android:layout_width="wrap_content" android:text="City: " android:layout_height="wrap_content" android:id="@+id/textView4" android:layout_below="@+id/textView2" android:layout_alignParentLeft="true"></TextView>
+	<TextView android:textAppearance="?android:attr/textAppearanceMedium" android:layout_width="wrap_content" android:text="CC: " android:layout_height="wrap_content" android:id="@+id/textView3" android:layout_below="@+id/textView4" android:layout_alignParentLeft="true"></TextView>
+
+</RelativeLayout>
+</ViewFlipper>

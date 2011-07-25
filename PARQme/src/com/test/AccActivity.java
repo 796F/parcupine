@@ -15,8 +15,8 @@ public class AccActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.account);
-        goWeb = (Button) findViewById(R.id.goWebNow);
         
+        goWeb = (Button) findViewById(R.id.registerbutton);
         goWeb.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 //open website

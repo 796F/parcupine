@@ -1,10 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:orientation="vertical"
-  android:layout_width="match_parent"
-  android:layout_height="match_parent">
-    <TextView android:textAppearance="?android:attr/textAppearanceLarge" android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/textView1" android:text="ALL YO INFO MASHUN GO Hya"></TextView>
-    <Button android:text="Button" android:id="@+id/goWebNow" android:layout_marginTop="50px" android:layout_height="wrap_content" android:layout_width="match_parent"></Button>
-    
-</LinearLayout>
+<RelativeLayout android:id="@+id/LinearLayout1"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_width="match_parent"
+	android:layout_height="match_parent">
+	<Button android:text="Logout" android:layout_width="match_parent"
+		android:id="@+id/logoutbutton" android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true"
+		android:layout_alignParentLeft="true"></Button>
+	<TextView android:textAppearance="?android:attr/textAppearanceLarge"
+		android:layout_width="wrap_content" android:text="Account Information"
+		android:layout_height="wrap_content" android:id="@+id/textView1"
+		android:layout_alignParentTop="true" android:layout_centerHorizontal="true"
+		android:layout_marginTop="97dp"></TextView>
+	<TextView android:textAppearance="?android:attr/textAppearanceLarge"
+		android:layout_width="wrap_content" android:text="Email: "
+		android:layout_height="wrap_content" android:id="@+id/textView2"
+		android:layout_below="@+id/textView1" android:layout_alignParentLeft="true"></TextView>
+	<TextView android:textAppearance="?android:attr/textAppearanceMedium" android:layout_width="wrap_content" android:text="City: " android:layout_height="wrap_content" android:id="@+id/textView4" android:layout_below="@+id/textView2" android:layout_alignParentLeft="true"></TextView>
+	<TextView android:textAppearance="?android:attr/textAppearanceMedium" android:layout_width="wrap_content" android:text="CC: " android:layout_height="wrap_content" android:id="@+id/textView3" android:layout_below="@+id/textView4" android:layout_alignParentLeft="true"></TextView>
+
+</RelativeLayout>

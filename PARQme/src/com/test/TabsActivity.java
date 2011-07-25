@@ -2,11 +2,13 @@ package com.test;
 
 import android.app.TabActivity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.widget.TabHost;
 
 public class TabsActivity extends TabActivity {
+	public static final String SAVED_INFO = "ParqMeInfo";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -30,7 +32,7 @@ public class TabsActivity extends TabActivity {
                       .setContent(intent);
         tabHost.addTab(spec);
 
-        intent = new Intent().setClass(this, AccActivity.class);
+        intent = new Intent().setClass(this, LoginScreen.class);
         spec = tabHost.newTabSpec("info").setIndicator("Account",
                           res.getDrawable(R.drawable.ic_tab_account))
                       .setContent(intent);
@@ -41,6 +43,12 @@ public class TabsActivity extends TabActivity {
                           res.getDrawable(R.drawable.ic_tab_help))
                       .setContent(intent);
         tabHost.addTab(spec);
-        tabHost.setCurrentTab(0);
+        SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
+
+        if(check.getBoolean("loginState", false))
+        	tabHost.setCurrentTab(0);
+        else
+        	tabHost.setCurrentTab(2);
     }
+    
 }
