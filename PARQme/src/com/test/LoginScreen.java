@@ -1,5 +1,7 @@
 package com.test;
 
+import java.net.URLConnection;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -21,7 +23,7 @@ public class LoginScreen extends Activity {
 	private Button logout;
 	private ViewFlipper vf;
 	private CheckBox box;
-	/** Called when the activity is first created. */
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -32,7 +34,7 @@ public class LoginScreen extends Activity {
 		emailForm=(EditText) findViewById(R.id.emailForm);
 		passwordForm = (EditText) findViewById(R.id.passwordForm);
 		final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
-		
+
 		if(check.getBoolean("loginState", false)){
 			vf.showNext();
 		}
@@ -42,7 +44,9 @@ public class LoginScreen extends Activity {
 			public void onClick(View v) {
 				String email = emailForm.getText().toString();
 				String pass = passwordForm.getText().toString();
-				if (email.equals(UserObject.email) && pass.equals(UserObject.passHash)){
+				
+				// CURRENTLY SENDING CLEAR TEXT.  ENCRYPT LATER.
+				if (UserObject.getAuth(email, pass)){
 					SharedPreferences.Editor editor = check.edit();
 					vf.showNext();
 					editor.putBoolean("loginState", true);
@@ -55,7 +59,7 @@ public class LoginScreen extends Activity {
 					editor.commit();
 				}else{
 					AlertDialog.Builder alert = new AlertDialog.Builder(LoginScreen.this);
-					alert.setMessage("Could Not Log In");
+					alert.setMessage("Could not Login\n Check your fields");
 					alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int which) {
 							dialog.cancel();
@@ -76,12 +80,24 @@ public class LoginScreen extends Activity {
 		logout = (Button) findViewById(R.id.logoutbutton);
 		logout.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				//open website
-				vf.showPrevious();
-				//SharedPreferences logout = getSharedPreferences(SAVED_INFO,0);
-				SharedPreferences.Editor editor = check.edit();
-				editor.putBoolean("loginState", false);
-				editor.commit();
+				//if not currently parked.
+				if(!check.getBoolean("parkState", false)){
+					vf.showPrevious();
+					//SharedPreferences logout = getSharedPreferences(SAVED_INFO,0);
+					SharedPreferences.Editor editor = check.edit();
+					editor.putBoolean("loginState", false);
+					editor.commit();
+				}else{
+					AlertDialog.Builder alert = new AlertDialog.Builder(LoginScreen.this);
+					alert.setMessage("You are currently parked");
+					alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.cancel();
+						}
+					});
+					AlertDialog a = alert.create();
+					a.show();
+				}
 			}});
 		
 		

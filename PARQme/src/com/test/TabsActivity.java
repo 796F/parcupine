@@ -1,6 +1,8 @@
 package com.test;
 
+import android.app.AlertDialog;
 import android.app.TabActivity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -44,11 +46,26 @@ public class TabsActivity extends TabActivity {
                       .setContent(intent);
         tabHost.addTab(spec);
         SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
-
+        
         if(check.getBoolean("loginState", false))
         	tabHost.setCurrentTab(0);
-        else
+        else{
         	tabHost.setCurrentTab(2);
+        	//show dialog saying you must login/register
+        	AlertDialog.Builder alert = new AlertDialog.Builder(TabsActivity.this);
+			alert.setMessage("You must Login to use ParqMe");
+			alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.cancel();
+				}
+			});
+			AlertDialog a = alert.create();
+			a.show();
+        }
     }
+//    public void onDestroy(){
+//    	SharedPreferences check = getSharedPreferences(SAVED_INFO, 0);
+//    	
+//    }
     
 }

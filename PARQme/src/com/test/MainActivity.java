@@ -28,19 +28,55 @@ import android.widget.TimePicker;
 import android.widget.ViewFlipper;
 
 /**
- * 
- * Add time and charge logic.
- * Add servlet calls for rates.
- * currently crashing on parqButton after user comes back from TimeLeft Activity.  
- * Buttons do not cancel correctly.  
+ * FIX MAP
+ * Add server calls for rates.
  * PARKING is free after 7pm.  include a time check method which may alertdialog.  
  * WRITE alert dialog class for NumberPicker, looks bad.
  * Phone should vibrate etc if 5 minutes remain,
  *    service should shutdown once time is up. 
- * On restore should take us back to unparq/refill page.  use sql lite to store time, and resume on boot
+ * store time, and resume on boot
+ * ERROR cases should be silently reported, if they become consistent manually check qrcode. 
+ * SEcurity in authenticating with server?  
+ * Once we log in, autoclose the keyboard prompt
+ * service exits on phone shutdown, implement boot listener, to start a new service.  
+ * look into city's expenses, number of parks, gauge the server costs, lay out finance to potential
+ *    partners
+ * CUSTOM buttons
  * */
 
 public class MainActivity extends Activity {
+	
+	/* on bootup, check for parkstate true.  
+	 * if state is parked, update timer and resume service.
+	 *   
+	 * when qr code is scanned, grab current date, calculate end date, 
+	 * start timer for end date, and store end date.  
+	 *    send end date associated with phonenumber and acc.  start timer on server end.  
+	 * 
+	 * 
+	 * when qrcode scanned again / service ends or time out, or unparqed 
+	 * delete end date, parkstate false.  
+	 *    send unparq to server. 
+	 *    
+	 *    EXITING always logs out, unless parked.  
+
+
+IF NOT logged in
+	NO PARK
+	STARTUP ACC PAGE
+
+IF logged in
+	PARK
+	STARTUP PARK PAGE
+	ACC PAGE starts second view
+	exit logs out
+
+IF remember checked
+	STARTUP PARK PAGE
+	ACC PAGE starts second view
+	 * 
+	 * 
+	 * */
 
 	private TextView priceDisplay;
 	private TextView timeDisplay;
@@ -50,6 +86,7 @@ public class MainActivity extends Activity {
 	private Button unparqButton;
 	private Button refillButton;
 	private Button hideButton;
+
 	
 	private int parkMinutes;
 	
@@ -65,11 +102,16 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.flipper);
 		vf = (ViewFlipper) findViewById(R.id.flipper);
 
+		final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
+		final SharedPreferences.Editor editor = check.edit();
+		//crash on return, cause is here?
+//		if(check.getBoolean("parkState", false)){
+//			priceDisplay.setText("parkstate is true");
+//			vf.showNext();
+//		}
 		//load correct layout which has the time selector and camera view.  
 		priceDisplay = (TextView) findViewById(R.id.textView1);
 		timeDisplay = (TextView) findViewById(R.id.textView5);
-		final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
-		
 		setTimeButton = (Button) findViewById(R.id.firstparq);
 		setTimeButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
@@ -85,8 +127,14 @@ public class MainActivity extends Activity {
 					Intent intent = new Intent("com.google.zxing.client.android.MYSCAN");
 					intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
 					startActivityForResult(intent, 0);
+					
+					//THIS BLOCK should be in onResult, if result is bad then we must re-capture qr code.
 					vf.showNext();
 					startService(new Intent(MainActivity.this, Background.class).putExtra("time", parkMinutes));
+					/*parkState changes how app resumes*/
+					editor.putBoolean("parkState", true);
+					editor.commit();
+					//
 				}else{
 					AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this);
 					alert.setMessage("You Must Login First");
@@ -110,6 +158,8 @@ public class MainActivity extends Activity {
 				//	    				          this has time parked, amount spent, 
 				stopService(new Intent(MainActivity.this, Background.class));
 				vf.showPrevious();
+				editor.putBoolean("parkState", false);
+				editor.commit();
 			}});
 		
 
@@ -186,16 +236,27 @@ public class MainActivity extends Activity {
 				String contents = intent.getStringExtra("SCAN_RESULT");
 				String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
 				
+				
 				/*scan results will contain an integer number, which represents a park location*/
 
 				/*send request to server with email + contentInt + time*/
 				timeDisplay.setText("RESULT GOT" + contents);
-				contactServer("test", contentInt, parkMinutes);
-
+				if(UserObject.sendCode(contents, "3023546447")){
+					SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
+					SharedPreferences.Editor editor = check.edit();
+					vf.showNext();
+					startService(new Intent(MainActivity.this, Background.class).putExtra("time", parkMinutes));
+					/*parkState changes how app resumes*/
+					editor.putBoolean("parkState", true);
+					editor.commit();
+				}else{
+					priceDisplay.setText("error processing qr code");
+				}
+				
 
 
 			} else if (resultCode == RESULT_CANCELED) {
-				priceDisplay.setText("RESULT BAD GOT :(");
+				priceDisplay.setText("This QR Code is Broken");
 				// Handle cancel
 			}
 		}

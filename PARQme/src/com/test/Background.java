@@ -35,6 +35,9 @@ public class Background extends Service{
 			}
 
 		}, b.getInt("time")*150);
+		
+		//schedule(TimerTask task, Date time) executes task at the time specified.  
+		//so create a date object for 5 minutes before time runs out.
 		return START_STICKY;
 	}
 	public void onDestroy(){
