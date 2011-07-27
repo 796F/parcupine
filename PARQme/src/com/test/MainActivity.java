@@ -28,21 +28,26 @@ import android.widget.TimePicker;
 import android.widget.ViewFlipper;
 
 /**
+ * 
+ * TIME LOGIC and BOOT LOAD SERVICE RESUME, real time updated timer display
+ * ParkedObject implemented and Display location info
+ * CUSTOM buttons and GRAPHICS
+ * 
+ * 
+ * ?? change accounT to an only logout screen, which takes the user back to splash/login screen.
  * FIX MAP
  * Add server calls for rates.
  * PARKING is free after 7pm.  include a time check method which may alertdialog.  
+ * 
  * WRITE alert dialog class for NumberPicker, looks bad.
  * Phone should vibrate etc if 5 minutes remain,
  *    service should shutdown once time is up. 
- * store time, and resume on boot
- * ERROR cases should be silently reported, if they become consistent manually check qrcode. 
+ *    
  * SEcurity in authenticating with server?  
  * Once we log in, autoclose the keyboard prompt
- * service exits on phone shutdown, implement boot listener, to start a new service.  
+ * login splash screen?  no functionality unless registered.  
  * look into city's expenses, number of parks, gauge the server costs, lay out finance to potential
  *    partners
- * CUSTOM buttons
- * login splash screen?  no functionality unless registered.  
  * */
 
 public class MainActivity extends Activity {
@@ -151,7 +156,7 @@ IF remember checked
 				//	    		are you sure? dialogue
 				//	    				if sure start summary activity
 				//	    				          this has time parked, amount spent, 
-				if(UserObject.unPark(qrcode, email)==1){
+				if(ServerCalls.unPark(qrcode, email)==1){
 					stopService(new Intent(MainActivity.this, Background.class));
 					vf.showPrevious();
 					editor.putBoolean("parkState", false);
@@ -246,7 +251,7 @@ IF remember checked
 				//TODO
 				String endtime = "FAKEENDTIME";
 				
-				if(UserObject.sendCode(contents, email, endtime)==1){
+				if(ServerCalls.sendCode(contents, email, endtime)==1){
 					vf.showNext();
 					startService(new Intent(MainActivity.this, Background.class).putExtra("time", parkMinutes));
 					/*parkState changes how app resumes*/

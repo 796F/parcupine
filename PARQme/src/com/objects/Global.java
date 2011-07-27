@@ -1,4 +1,4 @@
-package com.test;
+package com.objects;
 
 /**
  * Class for global constants that are used.  
