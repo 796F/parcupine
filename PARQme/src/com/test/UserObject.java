@@ -13,12 +13,12 @@ import java.sql.*;
  * */
 public class UserObject {
 	/*returns if authentication passed.*/
-	public static boolean getAuth(String email, String hash){
+	public static int getAuth(String email, String hash){
 		try {
 			String data = URLEncoder.encode("email", "UTF-8") + "=" + URLEncoder.encode(email, "UTF-8");
 			data+="&"+ URLEncoder.encode("passhash", "UTF-8") + "=" + URLEncoder.encode(hash, "UTF-8");
 			//prepare data
-			URL url = new URL("http://localhost/applogin.php");
+			URL url = new URL("http://parqme.com/applogin.php");
 			URLConnection conn = url.openConnection();
 			//open connection
 			conn.setDoOutput(true);
@@ -33,19 +33,21 @@ public class UserObject {
 			bufferedInput.read(buffer);
 			//read into buffer
 			String x =(new String(buffer, 0,bytesRead));
-			return (x.equals("1"));
+			//RESPONSE CODES ARE HERE.  handle them accordingly.  
+			return Integer.parseInt(x);
 		}catch (Exception e){
 			e.printStackTrace();
 		}
-		return false;
+		return -1;
 	}
 	/*returns true if parking successful*/
-	public static boolean sendCode(String qrcode, String phoneNumber){
+	public static int sendCode(String qrcode,  String email, String endtime){
 		try {
 			String data = URLEncoder.encode("code", "UTF-8") + "=" + URLEncoder.encode(qrcode, "UTF-8");
-			data+= "&"+URLEncoder.encode("phonenumber", "UTF-8") + "=" + URLEncoder.encode(phoneNumber, "UTF-8");
+			data+= "&"+URLEncoder.encode("email", "UTF-8") + "=" + URLEncoder.encode(email, "UTF-8");
+			data+= "&"+URLEncoder.encode("endtime", "UTF-8") + "=" + URLEncoder.encode(endtime, "UTF-8");
 			// Send data
-			URL url = new URL("http://localhost/park.php");
+			URL url = new URL("http://parqme.com/park.php");
 			URLConnection conn = url.openConnection();
 			
 			conn.setDoOutput(true);
@@ -60,11 +62,38 @@ public class UserObject {
 			bufferedInput.read(buffer);
 			//read into buffer
 			String x =(new String(buffer, 0,bytesRead));
-			return (x.equals("1"));
+			return Integer.parseInt(x);
 		}catch (Exception e){
 			e.printStackTrace();
 		}
-		return false;
+		return -1;
+	}
+	
+	public static int unPark(String qrcode, String email){
+		try {
+			String data = URLEncoder.encode("code", "UTF-8") + "=" + URLEncoder.encode(qrcode, "UTF-8");
+			data+= "&"+URLEncoder.encode("email", "UTF-8") + "=" + URLEncoder.encode(email, "UTF-8");
+			// Send data
+			URL url = new URL("http://parqme.com/park.php");
+			URLConnection conn = url.openConnection();
+			
+			conn.setDoOutput(true);
+			OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+			wr.write(data);
+			wr.flush();
+			//write data
+			int bytesRead = 1;
+			byte[] buffer = new byte[1];
+			//prepare buffers
+			BufferedInputStream bufferedInput = new BufferedInputStream(conn.getInputStream());
+			bufferedInput.read(buffer);
+			//read into buffer
+			String x =(new String(buffer, 0,bytesRead));
+			return Integer.parseInt(x);
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		return -1;
 	}
 	
 }

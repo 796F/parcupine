@@ -46,10 +46,11 @@ public class LoginScreen extends Activity {
 				String pass = passwordForm.getText().toString();
 				
 				// CURRENTLY SENDING CLEAR TEXT.  ENCRYPT LATER.
-				if (UserObject.getAuth(email, pass)){
+				if (UserObject.getAuth(email, pass)==1){
 					SharedPreferences.Editor editor = check.edit();
 					vf.showNext();
 					editor.putBoolean("loginState", true);
+					editor.putString("email", email);
 					//SharedPreferences login = getSharedPreferences(SAVED_INFO, 0);
 					if(box.isChecked()){
 						editor.putBoolean("remember", true);

@@ -42,6 +42,7 @@ import android.widget.ViewFlipper;
  * look into city's expenses, number of parks, gauge the server costs, lay out finance to potential
  *    partners
  * CUSTOM buttons
+ * login splash screen?  no functionality unless registered.  
  * */
 
 public class MainActivity extends Activity {
@@ -128,13 +129,6 @@ IF remember checked
 					intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
 					startActivityForResult(intent, 0);
 					
-					//THIS BLOCK should be in onResult, if result is bad then we must re-capture qr code.
-					vf.showNext();
-					startService(new Intent(MainActivity.this, Background.class).putExtra("time", parkMinutes));
-					/*parkState changes how app resumes*/
-					editor.putBoolean("parkState", true);
-					editor.commit();
-					//
 				}else{
 					AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this);
 					alert.setMessage("You Must Login First");
@@ -152,14 +146,20 @@ IF remember checked
 		unparqButton = (Button) findViewById(R.id.unparqbutton);
 		unparqButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-
+				String qrcode = check.getString("code", "badcode");
+				String email = check.getString("email", "bademail");
 				//	    		are you sure? dialogue
 				//	    				if sure start summary activity
 				//	    				          this has time parked, amount spent, 
-				stopService(new Intent(MainActivity.this, Background.class));
-				vf.showPrevious();
-				editor.putBoolean("parkState", false);
-				editor.commit();
+				if(UserObject.unPark(qrcode, email)==1){
+					stopService(new Intent(MainActivity.this, Background.class));
+					vf.showPrevious();
+					editor.putBoolean("parkState", false);
+					editor.commit();
+				}else{
+					
+					//interpret response code
+				}
 			}});
 		
 
@@ -231,8 +231,6 @@ IF remember checked
 		if (requestCode == 0) {
 			if (resultCode == RESULT_OK) {
 
-
-				int contentInt = intent.getIntExtra("SCAN_RESULT", Global.BAD_RESULT_CODE);
 				String contents = intent.getStringExtra("SCAN_RESULT");
 				String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
 				
@@ -241,18 +239,21 @@ IF remember checked
 
 				/*send request to server with email + contentInt + time*/
 				timeDisplay.setText("RESULT GOT" + contents);
-				if(UserObject.sendCode(contents, "3023546447")){
-					SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
-					SharedPreferences.Editor editor = check.edit();
+				SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
+				String email = check.getString("email", "bademail");
+				SharedPreferences.Editor editor = check.edit();
+				editor.putString("code", contents);
+				//TODO
+				String endtime = "FAKEENDTIME";
+				
+				if(UserObject.sendCode(contents, email, endtime)==1){
 					vf.showNext();
 					startService(new Intent(MainActivity.this, Background.class).putExtra("time", parkMinutes));
 					/*parkState changes how app resumes*/
 					editor.putBoolean("parkState", true);
-					editor.commit();
-				}else{
-					priceDisplay.setText("error processing qr code");
 				}
 				
+				editor.commit();
 
 
 			} else if (resultCode == RESULT_CANCELED) {
