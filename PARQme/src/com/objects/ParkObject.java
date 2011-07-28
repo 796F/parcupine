@@ -6,7 +6,7 @@ public class ParkObject {
 	private String location;
 	private int spotNum;
 	public ParkObject(){
-		this.location="NONE";
+		
 	}
 	
 	public ParkObject(String loc, float lat, float lon, int spot){

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Timer;
 
+import com.objects.ParkObject;
 import com.quietlycoding.android.picker.NumberPickerDialog;
 
 import android.app.Activity;
@@ -30,10 +31,9 @@ import android.widget.ViewFlipper;
 /**
  * 
  * TIME LOGIC and BOOT LOAD SERVICE RESUME, real time updated timer display
- * ParkedObject implemented and Display location info
  * CUSTOM buttons and GRAPHICS
  * 
- * 
+ * TimeLeftDisplay = analog timer, digital countdown (setting gives choice) 
  * ?? change accounT to an only logout screen, which takes the user back to splash/login screen.
  * FIX MAP
  * Add server calls for rates.
@@ -111,10 +111,9 @@ IF remember checked
 		final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 		final SharedPreferences.Editor editor = check.edit();
 		//crash on return, cause is here?
-//		if(check.getBoolean("parkState", false)){
-//			priceDisplay.setText("parkstate is true");
-//			vf.showNext();
-//		}
+		if(check.getBoolean("parkState", false)){
+			vf.showNext();
+		}
 		//load correct layout which has the time selector and camera view.  
 		priceDisplay = (TextView) findViewById(R.id.textView1);
 		timeDisplay = (TextView) findViewById(R.id.textView5);
@@ -129,12 +128,7 @@ IF remember checked
 		parqButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if(check.getBoolean("loginState", false)){
-					Intent intent = new Intent("com.google.zxing.client.android.MYSCAN");
-					intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
-					startActivityForResult(intent, 0);
-					
-				}else{
+				if(!check.getBoolean("loginState", false)){
 					AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this);
 					alert.setMessage("You Must Login First");
 					alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
@@ -144,6 +138,12 @@ IF remember checked
 					});
 					AlertDialog a = alert.create();
 					a.show();
+					
+				}else{
+					Intent intent = new Intent("com.google.zxing.client.android.MYSCAN");
+					intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
+					startActivityForResult(intent, 0);
+					
 				}
 			}});
 
@@ -239,7 +239,6 @@ IF remember checked
 				String contents = intent.getStringExtra("SCAN_RESULT");
 				String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
 				
-				
 				/*scan results will contain an integer number, which represents a park location*/
 
 				/*send request to server with email + contentInt + time*/
@@ -250,12 +249,13 @@ IF remember checked
 				editor.putString("code", contents);
 				//TODO
 				String endtime = "FAKEENDTIME";
-				
-				if(ServerCalls.sendCode(contents, email, endtime)==1){
+				ParkObject myPark = ServerCalls.Park(contents, email, endtime);
+				if(myPark!=null){
 					vf.showNext();
 					startService(new Intent(MainActivity.this, Background.class).putExtra("time", parkMinutes));
 					/*parkState changes how app resumes*/
 					editor.putBoolean("parkState", true);
+					timeDisplay.setText("You are parked in " + myPark.getLocation()+"\n Spot " + myPark.getSpotNum());
 				}
 				
 				editor.commit();

@@ -105,13 +105,13 @@ public class ServerCalls {
 		}
 		return -1;
 	}
-	public static ParkObject newUnPark(String qrcode, String email, String endtime){
+	public static ParkObject Park(String qrcode, String email, String endtime){
 		try {
 			String data = URLEncoder.encode("code", "UTF-8") + "=" + URLEncoder.encode(qrcode, "UTF-8");
 			data+= "&"+URLEncoder.encode("email", "UTF-8") + "=" + URLEncoder.encode(email, "UTF-8");
 			data+= "&"+URLEncoder.encode("endtime", "UTF-8") + "=" + URLEncoder.encode(endtime, "UTF-8");
 			// Send data
-			URL url = new URL("http://localhost/park.php");
+			URL url = new URL("http://parqme.com/park.php");
 			URLConnection conn = url.openConnection();
 			
 			conn.setDoOutput(true);

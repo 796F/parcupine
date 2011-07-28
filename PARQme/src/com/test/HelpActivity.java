@@ -6,6 +6,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 
 public class HelpActivity extends Activity {
 	private Button testphp;
+	public static final String SAVED_INFO = "ParqMeInfo";
 	private TextView phpre;
 	/** Called when the activity is first created. */
 	@Override
@@ -24,7 +26,11 @@ public class HelpActivity extends Activity {
         
         testphp.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				phpre.setText(hitPhp());
+
+				final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
+				final SharedPreferences.Editor editor = check.edit();
+				editor.putBoolean("parkState", false);
+				editor.commit();
 			}
 		});
 	}
