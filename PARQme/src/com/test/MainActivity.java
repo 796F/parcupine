@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.Timer;
 
 import com.objects.ParkObject;
+import com.objects.ThrowDialog;
 import com.quietlycoding.android.picker.NumberPickerDialog;
 
 import android.app.Activity;
@@ -31,6 +32,9 @@ import android.widget.ViewFlipper;
 /**
  * 
  * TIME LOGIC and BOOT LOAD SERVICE RESUME, real time updated timer display
+ * logic ------------
+ *       on parq, calculate first end-time, store and schedule
+ *       on refill, get end time, calculate new end-time (old.mins+refill.mins) and schedule
  * CUSTOM buttons and GRAPHICS
  * 
  * TimeLeftDisplay = analog timer, digital countdown (setting gives choice) 
@@ -129,17 +133,12 @@ IF remember checked
 			@Override
 			public void onClick(View v) {
 				if(!check.getBoolean("loginState", false)){
-					AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this);
-					alert.setMessage("You Must Login First");
-					alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) {
-							dialog.cancel();
-						}
-					});
-					AlertDialog a = alert.create();
-					a.show();
+					ThrowDialog.show(MainActivity.this, ThrowDialog.MUST_LOGIN);
 					
 				}else{
+
+
+					//TODO IF TIME SET ==0 minutes, SHOW DIALOG.  
 					Intent intent = new Intent("com.google.zxing.client.android.MYSCAN");
 					intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
 					startActivityForResult(intent, 0);
@@ -234,7 +233,7 @@ IF remember checked
 
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		if (requestCode == 0) {
-			if (resultCode == RESULT_OK) {
+			if (resultCode == RESULT_OK) { //TODO SHOULD ALSO CHECK if returned park object is good, before we make changes.
 
 				String contents = intent.getStringExtra("SCAN_RESULT");
 				String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
@@ -266,54 +265,6 @@ IF remember checked
 				// Handle cancel
 			}
 		}
-	}
-
-
-	public int contactServer(String email, int contentInt, int time){
-		try {
-			URL url = new URL("http://192.268.1.57:8080/UserBounce/UpdateDatabase");
-
-			URLConnection servletConnection = url.openConnection();
-
-			// inform the connection that we will send output and accept input
-			servletConnection.setDoInput(true);
-			servletConnection.setDoOutput(true);
-
-			// Don't use a cached version of URL connection.
-			servletConnection.setUseCaches(false);
-			servletConnection.setDefaultUseCaches(false);
-
-			// Specify the content type that we will send binary data
-			servletConnection.setRequestProperty("Content-Type", "application/x-java-serialized-object");
-
-			// get input and output streams on servlet
-			ObjectOutputStream os = new ObjectOutputStream(servletConnection.getOutputStream());
-
-			// send your data to the servlet
-			os.writeObject("TESTEMAIL@JA.COM" +","+contentInt+","+parkMinutes);
-			os.flush();
-			os.close();
-
-			ObjectInputStream iStream = new ObjectInputStream(servletConnection.getInputStream());
-			int responseCode = iStream.readInt();
-
-			if(responseCode==0){
-				//spot taken
-			}else if(responseCode==1){
-				//spot okay
-				return 1;
-			}else if(responseCode==2){
-				//jus tin case.  
-			}else{
-				//spoof code.  easter egg ascii art
-			}
-
-			/*read response code and interprit*/
-
-		}catch (Exception e){
-			e.printStackTrace();
-		}
-		return 0;
 	}
 
 

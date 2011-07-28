@@ -2,6 +2,9 @@ package com.test;
 
 import java.net.URLConnection;
 
+import com.objects.ThrowDialog;
+import com.objects.UserObject;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -12,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 public class LoginScreen extends Activity {
@@ -44,7 +48,29 @@ public class LoginScreen extends Activity {
 			public void onClick(View v) {
 				String email = emailForm.getText().toString();
 				String pass = passwordForm.getText().toString();
-				
+				UserObject user = ServerCalls.getUser(email, pass);
+//				if(user!=null){
+//					SharedPreferences.Editor editor = check.edit();
+//					vf.showNext();
+//					TextView fname = (TextView) findViewById(R.id.fname);
+//					fname.setText(user.getFname()+" "+user.getLname());
+//					TextView email = (TextView) findViewById(R.id.email);
+//					email.setText(user.getEmail());
+//					TextView phone = (TextView) findViewById(R.id.phone);
+//					phone.setText(user.getPhone());
+//					TextView history = (TextView) findViewById(R.id.history);
+//					editor.putBoolean("loginState", true);
+//					editor.putString("email", email);
+//					//SharedPreferences login = getSharedPreferences(SAVED_INFO, 0);
+//					if(box.isChecked()){
+//						editor.putBoolean("remember", true);
+//					}else{
+//						editor.putBoolean("remember", false);
+//					}
+//					editor.commit();
+//				}else{
+//					ThrowDialog.show(LoginScreen.this, ThrowDialog.COULD_NOT_AUTH);
+//				}
 				// CURRENTLY SENDING CLEAR TEXT.  ENCRYPT LATER.
 				if (ServerCalls.getAuth(email, pass)==1){
 					SharedPreferences.Editor editor = check.edit();
@@ -59,15 +85,7 @@ public class LoginScreen extends Activity {
 					}
 					editor.commit();
 				}else{
-					AlertDialog.Builder alert = new AlertDialog.Builder(LoginScreen.this);
-					alert.setMessage("Could not Login\n Check your fields");
-					alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) {
-							dialog.cancel();
-						}
-					});
-					AlertDialog a = alert.create();
-					a.show();
+					ThrowDialog.show(LoginScreen.this, ThrowDialog.COULD_NOT_AUTH);
 				}
 			}
 		});
@@ -89,15 +107,7 @@ public class LoginScreen extends Activity {
 					editor.putBoolean("loginState", false);
 					editor.commit();
 				}else{
-					AlertDialog.Builder alert = new AlertDialog.Builder(LoginScreen.this);
-					alert.setMessage("You are currently parked");
-					alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) {
-							dialog.cancel();
-						}
-					});
-					AlertDialog a = alert.create();
-					a.show();
+					ThrowDialog.show(LoginScreen.this, ThrowDialog.IS_PARKED);
 				}
 			}});
 		

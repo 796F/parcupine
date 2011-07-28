@@ -1,5 +1,7 @@
 package com.test;
 
+import com.objects.ThrowDialog;
+
 import android.app.AlertDialog;
 import android.app.TabActivity;
 import android.content.DialogInterface;
@@ -52,15 +54,7 @@ public class TabsActivity extends TabActivity {
         else{
         	tabHost.setCurrentTab(2);
         	//show dialog saying you must login/register
-        	AlertDialog.Builder alert = new AlertDialog.Builder(TabsActivity.this);
-			alert.setMessage("You must Login to use ParqMe");
-			alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.cancel();
-				}
-			});
-			AlertDialog a = alert.create();
-			a.show();
+        	ThrowDialog.show(TabsActivity.this, ThrowDialog.MUST_LOGIN);
         }
     }
 //    public void onDestroy(){

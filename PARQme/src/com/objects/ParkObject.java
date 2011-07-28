@@ -1,5 +1,8 @@
 package com.objects;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class ParkObject {
 	private float lat;
 	private float lon;
@@ -9,11 +12,18 @@ public class ParkObject {
 		
 	}
 	
-	public ParkObject(String loc, float lat, float lon, int spot){
-		this.lat=lat;
-		this.lon=lon;
-		this.location=loc;
-		this.spotNum=spot;
+//	public ParkObject(String loc, float lat, float lon, int spot){
+//		this.lat=lat;
+//		this.lon=lon;
+//		this.location=loc;
+//		this.spotNum=spot;
+//	}
+	public ParkObject(String result){
+		List<String> fields = Arrays.asList(result.split("@"));
+		this.location=fields.get(0);
+		this.lat=Float.parseFloat(fields.get(1));
+		this.lon=Float.parseFloat(fields.get(2));
+		this.spotNum=Integer.parseInt(fields.get(3));
 	}
 	@Override
 	public String toString(){

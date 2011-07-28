@@ -12,11 +12,9 @@
 		android:layout_height="wrap_content" android:id="@+id/textView1"
 		android:layout_alignParentTop="true" android:layout_centerHorizontal="true"
 		android:layout_marginTop="97dp"></TextView>
-	<TextView android:textAppearance="?android:attr/textAppearanceLarge"
-		android:layout_width="wrap_content" android:text="Email: "
-		android:layout_height="wrap_content" android:id="@+id/textView2"
-		android:layout_below="@+id/textView1" android:layout_alignParentLeft="true"></TextView>
-	<TextView android:textAppearance="?android:attr/textAppearanceMedium" android:layout_width="wrap_content" android:text="City: " android:layout_height="wrap_content" android:id="@+id/textView4" android:layout_below="@+id/textView2" android:layout_alignParentLeft="true"></TextView>
-	<TextView android:textAppearance="?android:attr/textAppearanceMedium" android:layout_width="wrap_content" android:text="CC: " android:layout_height="wrap_content" android:id="@+id/textView3" android:layout_below="@+id/textView4" android:layout_alignParentLeft="true"></TextView>
-
+	<TextView android:layout_width="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge" android:id="@+id/fname" android:text="TextView" android:layout_height="wrap_content" android:layout_below="@+id/textView1" android:layout_alignParentLeft="true" android:layout_marginTop="32dp"></TextView>
+	<TextView android:layout_width="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge" android:id="@+id/email" android:text="TextView" android:layout_height="wrap_content" android:layout_below="@+id/fname" android:layout_alignParentLeft="true"></TextView>
+	<TextView android:layout_width="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge" android:id="@+id/phone" android:text="TextView" android:layout_height="wrap_content" android:layout_below="@+id/email" android:layout_alignParentLeft="true"></TextView>
+	<TextView android:layout_width="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge" android:id="@+id/history" android:text="TextView" android:layout_height="wrap_content" android:layout_below="@+id/phone" android:layout_alignParentLeft="true"></TextView>
+	
 </RelativeLayout>
