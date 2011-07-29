@@ -36,8 +36,6 @@ public class HelpActivity extends Activity {
         
         testphp.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				Intent myIntent = new Intent(HelpActivity.this, TestMap.class);
-				startActivity(myIntent);
 			}
 		});
         
