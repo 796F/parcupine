@@ -10,19 +10,25 @@ public class UserObject {
 	private String lname;
 	private String phone;
 	private String email;
-	private List<String> history;
 	
 	public UserObject(){}
 	
 	public UserObject(String result){
-		List<String> fields = Arrays.asList(result.split("|"));
+		List<String> fields = Arrays.asList(result.split("&"));
 		this.fname=fields.get(0);
 		this.lname=fields.get(1);
 		this.email=fields.get(2);
 		this.phone = fields.get(3);
-		String historyString = fields.get(4);
-		this.history= Arrays.asList(historyString.split("&"));
 	}
+//	public boolean checkIntegrity(){
+//		if(this.getFname().equals("0")){
+//			return false;
+//		}else if(this.getFname().equals("2")){
+//			return false;
+//		}else{
+//			return true;
+//		}
+//	}
 	
 	public String getFname() {
 		return fname;
@@ -47,12 +53,6 @@ public class UserObject {
 	}
 	public void setEmail(String email) {
 		this.email = email;
-	}
-	public List<String> getHistory() {
-		return history;
-	}
-	public void setHistory(List<String> history) {
-		this.history = history;
 	}
 	
 }

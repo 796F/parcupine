@@ -4,10 +4,19 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import com.quietlycoding.android.picker.NumberPickerDialog;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -16,6 +25,7 @@ public class HelpActivity extends Activity {
 	private Button testphp;
 	public static final String SAVED_INFO = "ParqMeInfo";
 	private TextView phpre;
+	public String time;
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -26,51 +36,42 @@ public class HelpActivity extends Activity {
         
         testphp.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-
-				final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
-				final SharedPreferences.Editor editor = check.edit();
-				editor.putBoolean("parkState", false);
-				editor.commit();
+				Intent myIntent = new Intent(HelpActivity.this, TestMap.class);
+				startActivity(myIntent);
 			}
 		});
+        
+        
+        new CountDownTimer(minToMil(120), 1000){
+			@Override
+			public void onFinish() {
+				//unparq
+			}
+
+			@Override
+			public void onTick(long arg0) {
+				int seconds = (int)arg0/1000;
+				phpre.setText(formatMe(seconds));
+				
+			}
+        	
+        }.start();
 	}
-	public String hitPhp(){
-		String outstring ="";
-		
+	public static String formatMe(int seconds){
+		SimpleDateFormat sdf = new SimpleDateFormat("H:mm:ss");
 		try {
-			URL url = new URL("http://parqme.com/writedb");
-			URLConnection servletConnection = url.openConnection();
-
-			// inform the connection that we will send output and accept input
-			servletConnection.setDoInput(true);
-			servletConnection.setDoOutput(true);
-
-			// Don't use a cached version of URL connection.
-			servletConnection.setUseCaches(false);
-			servletConnection.setDefaultUseCaches(false);
-
-			// Specify the content type that we will send binary data
-			servletConnection.setRequestProperty("Content-Type", "application/x-java-serialized-object");
-
-			// get input and output streams on servlet
-			ObjectOutputStream os = new ObjectOutputStream(servletConnection.getOutputStream());
-
-			// send your data to the servlet
-			os.writeObject("testing");
-			os.flush();
-			os.close();
-
-			ObjectInputStream iStream = new ObjectInputStream(servletConnection.getInputStream());
-			outstring+=iStream.readObject();
-			
-
-			/*read response code and interprit*/
-
-		}catch (Exception e){
+			Date x = sdf.parse("00:00:00");
+			x.setSeconds(seconds);
+			return (sdf.format(x));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		return outstring;
+		return "BADBADBAD";
 	}
+	public static long minToMil(int minutes){
+    	return minutes*60000;
+    }
+	
 
 }

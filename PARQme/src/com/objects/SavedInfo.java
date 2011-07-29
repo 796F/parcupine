@@ -19,6 +19,7 @@ public class SavedInfo{
 		SharedPreferences.Editor editor = check.edit();
 		editor.putString("email", ""); editor.putString("endTime", ""); editor.putString("code", "");
 		editor.putBoolean("parkState", false); editor.putBoolean("loginState", false); editor.putBoolean("remember", false);
+		editor.commit();
 	}
 	//if parked return true, else false
 	public static boolean isParked(Context activity){
@@ -46,6 +47,14 @@ public class SavedInfo{
 		editor.putString("endTime", endTime);
 		editor.commit();
 		
+	}
+	public static String getEndTime(Context activity){
+		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
+		return check.getString("endTime", null);
+	}
+	public static String getEmail(Context activity){
+		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
+		return check.getString("email", null);
 	}
 	//set's code to a string
 	public static void setCode(Context activity, String code){
@@ -81,4 +90,5 @@ public class SavedInfo{
 		}
 		editor.commit();
 	}
+	
 }

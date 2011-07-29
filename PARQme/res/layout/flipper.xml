@@ -13,7 +13,7 @@
 		<TextView android:textAppearance="?android:attr/textAppearanceLarge"
 			android:layout_height="wrap_content" android:height="80px"
 			android:layout_width="wrap_content" android:text="  0 Minutes : $ 0.00"
-			android:id="@+id/textView1" android:layout_above="@+id/secondparq"
+			android:id="@+id/minutesprice" android:layout_above="@+id/secondparq"
 			android:layout_centerHorizontal="true" android:layout_marginBottom="52dp"></TextView>
 		<Button android:id="@+id/firstparq" android:layout_height="wrap_content"
 			android:text="SET PARQ TIME" android:layout_width="match_parent"
@@ -28,30 +28,30 @@
 		android:id="@+id/view2">
 		<TextView android:layout_height="wrap_content"
 			android:textAppearance="?android:attr/textAppearanceMedium"
-			android:id="@+id/textView1" android:layout_width="wrap_content"
+			android:id="@+id/username" android:layout_width="wrap_content"
 			android:text="username" android:layout_marginRight="0px"
 			android:layout_alignParentRight="true"></TextView>
 		<TextView android:layout_height="wrap_content"
 			android:textAppearance="?android:attr/textAppearanceLarge"
-			android:id="@+id/textView2" android:layout_width="wrap_content"
+			android:id="@+id/PARQbanner" android:layout_width="wrap_content"
 			android:text="PARQ" android:layout_alignParentLeft="true"></TextView>
 		<TextView android:layout_height="wrap_content"
 			android:textAppearance="?android:attr/textAppearanceLarge"
-			android:id="@+id/textView3" android:layout_marginTop="70px"
+			android:id="@+id/welcomeuser" android:layout_marginTop="70px"
 			android:layout_marginLeft="50px" android:layout_width="wrap_content"
 			android:text="Welcome Bob!" android:layout_alignParentLeft="true"></TextView>
 		<TextView android:layout_height="wrap_content"
 			android:textAppearance="?android:attr/textAppearanceMedium"
-			android:id="@+id/textView4" android:text="    Enjoy your stay blah"
-			android:layout_below="@+id/textView3" android:layout_width="match_parent"></TextView>
+			android:id="@+id/location" android:text="    Enjoy your stay blah"
+			android:layout_below="@+id/welcomeuser" android:layout_width="match_parent"></TextView>
 		<TextView android:layout_height="wrap_content"
 			android:textAppearance="?android:attr/textAppearanceLarge"
-			android:id="@+id/textView5" android:layout_width="wrap_content"
-			android:text="Time Left_____________" android:layout_below="@+id/textView4"
-			android:layout_alignLeft="@+id/textView4" android:layout_alignRight="@+id/textView4"
+			android:id="@+id/timeleftdisplay" android:layout_width="wrap_content"
+			android:text="Time Left_____________" android:layout_below="@+id/location"
+			android:layout_alignLeft="@+id/location" android:layout_alignRight="@+id/location"
 			android:layout_marginTop="100px" android:layout_marginLeft="50px"></TextView>
 		<Button android:layout_height="wrap_content"
-			android:layout_below="@+id/textView5" android:text="REFILL"
+			android:layout_below="@+id/timeleftdisplay" android:text="REFILL"
 			android:id="@+id/refillbutton" android:layout_width="match_parent"
 			android:layout_marginTop="50px"></Button>
 		<Button android:layout_height="wrap_content"

@@ -1,7 +1,7 @@
 package com.test;
 
-import java.net.URLConnection;
 
+import com.objects.SavedInfo;
 import com.objects.ThrowDialog;
 import com.objects.UserObject;
 
@@ -23,7 +23,7 @@ public class LoginScreen extends Activity {
 	private Button loginButton;
 	private EditText emailForm;
 	private EditText passwordForm;
-	private Button goWeb;
+	private Button register;
 	private Button logout;
 	private ViewFlipper vf;
 	private CheckBox box;
@@ -49,32 +49,21 @@ public class LoginScreen extends Activity {
 				String email = emailForm.getText().toString();
 				String pass = passwordForm.getText().toString();
 				UserObject user = ServerCalls.getUser(email, pass);
-//				if(user!=null){
-//					SharedPreferences.Editor editor = check.edit();
-//					vf.showNext();
-//					TextView fname = (TextView) findViewById(R.id.fname);
-//					fname.setText(user.getFname()+" "+user.getLname());
-//					TextView email = (TextView) findViewById(R.id.email);
-//					email.setText(user.getEmail());
-//					TextView phone = (TextView) findViewById(R.id.phone);
-//					phone.setText(user.getPhone());
-//					TextView history = (TextView) findViewById(R.id.history);
-//					editor.putBoolean("loginState", true);
-//					editor.putString("email", email);
-//					//SharedPreferences login = getSharedPreferences(SAVED_INFO, 0);
-//					if(box.isChecked()){
-//						editor.putBoolean("remember", true);
-//					}else{
-//						editor.putBoolean("remember", false);
-//					}
-//					editor.commit();
-//				}else{
-//					ThrowDialog.show(LoginScreen.this, ThrowDialog.COULD_NOT_AUTH);
-//				}
-				// CURRENTLY SENDING CLEAR TEXT.  ENCRYPT LATER.
-				if (ServerCalls.getAuth(email, pass)==1){
+				if(user!=null){
 					SharedPreferences.Editor editor = check.edit();
 					vf.showNext();
+					
+					
+					TextView fname = (TextView) findViewById(R.id.accinfolabel);
+					fname.setText(user.getFname()+" "+user.getLname());
+					
+					TextView emailField = (TextView) findViewById(R.id.accemailfield);
+					emailField.setText("Email: " + user.getEmail());
+					
+					TextView phone = (TextView) findViewById(R.id.creditcardfield);
+					phone.setText(user.getPhone());
+					
+					
 					editor.putBoolean("loginState", true);
 					editor.putString("email", email);
 					//SharedPreferences login = getSharedPreferences(SAVED_INFO, 0);
@@ -87,25 +76,39 @@ public class LoginScreen extends Activity {
 				}else{
 					ThrowDialog.show(LoginScreen.this, ThrowDialog.COULD_NOT_AUTH);
 				}
+				// CURRENTLY SENDING CLEAR TEXT.  ENCRYPT LATER.
+//				if (ServerCalls.getAuth(email, pass)==1){
+//					SharedPreferences.Editor editor = check.edit();
+//					vf.showNext();
+//					SavedInfo.toggleLogin(LoginScreen.this);
+//					if(box.isChecked()){
+//						editor.putBoolean("remember", true);
+//					}else{
+//						editor.putBoolean("remember", false);
+//					}
+//					editor.commit();
+//				}else{
+//					ThrowDialog.show(LoginScreen.this, ThrowDialog.COULD_NOT_AUTH);
+//				}
 			}
 		});
-		goWeb = (Button) findViewById(R.id.registerbutton);
-		goWeb.setOnClickListener(new View.OnClickListener() {
+		register = (Button) findViewById(R.id.registerbutton);
+		
+		register.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				//open website
 				Intent myintent = new Intent(LoginScreen.this, WebRegister.class);
 				startActivity(myintent);
 			}});
+		
+		
 		logout = (Button) findViewById(R.id.logoutbutton);
+		
 		logout.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				//if not currently parked.
 				if(!check.getBoolean("parkState", false)){
 					vf.showPrevious();
-					//SharedPreferences logout = getSharedPreferences(SAVED_INFO,0);
-					SharedPreferences.Editor editor = check.edit();
-					editor.putBoolean("loginState", false);
-					editor.commit();
+					SavedInfo.toggleLogin(LoginScreen.this);
 				}else{
 					ThrowDialog.show(LoginScreen.this, ThrowDialog.IS_PARKED);
 				}
