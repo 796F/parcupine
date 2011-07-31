@@ -6,6 +6,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import com.objects.Global;
+import com.objects.SavedInfo;
+import com.objects.ThrowDialog;
 
 import android.app.Service;
 import android.content.Intent;
@@ -35,8 +37,14 @@ public class Background extends Service{
 		Date endTime = new Date();
 		Date warningTime = new Date();
 		//add park minutes to current time's mins and set as end time.
-		warningTime.setMinutes(currentTime.getMinutes()+b.getInt("time")-5);
-		endTime.setMinutes(currentTime.getMinutes() + b.getInt("time"));
+		
+		//TODO make this calculated in seconds.
+		//warningTime.setMinutes(currentTime.getMinutes()+b.getInt("time")-5);
+		warningTime.setSeconds(currentTime.getSeconds()+b.getInt("time")-5*60);
+
+		//endTime.setMinutes(currentTime.getMinutes() + b.getInt("time"));
+		endTime.setSeconds(currentTime.getSeconds() + b.getInt("time"));
+		
 		//create formatter and get endtime string
 		String endTimeString = Global.sdf.format(endTime);
 		editor.putString("endTime", endTimeString);
@@ -48,6 +56,7 @@ public class Background extends Service{
 			@Override
 			public void run() {
 				// vibrate, ding, and bring up the refill page.  
+				//pass intent that started the main activity?? instead of new Intent();
 				Intent myIntent = new Intent(Background.this, TabsActivity.class);
 				myIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 				startActivity(myIntent);
@@ -60,7 +69,18 @@ public class Background extends Service{
 			public void run() {
 				//unparq user from server, stop the service, Vibrate
 				((Vibrator)getSystemService(VIBRATOR_SERVICE)).vibrate(2000);
-				stopService(new Intent(Background.this, Background.class));
+				//stopService(new Intent(Background.this, Background.class));
+				 String qrcode = check.getString("code", "badcode");
+				 String email = check.getString("email", "bademail");
+				 if(ServerCalls.unPark(qrcode, email)==1){
+					stopService(new Intent(Background.this, Background.class));
+					MainActivity.vf.showPrevious();
+					SavedInfo.togglePark(Background.this);
+				 }else{
+					ThrowDialog.show(Background.this, ThrowDialog.UNPARK_ERROR);
+				 }
+				
+				
 				editor.putBoolean("parkState", false);
 				editor.commit();
 			}

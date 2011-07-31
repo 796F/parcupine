@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.objects.SavedInfo;
 import com.quietlycoding.android.picker.NumberPickerDialog;
 
 import android.app.Activity;
@@ -36,24 +37,16 @@ public class HelpActivity extends Activity {
         
         testphp.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
+				SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
+				phpre.setText(check.getAll().toString());
+				//MainActivity.vf.showPrevious();
+				//SavedInfo.togglePark(HelpActivity.this);
+				//SavedInfo.reset(HelpActivity.this);
 			}
 		});
         
         
-        new CountDownTimer(minToMil(120), 1000){
-			@Override
-			public void onFinish() {
-				//unparq
-			}
-
-			@Override
-			public void onTick(long arg0) {
-				int seconds = (int)arg0/1000;
-				phpre.setText(formatMe(seconds));
-				
-			}
-        	
-        }.start();
+       
 	}
 	public static String formatMe(int seconds){
 		SimpleDateFormat sdf = new SimpleDateFormat("H:mm:ss");

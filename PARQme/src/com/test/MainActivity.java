@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Timer;
 
+import com.objects.Global;
 import com.objects.ParkObject;
 import com.objects.SavedInfo;
 import com.objects.ThrowDialog;
@@ -34,25 +35,20 @@ import android.widget.TimePicker;
 import android.widget.ViewFlipper;
 
 /**
+ * WRITE alert dialog class for NumberPicker, looks bad.
+ * ACCOUNT tab should have settings and personal options.
+ * DO NOT RELYON GOOD CONNECTION.  model should be - request change, send notice okay, make change on app, confirm change on server.
+ * 
+ * "Share Parq" option, pulls up qr code to scan.  
  * BOOT LOAD SERVICE RESUME
- * logic ------------
- *       on parq, calculate first end-time, store and schedule
- *       on refill, get end time, calculate new end-time (old.mins+refill.mins) and schedule
  * CUSTOM buttons and GRAPHICS
  * 
  * TimeLeftDisplay = analog timer, digital countdown (setting gives choice) 
- * ?? change accounT to an only logout screen, which takes the user back to splash/login screen.
- * FIX MAP
  * Add server calls for rates.
- * PARKING is free after 7pm.  include a time check method which may alertdialog.  
  * 
- * WRITE alert dialog class for NumberPicker, looks bad.
- * Phone should vibrate etc if 5 minutes remain,
- *    service should shutdown once time is up. 
  *    
- * SEcurity in authenticating with server?  
- * Once we log in, autoclose the keyboard prompt
- * login splash screen?  no functionality unless registered.  
+ * SEcurity in authenticating with server?
+ * 
  * look into city's expenses, number of parks, gauge the server costs, lay out finance to potential
  *    partners
  * */
@@ -107,7 +103,7 @@ IF remember checked
 
 	static final int NUM_PICKER_ID = 2;
 	private static final int REFILL_PICKER_ID = 0;
-	private ViewFlipper vf;
+	public static ViewFlipper vf;
 	public static final String SAVED_INFO = "ParqMeInfo";
 
 	/** Called when the activity is first created. */
@@ -118,7 +114,7 @@ IF remember checked
 		vf = (ViewFlipper) findViewById(R.id.flipper);
 
 		final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
-		final SharedPreferences.Editor editor = check.edit();
+		//final SharedPreferences.Editor editor = check.edit();
 		//crash on return, cause is here?
 		if(check.getBoolean("parkState", false)){
 			vf.showNext();
@@ -226,8 +222,13 @@ IF remember checked
 				
 			}
 			timer = initiateTimer(selectedNumber*60);
+			//why not just 							instead of checking park state.
+			//timer = initiateTimer(selectedNumber*60+remainSeconds);
 			timer.start();
 			updateDisplay();
+			stopService(new Intent(MainActivity.this, Background.class));
+			startService(new Intent(MainActivity.this, Background.class).putExtra("time", remainSeconds+selectedNumber*60));
+			//TODO update server's endtime.  
 		}
 	};
 	private void updateDisplay() {
@@ -251,7 +252,7 @@ IF remember checked
 
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		if (requestCode == 0) {
-			if (resultCode == RESULT_OK) { //TODO SHOULD ALSO CHECK if returned park object is good, before we make changes.
+			if (resultCode == RESULT_OK) { 
 
 				String contents = intent.getStringExtra("SCAN_RESULT");
 				//String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
@@ -260,19 +261,23 @@ IF remember checked
 				String email = check.getString("email", "bademail");
 				SharedPreferences.Editor editor = check.edit();
 				editor.putString("code", contents);
+				 
+				Date forString = new Date();
+				forString.setSeconds(forString.getSeconds()+parkMinutes*60);
+				String endtime = Global.sdf.format(forString);
 				
-				//TODO function initiateTimer starts a timer.  resuming app , refill button, and ONresult calls it.  
-				timer = initiateTimer(parkMinutes*60);
-				timer.start();
-				String endtime = "FAKEENDTIME";
 				ParkObject myPark = ServerCalls.Park(contents, email, endtime);
 				if(myPark!=null){
+					timer = initiateTimer(parkMinutes*60);
+					timer.start();
 					vf.showNext();
-					startService(new Intent(MainActivity.this, Background.class).putExtra("time", parkMinutes));
+					startService(new Intent(MainActivity.this, Background.class).putExtra("time", parkMinutes*60));
 					/*parkState changes how app resumes*/
 					editor.putBoolean("parkState", true);
-					userDisplay.setText("Welcome "); //TODO grab fname from user object
+					userDisplay.setText("Welcome " + check.getString("fname", "")); 
 					locDisplay.setText("You are parked at " + myPark.getLocation()+"\nSpot " + myPark.getSpotNum());
+				}else{
+					ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
 				}
 
 				editor.commit();
@@ -310,7 +315,6 @@ IF remember checked
 			x.setSeconds(seconds);
 			return (sdf.format(x));
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return "BADBADBAD";
@@ -324,7 +328,8 @@ IF remember checked
 			return new CountDownTimer(secToMil(countDownSeconds), 1000){
 				@Override
 				public void onFinish() {
-					//unparq
+//					timeDisplay.setText("Time Left: 0:00:00");
+//					MainActivity.vf.showPrevious();  CRASH
 				}
 				@Override
 				public void onTick(long arg0) {
@@ -340,8 +345,8 @@ IF remember checked
 
 				@Override
 				public void onFinish() {
-					// TODO Auto-generated method stub
-					
+//					timeDisplay.setText("Time Left: 0:00:00");
+//					MainActivity.vf.showPrevious();
 				}
 
 				@Override

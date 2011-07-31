@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="hello">Hello World, HelloTabWidgetActivity!</string>
-    <string name="app_name">HelloTabWidget</string>
+    <string name="app_name">PARQme</string>
     <string name="parqnow">PARQ NOW</string>
     <string name="parqme">PARQme</string>
 </resources>

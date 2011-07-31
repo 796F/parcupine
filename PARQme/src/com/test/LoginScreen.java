@@ -52,8 +52,7 @@ public class LoginScreen extends Activity {
 				if(user!=null){
 					SharedPreferences.Editor editor = check.edit();
 					vf.showNext();
-					
-					
+					editor.putString("fname", user.getFname());
 					TextView fname = (TextView) findViewById(R.id.accinfolabel);
 					fname.setText(user.getFname()+" "+user.getLname());
 					
