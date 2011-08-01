@@ -1,23 +1,11 @@
 package com.test;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.URL;
-import java.net.URLConnection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import com.objects.SavedInfo;
-import com.quietlycoding.android.picker.NumberPickerDialog;
-
 import android.app.Activity;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -36,6 +24,7 @@ public class HelpActivity extends Activity {
         phpre = (TextView) findViewById(R.id.phpresponse);
         
         testphp.setOnClickListener(new View.OnClickListener() {
+			@Override
 			public void onClick(View v) {
 				SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 				phpre.setText(check.getAll().toString());

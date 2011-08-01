@@ -3,18 +3,33 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:orientation="vertical" android:layout_width="match_parent"
 	android:layout_height="match_parent">
-	<Button android:text="Logout" android:layout_width="match_parent"
-		android:id="@+id/logoutbutton" android:layout_height="wrap_content"
-		android:layout_alignParentBottom="true"
+	<Button android:background="@drawable/logout"
+		android:layout_width="match_parent" android:id="@+id/logoutbutton"
+		android:layout_height="wrap_content" android:layout_alignParentBottom="true"
 		android:layout_alignParentLeft="true"></Button>
+	<Button android:layout_height="wrap_content" android:id="@+id/setting"
+		android:background="@drawable/setting" android:layout_width="wrap_content"
+		android:layout_above="@+id/logoutbutton" android:layout_alignLeft="@+id/logoutbutton"
+		android:layout_alignRight="@+id/logoutbutton"></Button>
 	<TextView android:textAppearance="?android:attr/textAppearanceLarge"
 		android:layout_width="wrap_content" android:text="Account Information"
-		android:layout_height="wrap_content" android:id="@+id/textView1"
+		android:layout_height="wrap_content" android:id="@+id/accinfolabel"
 		android:layout_alignParentTop="true" android:layout_centerHorizontal="true"
 		android:layout_marginTop="97dp"></TextView>
-	<TextView android:layout_width="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge" android:id="@+id/fname" android:text="TextView" android:layout_height="wrap_content" android:layout_below="@+id/textView1" android:layout_alignParentLeft="true" android:layout_marginTop="32dp"></TextView>
-	<TextView android:layout_width="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge" android:id="@+id/email" android:text="TextView" android:layout_height="wrap_content" android:layout_below="@+id/fname" android:layout_alignParentLeft="true"></TextView>
-	<TextView android:layout_width="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge" android:id="@+id/phone" android:text="TextView" android:layout_height="wrap_content" android:layout_below="@+id/email" android:layout_alignParentLeft="true"></TextView>
-	<TextView android:layout_width="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge" android:id="@+id/history" android:text="TextView" android:layout_height="wrap_content" android:layout_below="@+id/phone" android:layout_alignParentLeft="true"></TextView>
-	
+	<TextView android:textAppearance="?android:attr/textAppearanceLarge"
+		android:layout_width="wrap_content" android:text="Email: "
+		android:layout_height="wrap_content" android:id="@+id/accemailfield"
+		android:layout_below="@+id/accinfolabel"
+		android:layout_alignParentLeft="true"></TextView>
+	<TextView android:textAppearance="?android:attr/textAppearanceMedium"
+		android:layout_width="wrap_content" android:text="City: "
+		android:layout_height="wrap_content" android:id="@+id/acccityfield"
+		android:layout_below="@+id/accemailfield"
+		android:layout_alignParentLeft="true"></TextView>
+	<TextView android:textAppearance="?android:attr/textAppearanceMedium"
+		android:layout_width="wrap_content" android:text="CC: "
+		android:layout_height="wrap_content" android:id="@+id/creditcardfield"
+		android:layout_below="@+id/acccityfield"
+		android:layout_alignParentLeft="true"></TextView>
+
 </RelativeLayout>

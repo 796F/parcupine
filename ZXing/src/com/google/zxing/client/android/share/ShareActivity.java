@@ -68,7 +68,8 @@ public final class ShareActivity extends Activity {
   private Button clipboardButton;
 
   private final Button.OnClickListener contactListener = new Button.OnClickListener() {
-    public void onClick(View v) {
+    @Override
+	public void onClick(View v) {
       Intent intent = new Intent(Intent.ACTION_PICK, Contacts.People.CONTENT_URI);
       intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
       startActivityForResult(intent, PICK_CONTACT);
@@ -76,7 +77,8 @@ public final class ShareActivity extends Activity {
   };
 
   private final Button.OnClickListener bookmarkListener = new Button.OnClickListener() {
-    public void onClick(View v) {
+    @Override
+	public void onClick(View v) {
       Intent intent = new Intent(Intent.ACTION_PICK);
       intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
       intent.setClassName(ShareActivity.this, BookmarkPickerActivity.class.getName());
@@ -85,7 +87,8 @@ public final class ShareActivity extends Activity {
   };
 
   private final Button.OnClickListener appListener = new Button.OnClickListener() {
-    public void onClick(View v) {
+    @Override
+	public void onClick(View v) {
       Intent intent = new Intent(Intent.ACTION_PICK);
       intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
       intent.setClassName(ShareActivity.this, AppPickerActivity.class.getName());
@@ -94,7 +97,8 @@ public final class ShareActivity extends Activity {
   };
 
   private final Button.OnClickListener clipboardListener = new Button.OnClickListener() {
-    public void onClick(View v) {
+    @Override
+	public void onClick(View v) {
       ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
       // Should always be true, because we grey out the clipboard button in onResume() if it's empty
       if (clipboard.hasText()) {

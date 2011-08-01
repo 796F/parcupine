@@ -93,13 +93,15 @@ public final class SearchBookContentsActivity extends Activity {
   };
 
   private final Button.OnClickListener buttonListener = new Button.OnClickListener() {
-    public void onClick(View view) {
+    @Override
+	public void onClick(View view) {
       launchSearch();
     }
   };
 
   private final View.OnKeyListener keyListener = new View.OnKeyListener() {
-    public boolean onKey(View view, int keyCode, KeyEvent event) {
+    @Override
+	public boolean onKey(View view, int keyCode, KeyEvent event) {
       if (keyCode == KeyEvent.KEYCODE_ENTER) {
         launchSearch();
         return true;

@@ -20,6 +20,7 @@ public class ThrowDialog {
 		case MUST_LOGIN:
 			alert.setMessage("You Must Login to use ParqMe");
 			alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					dialog.cancel();
 				}
@@ -30,6 +31,7 @@ public class ThrowDialog {
 		case COULD_NOT_AUTH:
 			alert.setMessage("Could not Login\nCheck your fields");
 			alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					dialog.cancel();
 				}
@@ -40,6 +42,7 @@ public class ThrowDialog {
 		case IS_PARKED:
 			alert.setMessage("You are currently parked");
 			alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					dialog.cancel();
 				}
@@ -50,6 +53,7 @@ public class ThrowDialog {
 		case ZERO_MINUTES:
 			alert.setMessage("Select Parking Time");
 			alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					dialog.cancel();
 				}
@@ -60,6 +64,7 @@ public class ThrowDialog {
 		case UNPARK_ERROR:
 			alert.setMessage("Error Occurred Unparking\nTry Again.");
 			alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					dialog.cancel();
 				}
@@ -70,6 +75,7 @@ public class ThrowDialog {
 		case RESULT_ERROR:
 			alert.setMessage("Error Occurred Parking\nTry Again.");
 			alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					dialog.cancel();
 				}

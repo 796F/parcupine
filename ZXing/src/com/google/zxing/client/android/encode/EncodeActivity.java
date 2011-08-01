@@ -65,7 +65,8 @@ public final class EncodeActivity extends Activity {
    * available.
    */
   private final OnGlobalLayoutListener layoutListener = new OnGlobalLayoutListener() {
-    public void onGlobalLayout() {
+    @Override
+	public void onGlobalLayout() {
       if (firstLayout) {
         View layout = findViewById(R.id.encode_view);
         int width = layout.getWidth();

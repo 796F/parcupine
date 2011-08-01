@@ -42,7 +42,8 @@ public final class ISBNResultHandler extends ResultHandler {
   public ISBNResultHandler(Activity activity, ParsedResult result, Result rawResult) {
     super(activity, result, rawResult);
     showGoogleShopperButton(new View.OnClickListener() {
-      public void onClick(View view) {
+      @Override
+	public void onClick(View view) {
         ISBNParsedResult isbnResult = (ISBNParsedResult) getResult();
         openGoogleShopper(isbnResult.getISBN());
       }
@@ -62,7 +63,8 @@ public final class ISBNResultHandler extends ResultHandler {
   @Override
   public void handleButtonPress(final int index) {
     showNotOurResults(index, new AlertDialog.OnClickListener() {
-      public void onClick(DialogInterface dialogInterface, int i) {
+      @Override
+	public void onClick(DialogInterface dialogInterface, int i) {
         ISBNParsedResult isbnResult = (ISBNParsedResult) getResult();
         switch (index) {
           case 0:

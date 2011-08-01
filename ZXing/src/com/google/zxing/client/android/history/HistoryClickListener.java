@@ -44,7 +44,8 @@ final class HistoryClickListener implements DialogInterface.OnClickListener {
     this.items = items;
   }
 
-  public void onClick(DialogInterface dialogInterface, int i) {
+  @Override
+public void onClick(DialogInterface dialogInterface, int i) {
     if (i == dialogItems.length - 1) {
       historyManager.clearHistory();
     } else if (i == dialogItems.length - 2) {

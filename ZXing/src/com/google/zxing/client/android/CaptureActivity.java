@@ -142,14 +142,16 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
    * When the beep has finished playing, rewind to queue up another one.
    */
   private final OnCompletionListener beepListener = new OnCompletionListener() {
-    public void onCompletion(MediaPlayer mediaPlayer) {
+    @Override
+	public void onCompletion(MediaPlayer mediaPlayer) {
       mediaPlayer.seekTo(0);
     }
   };
 
   private final DialogInterface.OnClickListener aboutListener =
       new DialogInterface.OnClickListener() {
-    public void onClick(DialogInterface dialogInterface, int i) {
+    @Override
+	public void onClick(DialogInterface dialogInterface, int i) {
       Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.zxing_url)));
       intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
       startActivity(intent);
@@ -359,18 +361,21 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     super.onConfigurationChanged(config);
   }
 
-  public void surfaceCreated(SurfaceHolder holder) {
+  @Override
+public void surfaceCreated(SurfaceHolder holder) {
     if (!hasSurface) {
       hasSurface = true;
       initCamera(holder);
     }
   }
 
-  public void surfaceDestroyed(SurfaceHolder holder) {
+  @Override
+public void surfaceDestroyed(SurfaceHolder holder) {
     hasSurface = false;
   }
 
-  public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+  @Override
+public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 
   }
 
@@ -490,7 +495,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     metaTextView.setVisibility(View.GONE);
     metaTextViewLabel.setVisibility(View.GONE);
     Map<ResultMetadataType,Object> metadata =
-        (Map<ResultMetadataType,Object>) rawResult.getResultMetadata();
+        rawResult.getResultMetadata();
     if (metadata != null) {
       StringBuilder metadataText = new StringBuilder(20);
       for (Map.Entry<ResultMetadataType,Object> entry : metadata.entrySet()) {

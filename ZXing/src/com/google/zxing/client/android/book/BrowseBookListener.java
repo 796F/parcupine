@@ -34,7 +34,8 @@ final class BrowseBookListener implements AdapterView.OnItemClickListener {
     this.items = items;
   }
 
-  public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+  @Override
+public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
     // HACK(jbreiden) I have no idea where the heck our pageId off by one
     // error is coming from. I should not have to put in this position - 1
     // kludge.

@@ -57,14 +57,16 @@ final class Killer implements Runnable {
     }
   }
 
-  public void run() {
+  @Override
+public void run() {
     final Handler handler = new Handler();
     Timer t = new Timer();
     t.schedule(new TimerTask() {
       @Override
       public void run() {
         handler.post(new Runnable() {
-          public void run() {
+          @Override
+		public void run() {
             // This will kill the parent, a bad idea.
 //            parent.finish();
             // This will start the browser, a better idea

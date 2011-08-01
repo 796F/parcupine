@@ -5,14 +5,9 @@ import com.objects.UserObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.net.*;
-import java.sql.*;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * This object is used to store user preferences and such, passed between activities inside a bundle.  

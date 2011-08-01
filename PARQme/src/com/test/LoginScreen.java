@@ -6,8 +6,6 @@ import com.objects.ThrowDialog;
 import com.objects.UserObject;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -27,6 +25,8 @@ public class LoginScreen extends Activity {
 	private Button logout;
 	private ViewFlipper vf;
 	private CheckBox box;
+	private Button settings;
+	private Button back;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -45,6 +45,7 @@ public class LoginScreen extends Activity {
 		
 		loginButton = (Button) findViewById(R.id.loginButton);
 		loginButton.setOnClickListener(new View.OnClickListener() {
+			@Override
 			public void onClick(View v) {
 				String email = emailForm.getText().toString();
 				String pass = passwordForm.getText().toString();
@@ -94,6 +95,7 @@ public class LoginScreen extends Activity {
 		register = (Button) findViewById(R.id.registerbutton);
 		
 		register.setOnClickListener(new View.OnClickListener() {
+			@Override
 			public void onClick(View v) {
 				Intent myintent = new Intent(LoginScreen.this, WebRegister.class);
 				startActivity(myintent);
@@ -103,6 +105,7 @@ public class LoginScreen extends Activity {
 		logout = (Button) findViewById(R.id.logoutbutton);
 		
 		logout.setOnClickListener(new View.OnClickListener() {
+			@Override
 			public void onClick(View v) {
 				//if not currently parked.
 				if(!check.getBoolean("parkState", false)){
@@ -113,7 +116,22 @@ public class LoginScreen extends Activity {
 				}
 			}});
 		
-		
+		settings = (Button) findViewById(R.id.setting);
+		settings.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				vf.showNext();
+			}
+		});
+		back = (Button) findViewById(R.id.settingback);
+		back.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				vf.showPrevious();
+			}
+		});
 	}
 }
 

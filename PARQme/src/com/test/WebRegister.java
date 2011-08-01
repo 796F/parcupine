@@ -3,7 +3,6 @@ package com.test;
 import com.test.R;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.WebView;
@@ -24,7 +23,8 @@ public class WebRegister extends Activity {
 
             goAppButton = (Button) findViewById(R.id.goApp);
             goAppButton.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
+                @Override
+				public void onClick(View v) {
                 	  finish();
 //                    Intent myIntent = new Intent(WebRegister.this, TabsActivity.class);
 //                    startActivity(myIntent);

@@ -1,43 +1,36 @@
 package com.test;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.URL;
-import java.net.URLConnection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.Timer;
-
 import com.objects.Global;
 import com.objects.ParkObject;
 import com.objects.SavedInfo;
 import com.objects.ThrowDialog;
+import com.quietlycoding.android.picker.NumberPicker;
 import com.quietlycoding.android.picker.NumberPickerDialog;
+import com.quietlycoding.android.picker.Picker;
 
 import android.app.Activity;
 import android.app.ActivityGroup;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.TimePickerDialog;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TabHost;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.ViewFlipper;
 
 /**
  * WRITE alert dialog class for NumberPicker, looks bad.
  * ACCOUNT tab should have settings and personal options.
  * DO NOT RELYON GOOD CONNECTION.  model should be - request change, send notice okay, make change on app, confirm change on server.
+ * add listener to loginscreen, when back is pressed vf.showPrevious();
+ * move money display upwards on parq tab.  
+ * locate user and set center of map on his location, also zoom in.  
  * 
  * "Share Parq" option, pulls up qr code to scan.  
  * BOOT LOAD SERVICE RESUME
@@ -53,7 +46,7 @@ import android.widget.ViewFlipper;
  *    partners
  * */
 
-public class MainActivity extends Activity {
+public class MainActivity extends ActivityGroup {
 
 	/* on bootup, check for parkstate true.  
 	 * if state is parked, update timer and resume service.
@@ -125,11 +118,12 @@ IF remember checked
 		locDisplay = (TextView) findViewById(R.id.location);
 		timeDisplay = (TextView) findViewById(R.id.timeleftdisplay);
 		setTimeButton = (Button) findViewById(R.id.firstparq);
-
+		
 		setTimeButton.setOnClickListener(new View.OnClickListener() {
+			@Override
 			public void onClick(View v) {
 				showDialog(NUM_PICKER_ID);
-			}
+				}
 		});
 
 		parqButton = (Button) findViewById(R.id.secondparq);
@@ -153,6 +147,7 @@ IF remember checked
 
 		unparqButton = (Button) findViewById(R.id.unparqbutton);
 		unparqButton.setOnClickListener(new View.OnClickListener() {
+			@Override
 			public void onClick(View v) {
 				//TODO ARE YOU SURE DIALOG
 				String qrcode = check.getString("code", "badcode");
@@ -176,6 +171,7 @@ IF remember checked
 		refillButton = (Button) findViewById(R.id.refillbutton);
 
 		refillButton.setOnClickListener(new View.OnClickListener() {
+			@Override
 			public void onClick(View v) {
 				showDialog(REFILL_PICKER_ID);
 			}});
@@ -203,6 +199,7 @@ IF remember checked
 
 	private NumberPickerDialog.OnNumberSetListener mNumberSetListener = 
 		new NumberPickerDialog.OnNumberSetListener() {
+		@Override
 		public void onNumberSet(int selectedNumber) {
 			parkMinutes = selectedNumber;
 			updateDisplay();
@@ -235,10 +232,11 @@ IF remember checked
 		priceDisplay.setText(parkMinutes +" Minutes"+" : " +moneyConverter(getCostInCents(parkMinutes)));
 	}
 
+	@Override
 	protected Dialog onCreateDialog(int id) {
 		switch (id) {
 		case NUM_PICKER_ID:
-			NumberPickerDialog x =new NumberPickerDialog(this, 0, 0);
+			NumberPickerDialog x = new NumberPickerDialog(MainActivity.this, 0, 0);
 			x.setOnNumberSetListener(mNumberSetListener);
 			return x;
 
@@ -250,6 +248,7 @@ IF remember checked
 		return null;
 	}
 
+	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		if (requestCode == 0) {
 			if (resultCode == RESULT_OK) { 

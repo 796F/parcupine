@@ -77,7 +77,8 @@ public abstract class ResultHandler {
 
   private final DialogInterface.OnClickListener shopperMarketListener =
       new DialogInterface.OnClickListener() {
-    public void onClick(DialogInterface dialogInterface, int which) {
+    @Override
+	public void onClick(DialogInterface dialogInterface, int which) {
       launchIntent(new Intent(Intent.ACTION_VIEW, Uri.parse(MARKET_URI_PREFIX +
           GOOGLE_SHOPPER_PACKAGE + MARKET_REFERRER_SUFFIX)));
     }

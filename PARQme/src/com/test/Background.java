@@ -1,6 +1,5 @@
 package com.test;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -21,6 +20,7 @@ public class Background extends Service{
 	private Bundle b;
 	public static final String SAVED_INFO = "ParqMeInfo";
 	private Timer x;
+	@Override
 	public IBinder onBind(Intent arg0) {
 		// TODO Auto-generated method stub
 		return null;
@@ -90,6 +90,7 @@ public class Background extends Service{
 		//so create a date object for 5 minutes before time runs out.
 		return START_STICKY;
 	}
+	@Override
 	public void onDestroy(){
 		super.onDestroy();
 		x.cancel();
