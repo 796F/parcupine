@@ -23,7 +23,6 @@ import android.text.InputType;
 import android.text.Spanned;
 import android.text.method.NumberKeyListener;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -67,7 +66,8 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
                 final StringBuilder mBuilder = new StringBuilder();
                 final java.util.Formatter mFmt = new java.util.Formatter(mBuilder);
                 final Object[] mArgs = new Object[1];
-                public String toString(int value) {
+                @Override
+				public String toString(int value) {
                     mArgs[0] = value;
                     mBuilder.delete(0, mBuilder.length());
                     mFmt.format("%02d", mArgs);
@@ -77,7 +77,8 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
 
     private final Handler mHandler;
     private final Runnable mRunnable = new Runnable() {
-        public void run() {
+        @Override
+		public void run() {
             if (mIncrement) {
                 changeCurrent(mCurrent + 1);
                 mHandler.postDelayed(this, mSpeed);
@@ -202,7 +203,8 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         mSpeed = speed;
     }
 
-    public void onClick(View v) {
+    @Override
+	public void onClick(View v) {
         validateInput(mText);
         if (!mText.hasFocus()) mText.requestFocus();
 
@@ -267,7 +269,8 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         updateView();
     }
 
-    public void onFocusChange(View v, boolean hasFocus) {
+    @Override
+	public void onFocusChange(View v, boolean hasFocus) {
 
         /* When focus is lost check that the text field
          * has valid values.
@@ -294,7 +297,8 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
      * We start the long click here but rely on the {@link NumberPickerButton}
      * to inform us when the long click has ended.
      */
-    public boolean onLongClick(View v) {
+    @Override
+	public boolean onLongClick(View v) {
 
         /* The text view may still have focus so clear it's focus which will
          * trigger the on focus changed and any typed values to be pulled.
@@ -327,7 +331,8 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
     private NumberPickerButton mDecrementButton;
 
     private class NumberPickerInputFilter implements InputFilter {
-        public CharSequence filter(CharSequence source, int start, int end,
+        @Override
+		public CharSequence filter(CharSequence source, int start, int end,
                 Spanned dest, int dstart, int dend) {
             if (mDisplayedValues == null) {
                 return mNumberInputFilter.filter(source, start, end, dest, dstart, dend);
@@ -351,7 +356,8 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
 
         // XXX This doesn't allow for range limits when controlled by a
         // soft input method!
-        public int getInputType() {
+        @Override
+		public int getInputType() {
             return InputType.TYPE_CLASS_NUMBER;
         }
 

@@ -54,7 +54,8 @@ public class Picker extends Activity implements NumberPickerDialog.OnNumberSetLi
         return false;
     }
 
-    public void onNumberSet(int number) {
+    @Override
+	public void onNumberSet(int number) {
         Log.d("NumberPicker", "Number selected: " + number);
     }
 }

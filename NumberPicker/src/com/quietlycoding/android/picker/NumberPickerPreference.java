@@ -20,7 +20,6 @@ import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 public class NumberPickerPreference extends DialogPreference {
@@ -62,7 +61,8 @@ public class NumberPickerPreference extends DialogPreference {
         mPicker.setCurrent(getValue());
     }
     
-    public void onClick(DialogInterface dialog, int which) {
+    @Override
+	public void onClick(DialogInterface dialog, int which) {
         switch (which) {
         case DialogInterface.BUTTON_POSITIVE:
             saveValue(mPicker.getCurrent());
