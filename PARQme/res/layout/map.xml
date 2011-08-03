@@ -1,16 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/mainlayout"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+	android:id="@+id/mainlayout" android:orientation="vertical"
+	android:layout_width="fill_parent" android:layout_height="fill_parent">
 
-    <com.google.android.maps.MapView
-        android:id="@+id/mapview"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:clickable="true"
-        android:apiKey="0RlqMlfHhDpx9dI_AErM0dSZn_P1xznsgQeHA8Q"
-    />
+	<com.google.android.maps.MapView
+		android:id="@+id/mapview" android:layout_width="fill_parent"
+		android:layout_height="fill_parent" android:clickable="true"
+		android:apiKey="0RlqMlfHhDpx9dI_AErM0dSZn_P1xznsgQeHA8Q" />
+	<Button android:layout_width="wrap_content" android:text="Find Me"
+		android:layout_height="wrap_content" android:id="@+id/findMe"
+		android:layout_alignParentBottom="true"
+		android:layout_alignParentLeft="true"></Button>
+	<Button android:layout_width="wrap_content" android:text="Find Car"
+		android:layout_height="wrap_content" android:id="@+id/findCar"
+		android:layout_alignParentBottom="true" android:layout_toRightOf="@+id/findMe"></Button>
+	<Button android:layout_width="wrap_content" android:text="Find Parking"
+		android:layout_height="wrap_content" android:id="@+id/findPark"
+		android:layout_alignParentBottom="true" android:layout_toRightOf="@+id/findCar"></Button>
 
 </RelativeLayout>

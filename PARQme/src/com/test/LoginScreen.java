@@ -53,6 +53,9 @@ public class LoginScreen extends Activity {
 				if(user!=null){
 					SharedPreferences.Editor editor = check.edit();
 					vf.showNext();
+					
+					TabsActivity.topright.setText(user.getFname());
+					
 					editor.putString("fname", user.getFname());
 					TextView fname = (TextView) findViewById(R.id.accinfolabel);
 					fname.setText(user.getFname()+" "+user.getLname());
@@ -110,6 +113,7 @@ public class LoginScreen extends Activity {
 				//if not currently parked.
 				if(!check.getBoolean("parkState", false)){
 					vf.showPrevious();
+					TabsActivity.topright.setText("Not Logged In");
 					SavedInfo.toggleLogin(LoginScreen.this);
 				}else{
 					ThrowDialog.show(LoginScreen.this, ThrowDialog.IS_PARKED);

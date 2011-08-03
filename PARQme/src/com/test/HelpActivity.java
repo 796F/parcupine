@@ -3,6 +3,9 @@ package com.test;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import com.objects.SavedInfo;
+
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -31,6 +34,7 @@ public class HelpActivity extends Activity {
 				//MainActivity.vf.showPrevious();
 				//SavedInfo.togglePark(HelpActivity.this);
 				//SavedInfo.reset(HelpActivity.this);
+				
 			}
 		});
         

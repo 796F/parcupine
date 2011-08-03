@@ -25,16 +25,18 @@ import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 /**
- * WRITE alert dialog class for NumberPicker, looks bad.
+ * locate user and set center of map on his location, also zoom in. 
+ * help tab SS tutorial
  * ACCOUNT tab should have settings and personal options.
- * DO NOT RELYON GOOD CONNECTION.  model should be - request change, send notice okay, make change on app, confirm change on server.
- * add listener to loginscreen, when back is pressed vf.showPrevious();
- * move money display upwards on parq tab.  
- * locate user and set center of map on his location, also zoom in.  
  * 
+ * DO NOT RELY ON GOOD CONNECTION.  model should be - request change, send notice okay, make change on app, confirm change on server.
+ * add listener to loginscreen, when back is pressed vf.showPrevious();
+ * 
+ * move around, and make bigger, information/money display  
+ *  
  * "Share Parq" option, pulls up qr code to scan.  
+ * 
  * BOOT LOAD SERVICE RESUME
- * CUSTOM buttons and GRAPHICS
  * 
  * TimeLeftDisplay = analog timer, digital countdown (setting gives choice) 
  * Add server calls for rates.
@@ -91,12 +93,12 @@ IF remember checked
 	private Button hideButton;
 	private int remainSeconds;
 	private CountDownTimer timer;
-
+	public static ViewFlipper vf;
 	private int parkMinutes;
 
-	static final int NUM_PICKER_ID = 2;
+	private static final int NUM_PICKER_ID = 2;
 	private static final int REFILL_PICKER_ID = 0;
-	public static ViewFlipper vf;
+	
 	public static final String SAVED_INFO = "ParqMeInfo";
 
 	/** Called when the activity is first created. */
@@ -105,11 +107,10 @@ IF remember checked
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.flipper);
 		vf = (ViewFlipper) findViewById(R.id.flipper);
-
 		final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 		//final SharedPreferences.Editor editor = check.edit();
 		//crash on return, cause is here?
-		if(check.getBoolean("parkState", false)){
+		if(SavedInfo.isParked(MainActivity.this)){
 			vf.showNext();
 		}
 		//load correct layout which has the time selector and camera view.  
@@ -130,7 +131,7 @@ IF remember checked
 		parqButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if(!check.getBoolean("loginState", false)){
+				if(!SavedInfo.isLoggedIn(MainActivity.this)){
 					ThrowDialog.show(MainActivity.this, ThrowDialog.MUST_LOGIN);
 
 				}else{
@@ -273,6 +274,8 @@ IF remember checked
 					startService(new Intent(MainActivity.this, Background.class).putExtra("time", parkMinutes*60));
 					/*parkState changes how app resumes*/
 					editor.putBoolean("parkState", true);
+					editor.putFloat("lat", myPark.getLat());
+					editor.putFloat("lon", myPark.getLon());
 					userDisplay.setText("Welcome " + check.getString("fname", "")); 
 					locDisplay.setText("You are parked at " + myPark.getLocation()+"\nSpot " + myPark.getSpotNum());
 				}else{
@@ -327,8 +330,8 @@ IF remember checked
 			return new CountDownTimer(secToMil(countDownSeconds), 1000){
 				@Override
 				public void onFinish() {
-//					timeDisplay.setText("Time Left: 0:00:00");
-//					MainActivity.vf.showPrevious();  CRASH
+					timeDisplay.setText("Time Left: 0:00:00");
+					vf.showPrevious();
 				}
 				@Override
 				public void onTick(long arg0) {
@@ -344,8 +347,8 @@ IF remember checked
 
 				@Override
 				public void onFinish() {
-//					timeDisplay.setText("Time Left: 0:00:00");
-//					MainActivity.vf.showPrevious();
+					timeDisplay.setText("Time Left: 0:00:00");
+					vf.showPrevious();
 				}
 
 				@Override
