@@ -13,76 +13,80 @@
 		<EditText android:id="@+id/passwordForm" android:inputType="textPassword"
 			android:layout_width="match_parent" android:layout_height="wrap_content"
 			android:layout_below="@+id/emailForm" android:layout_alignParentLeft="true"></EditText>
-		<Button android:background="@drawable/login" android:layout_width="match_parent"
-			android:id="@+id/loginButton" android:layout_height="wrap_content"
-			android:layout_below="@+id/passwordForm"
-			android:layout_alignParentLeft="true" android:layout_marginTop="51dp"></Button>
-		<Button android:background="@drawable/register" android:layout_width="match_parent"
-			android:id="@+id/registerbutton" android:layout_height="wrap_content"
-			android:layout_below="@+id/loginButton"
-			android:layout_alignParentLeft="true"></Button>
-		<CheckBox android:id="@+id/checkBox1" android:layout_width="wrap_content"
+		<CheckBox android:id="@+id/rememberbox" android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:text="Remember Me"
 			android:layout_below="@+id/passwordForm"
 			android:layout_alignParentLeft="true" android:layout_marginLeft="72dp"></CheckBox>
+		<Button android:id="@+id/registerbutton" android:layout_width="match_parent"
+			android:background="@drawable/register" android:layout_height="wrap_content"
+			android:layout_alignParentBottom="true"
+			android:layout_alignParentLeft="true"></Button>
+		<Button android:id="@+id/loginButton" android:layout_width="match_parent"
+			android:background="@drawable/login" android:layout_height="wrap_content"
+			android:layout_above="@+id/registerbutton"
+			android:layout_alignParentLeft="true"></Button>
 
 	</RelativeLayout>
 
 	<RelativeLayout android:id="@+id/LinearLayout1"
-	xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:orientation="vertical" android:layout_width="match_parent"
+		android:layout_height="match_parent">
+		<Button android:background="@drawable/logout"
+			android:layout_width="match_parent" android:id="@+id/logoutbutton"
+			android:layout_height="wrap_content"
+			android:layout_alignParentBottom="true"
+			android:layout_alignParentLeft="true"></Button>
+		<Button android:layout_height="wrap_content" android:id="@+id/setting"
+			android:background="@drawable/setting" android:layout_width="wrap_content"
+			android:layout_above="@+id/logoutbutton" android:layout_alignLeft="@+id/logoutbutton"
+			android:layout_alignRight="@+id/logoutbutton"></Button>
+		<TextView android:textAppearance="?android:attr/textAppearanceLarge"
+			android:layout_width="wrap_content" android:text="Account Information"
+			android:layout_height="wrap_content" android:id="@+id/accinfolabel"
+			android:layout_alignParentTop="true" android:layout_centerHorizontal="true"
+			android:layout_marginTop="97dp"></TextView>
+		<TextView android:textAppearance="?android:attr/textAppearanceLarge"
+			android:layout_width="wrap_content" android:text="Email: "
+			android:layout_height="wrap_content" android:id="@+id/accemailfield"
+			android:layout_below="@+id/accinfolabel"
+			android:layout_alignParentLeft="true"></TextView>
+		<TextView android:textAppearance="?android:attr/textAppearanceMedium"
+			android:layout_width="wrap_content" android:text="City: "
+			android:layout_height="wrap_content" android:id="@+id/acccityfield"
+			android:layout_below="@+id/accemailfield"
+			android:layout_alignParentLeft="true"></TextView>
+		<TextView android:textAppearance="?android:attr/textAppearanceMedium"
+			android:layout_width="wrap_content" android:text="CC: "
+			android:layout_height="wrap_content" android:id="@+id/creditcardfield"
+			android:layout_below="@+id/acccityfield"
+			android:layout_alignParentLeft="true"></TextView>
+
+	</RelativeLayout>
+
+	<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:orientation="vertical" android:layout_width="match_parent"
 	android:layout_height="match_parent">
-	<Button android:background="@drawable/logout"
-		android:layout_width="match_parent" android:id="@+id/logoutbutton"
-		android:layout_height="wrap_content" android:layout_alignParentBottom="true"
-		android:layout_alignParentLeft="true"></Button>
-	<Button android:layout_height="wrap_content" android:id="@+id/setting"
-		android:background="@drawable/setting" android:layout_width="wrap_content"
-		android:layout_above="@+id/logoutbutton" android:layout_alignLeft="@+id/logoutbutton"
-		android:layout_alignRight="@+id/logoutbutton"></Button>
-	<TextView android:textAppearance="?android:attr/textAppearanceLarge"
-		android:layout_width="wrap_content" android:text="Account Information"
-		android:layout_height="wrap_content" android:id="@+id/accinfolabel"
-		android:layout_alignParentTop="true" android:layout_centerHorizontal="true"
-		android:layout_marginTop="97dp"></TextView>
-	<TextView android:textAppearance="?android:attr/textAppearanceLarge"
-		android:layout_width="wrap_content" android:text="Email: "
-		android:layout_height="wrap_content" android:id="@+id/accemailfield"
-		android:layout_below="@+id/accinfolabel"
-		android:layout_alignParentLeft="true"></TextView>
-	<TextView android:textAppearance="?android:attr/textAppearanceMedium"
-		android:layout_width="wrap_content" android:text="City: "
-		android:layout_height="wrap_content" android:id="@+id/acccityfield"
-		android:layout_below="@+id/accemailfield"
-		android:layout_alignParentLeft="true"></TextView>
-	<TextView android:textAppearance="?android:attr/textAppearanceMedium"
-		android:layout_width="wrap_content" android:text="CC: "
-		android:layout_height="wrap_content" android:id="@+id/creditcardfield"
-		android:layout_below="@+id/acccityfield"
-		android:layout_alignParentLeft="true"></TextView>
-
-</RelativeLayout>
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical" android:layout_width="match_parent"
-	android:layout_height="match_parent">
-	<Button android:layout_width="wrap_content" android:text="Button"
+	<Button android:layout_width="wrap_content" android:background="@drawable/back"
 		android:id="@+id/settingback" android:layout_height="wrap_content"
 		android:layout_alignParentBottom="true"
 		android:layout_alignParentLeft="true"></Button>
-	<CheckBox android:id="@+id/checkBox1" android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:text="CheckBox"
+	<CheckBox android:id="@+id/warnEnable" android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:text="Enable Warning"
 		android:layout_alignParentTop="true" android:layout_alignParentLeft="true"
 		android:layout_marginTop="116dp"></CheckBox>
-	<CheckBox android:id="@+id/checkBox2" android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:text="CheckBox"
-		android:layout_below="@+id/checkBox1" android:layout_alignParentLeft="true"></CheckBox>
-	<CheckBox android:id="@+id/checkBox3" android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:text="CheckBox"
-		android:layout_below="@+id/checkBox2" android:layout_alignParentLeft="true"></CheckBox>
-	<CheckBox android:id="@+id/checkBox4" android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:text="CheckBox"
-		android:layout_below="@+id/checkBox3" android:layout_alignParentLeft="true"></CheckBox>
+		
+	<CheckBox android:id="@+id/vibrateEnable" android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:text="Vibrate Enabled"
+		android:layout_below="@+id/warnEnable" android:layout_alignParentLeft="true"></CheckBox>
+		
+	<CheckBox android:id="@+id/ringEnable" android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:text="Ringtone Enabled"
+		android:layout_below="@+id/vibrateEnable" android:layout_alignParentLeft="true"></CheckBox>
+		
+	<CheckBox android:id="@+id/refillEnable" android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:text="AutoRefill"
+		android:layout_below="@+id/ringEnable" android:layout_alignParentLeft="true"></CheckBox>
 
 </RelativeLayout>
 </ViewFlipper>

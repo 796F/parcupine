@@ -2,22 +2,25 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:orientation="vertical" android:layout_width="match_parent"
 	android:layout_height="match_parent">
-	<Button android:layout_width="wrap_content" android:text="Button"
-		android:id="@+id/button1" android:layout_height="wrap_content"
+	<Button android:layout_width="wrap_content" android:background="@drawable/back"
+		android:id="@+id/settingback" android:layout_height="wrap_content"
 		android:layout_alignParentBottom="true"
 		android:layout_alignParentLeft="true"></Button>
-	<CheckBox android:id="@+id/checkBox1" android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:text="CheckBox"
+	<CheckBox android:id="@+id/warnEnable" android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:text="Enable Warning"
 		android:layout_alignParentTop="true" android:layout_alignParentLeft="true"
 		android:layout_marginTop="116dp"></CheckBox>
-	<CheckBox android:id="@+id/checkBox2" android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:text="CheckBox"
-		android:layout_below="@+id/checkBox1" android:layout_alignParentLeft="true"></CheckBox>
-	<CheckBox android:id="@+id/checkBox3" android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:text="CheckBox"
-		android:layout_below="@+id/checkBox2" android:layout_alignParentLeft="true"></CheckBox>
-	<CheckBox android:id="@+id/checkBox4" android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:text="CheckBox"
-		android:layout_below="@+id/checkBox3" android:layout_alignParentLeft="true"></CheckBox>
+		
+	<CheckBox android:id="@+id/vibrateEnable" android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:text="Vibrate Enabled"
+		android:layout_below="@+id/warnEnable" android:layout_alignParentLeft="true"></CheckBox>
+		
+	<CheckBox android:id="@+id/ringEnable" android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:text="Ringtone Enabled"
+		android:layout_below="@+id/vibrateEnable" android:layout_alignParentLeft="true"></CheckBox>
+		
+	<CheckBox android:id="@+id/refillEnable" android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:text="AutoRefill"
+		android:layout_below="@+id/ringEnable" android:layout_alignParentLeft="true"></CheckBox>
 
 </RelativeLayout>

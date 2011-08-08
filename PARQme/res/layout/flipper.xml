@@ -5,30 +5,29 @@
 
 	<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 		android:orientation="vertical" android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:id="@+id/view1">
+		android:layout_height="match_parent" android:id="@+id/view1">
 		<TextView android:textAppearance="?android:attr/textAppearanceLarge"
 			android:layout_height="wrap_content" android:height="80px"
 			android:layout_width="wrap_content" android:text="  0 Minutes : $ 0.00"
 			android:id="@+id/minutesprice" android:layout_above="@+id/secondparq"
 			android:layout_centerHorizontal="true" android:layout_marginBottom="52dp"></TextView>
 		<Button android:id="@+id/firstparq" android:layout_height="wrap_content"
-			android:layout_width="wrap_content"
-			android:layout_above="@+id/secondparq"
-			android:layout_alignParentLeft="true"
-			android:background="@drawable/settime"></Button>
-		<Button android:id="@+id/secondparq" android:background="@drawable/parkbutton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentBottom="true" android:layout_alignParentLeft="true"></Button>
+			android:layout_width="wrap_content" android:layout_above="@+id/secondparq"
+			android:layout_alignParentLeft="true" android:background="@drawable/settime"></Button>
+		<Button android:id="@+id/secondparq" android:background="@drawable/parkbutton"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:layout_alignParentBottom="true"
+			android:layout_alignParentLeft="true"></Button>
 
 	</RelativeLayout>
 
 	<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 		android:orientation="vertical" android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:id="@+id/view2">
+		android:layout_height="match_parent" android:id="@+id/view2">
 		<TextView android:layout_height="wrap_content"
 			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:id="@+id/username" android:layout_width="wrap_content"
-			android:text="username" android:layout_marginRight="0px"
+			android:text="" android:layout_marginRight="0px"
 			android:layout_alignParentRight="true"></TextView>
 		<TextView android:layout_height="wrap_content"
 			android:textAppearance="?android:attr/textAppearanceLarge"
@@ -36,30 +35,30 @@
 			android:text="PARQ" android:layout_alignParentLeft="true"></TextView>
 		<TextView android:layout_height="wrap_content"
 			android:textAppearance="?android:attr/textAppearanceLarge"
-			android:id="@+id/welcomeuser" android:layout_marginTop="70px"
-			android:layout_marginLeft="50px" android:layout_width="wrap_content"
-			android:text="Welcome Bob!" android:layout_alignParentLeft="true"></TextView>
-		<TextView android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceMedium"
-			android:id="@+id/location" android:text="    Enjoy your stay blah"
-			android:layout_below="@+id/welcomeuser" android:layout_width="match_parent"></TextView>
-		<TextView android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceLarge"
 			android:id="@+id/timeleftdisplay" android:layout_width="wrap_content"
 			android:text="Time Left_____________" android:layout_below="@+id/location"
 			android:layout_alignLeft="@+id/location" android:layout_alignRight="@+id/location"
 			android:layout_marginTop="100px" android:layout_marginLeft="50px"></TextView>
-		<Button android:layout_height="wrap_content"
-			android:layout_below="@+id/timeleftdisplay" android:text="REFILL"
-			android:id="@+id/refillbutton" android:layout_width="match_parent"
-			android:layout_marginTop="50px"></Button>
-		<Button android:layout_height="wrap_content"
-			android:layout_below="@+id/refillbutton" android:text="UNPARQ"
-			android:id="@+id/unparqbutton" android:layout_width="wrap_content"
-			android:layout_alignLeft="@+id/refillbutton"
-			android:layout_alignRight="@+id/refillbutton"
-			android:layout_marginTop="50px"></Button>
+		<Button android:id="@+id/unparqbutton" android:layout_width="wrap_content"
+			android:background="@drawable/unparkbutton" android:layout_height="wrap_content"
+			android:layout_alignParentBottom="true"
+			android:layout_alignParentLeft="true"></Button>
+		<Button android:id="@+id/refillbutton" android:layout_width="match_parent"
+			android:background="@drawable/refillbutton" android:layout_height="wrap_content"
+			android:layout_above="@+id/unparqbutton"
+			android:layout_alignParentLeft="true"></Button>
+		<TextView android:textAppearance="?android:attr/textAppearanceMedium"
+			android:layout_width="match_parent" android:id="@+id/location"
+			android:text="    Enjoy your stay blah" android:layout_height="wrap_content"
+			android:layout_below="@+id/welcomeuser"
+			android:layout_alignParentLeft="true" android:layout_marginTop="66dp"></TextView>
+		<TextView android:textAppearance="?android:attr/textAppearanceLarge"
+			android:layout_width="wrap_content" android:id="@+id/welcomeuser"
+			android:text="Welcome Bob!" android:layout_height="wrap_content"
+			android:layout_below="@+id/username" android:layout_alignLeft="@+id/timeleftdisplay"
+			android:layout_marginTop="54dp"></TextView>
 
 	</RelativeLayout>
+
 
 </ViewFlipper>

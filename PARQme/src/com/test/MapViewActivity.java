@@ -3,12 +3,14 @@ package com.test;
 import java.util.List;
 
 import android.content.Context;
+import android.content.Intent;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -87,19 +89,16 @@ public class MapViewActivity extends MapActivity {
 
 			@Override
 			public void onProviderDisabled(String arg0) {
-				// TODO Auto-generated method stub
 				
 			}
 
 			@Override
 			public void onProviderEnabled(String arg0) {
-				// TODO Auto-generated method stub
 				
 			}
 
 			@Override
 			public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
-				// TODO Auto-generated method stub
 				
 			}
 	    	
@@ -108,4 +107,12 @@ public class MapViewActivity extends MapActivity {
         lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locListener);
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locListener);
 	}
+	public void onBackPressed(){
+		Log.d("CDA", "OnBackPressed Called");
+		Intent setIntent = new Intent(Intent.ACTION_MAIN);
+		setIntent.addCategory(Intent.CATEGORY_HOME);
+		setIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		startActivity(setIntent);
+    	return;
+    }
 }

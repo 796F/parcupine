@@ -14,22 +14,26 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Vibrator;
+import android.view.View;
+import android.widget.ViewFlipper;
 
 public class Background extends Service{
 	private int parkTime;
 	private Bundle b;
 	public static final String SAVED_INFO = "ParqMeInfo";
 	private Timer x;
+	private View mainView;
+	private ViewFlipper vf;
 	@Override
 	public IBinder onBind(Intent arg0) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId){
 		b = intent.getExtras();
-
+//		mainView = (View) b.get("mainView");
+//		vf = (ViewFlipper) mainView.findViewById(R.id.flipper);
 		final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 		final SharedPreferences.Editor editor = check.edit();
 		//grab current time, and declare end time
@@ -38,7 +42,6 @@ public class Background extends Service{
 		Date warningTime = new Date();
 		//add park minutes to current time's mins and set as end time.
 		
-		//TODO make this calculated in seconds.
 		//warningTime.setMinutes(currentTime.getMinutes()+b.getInt("time")-5);
 		warningTime.setSeconds(currentTime.getSeconds()+b.getInt("time")-5*60);
 
@@ -52,32 +55,41 @@ public class Background extends Service{
 		//ON REFILL, stop this service, RECALCULATE ENDTIME by adding refill mins, AND RESTART service with new time.
 		
 		x = new Timer();
-		x.schedule(new TimerTask(){
-			@Override
-			public void run() {
-				// vibrate, ding, and bring up the refill page.  
-				//pass intent that started the main activity?? instead of new Intent();
-				Intent myIntent = new Intent(Background.this, TabsActivity.class);
-				myIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				startActivity(myIntent);
-				((Vibrator)getSystemService(VIBRATOR_SERVICE)).vibrate(1000);
-			}
-		}, warningTime);
+
+		
+		if(SavedInfo.warningEnable(Background.this)){
+			x.schedule(new TimerTask(){
+				@Override
+				public void run() {
+					MainActivity.warnMe(Background.this);
+					
+					Intent myIntent = new Intent(Background.this, TabsActivity.class);
+					myIntent.setAction(Intent.ACTION_MAIN);
+					myIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+					
+					myIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+					startActivity(myIntent);
+					
+				}
+			}, warningTime);
+		}
 		
 		x.schedule(new TimerTask(){
 			@Override
 			public void run() {
 				//unparq user from server, stop the service, Vibrate
-				((Vibrator)getSystemService(VIBRATOR_SERVICE)).vibrate(2000);
+				
 				//stopService(new Intent(Background.this, Background.class));
 				 String qrcode = check.getString("code", "badcode");
 				 String email = check.getString("email", "bademail");
 				 if(ServerCalls.unPark(qrcode, email)==1){
+					 //TODO:  resume app, and give dialog/warning
+					((Vibrator)getSystemService(VIBRATOR_SERVICE)).vibrate(2000);
 					stopService(new Intent(Background.this, Background.class));
-					MainActivity.vf.showPrevious();
+					//MainActivity.vf.showPrevious();
 					SavedInfo.togglePark(Background.this);
 				 }else{
-					ThrowDialog.show(Background.this, ThrowDialog.UNPARK_ERROR);
+					//ThrowDialog.show(Background.this, ThrowDialog.UNPARK_ERROR);
 				 }
 				
 				

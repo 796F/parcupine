@@ -1,5 +1,6 @@
 package com.test;
 
+import com.objects.SavedInfo;
 import com.objects.ThrowDialog;
 
 import android.app.TabActivity;
@@ -15,6 +16,8 @@ public class TabsActivity extends TabActivity {
 	public static TextView topright;
     @Override
     public void onCreate(Bundle savedInstanceState) {
+    	
+    	
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         topright = (TextView) findViewById(R.id.topright);
@@ -47,8 +50,15 @@ public class TabsActivity extends TabActivity {
                       .setContent(intent);
         tabHost.addTab(spec);
         SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
-        
-        if(check.getBoolean("loginState", false))
+        if(check.getBoolean("firstTimeFlag", true)){
+        	//if it doesnt exist, default value returns true.  
+        	//now set firstTimeFlag to false, so future times it returns.
+ 
+        	//start at tutorial page
+        	tabHost.setCurrentTab(3);
+        	//initialize all needed fields to starting values
+        	SavedInfo.reset(TabsActivity.this);
+        }else if(check.getBoolean("loginState", false))
         	tabHost.setCurrentTab(0);
         else{
         	tabHost.setCurrentTab(2);
@@ -56,9 +66,6 @@ public class TabsActivity extends TabActivity {
         	ThrowDialog.show(TabsActivity.this, ThrowDialog.MUST_LOGIN);
         }
     }
-//    public void onDestroy(){
-//    	SharedPreferences check = getSharedPreferences(SAVED_INFO, 0);
-//    	
-//    }
+    
     
 }

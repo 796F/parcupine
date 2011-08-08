@@ -12,13 +12,43 @@ public class SavedInfo{
 	 * String code
 	 * Boolean remember
 	 * */
+	//TODO:  make sure all needed info is set via reset and stuff.
 	public static final String SAVED_INFO = "ParqMeInfo";
-	//clears all to empty strings and falses
+	public static boolean isFirstTime(Context activity){
+		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO,0);
+		return check.getBoolean("firstTimeFlag", true);
+	}
+	public static boolean ringEnable(Context activity){
+		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO,0);
+		return check.getBoolean("ringEnable", true);
+	}
+	public static boolean warningEnable(Context activity){
+		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO,0);
+		return check.getBoolean("warningEnable", true);
+	}
+	public static boolean vibrateEnable(Context activity){
+		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO,0);
+		return check.getBoolean("vibrateEnable", true);
+	}
+	public static boolean autoRefill(Context activity){
+		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO,0);
+		return check.getBoolean("autoRefill", true);
+	}
+	//initializes all necessary states to initial if its first time app is run.  
 	public static void reset(Context activity){
 		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO,0);
 		SharedPreferences.Editor editor = check.edit();
-		editor.putString("email", ""); editor.putString("endTime", ""); editor.putString("code", "");
-		editor.putBoolean("parkState", false); editor.putBoolean("loginState", false); editor.putBoolean("remember", false);
+		editor.putString("email", ""); 
+		editor.putString("endTime", ""); 
+		editor.putString("code", "");
+		editor.putBoolean("parkState", false); 
+		editor.putBoolean("loginState", false); 
+		editor.putBoolean("remember", false);
+		editor.putBoolean("vibrateEnable", false); 
+		editor.putBoolean("warningEnable", false); 
+		editor.putBoolean("ringEnable", false);
+		editor.putBoolean("autoRefill", false);
+		editor.putBoolean("firstTimeFlag", false);
 		editor.commit();
 	}
 	//if parked return true, else false
@@ -98,5 +128,64 @@ public class SavedInfo{
 		}
 		editor.commit();
 	}
-	
+	public static void toggleVibrate(Context activity){
+		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
+		SharedPreferences.Editor editor = check.edit();
+		if(check.getBoolean("vibrateEnable", false)){
+			//if parked, set as not parked
+			editor.putBoolean("vibrateEnable", false);
+		}else{
+			//if not parked, set as parked.
+			editor.putBoolean("vibrateEnable", true);
+		}
+		editor.commit();
+	}
+	public static void toggleWarn(Context activity){
+		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
+		SharedPreferences.Editor editor = check.edit();
+		if(check.getBoolean("warningEnable", false)){
+			//if parked, set as not parked
+			editor.putBoolean("warningEnable", false);
+		}else{
+			//if not parked, set as parked.
+			editor.putBoolean("warningEnable", true);
+		}
+		editor.commit();
+	}
+	public static void toggleRing(Context activity){
+		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
+		SharedPreferences.Editor editor = check.edit();
+		if(check.getBoolean("ringEnable", false)){
+			//if parked, set as not parked
+			editor.putBoolean("ringEnable", false);
+		}else{
+			//if not parked, set as parked.
+			editor.putBoolean("ringEnable", true);
+		}
+		editor.commit();
+	}
+	public static void toggleRefill(Context activity){
+		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
+		SharedPreferences.Editor editor = check.edit();
+		if(check.getBoolean("autoRefill", false)){
+			//if parked, set as not parked
+			editor.putBoolean("autoRefill", false);
+		}else{
+			//if not parked, set as parked.
+			editor.putBoolean("autoRefill", true);
+		}
+		editor.commit();
+	}
+	public static void toggleRemember(Context activity){
+		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
+		SharedPreferences.Editor editor = check.edit();
+		if(check.getBoolean("remember", false)){
+			//if parked, set as not parked
+			editor.putBoolean("remember", false);
+		}else{
+			//if not parked, set as parked.
+			editor.putBoolean("remember", true);
+		}
+		editor.commit();
+	}
 }

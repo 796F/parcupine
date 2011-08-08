@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical" android:layout_width="match_parent"
-	android:layout_height="match_parent">
-	<EditText android:id="@+id/emailForm" android:text="Email and Password" android:inputType="textEmailAddress" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_alignParentTop="true" android:layout_alignParentLeft="true" android:layout_marginTop="132dp"></EditText>
-	<EditText android:id="@+id/passwordForm" android:inputType="textPassword" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_below="@+id/emailForm" android:layout_alignParentLeft="true"></EditText>
-	<Button android:text="Log In" android:layout_width="match_parent" android:id="@+id/loginButton" android:layout_height="wrap_content" android:layout_below="@+id/passwordForm" android:layout_alignParentLeft="true" android:layout_marginTop="51dp"></Button>
-	<Button android:text="Register" android:layout_width="match_parent" android:id="@+id/registerbutton" android:layout_height="wrap_content" android:layout_below="@+id/loginButton" android:layout_alignParentLeft="true"></Button>
-	<CheckBox android:id="@+id/checkBox1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Remember Me" android:layout_below="@+id/passwordForm" android:layout_alignParentLeft="true" android:layout_marginLeft="72dp"></CheckBox>
+		android:orientation="vertical" android:layout_width="match_parent"
+		android:layout_height="match_parent">
+		<EditText android:id="@+id/emailForm" android:text="Email and Password"
+			android:inputType="textEmailAddress" android:layout_width="match_parent"
+			android:layout_height="wrap_content" android:layout_alignParentTop="true"
+			android:layout_alignParentLeft="true" android:layout_marginTop="132dp"></EditText>
+		<EditText android:id="@+id/passwordForm" android:inputType="textPassword"
+			android:layout_width="match_parent" android:layout_height="wrap_content"
+			android:layout_below="@+id/emailForm" android:layout_alignParentLeft="true"></EditText>
+		<CheckBox android:id="@+id/checkBox1" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="Remember Me"
+			android:layout_below="@+id/passwordForm"
+			android:layout_alignParentLeft="true" android:layout_marginLeft="72dp"></CheckBox>
+		<Button android:id="@+id/registerbutton" android:layout_width="match_parent" android:background="@drawable/register" android:layout_height="wrap_content" android:layout_alignParentBottom="true" android:layout_alignParentLeft="true"></Button>
+		<Button android:id="@+id/loginButton" android:layout_width="match_parent" android:background="@drawable/login" android:layout_height="wrap_content" android:layout_above="@+id/registerbutton" android:layout_alignParentLeft="true"></Button>
 
-</RelativeLayout>
+	</RelativeLayout>

@@ -11,16 +11,23 @@ import com.quietlycoding.android.picker.NumberPicker;
 import com.quietlycoding.android.picker.NumberPickerDialog;
 import com.quietlycoding.android.picker.Picker;
 
+import android.media.MediaPlayer;
+import android.os.Vibrator;
+
 import android.app.Activity;
 import android.app.ActivityGroup;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Vibrator;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
@@ -28,8 +35,11 @@ import android.widget.ViewFlipper;
  * locate user and set center of map on his location, also zoom in. 
  * help tab SS tutorial
  * ACCOUNT tab should have settings and personal options.
+ * MAX # of refills
+ * auto refill function
  * 
  * DO NOT RELY ON GOOD CONNECTION.  model should be - request change, send notice okay, make change on app, confirm change on server.
+ * also must consider broken connections, so app must re-send requests that did not go through
  * add listener to loginscreen, when back is pressed vf.showPrevious();
  * 
  * move around, and make bigger, information/money display  
@@ -95,16 +105,17 @@ IF remember checked
 	private CountDownTimer timer;
 	public static ViewFlipper vf;
 	private int parkMinutes;
-
+	private static CheckBox box;
 	private static final int NUM_PICKER_ID = 2;
 	private static final int REFILL_PICKER_ID = 0;
-	
+
 	public static final String SAVED_INFO = "ParqMeInfo";
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 		setContentView(R.layout.flipper);
 		vf = (ViewFlipper) findViewById(R.id.flipper);
 		final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
@@ -119,12 +130,12 @@ IF remember checked
 		locDisplay = (TextView) findViewById(R.id.location);
 		timeDisplay = (TextView) findViewById(R.id.timeleftdisplay);
 		setTimeButton = (Button) findViewById(R.id.firstparq);
-		
+
 		setTimeButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				showDialog(NUM_PICKER_ID);
-				}
+			}
 		});
 
 		parqButton = (Button) findViewById(R.id.secondparq);
@@ -160,7 +171,7 @@ IF remember checked
 					try{
 						timer.cancel();
 					}catch (Exception e){
-						
+
 					}
 				}else{
 					ThrowDialog.show(MainActivity.this, ThrowDialog.UNPARK_ERROR);
@@ -212,12 +223,12 @@ IF remember checked
 		@Override
 		public void onNumberSet(int selectedNumber) {
 			parkMinutes+=selectedNumber;
-			
+
 			//stop current timer, start new timer with current time + selectedNumber.
 			try{
 				timer.cancel();
 			}catch(Exception e){
-				
+
 			}
 			timer = initiateTimer(selectedNumber*60);
 			//why not just 							instead of checking park state.
@@ -261,11 +272,11 @@ IF remember checked
 				String email = check.getString("email", "bademail");
 				SharedPreferences.Editor editor = check.edit();
 				editor.putString("code", contents);
-				 
+
 				Date forString = new Date();
 				forString.setSeconds(forString.getSeconds()+parkMinutes*60);
 				String endtime = Global.sdf.format(forString);
-				
+
 				ParkObject myPark = ServerCalls.Park(contents, email, endtime);
 				if(myPark!=null){
 					timer = initiateTimer(parkMinutes*60);
@@ -321,17 +332,23 @@ IF remember checked
 		}
 		return "BADBADBAD";
 	}
-	
+
 	public static long secToMil(int sec){
 		return sec*1000;
 	}
+	public static void backView(){
+		vf.showPrevious();
+		//maybe it brings back to thread. calling within thread.
+	}
+	//pass in context, use getAppmanager, change via said context.
+	//declare view in tabsActivity?  
 	public CountDownTimer initiateTimer(int countDownSeconds){
 		if(!SavedInfo.isParked(MainActivity.this)){
 			return new CountDownTimer(secToMil(countDownSeconds), 1000){
 				@Override
 				public void onFinish() {
 					timeDisplay.setText("Time Left: 0:00:00");
-					vf.showPrevious();
+					//vf.showPrevious();
 				}
 				@Override
 				public void onTick(long arg0) {
@@ -348,7 +365,7 @@ IF remember checked
 				@Override
 				public void onFinish() {
 					timeDisplay.setText("Time Left: 0:00:00");
-					vf.showPrevious();
+					//vf.showPrevious();
 				}
 
 				@Override
@@ -357,10 +374,33 @@ IF remember checked
 					remainSeconds = seconds;
 					timeDisplay.setText("Time Left: " + formatMe(seconds));
 				}
-				
+
 			};
 		}else{
 			return null;
+		}
+	}
+	public void onBackPressed(){
+		Log.d("CDA", "OnBackPressed Called");
+		Intent setIntent = new Intent(Intent.ACTION_MAIN);
+		setIntent.addCategory(Intent.CATEGORY_HOME);
+		setIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		startActivity(setIntent);
+		return;
+	}
+	public static void warnMe(Context activity){
+		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO,0);
+		//if time warning is enabled
+		if(check.getBoolean("warningEnable", false)){
+			//vibrate if settings say so
+			if(check.getBoolean("vibrateEnable", true)){
+				((Vibrator)activity.getSystemService(VIBRATOR_SERVICE)).vibrate(1000);
+			}
+			//TODO:ring is settings say so
+			if(check.getBoolean("ringEnable", true)){
+				MediaPlayer mediaPlayer = MediaPlayer.create(activity, R.raw.soundfile);
+				mediaPlayer.start(); // no need to call prepare(); create() does that for you
+			}
 		}
 	}
 

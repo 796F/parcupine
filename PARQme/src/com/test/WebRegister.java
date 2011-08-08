@@ -19,8 +19,8 @@ public class WebRegister extends Activity {
 
             mWebView = (WebView) findViewById(R.id.webview);
             mWebView.getSettings().setJavaScriptEnabled(true);
-            mWebView.loadUrl("http://www.parqme.com");
-
+            mWebView.loadUrl("http://www.parqme.com/register/register.mobile.php");
+            //TODO:  add back button graphic
             goAppButton = (Button) findViewById(R.id.goApp);
             goAppButton.setOnClickListener(new View.OnClickListener() {
                 @Override
