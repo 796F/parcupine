@@ -43,8 +43,21 @@ public class MapViewActivity extends MapActivity {
 	    MapView mapView = (MapView) findViewById(R.id.mapview);
 	    mapView.setBuiltInZoomControls(false);
 	    findPark = (Button) findViewById(R.id.findPark);
-	    
-	    
+	    /*lat=39.008046 lon=-76.888247 */
+	    findPark.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				//get saved info and animate to location and zoom in.  
+				mc.animateTo(
+						new GeoPoint(
+								(int)39.008046*1000000, 
+								(int)76.888247*1000000
+								)
+						);
+				mc.setZoom(2);
+			}
+		});
 	    findCar = (Button) findViewById(R.id.findCar);
 	    findCar.setOnClickListener(new View.OnClickListener() {
 			
@@ -105,7 +118,7 @@ public class MapViewActivity extends MapActivity {
 	    };
 
         lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locListener);
-        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locListener);
+        //lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locListener);
 	}
 	public void onBackPressed(){
 		Log.d("CDA", "OnBackPressed Called");

@@ -23,6 +23,7 @@ import android.content.SharedPreferences;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
@@ -230,7 +231,7 @@ IF remember checked
 			}catch(Exception e){
 
 			}
-			timer = initiateTimer(selectedNumber*60);
+			timer = initiateTimer(selectedNumber*60, vf);
 			//why not just 							instead of checking park state.
 			//timer = initiateTimer(selectedNumber*60+remainSeconds);
 			timer.start();
@@ -279,7 +280,7 @@ IF remember checked
 
 				ParkObject myPark = ServerCalls.Park(contents, email, endtime);
 				if(myPark!=null){
-					timer = initiateTimer(parkMinutes*60);
+					timer = initiateTimer(parkMinutes*60, vf);
 					timer.start();
 					vf.showNext();
 					startService(new Intent(MainActivity.this, Background.class).putExtra("time", parkMinutes*60));
@@ -342,13 +343,14 @@ IF remember checked
 	}
 	//pass in context, use getAppmanager, change via said context.
 	//declare view in tabsActivity?  
-	public CountDownTimer initiateTimer(int countDownSeconds){
+	public CountDownTimer initiateTimer(int countDownSeconds, final ViewFlipper myvf){
+		
 		if(!SavedInfo.isParked(MainActivity.this)){
 			return new CountDownTimer(secToMil(countDownSeconds), 1000){
 				@Override
 				public void onFinish() {
 					timeDisplay.setText("Time Left: 0:00:00");
-					//vf.showPrevious();
+					myvf.showPrevious();
 				}
 				@Override
 				public void onTick(long arg0) {
@@ -365,7 +367,7 @@ IF remember checked
 				@Override
 				public void onFinish() {
 					timeDisplay.setText("Time Left: 0:00:00");
-					//vf.showPrevious();
+					myvf.showPrevious();
 				}
 
 				@Override
@@ -396,7 +398,6 @@ IF remember checked
 			if(check.getBoolean("vibrateEnable", true)){
 				((Vibrator)activity.getSystemService(VIBRATOR_SERVICE)).vibrate(1000);
 			}
-			//TODO:ring is settings say so
 			if(check.getBoolean("ringEnable", true)){
 				MediaPlayer mediaPlayer = MediaPlayer.create(activity, R.raw.soundfile);
 				mediaPlayer.start(); // no need to call prepare(); create() does that for you
