@@ -8,6 +8,9 @@ public class ParkObject {
 	private float lon;
 	private String location;
 	private int spotNum;
+	private int rate;
+	private int maxTime;
+	
 	public ParkObject(){
 		
 	}
@@ -24,7 +27,25 @@ public class ParkObject {
 		this.lat=Float.parseFloat(fields.get(1));
 		this.lon=Float.parseFloat(fields.get(2));
 		this.spotNum=Integer.parseInt(fields.get(3));
+		this.rate=Integer.parseInt(fields.get(4));
+		this.maxTime=Integer.parseInt(fields.get(5));
 	}
+	public int getRate() {
+		return rate;
+	}
+
+	public void setRate(int rate) {
+		this.rate = rate;
+	}
+
+	public int getMaxTime() {
+		return maxTime;
+	}
+
+	public void setMaxTime(int maxTime) {
+		this.maxTime = maxTime;
+	}
+
 	@Override
 	public String toString(){
 		return location + lat + lon + spotNum;

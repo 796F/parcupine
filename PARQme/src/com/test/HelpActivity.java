@@ -42,12 +42,7 @@ public class HelpActivity extends Activity {
 				//SavedInfo.togglePark(HelpActivity.this);
 				//SavedInfo.reset(HelpActivity.this);
 				//SavedInfo.toggleVibrate(HelpActivity.this);
-				Intent myIntent = new Intent(HelpActivity.this, TabsActivity.class);
-				myIntent.setAction(Intent.ACTION_MAIN);
-				myIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-				
-				myIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				startActivity(myIntent);
+				SavedInfo.reset(HelpActivity.this);
 			}
 		});
         

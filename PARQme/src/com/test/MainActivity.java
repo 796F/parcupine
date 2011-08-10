@@ -33,15 +33,17 @@ import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 /**
- * locate user and set center of map on his location, also zoom in. 
- * help tab SS tutorial
- * ACCOUNT tab should have settings and personal options.
- * MAX # of refills
- * auto refill function
+ * find parking nearby, find parking general, find my car(popup message w/ info)
+ *
+ * MAX # of refills      just store number, and check each time you refill.  on unparq reset.  
+ * auto refill function      the task should include a check, for if auto-refill is on.  if on, automatically call refill 15 minutes.
+ *      refill function should be passed a context activity, which will be used when we call refill etc???  
+ * park only if detect internet  on the parq button, check if internet is active.  
+ * SS Tutorial 
  * 
  * DO NOT RELY ON GOOD CONNECTION.  model should be - request change, send notice okay, make change on app, confirm change on server.
- * also must consider broken connections, so app must re-send requests that did not go through
- * add listener to loginscreen, when back is pressed vf.showPrevious();
+ * 
+ * also must consider broken connections, so app must re-send refill requests that did not go through
  * 
  * move around, and make bigger, information/money display  
  *  
@@ -52,7 +54,7 @@ import android.widget.ViewFlipper;
  * TimeLeftDisplay = analog timer, digital countdown (setting gives choice) 
  * Add server calls for rates.
  * 
- *    
+ * 
  * SEcurity in authenticating with server?
  * 
  * look into city's expenses, number of parks, gauge the server costs, lay out finance to potential
@@ -169,6 +171,7 @@ IF remember checked
 					stopService(new Intent(MainActivity.this, Background.class));
 					vf.showPrevious();
 					SavedInfo.togglePark(MainActivity.this);
+					remainSeconds=parkMinutes*60;
 					try{
 						timer.cancel();
 					}catch (Exception e){
@@ -214,31 +217,50 @@ IF remember checked
 		new NumberPickerDialog.OnNumberSetListener() {
 		@Override
 		public void onNumberSet(int selectedNumber) {
-			parkMinutes = selectedNumber;
+			parkMinutes=selectedNumber;
+			//remainSeconds = selectedNumber*60;
 			updateDisplay();
 
 		}
 	};
+	
+	private void refillMe(int refillMinutes){
+		remainSeconds+=refillMinutes*60;
+
+		//stop current timer, start new timer with current time + selectedNumber.
+		try{
+			timer.cancel();
+		}catch(Exception e){
+
+		}
+		timer = initiateTimer(remainSeconds, vf);
+		//why not just 							instead of checking park state.
+		//timer = initiateTimer(selectedNumber*60+remainSeconds);
+		timer.start();
+		stopService(new Intent(MainActivity.this, Background.class));
+		startService(new Intent(MainActivity.this, Background.class).putExtra("time", remainSeconds));
+		//TODO update server's endtime.  
+	}
 	private NumberPickerDialog.OnNumberSetListener mRefillListener =
 		new NumberPickerDialog.OnNumberSetListener() {
 		@Override
 		public void onNumberSet(int selectedNumber) {
-			parkMinutes+=selectedNumber;
-
-			//stop current timer, start new timer with current time + selectedNumber.
-			try{
-				timer.cancel();
-			}catch(Exception e){
-
-			}
-			timer = initiateTimer(selectedNumber*60, vf);
-			//why not just 							instead of checking park state.
-			//timer = initiateTimer(selectedNumber*60+remainSeconds);
-			timer.start();
-			updateDisplay();
-			stopService(new Intent(MainActivity.this, Background.class));
-			startService(new Intent(MainActivity.this, Background.class).putExtra("time", remainSeconds+selectedNumber*60));
-			//TODO update server's endtime.  
+			refillMe(selectedNumber);
+//			remainSeconds+=selectedNumber*60;
+//
+//			//stop current timer, start new timer with current time + selectedNumber.
+//			try{
+//				timer.cancel();
+//			}catch(Exception e){
+//
+//			}
+//			timer = initiateTimer(remainSeconds, vf);
+//			//why not just 							instead of checking park state.
+//			//timer = initiateTimer(selectedNumber*60+remainSeconds);
+//			timer.start();
+//			stopService(new Intent(MainActivity.this, Background.class));
+//			startService(new Intent(MainActivity.this, Background.class).putExtra("time", remainSeconds));
+//			//TODO update server's endtime.  
 		}
 	};
 	private void updateDisplay() {
@@ -265,7 +287,7 @@ IF remember checked
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		if (requestCode == 0) {
 			if (resultCode == RESULT_OK) { 
-
+				remainSeconds=parkMinutes*60;
 				String contents = intent.getStringExtra("SCAN_RESULT");
 				//String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
 
@@ -275,15 +297,15 @@ IF remember checked
 				editor.putString("code", contents);
 
 				Date forString = new Date();
-				forString.setSeconds(forString.getSeconds()+parkMinutes*60);
+				forString.setSeconds(forString.getSeconds()+remainSeconds);
 				String endtime = Global.sdf.format(forString);
 
 				ParkObject myPark = ServerCalls.Park(contents, email, endtime);
 				if(myPark!=null){
-					timer = initiateTimer(parkMinutes*60, vf);
+					timer = initiateTimer(remainSeconds, vf);
 					timer.start();
 					vf.showNext();
-					startService(new Intent(MainActivity.this, Background.class).putExtra("time", parkMinutes*60));
+					startService(new Intent(MainActivity.this, Background.class).putExtra("time", remainSeconds));
 					/*parkState changes how app resumes*/
 					editor.putBoolean("parkState", true);
 					editor.putFloat("lat", myPark.getLat());
@@ -337,20 +359,16 @@ IF remember checked
 	public static long secToMil(int sec){
 		return sec*1000;
 	}
-	public static void backView(){
-		vf.showPrevious();
-		//maybe it brings back to thread. calling within thread.
-	}
-	//pass in context, use getAppmanager, change via said context.
-	//declare view in tabsActivity?  
+	
 	public CountDownTimer initiateTimer(int countDownSeconds, final ViewFlipper myvf){
 		
-		if(!SavedInfo.isParked(MainActivity.this)){
+		
 			return new CountDownTimer(secToMil(countDownSeconds), 1000){
 				@Override
 				public void onFinish() {
 					timeDisplay.setText("Time Left: 0:00:00");
 					myvf.showPrevious();
+					refillMe(15);
 				}
 				@Override
 				public void onTick(long arg0) {
@@ -360,28 +378,9 @@ IF remember checked
 				}
 
 			};
-		}else if(SavedInfo.isParked(MainActivity.this)){
-			//it's a refill request
-			return new CountDownTimer(secToMil(countDownSeconds+remainSeconds), 1000){
-
-				@Override
-				public void onFinish() {
-					timeDisplay.setText("Time Left: 0:00:00");
-					myvf.showPrevious();
-				}
-
-				@Override
-				public void onTick(long arg0) {
-					int seconds = (int) arg0/1000;
-					remainSeconds = seconds;
-					timeDisplay.setText("Time Left: " + formatMe(seconds));
-				}
-
-			};
-		}else{
-			return null;
-		}
+		
 	}
+	//tada
 	public void onBackPressed(){
 		Log.d("CDA", "OnBackPressed Called");
 		Intent setIntent = new Intent(Intent.ACTION_MAIN);
