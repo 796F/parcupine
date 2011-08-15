@@ -70,6 +70,12 @@ public class SavedInfo{
 		editor.commit();
 		
 	}
+	public static void setGeneric(Context activity, String title, boolean input){
+		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
+		SharedPreferences.Editor editor = check.edit();
+		editor.putBoolean(title, input);
+		editor.commit();
+	}
 	//set's end time to a string
 	public static void setEndTime(Context activity, String endTime){
 		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);

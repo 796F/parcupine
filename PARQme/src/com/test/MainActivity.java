@@ -19,6 +19,7 @@ import android.app.ActivityGroup;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.Intent;
 import android.os.Bundle;
@@ -35,27 +36,30 @@ import android.widget.ViewFlipper;
 /**
  * find parking nearby, find parking general, find my car(popup message w/ info)
  *
- * MAX # of refills      just store number, and check each time you refill.  on unparq reset.  
- * auto refill function      the task should include a check, for if auto-refill is on.  if on, automatically call refill 15 minutes.
- *      refill function should be passed a context activity, which will be used when we call refill etc???  
+ * settings should have option for warning time, save info on back, the time is read and passed when starting service
+ * the warning message should have refill option and ignore option
+ * 
+ * on park, grab lat/lon and compare with what we get from server for spot, combine and store for later.
  * park only if detect internet  on the parq button, check if internet is active.  
  * SS Tutorial 
  * 
  * DO NOT RELY ON GOOD CONNECTION.  model should be - request change, send notice okay, make change on app, confirm change on server.
- * 
  * also must consider broken connections, so app must re-send refill requests that did not go through
  * 
  * move around, and make bigger, information/money display  
- *  
+ * 
  * "Share Parq" option, pulls up qr code to scan.  
+ * 
+ * flash light when dark
  * 
  * BOOT LOAD SERVICE RESUME
  * 
  * TimeLeftDisplay = analog timer, digital countdown (setting gives choice) 
  * Add server calls for rates.
  * 
+ * INCORPORATING NUMBERPICKER:  inport class, start activity for view, setContentView of dialog
  * 
- * SEcurity in authenticating with server?
+ * SEcurity in authenticating with server? encrypt, salt, and ssl all communication.
  * 
  * look into city's expenses, number of parks, gauge the server costs, lay out finance to potential
  *    partners
@@ -63,38 +67,13 @@ import android.widget.ViewFlipper;
 
 public class MainActivity extends ActivityGroup {
 
-	/* on bootup, check for parkstate true.  
-	 * if state is parked, update timer and resume service.
-	 *   
-	 * when qr code is scanned, grab current date, calculate end date, 
-	 * start timer for end date, and store end date.  
-	 *    send end date associated with phonenumber and acc.  start timer on server end.  
-	 * 
-	 * 
-	 * when qrcode scanned again / service ends or time out, or unparqed 
-	 * delete end date, parkstate false.  
-	 *    send unparq to server. 
-	 *    
-	 *    EXITING always logs out, unless parked.  
-
-
-IF NOT logged in
-	NO PARK
-	STARTUP ACC PAGE
-
-IF logged in
-	PARK
-	STARTUP PARK PAGE
-	ACC PAGE starts second view
-	exit logs out
-
-IF remember checked
-	STARTUP PARK PAGE
-	ACC PAGE starts second view
-	 * 
-	 * 
-	 * */
-
+/*  Changes were made for testing . to revert...
+ * 	change private warntime back to 5 minutes
+	change setTime listener,
+	change refill listener
+	change service warningTime seconds */
+	
+	
 	private TextView priceDisplay;
 	private TextView userDisplay;
 	private TextView locDisplay;
@@ -103,12 +82,13 @@ IF remember checked
 	private Button parqButton;
 	private Button unparqButton;
 	private Button refillButton;
-	private Button hideButton;
 	private int remainSeconds;
 	private CountDownTimer timer;
 	public static ViewFlipper vf;
 	private int parkMinutes;
-	private static CheckBox box;
+	private int parkRate;
+	private int warnTime = 30;
+	private AlertDialog alert;
 	private static final int NUM_PICKER_ID = 2;
 	private static final int REFILL_PICKER_ID = 0;
 
@@ -119,6 +99,22 @@ IF remember checked
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+		builder.setMessage("You are almost out of time!")
+		.setCancelable(false)
+		.setPositiveButton("Refill", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				refillMe(1);
+			}
+		})
+		.setNegativeButton("Ignore", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				dialog.cancel();
+			}
+		});
+		 alert = builder.create();
+		
+		
 		setContentView(R.layout.flipper);
 		vf = (ViewFlipper) findViewById(R.id.flipper);
 		final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
@@ -164,23 +160,24 @@ IF remember checked
 		unparqButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				//TODO ARE YOU SURE DIALOG
-				String qrcode = check.getString("code", "badcode");
-				String email = check.getString("email", "bademail");
-				if(ServerCalls.unPark(qrcode, email)==1){
-					stopService(new Intent(MainActivity.this, Background.class));
-					vf.showPrevious();
-					SavedInfo.togglePark(MainActivity.this);
-					remainSeconds=parkMinutes*60;
-					try{
-						timer.cancel();
-					}catch (Exception e){
-
+				AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+				builder.setMessage("Are you sure you want to unparq?")
+				.setCancelable(false)
+				.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						unpark();
+						vf.showPrevious();
+						SavedInfo.togglePark(MainActivity.this);
+						remainSeconds=parkMinutes*60;
 					}
-				}else{
-					ThrowDialog.show(MainActivity.this, ThrowDialog.UNPARK_ERROR);
-					//interpret response code
-				}
+				})
+				.setNegativeButton("No", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						dialog.cancel();
+					}
+				});
+				AlertDialog alert = builder.create();
+				alert.show();
 			}});
 
 
@@ -194,78 +191,85 @@ IF remember checked
 
 	}
 
+	private int unpark(){
+		//service not stopping?  unparqing
+		SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
+		String qrcode = check.getString("code", "badcode");
+		String email = check.getString("email", "bademail");
+		int test = ServerCalls.unPark(qrcode, email);
+
+			try{
+				timer.cancel();
+				stopService(new Intent(MainActivity.this, Background.class));
+				return 1;
+			}catch (Exception e){
+				ThrowDialog.show(MainActivity.this, ThrowDialog.UNPARK_ERROR);
+				return 0;
+			}
+		
+	}
+	private int park(){
+		SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
+		String contents = check.getString("code", "");
+
+		String email = check.getString("email", "bademail");
+		Date forString = new Date();
+		forString.setSeconds(forString.getSeconds()+remainSeconds);
+		String endtime = Global.sdf.format(forString);
+		
+		if(ServerCalls.Park(contents, email, endtime)!=null){
+			return 1;
+		}else{
+			ThrowDialog.show(MainActivity.this, ThrowDialog.UNPARK_ERROR);
+			return 0;
+		}
+	}
 	private static int getRates(int LOCATION_CODE){
-		//CENTS PER 15 MINUTS
-		/*	Send http request to servlet with location code
-		 *  servlet responds with a double indicating rate
-		 *  
-		 *  URLConnection test = new URLConnection("http://www.parqme.com/SERVLET");
-		 * */
-		/* myLocation = getLocation();
-		 * return rates of myLocation;
-		 * */
+		//TODO: pass in park object instead of location code.
 		return 25;
 	}
 
-
-	private static int getCostInCents(int mins) {
-		return mins/15 * getRates(0);
-
-	}
 
 	private NumberPickerDialog.OnNumberSetListener mNumberSetListener = 
 		new NumberPickerDialog.OnNumberSetListener() {
 		@Override
 		public void onNumberSet(int selectedNumber) {
-			parkMinutes=selectedNumber;
-			//remainSeconds = selectedNumber*60;
+
+			//parkMinutes=selectedNumber;
+			//TODO: delete me, for testing
+			parkMinutes=1;
 			updateDisplay();
 
 		}
 	};
-	
-	private void refillMe(int refillMinutes){
-		remainSeconds+=refillMinutes*60;
 
+	private void refillMe(int refillMinutes){
+		//remainSeconds+=refillMinutes*60;
+		remainSeconds+=60;
 		//stop current timer, start new timer with current time + selectedNumber.
 		try{
 			timer.cancel();
+			timer = initiateTimer(remainSeconds, vf);
+			stopService(new Intent(MainActivity.this, Background.class));
+			int testing = unpark();
+			int testing2 = park();
+			timer.start();
+			startService(new Intent(MainActivity.this, Background.class).putExtra("time", remainSeconds));
+			ThrowDialog.show(MainActivity.this, ThrowDialog.REFILL_DONE);
+			
 		}catch(Exception e){
-
+			ThrowDialog.show(MainActivity.this, ThrowDialog.UNPARK_ERROR);
 		}
-		timer = initiateTimer(remainSeconds, vf);
-		//why not just 							instead of checking park state.
-		//timer = initiateTimer(selectedNumber*60+remainSeconds);
-		timer.start();
-		stopService(new Intent(MainActivity.this, Background.class));
-		startService(new Intent(MainActivity.this, Background.class).putExtra("time", remainSeconds));
-		//TODO update server's endtime.  
+		
 	}
+	
 	private NumberPickerDialog.OnNumberSetListener mRefillListener =
 		new NumberPickerDialog.OnNumberSetListener() {
 		@Override
 		public void onNumberSet(int selectedNumber) {
 			refillMe(selectedNumber);
-//			remainSeconds+=selectedNumber*60;
-//
-//			//stop current timer, start new timer with current time + selectedNumber.
-//			try{
-//				timer.cancel();
-//			}catch(Exception e){
-//
-//			}
-//			timer = initiateTimer(remainSeconds, vf);
-//			//why not just 							instead of checking park state.
-//			//timer = initiateTimer(selectedNumber*60+remainSeconds);
-//			timer.start();
-//			stopService(new Intent(MainActivity.this, Background.class));
-//			startService(new Intent(MainActivity.this, Background.class).putExtra("time", remainSeconds));
-//			//TODO update server's endtime.  
 		}
 	};
-	private void updateDisplay() {
-		priceDisplay.setText(parkMinutes +" Minutes"+" : " +moneyConverter(getCostInCents(parkMinutes)));
-	}
 
 	@Override
 	protected Dialog onCreateDialog(int id) {
@@ -302,6 +306,7 @@ IF remember checked
 
 				ParkObject myPark = ServerCalls.Park(contents, email, endtime);
 				if(myPark!=null){
+					parkRate=myPark.getRate();
 					timer = initiateTimer(remainSeconds, vf);
 					timer.start();
 					vf.showNext();
@@ -311,7 +316,7 @@ IF remember checked
 					editor.putFloat("lat", myPark.getLat());
 					editor.putFloat("lon", myPark.getLon());
 					userDisplay.setText("Welcome " + check.getString("fname", "")); 
-					locDisplay.setText("You are parked at " + myPark.getLocation()+"\nSpot " + myPark.getSpotNum());
+					locDisplay.setText("You are parked at\n" + myPark.getLocation()+"\nAt spot # " + myPark.getSpotNum());
 				}else{
 					ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
 				}
@@ -320,13 +325,70 @@ IF remember checked
 
 
 			} else if (resultCode == RESULT_CANCELED) {
-				priceDisplay.setText("This QR Code is Broken");
-				// Handle cancel
+
+			} 
+		}
+	}
+
+
+	public CountDownTimer initiateTimer(int countDownSeconds, final ViewFlipper myvf){
+
+
+		return new CountDownTimer(secToMil(countDownSeconds), 1000){
+			
+			@Override
+			public void onFinish() {
+				timeDisplay.setText("0:00:00");
+				SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
+				if(check.getBoolean("autoRefill", false)){
+					refillMe(1);
+					alert.cancel();
+				}else{
+					alert.cancel();
+					myvf.showPrevious();
+					ThrowDialog.show(MainActivity.this, ThrowDialog.TIME_OUT);
+				}
+			}
+			@Override
+			public void onTick(long arg0) {
+				int seconds = (int)arg0/1000;
+				if(seconds==warnTime){
+					
+					alert.show();
+				
+				}
+				remainSeconds = seconds;
+				timeDisplay.setText(formatMe(seconds));
+			}
+
+		};
+
+	}
+	public static void warnMe(Context activity){
+		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO,0);
+		//if time warning is enabled
+		if(check.getBoolean("warningEnable", false)){
+			//vibrate if settings say so
+			if(check.getBoolean("vibrateEnable", true)){
+				((Vibrator)activity.getSystemService(VIBRATOR_SERVICE)).vibrate(1000);
+			}
+			if(check.getBoolean("ringEnable", true)){
+				MediaPlayer mediaPlayer = MediaPlayer.create(activity, R.raw.alarm);
+				mediaPlayer.start(); // no need to call prepare(); create() does that for you
 			}
 		}
 	}
 
 
+	//tada
+	public void onBackPressed(){
+		Log.d("CDA", "OnBackPressed Called");
+		Intent setIntent = new Intent(Intent.ACTION_MAIN);
+		setIntent.addCategory(Intent.CATEGORY_HOME);
+		setIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		startActivity(setIntent);
+		return;
+	}
 	public String moneyConverter (int cents){
 		int m = cents;
 		if(m/100 > 0){
@@ -359,49 +421,13 @@ IF remember checked
 	public static long secToMil(int sec){
 		return sec*1000;
 	}
-	
-	public CountDownTimer initiateTimer(int countDownSeconds, final ViewFlipper myvf){
-		
-		
-			return new CountDownTimer(secToMil(countDownSeconds), 1000){
-				@Override
-				public void onFinish() {
-					timeDisplay.setText("Time Left: 0:00:00");
-					myvf.showPrevious();
-					refillMe(15);
-				}
-				@Override
-				public void onTick(long arg0) {
-					int seconds = (int)arg0/1000;
-					remainSeconds = seconds;
-					timeDisplay.setText("Time Left: " + formatMe(seconds));
-				}
 
-			};
-		
-	}
-	//tada
-	public void onBackPressed(){
-		Log.d("CDA", "OnBackPressed Called");
-		Intent setIntent = new Intent(Intent.ACTION_MAIN);
-		setIntent.addCategory(Intent.CATEGORY_HOME);
-		setIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		startActivity(setIntent);
-		return;
-	}
-	public static void warnMe(Context activity){
-		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO,0);
-		//if time warning is enabled
-		if(check.getBoolean("warningEnable", false)){
-			//vibrate if settings say so
-			if(check.getBoolean("vibrateEnable", true)){
-				((Vibrator)activity.getSystemService(VIBRATOR_SERVICE)).vibrate(1000);
-			}
-			if(check.getBoolean("ringEnable", true)){
-				MediaPlayer mediaPlayer = MediaPlayer.create(activity, R.raw.soundfile);
-				mediaPlayer.start(); // no need to call prepare(); create() does that for you
-			}
-		}
-	}
 
+	private static int getCostInCents(int mins) {
+		return mins/15 * getRates(0);
+
+	}
+	private void updateDisplay() {
+		priceDisplay.setText(parkMinutes +" Minutes"+" : " +moneyConverter(getCostInCents(parkMinutes)));
+	}
 }

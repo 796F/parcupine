@@ -26,8 +26,6 @@ public class WebRegister extends Activity {
                 @Override
 				public void onClick(View v) {
                 	  finish();
-//                    Intent myIntent = new Intent(WebRegister.this, TabsActivity.class);
-//                    startActivity(myIntent);
                     
                 }});
     }

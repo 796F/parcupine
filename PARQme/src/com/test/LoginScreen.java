@@ -44,7 +44,7 @@ public class LoginScreen extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.reg_flip);
 		LoginVf = (ViewFlipper) findViewById(R.id.reg_flip);
-		
+		final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 		rememberBox = (CheckBox) findViewById(R.id.rememberbox);
 		rememberBox.setOnCheckedChangeListener(new OnCheckedChangeListener(){
 			@Override
@@ -57,7 +57,13 @@ public class LoginScreen extends Activity {
 		vibrateBox.setOnCheckedChangeListener(new OnCheckedChangeListener(){
 			@Override
 			public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-				SavedInfo.toggleVibrate(LoginScreen.this);
+				if(vibrateBox.isChecked()){
+					SavedInfo.setGeneric(LoginScreen.this, "vibrateEnable", true);
+					//set true in file
+				}else{
+					//set false in file
+					SavedInfo.setGeneric(LoginScreen.this, "vibrateEnable", false);
+				}
 				
 			}
 		});
@@ -65,16 +71,26 @@ public class LoginScreen extends Activity {
 		warningBox.setOnCheckedChangeListener(new OnCheckedChangeListener(){
 			@Override
 			public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-				SavedInfo.toggleWarn(LoginScreen.this);
-				
+				if(warningBox.isChecked()){
+				SavedInfo.setGeneric(LoginScreen.this, "warningEnable", true);
+				//set true in file
+			}else{
+				//set false in file
+				SavedInfo.setGeneric(LoginScreen.this, "warningEnable", false);
+			}
 			}
 		});
 		ringBox = (CheckBox) findViewById(R.id.ringEnable);
 		ringBox.setOnCheckedChangeListener(new OnCheckedChangeListener(){
 			@Override
 			public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-				SavedInfo.toggleRing(LoginScreen.this);
-				
+				if(ringBox.isChecked()){
+					SavedInfo.setGeneric(LoginScreen.this, "ringEnable", true);
+					//set true in file
+				}else{
+					//set false in file
+					SavedInfo.setGeneric(LoginScreen.this, "ringEnable", false);
+				}
 			}
 		});
 		
@@ -82,14 +98,18 @@ public class LoginScreen extends Activity {
 		refillBox.setOnCheckedChangeListener(new OnCheckedChangeListener(){
 			@Override
 			public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-				SavedInfo.toggleRefill(LoginScreen.this);
-				
+				if(refillBox.isChecked()){
+					SavedInfo.setGeneric(LoginScreen.this, "autoRefill", true);
+					//set true in file
+				}else{
+					//set false in file
+					SavedInfo.setGeneric(LoginScreen.this, "autoRefill", false);
+				}
 			}
 		});
 		
 		emailForm=(EditText) findViewById(R.id.emailForm);
 		passwordForm = (EditText) findViewById(R.id.passwordForm);
-		final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 
 		if(check.getBoolean("loginState", false)){
 			LoginVf.showNext();

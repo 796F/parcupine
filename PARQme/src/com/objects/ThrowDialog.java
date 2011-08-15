@@ -12,7 +12,10 @@ public class ThrowDialog {
 	public final static int ZERO_MINUTES=3;
 	public final static int UNPARK_ERROR=4;
 	public final static int RESULT_ERROR=5;
-
+	public final static int TIME_OUT=6;
+	public final static int PARK_WARNING=7;
+	public final static int BAD_QRCODE=8;
+	public final static int REFILL_DONE=9;
 	public static void show(Context c, int dialog){
 		AlertDialog.Builder alert = new AlertDialog.Builder(c);
 		AlertDialog a;
@@ -74,6 +77,51 @@ public class ThrowDialog {
 			break;
 		case RESULT_ERROR:
 			alert.setMessage("Error Occurred Parking\nTry Again.");
+			alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.cancel();
+				}
+			});
+			a = alert.create();
+			a.show();
+			break;
+		case TIME_OUT:
+			alert.setMessage("You have run out of time.");
+			alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.cancel();
+				}
+			});
+			a = alert.create();
+			a.show();
+			break;
+		case PARK_WARNING:
+			alert.setMessage("You are almost out of time!");
+			alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.cancel();
+				}
+			});
+			a = alert.create();
+			a.show();
+			break;
+		case BAD_QRCODE:
+			alert.setMessage("QR Code did not Scan.");
+			alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.cancel();
+				}
+			});
+			a = alert.create();
+			a.show();
+			break;
+			
+		case REFILL_DONE:
+			alert.setMessage("Refill Complete.");
 			alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {

@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
@@ -29,6 +30,7 @@ public class MapViewActivity extends MapActivity {
 	public static double lon;
 	private LocationManager lm;
 	private String locationProvider;
+	private TextView latlon;
 	/** Called when the activity is first created. */
 	
 	@Override
@@ -37,6 +39,7 @@ public class MapViewActivity extends MapActivity {
 	}
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.map);
 	    locationProvider = LocationManager.NETWORK_PROVIDER;
@@ -44,6 +47,7 @@ public class MapViewActivity extends MapActivity {
 	    mapView.setBuiltInZoomControls(false);
 	    findPark = (Button) findViewById(R.id.findPark);
 	    /*lat=39.008046 lon=-76.888247 */
+	    latlon = (TextView) findViewById(R.id.latlontext);
 	    findPark.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
@@ -51,11 +55,11 @@ public class MapViewActivity extends MapActivity {
 				//get saved info and animate to location and zoom in.  
 				mc.animateTo(
 						new GeoPoint(
-								(int)39.008046*1000000, 
-								(int)76.888247*1000000
+								(int)38.935899*1000000, 
+								(int)-77.087122*1000000
 								)
 						);
-				mc.setZoom(2);
+				mc.setZoom(14);
 			}
 		});
 	    findCar = (Button) findViewById(R.id.findCar);
@@ -98,6 +102,8 @@ public class MapViewActivity extends MapActivity {
 			public void onLocationChanged(Location location) {
 				lat = location.getLatitude();	
 	        	lon = location.getLongitude();
+	        	latlon.setText(""+lat+" "+lon);
+	        	mc.animateTo(new GeoPoint((int)lat*1000000, (int)(lon-.88)*1000000));
 			}
 
 			@Override
@@ -118,7 +124,7 @@ public class MapViewActivity extends MapActivity {
 	    };
 
         lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locListener);
-        //lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locListener);
+        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locListener);
 	}
 	public void onBackPressed(){
 		Log.d("CDA", "OnBackPressed Called");

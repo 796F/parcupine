@@ -28,12 +28,11 @@ public class Background extends Service{
 	public IBinder onBind(Intent arg0) {
 		return null;
 	}
-
+	//TODO:  bug here, may be unparqing despite refill.
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId){
 		b = intent.getExtras();
-//		mainView = (View) b.get("mainView");
-//		vf = (ViewFlipper) mainView.findViewById(R.id.flipper);
+		
 		final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 		final SharedPreferences.Editor editor = check.edit();
 		//grab current time, and declare end time
@@ -42,17 +41,16 @@ public class Background extends Service{
 		Date warningTime = new Date();
 		//add park minutes to current time's mins and set as end time.
 		
-		//warningTime.setMinutes(currentTime.getMinutes()+b.getInt("time")-5);
-		warningTime.setSeconds(currentTime.getSeconds()+b.getInt("time")-5*60);
-
-		//endTime.setMinutes(currentTime.getMinutes() + b.getInt("time"));
+		warningTime.setSeconds(currentTime.getSeconds()+b.getInt("time")-30);
 		endTime.setSeconds(currentTime.getSeconds() + b.getInt("time"));
+		//TODO: delete me, for testing
+//		warningTime.setSeconds(currentTime.getSeconds()+30);
+//		endTime.setSeconds(currentTime.getSeconds() + 60);
 		
 		//create formatter and get endtime string
 		String endTimeString = Global.sdf.format(endTime);
 		editor.putString("endTime", endTimeString);
 		editor.commit();
-		//ON REFILL, stop this service, RECALCULATE ENDTIME by adding refill mins, AND RESTART service with new time.
 		
 		x = new Timer();
 
@@ -61,6 +59,7 @@ public class Background extends Service{
 			x.schedule(new TimerTask(){
 				@Override
 				public void run() {
+
 					MainActivity.warnMe(Background.this);
 					
 					Intent myIntent = new Intent(Background.this, TabsActivity.class);
@@ -77,29 +76,29 @@ public class Background extends Service{
 		x.schedule(new TimerTask(){
 			@Override
 			public void run() {
-				//unparq user from server, stop the service, Vibrate
 				
-				//stopService(new Intent(Background.this, Background.class));
 				 String qrcode = check.getString("code", "badcode");
 				 String email = check.getString("email", "bademail");
 				 if(ServerCalls.unPark(qrcode, email)==1){
-					 //TODO:  resume app, and give dialog/warning
-					((Vibrator)getSystemService(VIBRATOR_SERVICE)).vibrate(2000);
-					stopService(new Intent(Background.this, Background.class));
-					//MainActivity.vf.showPrevious();
+					 
+					((Vibrator)getSystemService(VIBRATOR_SERVICE)).vibrate(500);
 					SavedInfo.togglePark(Background.this);
+					Intent myIntent = new Intent(Background.this, TabsActivity.class);
+					myIntent.setAction(Intent.ACTION_MAIN);
+					myIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+					
+					myIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+					startActivity(myIntent);
+					
+					stopService(new Intent(Background.this, Background.class));
 				 }else{
-					//ThrowDialog.show(Background.this, ThrowDialog.UNPARK_ERROR);
 				 }
 				
 				
-				editor.putBoolean("parkState", false);
-				editor.commit();
+				
 			}
 		},endTime);
 		
-		//schedule(TimerTask task, Date time) executes task at the time specified.  
-		//so create a date object for 5 minutes before time runs out.
 		return START_STICKY;
 	}
 	@Override

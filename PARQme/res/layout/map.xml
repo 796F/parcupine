@@ -17,5 +17,6 @@
 	<Button android:layout_width="wrap_content" android:text="Find Parking"
 		android:layout_height="wrap_content" android:id="@+id/findPark"
 		android:layout_alignParentBottom="true" android:layout_toRightOf="@+id/findCar"></Button>
+	<TextView android:layout_width="wrap_content" android:id="@+id/latlontext" android:text="TextView" android:textAppearance="?android:attr/textAppearanceSmall" android:layout_height="wrap_content" android:layout_above="@+id/findMe" android:layout_alignParentLeft="true"></TextView>
 
 </RelativeLayout>

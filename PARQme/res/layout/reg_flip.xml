@@ -6,7 +6,7 @@
 	<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 		android:orientation="vertical" android:layout_width="match_parent"
 		android:layout_height="match_parent">
-		<EditText android:id="@+id/emailForm" android:text="Email and Password"
+		<EditText android:id="@+id/emailForm" android:text="tcampbel@american.edu"
 			android:inputType="textEmailAddress" android:layout_width="match_parent"
 			android:layout_height="wrap_content" android:layout_alignParentTop="true"
 			android:layout_alignParentLeft="true" android:layout_marginTop="132dp"></EditText>
@@ -52,7 +52,7 @@
 			android:layout_below="@+id/accinfolabel"
 			android:layout_alignParentLeft="true"></TextView>
 		<TextView android:textAppearance="?android:attr/textAppearanceMedium"
-			android:layout_width="wrap_content" android:text="City: "
+			android:layout_width="wrap_content" android:text=""
 			android:layout_height="wrap_content" android:id="@+id/acccityfield"
 			android:layout_below="@+id/accemailfield"
 			android:layout_alignParentLeft="true"></TextView>

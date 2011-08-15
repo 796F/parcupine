@@ -14,34 +14,6 @@ import java.net.*;
  * Remember to generate getters and setters
  * */
 public class ServerCalls {
-	public static int getAuth(String email, String hash){
-		try {
-			String data = URLEncoder.encode("email", "UTF-8") + "=" + URLEncoder.encode(email, "UTF-8");
-			data+="&"+ URLEncoder.encode("passhash", "UTF-8") + "=" + URLEncoder.encode(hash, "UTF-8");
-			//prepare data
-			URL url = new URL("http://parqme.com/applogin.php");
-			URLConnection conn = url.openConnection();
-			//open connection
-			conn.setDoOutput(true);
-			OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-			wr.write(data);
-			wr.flush();
-			//write data
-			int bytesRead = 1;
-			byte[] buffer = new byte[1];
-			//prepare buffers
-			BufferedInputStream bufferedInput = new BufferedInputStream(conn.getInputStream());
-			bufferedInput.read(buffer);
-			//read into buffer
-			String x =(new String(buffer, 0,bytesRead));
-			//RESPONSE CODES ARE HERE.  handle them accordingly.  
-			return Integer.parseInt(x);
-		}catch (Exception e){
-			e.printStackTrace();
-		}
-		return -1;
-	
-	}
 	
 	/*returns if authentication passed.*/
 	public static UserObject getUser(String email, String hash){
@@ -119,5 +91,10 @@ public class ServerCalls {
 		}
 		return null;
 		
+	}
+	public static ParkObject Refill(String qrcode, String email, String endtime){
+		//TODO:  unparq then park again, effectively refilling.
+		
+		return null;
 	}
 }
