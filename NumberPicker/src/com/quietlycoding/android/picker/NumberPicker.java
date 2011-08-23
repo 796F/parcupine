@@ -96,11 +96,13 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
     protected int mStart;
     protected int mEnd;
     protected int mCurrent;
+    protected int minimalIncrement = 10;
     protected int mPrevious;
     private OnChangedListener mListener;
     private Formatter mFormatter;
     private long mSpeed = 300;
-
+    
+    
     private boolean mIncrement;
     private boolean mDecrement;
 
@@ -134,7 +136,8 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         mText.setOnFocusChangeListener(this);
         mText.setFilters(new InputFilter[] {inputFilter});
         mText.setRawInputType(InputType.TYPE_CLASS_NUMBER);
-
+        mText.setInputType(0);
+        
         if (!isEnabled()) {
             setEnabled(false);
         }
@@ -150,7 +153,10 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         mDecrementButton.setEnabled(enabled);
         mText.setEnabled(enabled);
     }
-
+    
+    public void setMinInc(int inc){
+    	minimalIncrement = inc;
+    }
     public void setOnChangeListener(OnChangedListener listener) {
         mListener = listener;
     }
@@ -210,9 +216,9 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
 
         // now perform the increment/decrement
         if (R.id.increment == v.getId()) {
-            changeCurrent(mCurrent + 15);
+            changeCurrent(mCurrent + minimalIncrement);
         } else if (R.id.decrement == v.getId()) {
-            changeCurrent(mCurrent - 15);
+            changeCurrent(mCurrent - minimalIncrement);
         }
     }
 
@@ -235,6 +241,10 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
 
         notifyChange();
         updateView();
+    }
+    
+    public void updateMax(){
+    	mText.setText("ALL DAY");
     }
 
     protected void notifyChange() {
