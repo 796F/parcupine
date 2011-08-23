@@ -44,10 +44,10 @@ public class SavedInfo{
 		editor.putBoolean("parkState", false); 
 		editor.putBoolean("loginState", false); 
 		editor.putBoolean("remember", false);
-		editor.putBoolean("vibrateEnable", false); 
-		editor.putBoolean("warningEnable", false); 
-		editor.putBoolean("ringEnable", false);
-		editor.putBoolean("autoRefill", false);
+		editor.putBoolean("vibrateEnable", true); 
+		editor.putBoolean("warningEnable", true); 
+		editor.putBoolean("ringEnable", true);
+		editor.putBoolean("autoRefill", true);
 		editor.putBoolean("firstTimeFlag", false);
 		editor.commit();
 	}

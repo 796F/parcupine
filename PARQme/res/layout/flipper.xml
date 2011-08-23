@@ -14,7 +14,8 @@
 			android:layout_alignParentBottom="true"
 			android:layout_alignParentLeft="true"></Button>
 		<TextView android:height="80px" android:layout_width="wrap_content"
-			android:id="@+id/minutesprice" android:text="  0 Minutes : $ 0.00"
+			android:id="@+id/minutesprice" android:text="  0 Mins : $ 0.00"
+			android:textSize="35sp"
 			android:textAppearance="?android:attr/textAppearanceLarge"
 			android:layout_height="wrap_content" android:layout_alignParentTop="true"
 			android:layout_centerHorizontal="true" android:layout_marginTop="114dp"></TextView>
@@ -53,7 +54,7 @@
 			android:text="Time Left 0:00:00" android:textAppearance="?android:attr/textAppearanceLarge"
 			android:textSize="55sp"
 			android:layout_height="wrap_content" android:layout_below="@+id/location"
-			android:layout_centerHorizontal="true" android:layout_marginTop="76dp"></TextView>
+			android:layout_centerHorizontal="true" android:layout_marginTop="46dp"></TextView>
 
 	</RelativeLayout>
 

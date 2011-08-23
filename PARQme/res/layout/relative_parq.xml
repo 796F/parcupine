@@ -1,18 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 		android:orientation="vertical" android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:id="@+id/view1">
-		<TextView android:textAppearance="?android:attr/textAppearanceLarge"
-			android:layout_height="wrap_content" android:height="80px"
-			android:layout_width="wrap_content" android:text="  0 Minutes : $ 0.00"
-			android:id="@+id/minutesprice" android:layout_above="@+id/secondparq"
-			android:layout_centerHorizontal="true" android:layout_marginBottom="52dp"></TextView>
-		<Button android:id="@+id/firstparq" android:layout_height="wrap_content"
-			android:layout_width="wrap_content"
-			android:layout_above="@+id/secondparq"
-			android:layout_alignParentLeft="true"
-			android:background="@drawable/settime"></Button>
-		<Button android:id="@+id/secondparq" android:background="@drawable/parkbutton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentBottom="true" android:layout_alignParentLeft="true"></Button>
+		android:layout_height="match_parent" android:id="@+id/view1">
+		<Button android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/secondparq" android:background="@drawable/parkbutton" android:layout_centerVertical="true" android:layout_alignParentLeft="true"></Button>
 
 	</RelativeLayout>

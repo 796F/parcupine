@@ -34,14 +34,23 @@ import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 /**
+ * compatibility, 
  * find parking nearby, find parking general, find my car(popup message w/ info)
- *
+ * expense handling, create database of company charge tokens, for specific user email.  
+ *    if the user's expense handlingn is flagged, check db for how much company has paid.  
+ *    
+ * change to scan then flip to view that you can set time.  
+ * 
+ * refill complete dialog cancels after a while
+ * 
+ * app doesn't work on 2.3, the app always quits and services dont stop.
+ * OR it isn't quitting, but the resume is just making a new instance of same app each time.  possible?
+ * 
+ * IN APP tutorial, speech bubbles pop up on actual buttons, walkthru.
  * settings should have option for warning time, save info on back, the time is read and passed when starting service
- * the warning message should have refill option and ignore option
  * 
  * on park, grab lat/lon and compare with what we get from server for spot, combine and store for later.
  * park only if detect internet  on the parq button, check if internet is active.  
- * SS Tutorial 
  * 
  * DO NOT RELY ON GOOD CONNECTION.  model should be - request change, send notice okay, make change on app, confirm change on server.
  * also must consider broken connections, so app must re-send refill requests that did not go through
@@ -51,6 +60,8 @@ import android.widget.ViewFlipper;
  * "Share Parq" option, pulls up qr code to scan.  
  * 
  * flash light when dark
+ * 
+ * 
  * 
  * BOOT LOAD SERVICE RESUME
  * 
@@ -91,7 +102,7 @@ public class MainActivity extends ActivityGroup {
 	private AlertDialog alert;
 	private static final int NUM_PICKER_ID = 2;
 	private static final int REFILL_PICKER_ID = 0;
-
+	private static MediaPlayer mediaPlayer;
 	public static final String SAVED_INFO = "ParqMeInfo";
 
 	/** Called when the activity is first created. */
@@ -105,11 +116,13 @@ public class MainActivity extends ActivityGroup {
 		.setPositiveButton("Refill", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
 				refillMe(1);
+				mediaPlayer.stop();
 			}
 		})
 		.setNegativeButton("Ignore", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
 				dialog.cancel();
+				mediaPlayer.stop();
 			}
 		});
 		 alert = builder.create();
@@ -167,7 +180,9 @@ public class MainActivity extends ActivityGroup {
 					public void onClick(DialogInterface dialog, int id) {
 						unpark();
 						vf.showPrevious();
-						SavedInfo.togglePark(MainActivity.this);
+						SharedPreferences.Editor editor = check.edit();
+						editor.putBoolean("parkState", false);
+						editor.commit();
 						remainSeconds=parkMinutes*60;
 					}
 				})
@@ -267,7 +282,8 @@ public class MainActivity extends ActivityGroup {
 		new NumberPickerDialog.OnNumberSetListener() {
 		@Override
 		public void onNumberSet(int selectedNumber) {
-			refillMe(selectedNumber);
+			//refillMe(selectedNumber);
+			refillMe(1);
 		}
 	};
 
@@ -341,8 +357,8 @@ public class MainActivity extends ActivityGroup {
 				timeDisplay.setText("0:00:00");
 				SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 				if(check.getBoolean("autoRefill", false)){
-					refillMe(1);
 					alert.cancel();
+					refillMe(1);
 				}else{
 					alert.cancel();
 					myvf.showPrevious();
@@ -353,9 +369,7 @@ public class MainActivity extends ActivityGroup {
 			public void onTick(long arg0) {
 				int seconds = (int)arg0/1000;
 				if(seconds==warnTime){
-					
 					alert.show();
-				
 				}
 				remainSeconds = seconds;
 				timeDisplay.setText(formatMe(seconds));
@@ -373,14 +387,12 @@ public class MainActivity extends ActivityGroup {
 				((Vibrator)activity.getSystemService(VIBRATOR_SERVICE)).vibrate(1000);
 			}
 			if(check.getBoolean("ringEnable", true)){
-				MediaPlayer mediaPlayer = MediaPlayer.create(activity, R.raw.alarm);
+				mediaPlayer = MediaPlayer.create(activity, R.raw.alarm);
 				mediaPlayer.start(); // no need to call prepare(); create() does that for you
 			}
 		}
 	}
 
-
-	//tada
 	public void onBackPressed(){
 		Log.d("CDA", "OnBackPressed Called");
 		Intent setIntent = new Intent(Intent.ACTION_MAIN);
@@ -428,6 +440,6 @@ public class MainActivity extends ActivityGroup {
 
 	}
 	private void updateDisplay() {
-		priceDisplay.setText(parkMinutes +" Minutes"+" : " +moneyConverter(getCostInCents(parkMinutes)));
+		priceDisplay.setText(parkMinutes +" Mins"+" : " +moneyConverter(getCostInCents(parkMinutes)));
 	}
 }
