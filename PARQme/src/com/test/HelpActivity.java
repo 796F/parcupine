@@ -36,9 +36,7 @@ public class HelpActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
-        setContentView(R.layout.set_time);
-        NumberPicker x = (NumberPicker) findViewById(R.id.parktimepicker);
-        
+        setContentView(R.layout.relative_parq);
 //        nextButton = (Button) findViewById(R.id.tutNextPage);
 //        prevButton = (Button) findViewById(R.id.tutPrevPage);
 //        //phpre = (TextView) findViewById(R.id.phpresponse);

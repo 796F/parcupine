@@ -103,7 +103,7 @@ public class MapViewActivity extends MapActivity {
 				lat = location.getLatitude();	
 	        	lon = location.getLongitude();
 	        	latlon.setText(""+lat+" "+lon);
-	        	mc.animateTo(new GeoPoint((int)lat*1000000, (int)(lon-.88)*1000000));
+	        	mc.animateTo(new GeoPoint((int)lat*1000000, (int)lon*1000000));
 			}
 
 			@Override

@@ -66,13 +66,13 @@ public class ServerCalls {
 		}
 		return -1;
 	}
-	public static ParkObject Park(String qrcode, String email, String endtime){
+	public static ParkObject getSpotInfo(String qrcode, String email, String endtime){
 		try {
 			String data = URLEncoder.encode("code", "UTF-8") + "=" + URLEncoder.encode(qrcode, "UTF-8");
 			data+= "&"+URLEncoder.encode("email", "UTF-8") + "=" + URLEncoder.encode(email, "UTF-8");
 			data+= "&"+URLEncoder.encode("endtime", "UTF-8") + "=" + URLEncoder.encode(endtime, "UTF-8");
 			// Send data
-			URL url = new URL("http://parqme.com/park.php");
+			URL url = new URL("http://parqme.com/loc_info.php");
 			URLConnection conn = url.openConnection();
 			
 			conn.setDoOutput(true);
@@ -92,9 +92,31 @@ public class ServerCalls {
 		return null;
 		
 	}
-	public static ParkObject Refill(String qrcode, String email, String endtime){
-		//TODO:  unparq then park again, effectively refilling.
-		
-		return null;
+	public static int Park(String qrcode, String email, String endtime){
+		try {
+			String data = URLEncoder.encode("code", "UTF-8") + "=" + URLEncoder.encode(qrcode, "UTF-8");
+			data+= "&"+URLEncoder.encode("email", "UTF-8") + "=" + URLEncoder.encode(email, "UTF-8");
+			data+= "&"+URLEncoder.encode("endtime", "UTF-8") + "=" + URLEncoder.encode(endtime, "UTF-8");
+			// Send data
+			URL url = new URL("http://parqme.com/park.php");
+			URLConnection conn = url.openConnection();
+			
+			conn.setDoOutput(true);
+			OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+			wr.write(data);
+			wr.flush();
+			//write data
+			int bytesRead = 1;
+			byte[] buffer = new byte[1];
+			//prepare buffers
+			BufferedInputStream bufferedInput = new BufferedInputStream(conn.getInputStream());
+			bufferedInput.read(buffer);
+			//read into buffer
+			String x =(new String(buffer, 0,bytesRead));
+			return Integer.parseInt(x);
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		return 0;
 	}
 }

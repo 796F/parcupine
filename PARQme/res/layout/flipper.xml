@@ -6,25 +6,44 @@
 	<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 		android:orientation="vertical" android:layout_width="match_parent"
 		android:layout_height="match_parent" android:id="@+id/view1">
-		<Button android:id="@+id/firstparq" android:layout_height="wrap_content"
-			android:layout_width="wrap_content" android:layout_above="@+id/secondparq"
-			android:layout_alignParentLeft="true" android:background="@drawable/settime"></Button>
-		<Button android:id="@+id/secondparq" android:background="@drawable/parkbutton"
-			android:layout_width="wrap_content" android:layout_height="wrap_content"
-			android:layout_alignParentBottom="true"
-			android:layout_alignParentLeft="true"></Button>
-		<TextView android:height="80px" android:layout_width="wrap_content"
-			android:id="@+id/minutesprice" android:text="  0 Mins : $ 0.00"
-			android:textSize="35sp"
-			android:textAppearance="?android:attr/textAppearanceLarge"
-			android:layout_height="wrap_content" android:layout_alignParentTop="true"
-			android:layout_centerHorizontal="true" android:layout_marginTop="114dp"></TextView>
+		<Button android:layout_height="wrap_content"
+			android:layout_width="wrap_content" android:id="@+id/scanButton"
+			android:background="@drawable/parkbutton"
+			android:layout_centerVertical="true" android:layout_alignParentLeft="true"></Button>
 
 	</RelativeLayout>
+	
+	<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_width="match_parent"
+	android:layout_height="match_parent" android:id="@+id/view2">
+	<Button android:text="Min" android:layout_height="wrap_content"
+		android:id="@+id/minparktime" android:layout_below="@+id/parktimepicker"
+		android:layout_alignLeft="@+id/parktimepicker" android:layout_width="100dp"></Button>
+	<Button android:text="Max" android:layout_height="wrap_content"
+		android:id="@+id/maxparktime" android:layout_below="@+id/parktimepicker"
+		android:layout_alignRight="@+id/parktimepicker" android:layout_width="100dp"></Button>
+	<Button android:text="Cancel Park" android:layout_width="match_parent"
+		android:id="@+id/cancelpark" android:layout_below="@+id/parkbutton"
+		android:layout_alignParentLeft="true" android:layout_height="match_parent"></Button>
+	<Button android:layout_height="wrap_content"
+		android:layout_width="match_parent" android:id="@+id/parkbutton"
+		android:background="@drawable/parkbutton" android:layout_below="@+id/minparktime"
+		android:layout_alignParentLeft="true"></Button>
+	<com.quietlycoding.android.picker.NumberPicker
+		android:layout_width="200dp" android:id="@+id/parktimepicker"
+		android:layout_height="wrap_content" android:layout_alignParentTop="true"
+		android:layout_centerHorizontal="true" android:layout_marginTop="163dp"></com.quietlycoding.android.picker.NumberPicker>
+	<TextView android:id="@+id/priceDisplay"
+		android:layout_height="wrap_content" android:layout_width="wrap_content"
+		android:textSize="35sp"
+		android:text="$ 0.00" android:layout_alignParentTop="true"
+		android:layout_centerHorizontal="true" android:layout_marginTop="83dp"></TextView>
+
+</RelativeLayout>
 
 	<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 		android:orientation="vertical" android:layout_width="match_parent"
-		android:layout_height="match_parent" android:id="@+id/view2">
+		android:layout_height="match_parent" android:id="@+id/view3">
 		<TextView android:layout_height="wrap_content"
 			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:id="@+id/username" android:layout_width="wrap_content"
@@ -51,10 +70,10 @@
 			android:layout_height="wrap_content" android:layout_below="@+id/username"
 			android:layout_alignParentLeft="true" android:layout_marginTop="29dp"></TextView>
 		<TextView android:layout_width="wrap_content" android:id="@+id/timeleftdisplay"
-			android:text="Time Left 0:00:00" android:textAppearance="?android:attr/textAppearanceLarge"
-			android:textSize="55sp"
-			android:layout_height="wrap_content" android:layout_below="@+id/location"
-			android:layout_centerHorizontal="true" android:layout_marginTop="46dp"></TextView>
+			android:text="0:00:00" android:textAppearance="?android:attr/textAppearanceLarge"
+			android:textSize="55sp" android:layout_height="wrap_content"
+			android:layout_below="@+id/location" android:layout_centerHorizontal="true"
+			android:layout_marginTop="46dp"></TextView>
 
 	</RelativeLayout>
 

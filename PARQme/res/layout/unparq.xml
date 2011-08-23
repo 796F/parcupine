@@ -28,7 +28,7 @@
 			android:layout_height="wrap_content" android:layout_below="@+id/username"
 			android:layout_alignParentLeft="true" android:layout_marginTop="29dp"></TextView>
 		<TextView android:layout_width="wrap_content" android:id="@+id/timeleftdisplay"
-			android:text="Time Left 0:00:00" android:textAppearance="?android:attr/textAppearanceLarge"
+			android:text="0:00:00" android:textAppearance="?android:attr/textAppearanceLarge"
 			android:textSize="55sp"
 			android:layout_height="wrap_content" android:layout_below="@+id/location"
 			android:layout_centerHorizontal="true" android:layout_marginTop="46dp"></TextView>

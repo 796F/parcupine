@@ -9,7 +9,6 @@ import com.objects.SavedInfo;
 import com.objects.ThrowDialog;
 import com.quietlycoding.android.picker.NumberPicker;
 import com.quietlycoding.android.picker.NumberPickerDialog;
-import com.quietlycoding.android.picker.Picker;
 
 import android.media.MediaPlayer;
 import android.os.Vibrator;
@@ -89,20 +88,27 @@ public class MainActivity extends ActivityGroup {
 	private TextView userDisplay;
 	private TextView locDisplay;
 	private TextView timeDisplay;
-	private Button setTimeButton;
-	private Button parqButton;
+	
+	private Button scanButton;
 	private Button unparqButton;
 	private Button refillButton;
+	private Button minTimeButton;
+	private Button maxTimeButton;
+	private Button cancelPark;
+	
 	private int remainSeconds;
+	private int parkMinutes;
+	private int minIncrease;
+	private int maxTime;
+	private int warnTime = 30;
 	private CountDownTimer timer;
 	public static ViewFlipper vf;
-	private int parkMinutes;
-	private int parkRate;
-	private int warnTime = 30;
 	private AlertDialog alert;
+	private static MediaPlayer mediaPlayer;
+	private static NumberPicker mNumberPicker;
+	
 	private static final int NUM_PICKER_ID = 2;
 	private static final int REFILL_PICKER_ID = 0;
-	private static MediaPlayer mediaPlayer;
 	public static final String SAVED_INFO = "ParqMeInfo";
 
 	/** Called when the activity is first created. */
@@ -135,36 +141,29 @@ public class MainActivity extends ActivityGroup {
 		//crash on return, cause is here?
 		if(SavedInfo.isParked(MainActivity.this)){
 			vf.showNext();
+			vf.showNext();
 		}
 		//load correct layout which has the time selector and camera view.  
-		priceDisplay = (TextView) findViewById(R.id.minutesprice);
+		priceDisplay = (TextView) findViewById(R.id.priceDisplay);
 		userDisplay = (TextView) findViewById(R.id.welcomeuser);
 		locDisplay = (TextView) findViewById(R.id.location);
 		timeDisplay = (TextView) findViewById(R.id.timeleftdisplay);
-		setTimeButton = (Button) findViewById(R.id.firstparq);
+		
+		
 
-		setTimeButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				showDialog(NUM_PICKER_ID);
-			}
-		});
-
-		parqButton = (Button) findViewById(R.id.secondparq);
-		parqButton.setOnClickListener(new View.OnClickListener() {
+		scanButton = (Button) findViewById(R.id.scanButton);
+		scanButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				if(!SavedInfo.isLoggedIn(MainActivity.this)){
 					ThrowDialog.show(MainActivity.this, ThrowDialog.MUST_LOGIN);
 
 				}else{
-					if(parkMinutes==0){
-						ThrowDialog.show(MainActivity.this, ThrowDialog.ZERO_MINUTES);
-					}else{
+				
 						Intent intent = new Intent("com.google.zxing.client.android.MYSCAN");
 						intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
 						startActivityForResult(intent, 0);
-					}
+					
 				}
 			}});
 
@@ -179,6 +178,7 @@ public class MainActivity extends ActivityGroup {
 				.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
 						unpark();
+						vf.showPrevious();
 						vf.showPrevious();
 						SharedPreferences.Editor editor = check.edit();
 						editor.putBoolean("parkState", false);
@@ -203,7 +203,28 @@ public class MainActivity extends ActivityGroup {
 			public void onClick(View v) {
 				showDialog(REFILL_PICKER_ID);
 			}});
+		
 
+		minTimeButton = (Button) findViewById(R.id.minparktime);
+		minTimeButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+
+			}});
+		maxTimeButton = (Button) findViewById(R.id.maxparktime);
+		maxTimeButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+
+			}});
+		cancelPark = (Button) findViewById(R.id.cancelpark);
+		cancelPark.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+
+			}});
+		
+		
 	}
 
 	private int unpark(){
@@ -232,7 +253,7 @@ public class MainActivity extends ActivityGroup {
 		forString.setSeconds(forString.getSeconds()+remainSeconds);
 		String endtime = Global.sdf.format(forString);
 		
-		if(ServerCalls.Park(contents, email, endtime)!=null){
+		if(ServerCalls.getSpotInfo(contents, email, endtime)!=null){
 			return 1;
 		}else{
 			ThrowDialog.show(MainActivity.this, ThrowDialog.UNPARK_ERROR);
@@ -307,37 +328,39 @@ public class MainActivity extends ActivityGroup {
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		if (requestCode == 0) {
 			if (resultCode == RESULT_OK) { 
-				remainSeconds=parkMinutes*60;
-				String contents = intent.getStringExtra("SCAN_RESULT");
-				//String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
-
-				SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
-				String email = check.getString("email", "bademail");
-				SharedPreferences.Editor editor = check.edit();
-				editor.putString("code", contents);
-
-				Date forString = new Date();
-				forString.setSeconds(forString.getSeconds()+remainSeconds);
-				String endtime = Global.sdf.format(forString);
-
-				ParkObject myPark = ServerCalls.Park(contents, email, endtime);
-				if(myPark!=null){
-					parkRate=myPark.getRate();
-					timer = initiateTimer(remainSeconds, vf);
-					timer.start();
-					vf.showNext();
-					startService(new Intent(MainActivity.this, Background.class).putExtra("time", remainSeconds));
-					/*parkState changes how app resumes*/
-					editor.putBoolean("parkState", true);
-					editor.putFloat("lat", myPark.getLat());
-					editor.putFloat("lon", myPark.getLon());
-					userDisplay.setText("Welcome " + check.getString("fname", "")); 
-					locDisplay.setText("You are parked at\n" + myPark.getLocation()+"\nAt spot # " + myPark.getSpotNum());
-				}else{
-					ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
-				}
-
-				editor.commit();
+				vf.showNext();
+				
+//				remainSeconds=parkMinutes*60;
+//				String contents = intent.getStringExtra("SCAN_RESULT");
+//				//String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
+//
+//				SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
+//				String email = check.getString("email", "bademail");
+//				SharedPreferences.Editor editor = check.edit();
+//				editor.putString("code", contents);
+//
+//				Date forString = new Date();
+//				forString.setSeconds(forString.getSeconds()+remainSeconds);
+//				String endtime = Global.sdf.format(forString);
+//
+//				ParkObject myPark = ServerCalls.getSpotInfo(contents, email, endtime);
+//				if(myPark!=null){
+//					parkRate=myPark.getRate();
+//					timer = initiateTimer(remainSeconds, vf);
+//					timer.start();
+//					vf.showNext();
+//					startService(new Intent(MainActivity.this, Background.class).putExtra("time", remainSeconds));
+//					/*parkState changes how app resumes*/
+//					editor.putBoolean("parkState", true);
+//					editor.putFloat("lat", myPark.getLat());
+//					editor.putFloat("lon", myPark.getLon());
+//					userDisplay.setText("Welcome " + check.getString("fname", "")); 
+//					locDisplay.setText("You are parked at\n" + myPark.getLocation()+"\nAt spot # " + myPark.getSpotNum());
+//				}else{
+//					ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
+//				}
+//
+//				editor.commit();
 
 
 			} else if (resultCode == RESULT_CANCELED) {

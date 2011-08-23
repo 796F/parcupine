@@ -8,7 +8,7 @@ public class ParkObject {
 	private float lon;
 	private String location;
 	private int spotNum;
-	private int rate;
+	private int minIncrement;
 	private int maxTime;
 	
 	public ParkObject(){
@@ -26,22 +26,16 @@ public class ParkObject {
 		this.location=fields.get(0);
 		this.lat=Float.parseFloat(fields.get(1));
 		this.lon=Float.parseFloat(fields.get(2));
-		//ind 3 is rate
-		//ind 4 is max
-		//ind 5 is spot
-//		this.spotNum=Integer.parseInt(fields.get(3));
-//		this.rate=Integer.parseInt(fields.get(4));
-//		this.maxTime=Integer.parseInt(fields.get(5));
-		this.spotNum=Integer.parseInt(fields.get(5));
-		this.rate=Integer.parseInt(fields.get(3));
+		this.minIncrement=Integer.parseInt(fields.get(3));
 		this.maxTime=Integer.parseInt(fields.get(4));
+		this.spotNum=Integer.parseInt(fields.get(5));
 	}
 	public int getRate() {
-		return rate;
+		return minIncrement;
 	}
 
 	public void setRate(int rate) {
-		this.rate = rate;
+		this.minIncrement = rate;
 	}
 
 	public int getMaxTime() {
