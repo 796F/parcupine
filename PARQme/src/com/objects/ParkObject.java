@@ -10,6 +10,7 @@ public class ParkObject {
 	private int spotNum;
 	private int minIncrement;
 	private int maxTime;
+	private int unitPrice;
 	
 	public ParkObject(){
 		
@@ -28,7 +29,8 @@ public class ParkObject {
 		this.lon=Float.parseFloat(fields.get(2));
 		this.minIncrement=Integer.parseInt(fields.get(3));
 		this.maxTime=Integer.parseInt(fields.get(4));
-		this.spotNum=Integer.parseInt(fields.get(5));
+		this.unitPrice=Integer.parseInt(fields.get(5));
+		this.spotNum=Integer.parseInt(fields.get(6));
 	}
 	public int getRate() {
 		return minIncrement;
@@ -73,5 +75,21 @@ public class ParkObject {
 	}
 	public void setSpotNum(int spotNum) {
 		this.spotNum = spotNum;
+	}
+
+	public int getMinIncrement() {
+		return minIncrement;
+	}
+
+	public void setMinIncrement(int minIncrement) {
+		this.minIncrement = minIncrement;
+	}
+
+	public int getUnitPrice() {
+		return unitPrice;
+	}
+
+	public void setUnitPrice(int unitPrice) {
+		this.unitPrice = unitPrice;
 	}
 }
