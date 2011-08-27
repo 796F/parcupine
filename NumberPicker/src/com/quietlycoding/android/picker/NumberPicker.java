@@ -339,7 +339,13 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
 
     private NumberPickerButton mIncrementButton;
     private NumberPickerButton mDecrementButton;
-
+    
+    public NumberPickerButton getIncButton(){
+    	return mIncrementButton;
+    }
+    public NumberPickerButton getDecButton(){
+    	return mDecrementButton;
+    }
     private class NumberPickerInputFilter implements InputFilter {
         @Override
 		public CharSequence filter(CharSequence source, int start, int end,

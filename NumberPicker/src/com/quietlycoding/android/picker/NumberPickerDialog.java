@@ -26,7 +26,7 @@ public class NumberPickerDialog extends AlertDialog implements OnClickListener {
     private OnNumberSetListener mListener;
     private NumberPicker mNumberPicker;
     private OnCancelListener mCancel;
-    
+    private int maxRefill=10000000;
     private int mInitialValue;
     
     public NumberPickerDialog(Context context, int theme, int initialValue) {
@@ -44,7 +44,22 @@ public class NumberPickerDialog extends AlertDialog implements OnClickListener {
         mNumberPicker.setCurrent(mInitialValue);
         
     }
-
+    
+    public void setRange(int min, int max){
+    	mNumberPicker.setRange(min, max);
+    }
+    public void setCurrent(int current){
+    	mNumberPicker.setCurrent(current);
+    }
+    public void setMaxRefill(int inc){
+    	maxRefill = inc;
+    }
+    public int getMaxRefill(){
+    	return maxRefill;
+    }
+    public void setMinInc(int inc){
+    	mNumberPicker.setMinInc(inc);
+    }
     public void setOnNumberSetListener(OnNumberSetListener listener) {
         mListener = listener;
     }
