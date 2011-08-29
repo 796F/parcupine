@@ -16,6 +16,10 @@
 
 package com.quietlycoding.android.picker;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import android.content.Context;
 import android.os.Handler;
 import android.text.InputFilter;
@@ -252,7 +256,16 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
             mListener.onChanged(this, mPrevious, mCurrent);
         }
     }
-
+    public static String formatMe(int minutes){
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+		try {
+			Date x = sdf.parse("00:00");
+			x.setMinutes(minutes);
+			return (sdf.format(x));
+		} catch (ParseException e) {
+			return "0x0";
+		}
+	}
     protected void updateView() {
 
         /* If we don't have displayed values then use the
@@ -260,6 +273,7 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
          * displayed values for the current number.
          */
         if (mDisplayedValues == null) {
+        	//mText.setText("All Day");
             mText.setText(formatNumber(mCurrent));
         } else {
             mText.setText(mDisplayedValues[mCurrent - mStart]);
@@ -310,18 +324,18 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
     @Override
 	public boolean onLongClick(View v) {
 
-        /* The text view may still have focus so clear it's focus which will
-         * trigger the on focus changed and any typed values to be pulled.
-         */
-        mText.clearFocus();
-
-        if (R.id.increment == v.getId()) {
-            mIncrement = true;
-            mHandler.post(mRunnable);
-        } else if (R.id.decrement == v.getId()) {
-            mDecrement = true;
-            mHandler.post(mRunnable);
-        }
+//        /* The text view may still have focus so clear it's focus which will
+//         * trigger the on focus changed and any typed values to be pulled.
+//         */
+//        mText.clearFocus();
+//
+//        if (R.id.increment == v.getId()) {
+//            mIncrement = true;
+//            mHandler.post(mRunnable);
+//        } else if (R.id.decrement == v.getId()) {
+//            mDecrement = true;
+//            mHandler.post(mRunnable);
+//        }
         return true;
     }
 
