@@ -9,11 +9,15 @@ package com.test;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+
 import java.util.Date;
+
 import com.objects.Global;
 import com.objects.ParkObject;
 import com.objects.SavedInfo;
+import com.objects.ServerCalls;
 import com.objects.ThrowDialog;
+
 import com.quietlycoding.android.picker.NumberPicker;
 import com.quietlycoding.android.picker.NumberPickerButton;
 import com.quietlycoding.android.picker.NumberPickerDialog;
@@ -23,7 +27,6 @@ import android.os.Vibrator;
 
 import android.app.ActivityGroup;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -37,10 +40,12 @@ import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 /**
+ * parkinfo should only hold information about sparking spots.  
+ * user table should hold if and where they're parked.  
  * change how server handles 2 people parking etc (details in email to sunny)
+ * parking history, don't retrieve from server, only send for web display...[start time, end time, price, where, email]
  * INSIDE NUMBER PICKER DISPLAY should show hrs:minutes ???
  * fix map???
- * maximum time one can park at a spot.  
  * allowing multiple people to park in one spot, etc fix.  
  * 
  * compatibility!!!! works on emulators but not on phone.
@@ -101,32 +106,32 @@ public class MainActivity extends ActivityGroup {
 	private NumberPickerButton pickerDecButton;
 
 	/*ints used by calculations*/
-	private int remainSeconds;
-	private int parkMinutes;
-	private int minimalIncrement;
-	private int maxTime;
-	private int warnTime = 30;
-	private int totalTimeParked = 0;
-	//TODO:  initialize totaltimeparked to 0, increment on park and refills, check for <= on all refills
-
+	private int warnTime = 30; //in seconds
+	private int remainSeconds; //in seconds
+	private int parkMinutes;//in minutes
+	private int minimalIncrement;//in minutes
+	private int maxTime; //in minutes
+	private int totalTimeParked = 0; //in minutes
+	
 	/*various Objects used declared here*/
 	private static ParkObject mySpot;
 	private CountDownTimer timer;
 	public static ViewFlipper vf;
 	private AlertDialog alert;
 	private static MediaPlayer mediaPlayer;
-	
+
 	private NumberPicker parkTimePicker;
 	private Date globalEndTime;
 
 	/*final variables*/
-	private static final int REFILL_PICKER_ID = 0;
 	public static final String SAVED_INFO = "ParqMeInfo";
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
+		//database.execSQL("INSERT INTO parkhistory VALUES('test','test','test','test','test')");
+
 		//use flipper view
 		setContentView(R.layout.flipper);
 
@@ -171,8 +176,18 @@ public class MainActivity extends ActivityGroup {
 				int parkResult = park();
 				//if that response code is good,
 				if (parkResult==1){
+					totalTimeParked+=parkMinutes;
+					if(totalTimeParked == maxTime){
+						ThrowDialog.show(MainActivity.this, ThrowDialog.MAX_TIME);
+					}
 					vf.showNext();
 					//create and start countdown display
+					
+					//TODO: DELETE ME FOR TESTING
+					remainSeconds = 60;
+					parkMinutes = 1;
+					//END TESTING CODE
+					
 					timer = initiateTimer(remainSeconds, vf);
 					timer.start();
 					//start timer background service
@@ -206,6 +221,7 @@ public class MainActivity extends ActivityGroup {
 						//if they selected yes, call unpark()
 						int unparkResult= unpark();
 						if(unparkResult==1){
+							totalTimeParked=0;
 							//change view back to initial one
 							vf.showPrevious();
 							vf.showPrevious();
@@ -230,7 +246,15 @@ public class MainActivity extends ActivityGroup {
 		refillButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				showDialog(REFILL_PICKER_ID);
+				if(totalTimeParked<maxTime){
+					NumberPickerDialog y = new NumberPickerDialog(MainActivity.this, 0,0);
+					y.setRange(mySpot.getMinIncrement(), mySpot.getMaxTime()-totalTimeParked);
+					y.setMinInc(mySpot.getMinIncrement());
+					y.setOnNumberSetListener(mRefillListener);
+					y.show();
+				}else{
+					ThrowDialog.show(MainActivity.this, ThrowDialog.MAX_TIME);
+				}
 			}});
 
 		minTimeButton = (Button) findViewById(R.id.minparktime);
@@ -298,7 +322,10 @@ public class MainActivity extends ActivityGroup {
 		.setCancelable(false)
 		.setPositiveButton("Refill", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
-				refillMe(1);
+				if(totalTimeParked<maxTime)
+					refillMe(1);
+				else
+					ThrowDialog.show(MainActivity.this, ThrowDialog.MAX_TIME);
 				//mediaPlayer.stop();
 			}
 		})
@@ -355,23 +382,35 @@ public class MainActivity extends ActivityGroup {
 
 
 	private void refillMe(int refillMinutes){
-		//remainSeconds+=refillMinutes*60;
-		remainSeconds+=60;
-		//stop current timer, start new timer with current time + selectedNumber.
-		try{
-			timer.cancel();
-			timer = initiateTimer(remainSeconds, vf);
-			stopService(new Intent(MainActivity.this, Background.class));
-			int testing = unpark();
-			int testing2 = park();
-			timer.start();
-			startService(new Intent(MainActivity.this, Background.class).putExtra("time", remainSeconds));
-			ThrowDialog.show(MainActivity.this, ThrowDialog.REFILL_DONE);
-
-		}catch(Exception e){
-			ThrowDialog.show(MainActivity.this, ThrowDialog.UNPARK_ERROR);
+		//if we haven't gone past the total time we're allowed to park
+		if(totalTimeParked+refillMinutes<=maxTime){
+			//update the total time parked and remaining time.
+			
+			//totalTimeParked+=refillMinutes;
+			//remainSeconds+=refillMinutes*60;
+			
+			//TODO:  DELETE ME TESTING CODE
+			remainSeconds+=60;
+			//END TESTING CODE
+			
+			//stop current timer, start new timer with current time + selectedNumber.
+			try{
+				timer.cancel();
+				timer = initiateTimer(remainSeconds, vf);
+				stopService(new Intent(MainActivity.this, Background.class));
+				int testing = unpark();
+				int testing2 = park();
+				timer.start();
+				startService(new Intent(MainActivity.this, Background.class).putExtra("time", remainSeconds));
+				if(totalTimeParked==maxTime){
+					ThrowDialog.show(MainActivity.this, ThrowDialog.MAX_TIME);
+				}else{
+					ThrowDialog.show(MainActivity.this, ThrowDialog.REFILL_DONE);
+				}
+			}catch(Exception e){
+				ThrowDialog.show(MainActivity.this, ThrowDialog.UNPARK_ERROR);
+			}
 		}
-
 	}
 
 	private NumberPickerDialog.OnNumberSetListener mRefillListener =
@@ -382,19 +421,7 @@ public class MainActivity extends ActivityGroup {
 				refillMe(selectedNumber);
 		}
 	};
-
-	@Override
-	protected Dialog onCreateDialog(int id) {
-		switch (id) {
-		case REFILL_PICKER_ID:
-			NumberPickerDialog y = new NumberPickerDialog(this, 0,0);
-			y.setRange(mySpot.getMinIncrement(), mySpot.getMaxTime());
-			y.setMinInc(mySpot.getMinIncrement());
-			y.setOnNumberSetListener(mRefillListener);
-			return y;
-		}
-		return null;
-	}
+	
 
 	//once we scan the qr code
 	@Override
@@ -414,8 +441,10 @@ public class MainActivity extends ActivityGroup {
 					//initialize all variables to match spot
 					minimalIncrement=mySpot.getMinIncrement();
 					maxTime = mySpot.getMaxTime();
+					
 					parkMinutes=minimalIncrement;
 					remainSeconds=parkMinutes*60;
+					
 					//store some used info
 					SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 					SharedPreferences.Editor editor = check.edit();
@@ -423,6 +452,7 @@ public class MainActivity extends ActivityGroup {
 					editor.putFloat("lat", mySpot.getLat());
 					editor.putFloat("lon", mySpot.getLon());
 					editor.commit();
+					updateDisplay();
 				}else{
 					ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
 				}
@@ -433,35 +463,44 @@ public class MainActivity extends ActivityGroup {
 		}
 	}
 
-
+	/* THIS TIMER is only used for in-app visuals.  The actual server updating and such are
+	 * done via user button clicks, and the background service we run.  */
 	public CountDownTimer initiateTimer(int countDownSeconds, final ViewFlipper myvf){
-
-
+		//creates the countdown timer
 		return new CountDownTimer(countDownSeconds*1000, 1000){
-
+			//on each 1 second tick, 
+			@Override
+			public void onTick(long arg0) {
+				
+				int seconds = (int)arg0/1000;
+				//if the time is what our warning-time is set to
+				if(seconds==warnTime&&SavedInfo.autoRefill(MainActivity.this)==false){
+					//alert the user
+					alert.show();
+				}
+				//update remain seconds and timer.
+				remainSeconds = seconds;
+				timeDisplay.setText(formatMe(seconds));
+			}
+			//on last tick,
 			@Override
 			public void onFinish() {
 				timeDisplay.setText("0:00:00");
 				SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
+				//if autorefill is on, refill the user minimalIncrement
 				if(check.getBoolean("autoRefill", false)){
 					alert.cancel();
 					refillMe(1);
 				}else{
+					//else we cancel the running out of tie dialog
 					alert.cancel();
+					//and restore view
 					myvf.showPrevious();
 					myvf.showPrevious();
 					ThrowDialog.show(MainActivity.this, ThrowDialog.TIME_OUT);
 				}
 			}
-			@Override
-			public void onTick(long arg0) {
-				int seconds = (int)arg0/1000;
-				if(seconds==warnTime){
-					alert.show();
-				}
-				remainSeconds = seconds;
-				timeDisplay.setText(formatMe(seconds));
-			}
+
 
 		};
 
@@ -475,7 +514,7 @@ public class MainActivity extends ActivityGroup {
 				((Vibrator)activity.getSystemService(VIBRATOR_SERVICE)).vibrate(1000);
 			}
 			if(check.getBoolean("ringEnable", true)){
-				mediaPlayer.start(); // no need to call prepare(); create() does that for you
+				mediaPlayer.start();
 			}
 		}
 	}
@@ -490,7 +529,7 @@ public class MainActivity extends ActivityGroup {
 		startActivity(setIntent);
 		return;
 	}
-	
+
 	//converts cents to "$ x.xx"
 	public String moneyConverter (int cents){
 		int m = cents;
@@ -509,7 +548,7 @@ public class MainActivity extends ActivityGroup {
 			return "$ 0." + cents;
 		}
 	}
-	//converts seconds to "hh:mm:ss"
+	//converts seconds to "H:mm:ss"
 	public static String formatMe(int seconds){
 		SimpleDateFormat sdf = new SimpleDateFormat("H:mm:ss");
 		try {
@@ -528,5 +567,5 @@ public class MainActivity extends ActivityGroup {
 	}
 	private void updateDisplay() {
 		priceDisplay.setText(moneyConverter(getCostInCents(parkMinutes)));
-	}//parkMinutes +" Mins"+" : " +
+	}
 }

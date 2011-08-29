@@ -16,6 +16,8 @@ public class ThrowDialog {
 	public final static int PARK_WARNING=7;
 	public final static int BAD_QRCODE=8;
 	public final static int REFILL_DONE=9;
+	public final static int MAX_TIME=10;
+	public final static int NO_REFILL=11;
 	public static void show(Context c, int dialog){
 		AlertDialog.Builder alert = new AlertDialog.Builder(c);
 		AlertDialog a;
@@ -122,6 +124,29 @@ public class ThrowDialog {
 			
 		case REFILL_DONE:
 			alert.setMessage("Refill Complete.");
+			alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.cancel();
+				}
+			});
+			a = alert.create();
+			a.show();
+			break;
+		case MAX_TIME:
+			alert.setMessage("You have reached the Max\nAllowed Park Time");
+			alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.cancel();
+				}
+			});
+			a = alert.create();
+			a.show();
+			break;
+		//unused, MAX_TIME used instead.
+		case NO_REFILL:
+			alert.setMessage("You have reached the Max\nAllowed Park Time");
 			alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {

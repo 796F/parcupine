@@ -12,11 +12,6 @@
 		android:layout_above="@+id/logoutbutton" android:layout_alignLeft="@+id/logoutbutton"
 		android:layout_alignRight="@+id/logoutbutton"></Button>
 	<TextView android:textAppearance="?android:attr/textAppearanceLarge"
-		android:layout_width="wrap_content" android:text="Account Information"
-		android:layout_height="wrap_content" android:id="@+id/accinfolabel"
-		android:layout_alignParentTop="true" android:layout_centerHorizontal="true"
-		android:layout_marginTop="97dp"></TextView>
-	<TextView android:textAppearance="?android:attr/textAppearanceLarge"
 		android:layout_width="wrap_content" android:text="Email: "
 		android:layout_height="wrap_content" android:id="@+id/accemailfield"
 		android:layout_below="@+id/accinfolabel"
@@ -31,5 +26,16 @@
 		android:layout_height="wrap_content" android:id="@+id/creditcardfield"
 		android:layout_below="@+id/acccityfield"
 		android:layout_alignParentLeft="true"></TextView>
+	
+	<ListView android:id="@+id/listView1" android:layout_width="match_parent"
+		android:layout_height="match_parent" android:layout_below="@+id/creditcardfield"
+		android:layout_alignParentLeft="true" android:layout_above="@+id/setting"
+		android:cacheColorHint="#00000000">
+		</ListView>
+	<TextView android:textAppearance="?android:attr/textAppearanceLarge"
+		android:text="Account Information" android:id="@+id/accinfolabel"
+		android:layout_width="wrap_content" android:layout_height="wrap_content"
+		android:layout_below="@+id/textView7" android:layout_centerHorizontal="true"
+		android:layout_marginTop="24dp"></TextView>
 
 </RelativeLayout>

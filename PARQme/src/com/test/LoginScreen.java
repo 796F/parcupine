@@ -2,6 +2,7 @@ package com.test;
 
 
 import com.objects.SavedInfo;
+import com.objects.ServerCalls;
 import com.objects.ThrowDialog;
 import com.objects.UserObject;
 
@@ -11,12 +12,17 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 public class LoginScreen extends Activity {
@@ -43,6 +49,24 @@ public class LoginScreen extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.reg_flip);
+		
+		ListView lv = (ListView) findViewById(R.id.listView1);
+		 final String[] COUNTRIES = new String[] {
+			    "8/25, 5:15 pm - 5:45 pm", "8/26, 2:30 pm - 3:00 pm","8/27, 9:12 am - 12:12 pm"
+			  };
+		lv.setAdapter(new ArrayAdapter<String>(this, R.layout.list_item, COUNTRIES));
+
+		lv.setVerticalFadingEdgeEnabled(false);
+		lv.setTextFilterEnabled(true);
+		lv.setOnItemClickListener(new OnItemClickListener() {
+		    public void onItemClick(AdapterView<?> parent, View view,
+		        int position, long id) {
+		      // When clicked, show a toast with the TextView text
+		      Toast.makeText(getApplicationContext(), ((TextView) view).getText(),
+		          Toast.LENGTH_SHORT).show();
+		    }
+		  });
+		
 		LoginVf = (ViewFlipper) findViewById(R.id.reg_flip);
 		final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 		rememberBox = (CheckBox) findViewById(R.id.rememberbox);

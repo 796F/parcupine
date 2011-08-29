@@ -1,7 +1,5 @@
-package com.test;
+package com.objects;
 
-import com.objects.ParkObject;
-import com.objects.UserObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
