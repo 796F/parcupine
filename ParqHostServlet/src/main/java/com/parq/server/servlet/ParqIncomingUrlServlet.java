@@ -1,6 +1,7 @@
 package com.parq.server.servlet;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -18,7 +19,6 @@ public class ParqIncomingUrlServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		super.doGet(req, resp);
 
 		parseRequst(req, resp);
 	}
@@ -29,7 +29,8 @@ public class ParqIncomingUrlServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		super.doPost(req, resp);
+
+		parseRequst(req, resp);
 	}
 
 	/**
@@ -42,10 +43,27 @@ public class ParqIncomingUrlServlet extends HttpServlet {
 	 */
 	private void parseRequst(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
+
 		
 		String incomingUrl = req.getRequestURL().toString();
-
+		
+		// use string parsing to split apart the incoming url
+		String[] stringParts = incomingUrl.split("/");
+		
+		// check to make sure the incoming url is well formed
+		if (! stringParts[stringParts.length - 3].equalsIgnoreCase("p")) {
+			throw new IllegalStateException("Incoming URL is malformed");
+		}
+		
+		String clientId = stringParts[stringParts.length - 2];
+		String parkingSpaceId = stringParts[stringParts.length - 1];
+		
+		
+	    PrintWriter out = resp.getWriter();
+	    out.println("Incoming URL: " + incomingUrl );
+	    out.println("");
+	    out.println("Client: " + clientId);
+	    out.println("Parking Space: " + parkingSpaceId);
 	}
 
 }
