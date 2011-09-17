@@ -1,20 +1,7 @@
 package com.test;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Stack;
-
-import com.objects.SavedInfo;
-import com.quietlycoding.android.picker.NumberPicker;
-
 import android.app.Activity;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;

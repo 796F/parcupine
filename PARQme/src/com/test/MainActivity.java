@@ -37,37 +37,45 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 /**
- * parkinfo should only hold information about sparking spots.  
- * user table should hold if and where they're parked.  
- * change how server handles 2 people parking etc (details in email to sunny)
- * parking history, don't retrieve from server, only send for web display...[start time, end time, price, where, email]
- * INSIDE NUMBER PICKER DISPLAY should show hrs:minutes ???
- * fix map???
- * allowing multiple people to park in one spot, etc fix.  
+ * by saving all info, you can resume properly.  on create, use string starttime to find out how much time is left, calculate it
+ * and then use it to initiate timer.  service should still be running, to resume app and auto-unpark and stuff.  have service conduct autorefill,
+ * not the timer.  
+ * 
+ * edittext with tags, layout similar to citrix meeting app.  you can edit the layout of the actual edittext widget.	
+ * 
+ * save all info to be displayed, such as email etc, and load to prevent app from looking bad if resume doesn't work.  true "re-load"
+ * refill should edit usertable and history table, and then edit app.  unparking then parking is lazy programming.  
+ * edit add_history.php to check if users are currently parked, if true then update else insert.
+ * sqlite db for parking history
+ * internet detection
+ * different user  
+ * pop-up tutorial
+ * write find car w/ pop-up for location, find parking (nearby? in general? how to do?)
+ * create managerial app
+ * time zone? how is it delt with on phone?  ON PARK, SAVE PRIVATE STARTTIME DATE OBJ.
  * 
  * compatibility!!!! works on emulators but not on phone.
  * app doesn't work on 2.3, the app always quits and services dont stop.
  * OR it isn't quitting, but the resume is just making a new instance of same app each time.  possible?
  * 
- * find parking nearby, find parking general, find my car(popup message w/ info)
  * expense handling, create database of company charge tokens, for specific user email.  
  *    if the user's expense handlingn is flagged, check db for how much company has paid.  
  *    
  * refill complete dialog cancels after a while
- * 
- * IN APP tutorial, speech bubbles pop up on actual buttons, walkthru.
  * settings should have option for warning time, save info on back, the time is read and passed when starting service
  * 
  * on park, grab lat/lon and compare with what we get from server for spot, combine and store for later.
  * park only if detect internet  on the parq button, check if internet is active.  
  * 
- * DO NOT RELY ON GOOD CONNECTION.  model should be - request change, send notice okay, make change on app, confirm change on server.
+ * DO NOT RELY ON GOOD CONNECTION.  model should be - ping server, respond okay, make change on app, confirm change on server.
  * also must consider broken connections, so app must re-send refill requests that did not go through
  * 
- * move around, and make bigger, information/money display  
+ * perfect information display (sizing, borders, etc)
+ * INSIDE NUMBER PICKER DISPLAY should show hrs:minutes ???
  * 
  * "Share Parq" option, pulls up qr code to scan.  
  * 
@@ -112,33 +120,33 @@ public class MainActivity extends ActivityGroup {
 	private int minimalIncrement;//in minutes
 	private int maxTime; //in minutes
 	private int totalTimeParked = 0; //in minutes
-	
+	private int parkCost =0;
+
 	/*various Objects used declared here*/
 	private static ParkObject mySpot;
 	private CountDownTimer timer;
 	public static ViewFlipper vf;
 	private AlertDialog alert;
 	private static MediaPlayer mediaPlayer;
-
 	private NumberPicker parkTimePicker;
 	private Date globalEndTime;
-
+	private boolean networkStatus = false;
+	
 	/*final variables*/
 	public static final String SAVED_INFO = "ParqMeInfo";
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		//database.execSQL("INSERT INTO parkhistory VALUES('test','test','test','test','test')");
-
+		
+		//check for internet on create, do it a lot later too.
 		//use flipper view
 		setContentView(R.layout.flipper);
 
 		//Create refill dialog which has special components
 		alert = makeRefillDialog();
 
-		//initialize displays and objects used
+		//hook elements
 		priceDisplay = (TextView) findViewById(R.id.priceDisplay);
 		userDisplay = (TextView) findViewById(R.id.welcomeuser);
 		locDisplay = (TextView) findViewById(R.id.location);
@@ -162,6 +170,7 @@ public class MainActivity extends ActivityGroup {
 					//if not logged in, alert user via dialog
 					ThrowDialog.show(MainActivity.this, ThrowDialog.MUST_LOGIN);
 				}else{
+				
 					//else start scan intent
 					Intent intent = new Intent("com.google.zxing.client.android.MYSCAN");
 					intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
@@ -177,17 +186,18 @@ public class MainActivity extends ActivityGroup {
 				//if that response code is good,
 				if (parkResult==1){
 					totalTimeParked+=parkMinutes;
+					parkCost = getCostInCents(parkMinutes);
 					if(totalTimeParked == maxTime){
 						ThrowDialog.show(MainActivity.this, ThrowDialog.MAX_TIME);
 					}
 					vf.showNext();
-					//create and start countdown display
 					
 					//TODO: DELETE ME FOR TESTING
-					remainSeconds = 60;
-					parkMinutes = 1;
+					//remainSeconds = 60;
+					//parkMinutes = 1;
 					//END TESTING CODE
-					
+
+					//create and start countdown display
 					timer = initiateTimer(remainSeconds, vf);
 					timer.start();
 					//start timer background service
@@ -202,6 +212,7 @@ public class MainActivity extends ActivityGroup {
 					//display where user is parked and who they are
 					userDisplay.setText("Welcome " + check.getString("fname", "")); 
 					locDisplay.setText("You are parked at\n" + mySpot.getLocation()+"\nAt spot # " + mySpot.getSpotNum());
+					
 
 				}else{
 					ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
@@ -214,14 +225,22 @@ public class MainActivity extends ActivityGroup {
 			@Override
 			public void onClick(View v) {
 				AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-				builder.setMessage("Are you sure you want to unparq?")
+				builder.setMessage("Are you sure you want to unpark?")
 				.setCancelable(false)
 				.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+					@Override
 					public void onClick(DialogInterface dialog, int id) {
 						//if they selected yes, call unpark()
 						int unparkResult= unpark();
 						if(unparkResult==1){
+							//reset ints
+							parkMinutes=0;
 							totalTimeParked=0;
+							remainSeconds=0;
+							minimalIncrement=0;
+							maxTime=0;
+							parkCost=0;
+							
 							//change view back to initial one
 							vf.showPrevious();
 							vf.showPrevious();
@@ -229,10 +248,13 @@ public class MainActivity extends ActivityGroup {
 							SharedPreferences.Editor editor = check.edit();
 							editor.putBoolean("parkState", false);
 							editor.commit();
+						}else{
+							Toast.makeText(MainActivity.this, unparkResult, Toast.LENGTH_LONG);
 						}
 					}
 				})
 				.setNegativeButton("No", new DialogInterface.OnClickListener() {
+					@Override
 					public void onClick(DialogInterface dialog, int id) {
 						dialog.cancel();
 					}
@@ -321,15 +343,17 @@ public class MainActivity extends ActivityGroup {
 		builder.setMessage("You are almost out of time!")
 		.setCancelable(false)
 		.setPositiveButton("Refill", new DialogInterface.OnClickListener() {
+			@Override
 			public void onClick(DialogInterface dialog, int id) {
 				if(totalTimeParked<maxTime)
-					refillMe(1);
+					refillMe(minimalIncrement);
 				else
 					ThrowDialog.show(MainActivity.this, ThrowDialog.MAX_TIME);
 				//mediaPlayer.stop();
 			}
 		})
 		.setNegativeButton("Ignore", new DialogInterface.OnClickListener() {
+			@Override
 			public void onClick(DialogInterface dialog, int id) {
 				dialog.cancel();
 				//mediaPlayer.stop();
@@ -338,12 +362,17 @@ public class MainActivity extends ActivityGroup {
 		return builder.create();
 	}
 
+	/**
+	 * unpark and park are methods that handle ending/initializing
+	 * the background service, as well as sending queries to the server. 
+	 * So basically, changes that happen behind the app.*/
 	private int unpark(){
 		//grab the qr code and user email from saved info
 		SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 		String qrcode = check.getString("code", "badcode");
 		String email = check.getString("email", "bademail");
 		//use them to unpark the user serverside
+		
 		if (ServerCalls.unPark(qrcode, email)==1){
 			try{
 				//stop the countdown timer and service
@@ -367,10 +396,15 @@ public class MainActivity extends ActivityGroup {
 		String email = check.getString("email", "bademail");
 		//calculate when parking ends
 		globalEndTime = new Date();
+		String starttime = Global.sdf.format(globalEndTime);
+		String parkDate = Global.sdfDate.format(globalEndTime);		
 		globalEndTime.setSeconds(globalEndTime.getSeconds()+remainSeconds);
 		String endtime = Global.sdf.format(globalEndTime);
 
 		if(ServerCalls.Park(contents, email, endtime)==1){
+			//Toast.makeText(MainActivity.this, ""+ServerCalls.addHistory(parkDate, starttime, endtime, contents, email, parkCost), Toast.LENGTH_SHORT).show();
+			
+			ServerCalls.addHistory(parkDate, starttime, endtime, contents, email, parkCost);
 			//return a happy response
 			return 1;
 		}else{
@@ -385,12 +419,14 @@ public class MainActivity extends ActivityGroup {
 		//if we haven't gone past the total time we're allowed to park
 		if(totalTimeParked+refillMinutes<=maxTime){
 			//update the total time parked and remaining time.
-			
-			//totalTimeParked+=refillMinutes;
-			//remainSeconds+=refillMinutes*60;
+			parkMinutes+=refillMinutes;
+			parkCost = getCostInCents(parkMinutes);
+			totalTimeParked+=refillMinutes;
+			remainSeconds+=refillMinutes*60;
+			updateDisplay();
 			
 			//TODO:  DELETE ME TESTING CODE
-			remainSeconds+=60;
+			//remainSeconds+=60;
 			//END TESTING CODE
 			
 			//stop current timer, start new timer with current time + selectedNumber.
@@ -438,6 +474,7 @@ public class MainActivity extends ActivityGroup {
 					//prepare time picker for this spot
 					parkTimePicker.setRange(mySpot.getMinIncrement(), mySpot.getMaxTime());
 					parkTimePicker.setMinInc(mySpot.getMinIncrement());
+					
 					//initialize all variables to match spot
 					minimalIncrement=mySpot.getMinIncrement();
 					maxTime = mySpot.getMaxTime();
@@ -459,6 +496,34 @@ public class MainActivity extends ActivityGroup {
 
 			} else if (resultCode == RESULT_CANCELED) {
 				//do nothing if the user doesn't scan and just cancels.
+				//call server using the qr code, to get a resulting spot's info.
+				String contents = "3";
+				//contents contains string "parqme.com/p/c36/p123456" or w/e...
+				mySpot = ServerCalls.getSpotInfo(contents);
+				//if we get the object successfully
+				if(mySpot!=null){
+					vf.showNext();
+					//prepare time picker for this spot
+					parkTimePicker.setRange(mySpot.getMinIncrement(), mySpot.getMaxTime());
+					parkTimePicker.setMinInc(mySpot.getMinIncrement());
+					//initialize all variables to match spot
+					minimalIncrement=mySpot.getMinIncrement();
+					maxTime = mySpot.getMaxTime();
+					
+					parkMinutes=minimalIncrement;
+					remainSeconds=parkMinutes*60;
+					
+					//store some used info
+					SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
+					SharedPreferences.Editor editor = check.edit();
+					editor.putString("code", contents);
+					editor.putFloat("lat", mySpot.getLat());
+					editor.putFloat("lon", mySpot.getLon());
+					editor.commit();
+					updateDisplay();
+				}else{
+					ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
+				}
 			} 
 		}
 	}
@@ -521,6 +586,7 @@ public class MainActivity extends ActivityGroup {
 
 	//override back press, keep app running in background
 	//TODO:  DANGEROUS METHOD -- you dont' know how this works, but just that it works...for 2.2
+	@Override
 	public void onBackPressed(){
 		Log.d("CDA", "OnBackPressed Called");
 		Intent setIntent = new Intent(Intent.ACTION_MAIN);
@@ -565,7 +631,7 @@ public class MainActivity extends ActivityGroup {
 		//number of minutes parked, divided by the minimum increment (aka unit of time), multiplied by price per unit in cents
 		return (mins/(mySpot.getMinIncrement())) * mySpot.getUnitPrice();
 	}
-	private void updateDisplay() {
+	private void updateDisplay() {	
 		priceDisplay.setText(moneyConverter(getCostInCents(parkMinutes)));
 	}
 }

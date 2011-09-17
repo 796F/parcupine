@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TabHost xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@android:id/tabhost" android:layout_width="fill_parent"
+	android:layout_gravity="bottom" android:layout_height="match_parent">
+	<LinearLayout android:orientation="vertical"
+		android:layout_width="fill_parent" android:layout_height="fill_parent"
+		android:padding="5dp">
+		<FrameLayout android:id="@android:id/tabcontent"
+			android:layout_height="wrap_content" android:layout_weight="1"
+			android:layout_width="fill_parent" android:padding="5dp"
+			android:background="@drawable/backgroundlayer">
+			<RelativeLayout android:layout_height="wrap_content"
+				android:layout_width="fill_parent" android:id="@+id/testrel">
+				<TextView android:id="@+id/topleft" android:layout_width="wrap_content"
+					android:textAppearance="?android:attr/textAppearanceLarge"
+					android:layout_height="wrap_content" android:text="PARQ"
+					android:layout_alignParentTop="true"
+					android:layout_alignParentLeft="true"></TextView>
+				<TextView android:id="@+id/topright" android:layout_width="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge" android:layout_height="wrap_content" android:text="Not Logged In" android:layout_alignParentTop="true" android:layout_alignParentRight="true"></TextView>
+
+			</RelativeLayout>
+
+		</FrameLayout>
+		<TabWidget android:id="@android:id/tabs"
+			android:layout_width="fill_parent" android:layout_height="wrap_content"
+			android:layout_weight="0" android:tabStripEnabled="false" />
+
+	</LinearLayout>
+</TabHost>

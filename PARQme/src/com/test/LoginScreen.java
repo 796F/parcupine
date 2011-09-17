@@ -59,7 +59,8 @@ public class LoginScreen extends Activity {
 		lv.setVerticalFadingEdgeEnabled(false);
 		lv.setTextFilterEnabled(true);
 		lv.setOnItemClickListener(new OnItemClickListener() {
-		    public void onItemClick(AdapterView<?> parent, View view,
+		    @Override
+			public void onItemClick(AdapterView<?> parent, View view,
 		        int position, long id) {
 		      // When clicked, show a toast with the TextView text
 		      Toast.makeText(getApplicationContext(), ((TextView) view).getText(),
@@ -213,6 +214,7 @@ public class LoginScreen extends Activity {
 			}
 		});
 	}
+	@Override
 	public void onBackPressed(){
 		Log.d("CDA", "OnBackPressed Called");
 		Intent setIntent = new Intent(Intent.ACTION_MAIN);

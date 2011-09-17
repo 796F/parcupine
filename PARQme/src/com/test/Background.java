@@ -7,8 +7,6 @@ import java.util.TimerTask;
 import com.objects.Global;
 import com.objects.SavedInfo;
 import com.objects.ServerCalls;
-import com.objects.ThrowDialog;
-
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;

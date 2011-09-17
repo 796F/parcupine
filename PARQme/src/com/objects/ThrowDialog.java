@@ -18,6 +18,7 @@ public class ThrowDialog {
 	public final static int REFILL_DONE=9;
 	public final static int MAX_TIME=10;
 	public final static int NO_REFILL=11;
+	public final static int NO_NET=12;
 	public static void show(Context c, int dialog){
 		AlertDialog.Builder alert = new AlertDialog.Builder(c);
 		AlertDialog a;
@@ -147,6 +148,17 @@ public class ThrowDialog {
 		//unused, MAX_TIME used instead.
 		case NO_REFILL:
 			alert.setMessage("You have reached the Max\nAllowed Park Time");
+			alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.cancel();
+				}
+			});
+			a = alert.create();
+			a.show();
+			break;
+		case NO_NET:
+			alert.setMessage("Could not connect to\nthe Internet");
 			alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {

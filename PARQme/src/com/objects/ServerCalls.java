@@ -115,4 +115,34 @@ public class ServerCalls {
 		}
 		return 0;
 	}
+	public static int addHistory(String date, String starttime, String endtime, String location, String email, int cost){
+		try {
+			String data = URLEncoder.encode("date", "UTF-8") + "=" + URLEncoder.encode(date, "UTF-8");
+			data+= "&"+URLEncoder.encode("location", "UTF-8") + "=" + URLEncoder.encode(location, "UTF-8");
+			data+= "&"+URLEncoder.encode("starttime", "UTF-8") + "=" + URLEncoder.encode(starttime, "UTF-8");
+			data+= "&"+URLEncoder.encode("endtime", "UTF-8") + "=" + URLEncoder.encode(endtime, "UTF-8");
+			data+= "&"+URLEncoder.encode("email", "UTF-8") + "=" + URLEncoder.encode(email, "UTF-8");
+			data+= "&"+URLEncoder.encode("cost", "UTF-8") + "=" + URLEncoder.encode(cost+"", "UTF-8");
+			// Send data
+			URL url = new URL("http://parqme.com/add_history.php");
+			URLConnection conn = url.openConnection();
+			
+			conn.setDoOutput(true);
+			OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+			wr.write(data);
+			wr.flush();
+			//write data
+			int bytesRead = 1;
+			byte[] buffer = new byte[1];
+			//prepare buffers
+			BufferedInputStream bufferedInput = new BufferedInputStream(conn.getInputStream());
+			bufferedInput.read(buffer);
+			//read into buffer
+			String x =(new String(buffer, 0,bytesRead));
+			return Integer.parseInt(x);
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		return -1;
+	}
 }

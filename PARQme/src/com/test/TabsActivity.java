@@ -19,7 +19,7 @@ public class TabsActivity extends TabActivity {
     	
     	
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        setContentView(R.layout.tabs);
         topright = (TextView) findViewById(R.id.topright);
         Resources res = getResources(); 
         TabHost tabHost = getTabHost(); 
@@ -44,7 +44,8 @@ public class TabsActivity extends TabActivity {
                       .setContent(intent);
         tabHost.addTab(spec);
         
-        intent = new Intent().setClass(this, HelpActivity.class);
+        //help tab sometimes used to debug.
+        intent = new Intent().setClass(this, DebugActivity.class);
         spec = tabHost.newTabSpec("test").setIndicator("Help",
                           res.getDrawable(R.drawable.ic_tab_help))
                       .setContent(intent);
