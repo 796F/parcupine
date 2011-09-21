@@ -145,4 +145,33 @@ public class ServerCalls {
 		}
 		return -1;
 	}
+	public static String test(String qrcode, String email, String endtime){
+		try {
+			String data = URLEncoder.encode("code", "UTF-8") + "=" + URLEncoder.encode(qrcode, "UTF-8");
+			data+= "&"+URLEncoder.encode("email", "UTF-8") + "=" + URLEncoder.encode(email, "UTF-8");
+			data+= "&"+URLEncoder.encode("endtime", "UTF-8") + "=" + URLEncoder.encode(endtime, "UTF-8");
+			// Send data
+			URL url = new URL("http://localhost:8080/UserBounce/UpdateDatabase");
+			URLConnection conn = url.openConnection();
+			
+			conn.setRequestProperty("fromApp", "yes");
+			
+			conn.setDoOutput(true);
+			OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+			wr.write(data);
+			wr.flush();
+			//write data
+			int bytesRead = 1024;
+			byte[] buffer = new byte[1];
+			//prepare buffers
+			BufferedInputStream bufferedInput = new BufferedInputStream(conn.getInputStream());
+			bufferedInput.read(buffer);
+			//read into buffer
+			String x =(new String(buffer, 0,bytesRead));
+			return x;
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		return "blah";
+	}
 }

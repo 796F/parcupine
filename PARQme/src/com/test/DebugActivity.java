@@ -2,6 +2,8 @@ package com.test;
 
 import java.util.List;
 
+import com.objects.ServerCalls;
+
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.location.Criteria;
@@ -52,9 +54,9 @@ public class DebugActivity extends Activity {
 			public void onClick(View arg0) {
 				Toast.makeText(DebugActivity.this, "HELLO WORLD", Toast.LENGTH_SHORT);
 				SharedPreferences check = getSharedPreferences("ParqMeInfo",0);
-				display.setText(""+check.getAll());
+				display.setText(ServerCalls.test("bha", "email", "endtime"));
 				//SavedInfo.reset(DebugActivity.this);
-				finish();
+				//finish();
 			}
 		});
 	    
