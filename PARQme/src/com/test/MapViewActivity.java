@@ -97,9 +97,10 @@ public class MapViewActivity extends MapActivity {
 		//get reference to your map's overlays
 		mapOverlays = mapView.getOverlays();
 		//find a drawable you want, can declare multiple drawables
+		
 		Drawable drawable = this.getResources().getDrawable(R.drawable.bluep);
 		//then create an itemized overlay using said drawable, can make more itemizzedoverlays.
-		itemizedoverlay = new MapOverlays(drawable,this);
+		itemizedoverlay = new MapOverlays(drawable,mapView);
 		GeoPoint point = new GeoPoint((int)(38.984924*1e6),(int)(-76.935486*1e6));
 		OverlayItem x = new OverlayItem(point, "Ritchie Parking Lot", "Spot: D6");
 		itemizedoverlay.addOverlay(x);
