@@ -3,9 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry kind="src" path="gen"/>
-	<classpathentry kind="lib" path="C:/Android/core.jar"/>
-	<classpathentry kind="src" path="MapViewBalloon_src"/>
-	<classpathentry kind="src" path="ZXing_src"/>
 	<classpathentry kind="src" path="NumberPicker_src"/>
+	<classpathentry kind="src" path="MapViewBalloon_src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
