@@ -9,36 +9,35 @@ package com.test;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-
 import java.util.Date;
-
-import com.objects.Global;
-import com.objects.ParkObject;
-import com.objects.SavedInfo;
-import com.objects.ServerCalls;
-import com.objects.ThrowDialog;
-
-import com.quietlycoding.android.picker.NumberPicker;
-import com.quietlycoding.android.picker.NumberPickerButton;
-import com.quietlycoding.android.picker.NumberPickerDialog;
-
-import android.media.MediaPlayer;
-import android.os.Vibrator;
 
 import android.app.ActivityGroup;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
+
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
+import com.objects.Global;
+import com.objects.ParkObject;
+import com.objects.SavedInfo;
+import com.objects.ServerCalls;
+import com.objects.ThrowDialog;
+import com.quietlycoding.android.picker.NumberPicker;
+import com.quietlycoding.android.picker.NumberPickerButton;
+import com.quietlycoding.android.picker.NumberPickerDialog;
 
 /**
  * by saving all info, you can resume properly.  on create, use string starttime to find out how much time is left, calculate it
@@ -172,9 +171,7 @@ public class MainActivity extends ActivityGroup {
 				}else{
 				
 					//else start scan intent
-					Intent intent = new Intent("com.google.zxing.client.android.MYSCAN");
-					intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
-					startActivityForResult(intent, 0);
+					IntentIntegrator.initiateScan(MainActivity.this);
 				}
 			}});
 		parkButton = (Button) findViewById(R.id.parkbutton);
@@ -462,10 +459,11 @@ public class MainActivity extends ActivityGroup {
 	//once we scan the qr code
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-		if (requestCode == 0) {
-			if (resultCode == RESULT_OK) { 
-				//call server using the qr code, to get a resulting spot's info.
-				String contents = intent.getStringExtra("SCAN_RESULT");
+		final IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+		if (scanResult != null) {
+			//call server using the qr code, to get a resulting spot's info.
+			final String contents = scanResult.getContents();
+			if (contents != null) {
 				//contents contains string "parqme.com/p/c36/p123456" or w/e...
 				mySpot = ServerCalls.getSpotInfo(contents);
 				//if we get the object successfully
@@ -493,38 +491,37 @@ public class MainActivity extends ActivityGroup {
 				}else{
 					ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
 				}
-
-			} else if (resultCode == RESULT_CANCELED) {
-				//do nothing if the user doesn't scan and just cancels.
-				//call server using the qr code, to get a resulting spot's info.
-				String contents = "3";
-				//contents contains string "parqme.com/p/c36/p123456" or w/e...
-				mySpot = ServerCalls.getSpotInfo(contents);
-				//if we get the object successfully
-				if(mySpot!=null){
-					vf.showNext();
-					//prepare time picker for this spot
-					parkTimePicker.setRange(mySpot.getMinIncrement(), mySpot.getMaxTime());
-					parkTimePicker.setMinInc(mySpot.getMinIncrement());
-					//initialize all variables to match spot
-					minimalIncrement=mySpot.getMinIncrement();
-					maxTime = mySpot.getMaxTime();
-					
-					parkMinutes=minimalIncrement;
-					remainSeconds=parkMinutes*60;
-					
-					//store some used info
-					SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
-					SharedPreferences.Editor editor = check.edit();
-					editor.putString("code", contents);
-					editor.putFloat("lat", mySpot.getLat());
-					editor.putFloat("lon", mySpot.getLon());
-					editor.commit();
-					updateDisplay();
-				}else{
-					ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
-				}
-			} 
+//			} else {
+//				//do nothing if the user doesn't scan and just cancels.
+//				//call server using the qr code, to get a resulting spot's info.
+//				String contents = "3";
+//				//contents contains string "parqme.com/p/c36/p123456" or w/e...
+//				mySpot = ServerCalls.getSpotInfo(contents);
+//				//if we get the object successfully
+//				if(mySpot!=null){
+//					vf.showNext();
+//					//prepare time picker for this spot
+//					parkTimePicker.setRange(mySpot.getMinIncrement(), mySpot.getMaxTime());
+//					parkTimePicker.setMinInc(mySpot.getMinIncrement());
+//					//initialize all variables to match spot
+//					minimalIncrement=mySpot.getMinIncrement();
+//					maxTime = mySpot.getMaxTime();
+//
+//					parkMinutes=minimalIncrement;
+//					remainSeconds=parkMinutes*60;
+//
+//					//store some used info
+//					SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
+//					SharedPreferences.Editor editor = check.edit();
+//					editor.putString("code", contents);
+//					editor.putFloat("lat", mySpot.getLat());
+//					editor.putFloat("lon", mySpot.getLon());
+//					editor.commit();
+//					updateDisplay();
+//				}else{
+//					ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
+//				}
+			}
 		}
 	}
 

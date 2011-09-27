@@ -5,5 +5,6 @@
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="src" path="NumberPicker_src"/>
 	<classpathentry kind="src" path="MapViewBalloon_src"/>
+	<classpathentry kind="lib" path="lib/android-integration.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
