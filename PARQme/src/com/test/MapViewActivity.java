@@ -47,14 +47,13 @@ import com.objects.SavedInfo;
  * */
 public class MapViewActivity extends MapActivity {
 	//private constants used
-	public static double lat;
-	public static double lon;
+	public double lat;
+	public double lon;
 	private int zoomLevel = 21;
 	private double a;
 	private double b;
 
 	//map controlling elements
-	private String locationProvider;
 	private LocationManager locMan;
 	private MapController mapCtrl;
 	private ArrayList<OverlayItem> parkLoc;
@@ -90,7 +89,6 @@ public class MapViewActivity extends MapActivity {
 		mapView.setBuiltInZoomControls(true);
 		latlonTempDisplay = (TextView) findViewById(R.id.latlontext);
 		address = (EditText) findViewById(R.id.addressinput);
-		locationProvider = LocationManager.NETWORK_PROVIDER;
 		mapCtrl = mapView.getController();
 		locMan = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		
@@ -105,24 +103,6 @@ public class MapViewActivity extends MapActivity {
 		OverlayItem x = new OverlayItem(point, "Ritchie Parking Lot", "Spot: D6");
 		itemizedoverlay.addOverlay(x);
 		mapOverlays.add(itemizedoverlay);
-		
-		LocationListener locListener = new LocationListener(){
-			@Override
-			public void onLocationChanged(Location location) {
-				lat = location.getLatitude();	
-				lon = location.getLongitude();
-				latlonTempDisplay.setText("Lat:" +lat + "   Lon:" + lon);
-			}
-			@Override
-			public void onProviderDisabled(String arg0) {	
-			}
-			@Override
-			public void onProviderEnabled(String arg0) {	
-			}
-			@Override
-			public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
-			}
-		};
 		
 		searchButton = (Button) findViewById(R.id.searchbutton);
 		searchButton.setOnClickListener(new View.OnClickListener() {
@@ -189,11 +169,39 @@ public class MapViewActivity extends MapActivity {
 				mapCtrl.setZoom(zoomLevel);
 			}
 		});
+	}
 
+	@Override
+	protected void onResume() {
+		super.onResume();
+
+		final LocationListener locListener = new LocationListener(){
+			private static final float DEFAULT_ACCURACY = 100;
+			@Override
+			public void onLocationChanged(Location location) {
+				if (location.hasAccuracy() && location.getAccuracy() < DEFAULT_ACCURACY) {
+					lat = location.getLatitude();
+					lon = location.getLongitude();
+					latlonTempDisplay.setText("Lat:" +lat + "   Lon:" + lon);
+					((LocationManager) MapViewActivity.this
+							.getSystemService(Context.LOCATION_SERVICE))
+							.removeUpdates(this);
+				}
+			}
+			@Override
+			public void onProviderDisabled(String arg0) {
+			}
+			@Override
+			public void onProviderEnabled(String arg0) {
+			}
+			@Override
+			public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
+			}
+		};
 		locMan.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locListener);
 		locMan.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locListener);
-
 	}
+
 	@Override
 	public void onBackPressed(){
 		Log.d("CDA", "OnBackPressed Called");
