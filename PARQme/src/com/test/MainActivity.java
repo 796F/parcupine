@@ -21,9 +21,12 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Vibrator;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -102,6 +105,8 @@ public class MainActivity extends ActivityGroup {
 	private TextView timeDisplay;
 
 	/*Buttons declared here*/
+	private EditText spotNum;
+	private Button submitButton;
 	private Button scanButton;
 	private Button unparqButton;
 	private Button refillButton;
@@ -129,7 +134,6 @@ public class MainActivity extends ActivityGroup {
 	private static MediaPlayer mediaPlayer;
 	private NumberPicker parkTimePicker;
 	private Date globalEndTime;
-	private boolean networkStatus = false;
 	
 	/*final variables*/
 	public static final String SAVED_INFO = "ParqMeInfo";
@@ -161,6 +165,55 @@ public class MainActivity extends ActivityGroup {
 		}
 
 		//initialize buttons and set actions
+		submitButton = (Button) findViewById(R.id.submitButton);
+		submitButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				final String contents = "1";
+				//contents contains string "parqme.com/p/c36/p123456" or w/e...
+				mySpot = ServerCalls.getSpotInfo(contents);
+				//if we get the object successfully
+				if(mySpot!=null){
+					vf.showNext();
+					//prepare time picker for this spot
+					parkTimePicker.setRange(mySpot.getMinIncrement(), mySpot.getMaxTime());
+					parkTimePicker.setMinInc(mySpot.getMinIncrement());
+
+					//initialize all variables to match spot
+					minimalIncrement=mySpot.getMinIncrement();
+					maxTime = mySpot.getMaxTime();
+
+					parkMinutes=minimalIncrement;
+					remainSeconds=parkMinutes*60;
+
+					//store some used info
+					SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
+					SharedPreferences.Editor editor = check.edit();
+					editor.putString("code", contents);
+					editor.putFloat("lat", mySpot.getLat());
+					editor.putFloat("lon", mySpot.getLon());
+					editor.commit();
+					updateDisplay();
+				}else{
+					ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
+				}
+			}
+		});
+		spotNum = (EditText) findViewById(R.id.spot_num);
+		spotNum.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void afterTextChanged(Editable s) {
+				submitButton.setEnabled(s.length() == 4);
+			}
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+			}
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before,
+					int count) {
+			}
+		});
 		scanButton = (Button) findViewById(R.id.scanButton);
 		scanButton.setOnClickListener(new View.OnClickListener() {
 			@Override

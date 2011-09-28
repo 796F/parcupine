@@ -6,11 +6,25 @@
 	<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 		android:orientation="vertical" android:layout_width="match_parent"
 		android:layout_height="match_parent" android:id="@+id/view1">
+		<EditText android:id="@+id/spot_num" android:layout_height="wrap_content"
+			android:layout_width="wrap_content" android:singleLine="true"
+			android:layout_marginTop="72dp" android:textSize="32sp"
+			android:inputType="number" android:hint="Spot #"
+			android:layout_centerHorizontal="true"/>
+		<ImageView android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_toRightOf="@id/spot_num"
+			android:layout_marginTop="72dp"/>
+		<Button android:layout_height="wrap_content"
+			android:layout_width="wrap_content" android:id="@+id/submitButton"
+			android:background="@drawable/submit"
+			android:layout_below="@id/spot_num"
+			android:enabled="false"/>
 		<Button android:layout_height="wrap_content"
 			android:layout_width="wrap_content" android:id="@+id/scanButton"
-			android:background="@drawable/parkbutton"
-			android:layout_centerVertical="true" android:layout_alignParentLeft="true"></Button>
-
+			android:background="@drawable/scan"
+			android:layout_below="@id/submitButton"
+			android:layout_marginTop="60dp"/>
 	</RelativeLayout>
 	
 	<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -27,7 +41,7 @@
 		android:layout_alignParentLeft="true" android:layout_height="match_parent"></Button>
 	<Button android:layout_height="wrap_content"
 		android:layout_width="match_parent" android:id="@+id/parkbutton"
-		android:background="@drawable/parkbutton" android:layout_below="@+id/minparktime"
+		android:background="@drawable/scan" android:layout_below="@+id/minparktime"
 		android:layout_alignParentLeft="true"></Button>
 	<TextView android:id="@+id/priceDisplay" android:layout_height="wrap_content" android:layout_width="wrap_content" android:textSize="55sp" android:text="$ 0.00" android:layout_alignBottom="@+id/parktimepicker" android:layout_centerHorizontal="true" android:layout_marginBottom="123dp"></TextView>
 	<com.quietlycoding.android.picker.NumberPicker android:id="@+id/parktimepicker" android:layout_height="wrap_content" android:layout_alignParentTop="true" android:layout_centerHorizontal="true" android:layout_marginTop="154dp" android:layout_width="200dp"></com.quietlycoding.android.picker.NumberPicker>
