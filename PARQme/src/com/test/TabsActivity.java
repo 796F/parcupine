@@ -50,15 +50,15 @@ public class TabsActivity extends TabActivity {
                       .setContent(intent);
         tabHost.addTab(spec);
         SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
-        if(check.getBoolean("firstTimeFlag", true)){
-        	//if it doesnt exist, default value returns true.  
-        	//now set firstTimeFlag to false, so future times it returns.
- 
-        	//start at tutorial page
-        	tabHost.setCurrentTab(3);
-        	//initialize all needed fields to starting values
-        	SavedInfo.reset(TabsActivity.this);
-        }else if(check.getBoolean("loginState", false))
+//        if(check.getBoolean("firstTimeFlag", true)){
+//        	//if it doesnt exist, default value returns true.  
+//        	//now set firstTimeFlag to false, so future times it returns.
+// 
+//        	//start at tutorial page
+//        	tabHost.setCurrentTab(3);
+//        	//initialize all needed fields to starting values
+//        	SavedInfo.reset(TabsActivity.this);
+        /*}else*/ if(check.getBoolean("loginState", false))
         	tabHost.setCurrentTab(0);
         else{
         	tabHost.setCurrentTab(2);
