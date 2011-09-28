@@ -16,8 +16,7 @@ public class TabsActivity extends TabActivity {
 	public static TextView topright;
     @Override
     public void onCreate(Bundle savedInstanceState) {
-    	
-    	
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tabs);
         topright = (TextView) findViewById(R.id.topright);
@@ -38,7 +37,7 @@ public class TabsActivity extends TabActivity {
                       .setContent(intent);
         tabHost.addTab(spec);
 
-        intent = new Intent().setClass(this, LoginScreen.class);
+        intent = new Intent().setClass(this, AccountActivity.class);
         spec = tabHost.newTabSpec("info").setIndicator("Account",
                           res.getDrawable(R.drawable.ic_tab_account))
                       .setContent(intent);

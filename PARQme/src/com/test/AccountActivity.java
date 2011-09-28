@@ -1,16 +1,10 @@
 package com.test;
 
 
-import com.objects.SavedInfo;
-import com.objects.ServerCalls;
-import com.objects.ThrowDialog;
-import com.objects.UserObject;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -19,21 +13,18 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
-public class LoginScreen extends Activity {
+import com.objects.SavedInfo;
+import com.objects.ThrowDialog;
+
+public class AccountActivity extends Activity {
 	public static final String SAVED_INFO = "ParqMeInfo";
-	private Button loginButton;
-	private EditText emailForm;
-	private EditText passwordForm;
-	private Button register;
 	private Button logout;
 	private ViewFlipper LoginVf;
-	private CheckBox rememberBox;
 	public static CheckBox vibrateBox;
 	public static CheckBox warningBox;
 	private CheckBox ringBox;
@@ -70,24 +61,16 @@ public class LoginScreen extends Activity {
 		
 		LoginVf = (ViewFlipper) findViewById(R.id.reg_flip);
 		final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
-		rememberBox = (CheckBox) findViewById(R.id.rememberbox);
-		rememberBox.setOnCheckedChangeListener(new OnCheckedChangeListener(){
-			@Override
-			public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-				SavedInfo.toggleRemember(LoginScreen.this);
-				
-			}
-		});
 		vibrateBox = (CheckBox) findViewById(R.id.vibrateEnable);
 		vibrateBox.setOnCheckedChangeListener(new OnCheckedChangeListener(){
 			@Override
 			public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
 				if(vibrateBox.isChecked()){
-					SavedInfo.setGeneric(LoginScreen.this, "vibrateEnable", true);
+					SavedInfo.setGeneric(AccountActivity.this, "vibrateEnable", true);
 					//set true in file
 				}else{
 					//set false in file
-					SavedInfo.setGeneric(LoginScreen.this, "vibrateEnable", false);
+					SavedInfo.setGeneric(AccountActivity.this, "vibrateEnable", false);
 				}
 				
 			}
@@ -97,11 +80,11 @@ public class LoginScreen extends Activity {
 			@Override
 			public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
 				if(warningBox.isChecked()){
-				SavedInfo.setGeneric(LoginScreen.this, "warningEnable", true);
+				SavedInfo.setGeneric(AccountActivity.this, "warningEnable", true);
 				//set true in file
 			}else{
 				//set false in file
-				SavedInfo.setGeneric(LoginScreen.this, "warningEnable", false);
+				SavedInfo.setGeneric(AccountActivity.this, "warningEnable", false);
 			}
 			}
 		});
@@ -110,11 +93,11 @@ public class LoginScreen extends Activity {
 			@Override
 			public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
 				if(ringBox.isChecked()){
-					SavedInfo.setGeneric(LoginScreen.this, "ringEnable", true);
+					SavedInfo.setGeneric(AccountActivity.this, "ringEnable", true);
 					//set true in file
 				}else{
 					//set false in file
-					SavedInfo.setGeneric(LoginScreen.this, "ringEnable", false);
+					SavedInfo.setGeneric(AccountActivity.this, "ringEnable", false);
 				}
 			}
 		});
@@ -124,64 +107,15 @@ public class LoginScreen extends Activity {
 			@Override
 			public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
 				if(refillBox.isChecked()){
-					SavedInfo.setGeneric(LoginScreen.this, "autoRefill", true);
+					SavedInfo.setGeneric(AccountActivity.this, "autoRefill", true);
 					//set true in file
 				}else{
 					//set false in file
-					SavedInfo.setGeneric(LoginScreen.this, "autoRefill", false);
+					SavedInfo.setGeneric(AccountActivity.this, "autoRefill", false);
 				}
 			}
 		});
-		
-		emailForm=(EditText) findViewById(R.id.emailForm);
-		passwordForm = (EditText) findViewById(R.id.passwordForm);
 
-		if(check.getBoolean("loginState", false)){
-			LoginVf.showNext();
-		}
-		
-		loginButton = (Button) findViewById(R.id.loginButton);
-		loginButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				String email = emailForm.getText().toString();
-				String pass = passwordForm.getText().toString();
-				UserObject user = ServerCalls.getUser(email, pass);
-				if(user!=null){
-					SharedPreferences.Editor editor = check.edit();
-					LoginVf.showNext();
-					
-					TabsActivity.topright.setText(user.getFname());
-					
-					editor.putString("fname", user.getFname());
-					TextView fname = (TextView) findViewById(R.id.accinfolabel);
-					fname.setText(user.getFname()+" "+user.getLname());
-					
-					TextView emailField = (TextView) findViewById(R.id.accemailfield);
-					emailField.setText("Email: " + user.getEmail());
-					
-					TextView phone = (TextView) findViewById(R.id.creditcardfield);
-					phone.setText(user.getPhone());
-					
-					editor.putBoolean("loginState", true);
-					editor.putString("email", email);
-					editor.commit();
-				}else{
-					ThrowDialog.show(LoginScreen.this, ThrowDialog.COULD_NOT_AUTH);
-				}
-				
-			}
-		});
-		register = (Button) findViewById(R.id.registerbutton);
-		
-		register.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent myintent = new Intent(LoginScreen.this, WebRegister.class);
-				startActivity(myintent);
-			}});
-		
-		
 		logout = (Button) findViewById(R.id.logoutbutton);
 		
 		logout.setOnClickListener(new View.OnClickListener() {
@@ -189,11 +123,12 @@ public class LoginScreen extends Activity {
 			public void onClick(View v) {
 				//if not currently parked.
 				if(!check.getBoolean("parkState", false)){
-					LoginVf.showPrevious();
 					TabsActivity.topright.setText("Not Logged In");
-					SavedInfo.toggleLogin(LoginScreen.this);
+					SavedInfo.toggleLogin(AccountActivity.this);
+					startActivity(new Intent(AccountActivity.this, LoginActivity.class));
+					finish();
 				}else{
-					ThrowDialog.show(LoginScreen.this, ThrowDialog.IS_PARKED);
+					ThrowDialog.show(AccountActivity.this, ThrowDialog.IS_PARKED);
 				}
 			}});
 		
@@ -214,15 +149,6 @@ public class LoginScreen extends Activity {
 			}
 		});
 	}
-	@Override
-	public void onBackPressed(){
-		Log.d("CDA", "OnBackPressed Called");
-		Intent setIntent = new Intent(Intent.ACTION_MAIN);
-		setIntent.addCategory(Intent.CATEGORY_HOME);
-		setIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		startActivity(setIntent);
-    	return;
-    }
 }
 
 
