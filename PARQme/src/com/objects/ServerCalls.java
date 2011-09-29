@@ -64,9 +64,10 @@ public class ServerCalls {
 		}
 		return -1;
 	}
-	public static ParkObject getSpotInfo(String qrcode){
+	public static ParkObject getSpotInfo(String qrcode,String email){
 		try {
 			String data = URLEncoder.encode("code", "UTF-8") + "=" + URLEncoder.encode(qrcode, "UTF-8");
+			data+= "&"+URLEncoder.encode("email", "UTF-8") + "=" + URLEncoder.encode(email, "UTF-8");
 			// Send data
 			URL url = new URL("http://parqme.com/loc_info.php");
 			URLConnection conn = url.openConnection();

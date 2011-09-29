@@ -60,7 +60,6 @@ public class Background extends Service{
 				public void run() {
 
 					MainActivity.warnMe(Background.this);
-					
 					Intent myIntent = new Intent(Background.this, TabsActivity.class);
 					myIntent.setAction(Intent.ACTION_MAIN);
 					myIntent.addCategory(Intent.CATEGORY_LAUNCHER);
@@ -83,6 +82,7 @@ public class Background extends Service{
 					((Vibrator)getSystemService(VIBRATOR_SERVICE)).vibrate(500);
 					SavedInfo.togglePark(Background.this);
 					Intent myIntent = new Intent(Background.this, TabsActivity.class);
+					//the intent should be pointing to login now, no longer tabs.  
 					myIntent.setAction(Intent.ACTION_MAIN);
 					myIntent.addCategory(Intent.CATEGORY_LAUNCHER);
 					

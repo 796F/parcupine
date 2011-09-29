@@ -38,16 +38,14 @@ public class SavedInfo{
 	public static void reset(Context activity){
 		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO,0);
 		SharedPreferences.Editor editor = check.edit();
-		editor.putString("email", ""); 
 		editor.putString("endTime", ""); 
 		editor.putString("code", "");
 		editor.putBoolean("parkState", false); 
-		editor.putBoolean("loginState", false); 
 		editor.putBoolean("remember", false);
-		editor.putBoolean("vibrateEnable", true); 
-		editor.putBoolean("warningEnable", true); 
-		editor.putBoolean("ringEnable", true);
-		editor.putBoolean("autoRefill", true);
+		editor.putBoolean("vibrateEnable", false); 
+		editor.putBoolean("warningEnable", false); 
+		editor.putBoolean("ringEnable", false);
+		editor.putBoolean("autoRefill", false);
 		editor.putBoolean("firstTimeFlag", false);
 		editor.commit();
 	}

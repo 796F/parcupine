@@ -46,14 +46,14 @@
 	<TextView android:id="@+id/rate_display"
 		android:layout_height="wrap_content" android:layout_width="wrap_content"
 		android:textSize="20sp" android:text="1 Hour = $2, Full Day = $16"
-		android:layout_centerHorizontal="true" android:layout_marginTop="58dp" />
+		android:layout_centerHorizontal="true" android:layout_marginTop="25dp" />
 	<TextView android:id="@+id/priceDisplay"
 		android:layout_height="wrap_content" android:layout_width="wrap_content"
 		android:textSize="55sp" android:text="$ 0.00"
 		android:layout_alignBottom="@+id/parktimepicker"
-		android:layout_centerHorizontal="true" android:layout_marginBottom="123dp"
+		android:layout_centerHorizontal="true" android:layout_marginBottom="5dp"
 		android:layout_below="@id/rate_display" />
-	<com.quietlycoding.android.picker.NumberPicker android:id="@+id/parktimepicker" android:layout_height="wrap_content" android:layout_alignParentTop="true" android:layout_centerHorizontal="true" android:layout_marginTop="154dp" android:layout_width="200dp"></com.quietlycoding.android.picker.NumberPicker>
+	<com.quietlycoding.android.picker.NumberPicker android:id="@+id/parktimepicker" android:layout_height="wrap_content" android:layout_alignParentTop="true" android:layout_centerHorizontal="true" android:layout_marginTop="120dp" android:layout_width="200dp"></com.quietlycoding.android.picker.NumberPicker>
 
 </RelativeLayout>
 

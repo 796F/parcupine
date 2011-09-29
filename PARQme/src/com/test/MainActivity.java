@@ -114,6 +114,7 @@ public class MainActivity extends ActivityGroup {
 	private Button maxTimeButton;
 	private Button cancelPark;
 	private Button parkButton;
+	private Button gpsButton;
 	private NumberPickerButton pickerIncButton;
 	private NumberPickerButton pickerDecButton;
 
@@ -154,7 +155,7 @@ public class MainActivity extends ActivityGroup {
 		userDisplay = (TextView) findViewById(R.id.welcomeuser);
 		locDisplay = (TextView) findViewById(R.id.location);
 		timeDisplay = (TextView) findViewById(R.id.timeleftdisplay);
-		vf = (ViewFlipper) findViewById(R.id.flipper);
+		 vf = (ViewFlipper) findViewById(R.id.flipper);
 		parkTimePicker = (NumberPicker) findViewById(R.id.parktimepicker);
 		mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.alarm);
 		final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
@@ -169,34 +170,7 @@ public class MainActivity extends ActivityGroup {
 		submitButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				final String contents = "1";
-				//contents contains string "parqme.com/p/c36/p123456" or w/e...
-				mySpot = ServerCalls.getSpotInfo(contents);
-				//if we get the object successfully
-				if(mySpot!=null){
-					vf.showNext();
-					//prepare time picker for this spot
-					parkTimePicker.setRange(mySpot.getMinIncrement(), mySpot.getMaxTime());
-					parkTimePicker.setMinInc(mySpot.getMinIncrement());
-
-					//initialize all variables to match spot
-					minimalIncrement=mySpot.getMinIncrement();
-					maxTime = mySpot.getMaxTime();
-
-					parkMinutes=minimalIncrement;
-					remainSeconds=parkMinutes*60;
-
-					//store some used info
-					SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
-					SharedPreferences.Editor editor = check.edit();
-					editor.putString("code", contents);
-					editor.putFloat("lat", mySpot.getLat());
-					editor.putFloat("lon", mySpot.getLon());
-					editor.commit();
-					updateDisplay();
-				}else{
-					ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
-				}
+				Toast.makeText(MainActivity.this, "COMING SOON!", Toast.LENGTH_LONG);
 			}
 		});
 		spotNum = (EditText) findViewById(R.id.spot_num);
@@ -227,6 +201,8 @@ public class MainActivity extends ActivityGroup {
 					IntentIntegrator.initiateScan(MainActivity.this);
 				}
 			}});
+		
+	
 		parkButton = (Button) findViewById(R.id.parkbutton);
 		parkButton.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -468,6 +444,7 @@ public class MainActivity extends ActivityGroup {
 	private void refillMe(int refillMinutes){
 		//if we haven't gone past the total time we're allowed to park
 		if(totalTimeParked+refillMinutes<=maxTime){
+			
 			//update the total time parked and remaining time.
 			parkMinutes+=refillMinutes;
 			parkCost = getCostInCents(parkMinutes);
@@ -504,7 +481,9 @@ public class MainActivity extends ActivityGroup {
 		@Override
 		public void onNumberSet(int selectedNumber) {
 			if(selectedNumber>=minimalIncrement)
-				refillMe(selectedNumber);
+				//TODO testing delete me
+				refillMe(1);
+				//refillMe(selectedNumber);
 		}
 	};
 	
@@ -515,10 +494,11 @@ public class MainActivity extends ActivityGroup {
 		final IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
 		if (scanResult != null) {
 			//call server using the qr code, to get a resulting spot's info.
-			final String contents = scanResult.getContents();
+			String contents = scanResult.getContents();
 			if (contents != null) {
 				//contents contains string "parqme.com/p/c36/p123456" or w/e...
-				mySpot = ServerCalls.getSpotInfo(contents);
+				SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
+				mySpot = ServerCalls.getSpotInfo(contents, check.getString("email", "xia@umd.edu"));
 				//if we get the object successfully
 				if(mySpot!=null){
 					vf.showNext();
@@ -530,11 +510,12 @@ public class MainActivity extends ActivityGroup {
 					minimalIncrement=mySpot.getMinIncrement();
 					maxTime = mySpot.getMaxTime();
 					
-					parkMinutes=minimalIncrement;
+					//TODO delete me testing
+					parkMinutes=1;
+					//parkMinutes=minimalIncrement;
 					remainSeconds=parkMinutes*60;
 					
 					//store some used info
-					SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 					SharedPreferences.Editor editor = check.edit();
 					editor.putString("code", contents);
 					editor.putFloat("lat", mySpot.getLat());
@@ -544,36 +525,36 @@ public class MainActivity extends ActivityGroup {
 				}else{
 					ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
 				}
-//			} else {
-//				//do nothing if the user doesn't scan and just cancels.
-//				//call server using the qr code, to get a resulting spot's info.
-//				String contents = "3";
-//				//contents contains string "parqme.com/p/c36/p123456" or w/e...
-//				mySpot = ServerCalls.getSpotInfo(contents);
-//				//if we get the object successfully
-//				if(mySpot!=null){
-//					vf.showNext();
-//					//prepare time picker for this spot
-//					parkTimePicker.setRange(mySpot.getMinIncrement(), mySpot.getMaxTime());
-//					parkTimePicker.setMinInc(mySpot.getMinIncrement());
-//					//initialize all variables to match spot
-//					minimalIncrement=mySpot.getMinIncrement();
-//					maxTime = mySpot.getMaxTime();
-//
-//					parkMinutes=minimalIncrement;
-//					remainSeconds=parkMinutes*60;
-//
-//					//store some used info
-//					SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
-//					SharedPreferences.Editor editor = check.edit();
-//					editor.putString("code", contents);
-//					editor.putFloat("lat", mySpot.getLat());
-//					editor.putFloat("lon", mySpot.getLon());
-//					editor.commit();
-//					updateDisplay();
-//				}else{
-//					ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
-//				}
+			} else {
+				//do nothing if the user doesn't scan and just cancels.
+				//call server using the qr code, to get a resulting spot's info.
+				contents = "3";
+				SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
+				//contents contains string "parqme.com/p/c36/p123456" or w/e...
+				mySpot = ServerCalls.getSpotInfo(contents, check.getString("email", "xia@umd.edu"));
+				//if we get the object successfully
+				if(mySpot!=null){
+					vf.showNext();
+					//prepare time picker for this spot
+					parkTimePicker.setRange(mySpot.getMinIncrement(), mySpot.getMaxTime());
+					parkTimePicker.setMinInc(mySpot.getMinIncrement());
+					//initialize all variables to match spot
+					minimalIncrement=mySpot.getMinIncrement();
+					maxTime = mySpot.getMaxTime();
+
+					parkMinutes=minimalIncrement;
+					remainSeconds=parkMinutes*60;
+
+					//store some used info
+					SharedPreferences.Editor editor = check.edit();
+					editor.putString("code", contents);
+					editor.putFloat("lat", mySpot.getLat());
+					editor.putFloat("lon", mySpot.getLon());
+					editor.commit();
+					updateDisplay();
+				}else{
+					ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
+				}
 			}
 		}
 	}

@@ -54,7 +54,8 @@ public class DebugActivity extends Activity {
 			public void onClick(View arg0) {
 				Toast.makeText(DebugActivity.this, "HELLO WORLD", Toast.LENGTH_SHORT);
 				SharedPreferences check = getSharedPreferences("ParqMeInfo",0);
-				display.setText(ServerCalls.test("bha", "email", "endtime"));
+				display.setText(check.getAll().toString());
+				//display.setText(ServerCalls.test("bha", "email", "endtime"));
 				//SavedInfo.reset(DebugActivity.this);
 				//finish();
 			}
