@@ -43,7 +43,7 @@ public class AccountActivity extends Activity {
 		
 		ListView lv = (ListView) findViewById(R.id.listView1);
 		 final String[] COUNTRIES = new String[] {
-			    "8/25, 5:15 pm - 5:45 pm", "8/26, 2:30 pm - 3:00 pm","8/27, 9:12 am - 12:12 pm"
+			    "8/25, Nebraska Ave", "8/26, Nebraska Ave","8/27, 5th & G","9/22, Nebraska Ave","9/27, 5th & G"
 			  };
 		lv.setAdapter(new ArrayAdapter<String>(this, R.layout.list_item, COUNTRIES));
 

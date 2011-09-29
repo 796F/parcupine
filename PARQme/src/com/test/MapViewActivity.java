@@ -104,6 +104,12 @@ public class MapViewActivity extends MapActivity {
 		itemizedoverlay.addOverlay(x);
 		mapOverlays.add(itemizedoverlay);
 		
+		itemizedoverlay = new MapOverlays(drawable,mapView);
+		GeoPoint point2 = new GeoPoint((int)(38.935898*1e6),(int)(-77.08712*1e6));
+		OverlayItem xy = new OverlayItem(point2, "Nebraska Avenue", "Spot: 2231");
+		itemizedoverlay.addOverlay(xy);
+		mapOverlays.add(itemizedoverlay);
+		
 		searchButton = (Button) findViewById(R.id.searchbutton);
 		searchButton.setOnClickListener(new View.OnClickListener() {
 			

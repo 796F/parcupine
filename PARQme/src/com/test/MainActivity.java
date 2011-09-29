@@ -170,14 +170,42 @@ public class MainActivity extends ActivityGroup {
 		submitButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Toast.makeText(MainActivity.this, "COMING SOON!", Toast.LENGTH_LONG);
+				final String contents = spotNum.getText().toString();
+				//contents contains string "parqme.com/p/c36/p123456" or w/e...
+				SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
+				mySpot = ServerCalls.getSpotInfo(contents, check.getString("email", "xia@umd.edu"));
+				//if we get the object successfully
+				if(mySpot!=null){
+					vf.showNext();
+					//prepare time picker for this spot
+					parkTimePicker.setRange(mySpot.getMinIncrement(), mySpot.getMaxTime());
+					parkTimePicker.setMinInc(mySpot.getMinIncrement());
+
+					//initialize all variables to match spot
+					minimalIncrement=mySpot.getMinIncrement();
+					maxTime = mySpot.getMaxTime();
+
+					parkMinutes=minimalIncrement;
+					remainSeconds=parkMinutes*60;
+
+					//store some used info
+					SharedPreferences.Editor editor = check.edit();
+					editor.putString("code", contents);
+					editor.putFloat("lat", mySpot.getLat());
+					editor.putFloat("lon", mySpot.getLon());
+					editor.commit();
+					updateDisplay();
+				}else{
+					ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
+				}
 			}
 		});
 		spotNum = (EditText) findViewById(R.id.spot_num);
 		spotNum.addTextChangedListener(new TextWatcher() {
 			@Override
 			public void afterTextChanged(Editable s) {
-				submitButton.setEnabled(s.length() == 4);
+				submitButton.setEnabled(s.length() == 1);
+				submitButton.setEnabled(s.length() == 2);
 			}
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count,
@@ -482,8 +510,8 @@ public class MainActivity extends ActivityGroup {
 		public void onNumberSet(int selectedNumber) {
 			if(selectedNumber>=minimalIncrement)
 				//TODO testing delete me
-				refillMe(1);
-				//refillMe(selectedNumber);
+				//refillMe(1);
+				refillMe(selectedNumber);
 		}
 	};
 	
@@ -511,8 +539,8 @@ public class MainActivity extends ActivityGroup {
 					maxTime = mySpot.getMaxTime();
 					
 					//TODO delete me testing
-					parkMinutes=1;
-					//parkMinutes=minimalIncrement;
+					//parkMinutes=1;
+					parkMinutes=minimalIncrement;
 					remainSeconds=parkMinutes*60;
 					
 					//store some used info
