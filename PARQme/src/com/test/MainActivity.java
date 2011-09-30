@@ -43,9 +43,12 @@ import com.quietlycoding.android.picker.NumberPickerButton;
 import com.quietlycoding.android.picker.NumberPickerDialog;
 
 /**
+ * connection ready display, ping server.  
+ * robust communication model.  
+ * 
  * by saving all info, you can resume properly.  on create, use string starttime to find out how much time is left, calculate it
  * and then use it to initiate timer.  service should still be running, to resume app and auto-unpark and stuff.  have service conduct autorefill,
- * not the timer.  
+ * not the timer.  do so by editing a saved string for time, a service can edit it.  
  * 
  * edittext with tags, layout similar to citrix meeting app.  you can edit the layout of the actual edittext widget.	
  * 
@@ -171,32 +174,34 @@ public class MainActivity extends ActivityGroup {
 			@Override
 			public void onClick(View v) {
 				final String contents = spotNum.getText().toString();
-				//contents contains string "parqme.com/p/c36/p123456" or w/e...
+				// contents contains string "parqme.com/p/c36/p123456" or w/e...
 				SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
-				mySpot = ServerCalls.getSpotInfo(contents, check.getString("email", "xia@umd.edu"));
-				//if we get the object successfully
-				if(mySpot!=null){
+				
+				mySpot = ServerCalls.getSpotInfo(contents,check.getString("email", "xia@umd.edu"));
+				// if we get the object successfully
+				if (mySpot != null) {
 					vf.showNext();
-					//prepare time picker for this spot
-					parkTimePicker.setRange(mySpot.getMinIncrement(), mySpot.getMaxTime());
+					// prepare time picker for this spot
+					parkTimePicker.setRange(mySpot.getMinIncrement(),
+							mySpot.getMaxTime());
 					parkTimePicker.setMinInc(mySpot.getMinIncrement());
 
-					//initialize all variables to match spot
-					minimalIncrement=mySpot.getMinIncrement();
+					// initialize all variables to match spot
+					minimalIncrement = mySpot.getMinIncrement();
 					maxTime = mySpot.getMaxTime();
 
-					parkMinutes=minimalIncrement;
-					remainSeconds=parkMinutes*60;
-
-					//store some used info
+					parkMinutes = minimalIncrement;
+					remainSeconds = parkMinutes * 60;
+					// store some used info
 					SharedPreferences.Editor editor = check.edit();
 					editor.putString("code", contents);
 					editor.putFloat("lat", mySpot.getLat());
 					editor.putFloat("lon", mySpot.getLon());
 					editor.commit();
 					updateDisplay();
-				}else{
-					ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
+				} else {
+					ThrowDialog.show(MainActivity.this,
+							ThrowDialog.RESULT_ERROR);
 				}
 			}
 		});
@@ -205,7 +210,6 @@ public class MainActivity extends ActivityGroup {
 			@Override
 			public void afterTextChanged(Editable s) {
 				submitButton.setEnabled(s.length() == 1);
-				submitButton.setEnabled(s.length() == 2);
 			}
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count,
@@ -247,8 +251,8 @@ public class MainActivity extends ActivityGroup {
 					vf.showNext();
 					
 					//TODO: DELETE ME FOR TESTING
-					//remainSeconds = 60;
-					//parkMinutes = 1;
+					remainSeconds = 60;
+					parkMinutes = 1;
 					//END TESTING CODE
 
 					//create and start countdown display
@@ -400,7 +404,8 @@ public class MainActivity extends ActivityGroup {
 			@Override
 			public void onClick(DialogInterface dialog, int id) {
 				if(totalTimeParked<maxTime)
-					refillMe(minimalIncrement);
+					refillMe(1);
+					//refillMe(minimalIncrement);
 				else
 					ThrowDialog.show(MainActivity.this, ThrowDialog.MAX_TIME);
 				//mediaPlayer.stop();
@@ -510,8 +515,8 @@ public class MainActivity extends ActivityGroup {
 		public void onNumberSet(int selectedNumber) {
 			if(selectedNumber>=minimalIncrement)
 				//TODO testing delete me
-				//refillMe(1);
-				refillMe(selectedNumber);
+				refillMe(1);
+				//refillMe(selectedNumber);
 		}
 	};
 	
@@ -539,8 +544,8 @@ public class MainActivity extends ActivityGroup {
 					maxTime = mySpot.getMaxTime();
 					
 					//TODO delete me testing
-					//parkMinutes=1;
-					parkMinutes=minimalIncrement;
+					parkMinutes=1;
+					//parkMinutes=minimalIncrement;
 					remainSeconds=parkMinutes*60;
 					
 					//store some used info
@@ -607,9 +612,10 @@ public class MainActivity extends ActivityGroup {
 				timeDisplay.setText(formatMe(seconds));
 			}
 			//on last tick,
+			//TODO calling alert.cancel() or throwdialog when app isn't in forefront may cause crash?
 			@Override
 			public void onFinish() {
-				timeDisplay.setText("0:00:00");
+				//timeDisplay.setText("0:00:00");
 				SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 				//if autorefill is on, refill the user minimalIncrement
 				if(check.getBoolean("autoRefill", false)){
@@ -634,10 +640,10 @@ public class MainActivity extends ActivityGroup {
 		//if time warning is enabled
 		if(check.getBoolean("warningEnable", false)){
 			//vibrate if settings say so
-			if(check.getBoolean("vibrateEnable", true)){
+			if(check.getBoolean("vibrateEnable", false)){
 				((Vibrator)activity.getSystemService(VIBRATOR_SERVICE)).vibrate(1000);
 			}
-			if(check.getBoolean("ringEnable", true)){
+			if(check.getBoolean("ringEnable", false)){
 				mediaPlayer.start();
 			}
 		}

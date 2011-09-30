@@ -44,7 +44,9 @@ public class LoginActivity extends Activity {
 		passwordForm = (EditText) findViewById(R.id.passwordForm);
 
 		if(check.getBoolean("loginState", false)){
-			startActivity(new Intent(this, TabsActivity.class));
+			Intent x = new Intent(this, TabsActivity.class);
+			x.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+			startActivity(x);
 			finish();
 		}
 		
