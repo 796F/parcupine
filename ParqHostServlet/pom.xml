@@ -23,5 +23,21 @@
 	</dependencies>
 	<build>
 		<finalName>p</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.axis2</groupId>
+				<artifactId>axis2-java2wsdl-maven-plugin</artifactId>
+				<configuration>
+					<className>com.parq.server.servlet.ParqIncomingurlServlet</className>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>java2wsdl</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
 	</build>
 </project>
