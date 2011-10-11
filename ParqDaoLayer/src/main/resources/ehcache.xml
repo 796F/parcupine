@@ -1,21 +1,25 @@
 <ehcache maxBytesLocalOnHeap="1g" maxBytesLocalOffHeap="4g"
 	maxBytesLocalDisk="1g">
 	<!-- This a sample template for a long duration cache
-	<cache name="LongDurationCache" maxBytesLocalOnHeap="50m"
+	<cache name="LongDurationCache" maxBytesLocalHeap="50m"
 		maxBytesLocalOffHeap="200m" timeToLiveSeconds="86400"
 		overflowToDisk="false">
 	</cache>
 	 -->
 	<!-- This a sample template for a short duration cache 
-	<cache name="ShortDurationCache" maxBytesLocalOnHeap="50m"
+	<cache name="ShortDurationCache" maxBytesLocalHeap="50m"
 		timeToLiveSeconds="60" overflowToOffHeap="false" overflowToDisk="false">
 	</cache>
 	-->
 	
 	<!-- this is the user table's cache (1 day expiration) -->
-	<cache name="UserCache" maxBytesLocalOnHeap="100m"
-		maxBytesLocalOffHeap="400m" timeToLiveSeconds="86400"
-		overflowToDisk="false">
+	<cache name="UserCache"
+            maxElementsInMemory="10000"
+            eternal="false"
+            timeToIdleSeconds="43200"
+            timeToLiveSeconds="86400"
+            overflowToDisk="false"
+            memoryStoreEvictionPolicy="LRU">
 	</cache>
 	
 	

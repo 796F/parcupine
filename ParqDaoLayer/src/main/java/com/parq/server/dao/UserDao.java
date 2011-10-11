@@ -57,6 +57,7 @@ public class UserDao extends AbstractParqDaoParent {
 			return null;
 		}
 		User user = new User();
+		rs.first();
 		user.setUserID(rs.getInt("User_ID"));
 		user.setUserName(rs.getString("UserName"));
 		user.setPassword(rs.getString("Password"));
@@ -67,10 +68,13 @@ public class UserDao extends AbstractParqDaoParent {
 	public User getUserById(int id) {
 		// the cache key for this method call;
 		String cacheKey = "getUserById:" + id;
-
-		User user = (User) myCache.get(cacheKey).getValue();
-		if (user != null) {
-			return user;
+		
+		User user = null;
+		if (myCache.get(cacheKey) != null) {
+			user = (User) myCache.get(cacheKey).getValue();
+			if (user != null) {
+				return user;
+			}
 		}
 
 		// query the DB for the user object
@@ -103,9 +107,12 @@ public class UserDao extends AbstractParqDaoParent {
 		// the cache key for this method call;
 		String cacheKey = "getUserByUserName:" + userName;
 
-		User user = (User) myCache.get(cacheKey).getValue();
-		if (user != null) {
-			return user;
+		User user = null;
+		if (myCache.get(cacheKey) != null) {
+			user = (User) myCache.get(cacheKey).getValue();
+			if (user != null) {
+				return user;
+			}
 		}
 
 		// query the DB for the user object
@@ -120,8 +127,7 @@ public class UserDao extends AbstractParqDaoParent {
 			user = createUserObject(rs);
 
 		} catch (SQLException sqle) {
-			System.out.println("SQL statement is invalid: " + pstmt);
-			throw new RuntimeException(sqle);
+			user = null;
 		} finally {
 			closeConnection(con);
 		}
@@ -138,9 +144,12 @@ public class UserDao extends AbstractParqDaoParent {
 		// the cache key for this method call;
 		String cacheKey = "getUserByEmail:" + emailAddress;
 
-		User user = (User) myCache.get(cacheKey).getValue();
-		if (user != null) {
-			return user;
+		User user = null;
+		if (myCache.get(cacheKey) != null) {
+			user = (User) myCache.get(cacheKey).getValue();
+			if (user != null) {
+				return user;
+			}
 		}
 
 		// query the DB for the user object
@@ -178,7 +187,7 @@ public class UserDao extends AbstractParqDaoParent {
 			con = getConnection();
 			pstmt = con.prepareStatement(sqlDeleteUserById);
 			pstmt.setInt(1, id);
-			deleteSuccessful = pstmt.execute();
+			deleteSuccessful = pstmt.executeUpdate() > 0;
 
 		} catch (SQLException sqle) {
 			System.out.println("SQL statement is invalid: " + pstmt);

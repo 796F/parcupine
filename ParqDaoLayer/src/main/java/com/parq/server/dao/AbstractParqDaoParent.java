@@ -14,7 +14,7 @@ abstract class AbstractParqDaoParent {
 
 	private Connection con;
 	protected static final String driver = "com.mysql.jdbc.Driver";
-	protected static String propertyFile = "/ParqDao.properties";
+	protected static String propertyFile = "./ParqDao.properties";
 
 	protected static String url;
 	protected static String db;
