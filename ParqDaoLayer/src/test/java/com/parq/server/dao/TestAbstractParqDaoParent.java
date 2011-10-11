@@ -20,8 +20,8 @@ public class TestAbstractParqDaoParent extends TestCase {
 
 	public void testConnectAndClose() {
 		testDao.initialize();
-		testDao.connect();
-		testDao.close();
+		testDao.getConnection();
+		testDao.closeConnection();
 
 		// if connect or close call fails, it will never reach this assert
 		// statement

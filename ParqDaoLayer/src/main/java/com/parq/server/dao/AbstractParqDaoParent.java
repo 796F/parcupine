@@ -7,9 +7,12 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+
 abstract class AbstractParqDaoParent {
 
-	protected Connection con;
+	private Connection con;
 	protected static final String driver = "com.mysql.jdbc.Driver";
 	protected static String propertyFile = "/ParqDao.properties";
 
@@ -19,8 +22,8 @@ abstract class AbstractParqDaoParent {
 	protected static String pwd;
 	protected static boolean initizationComplete;
 
+	// Initialize the db connection
 	protected void initialize() {
-
 		// properties file loading only need to happen once per JVM startup,
 		// once the properties file is loaded, those properties are in memory
 		// for rest of the jvm session
@@ -34,8 +37,8 @@ abstract class AbstractParqDaoParent {
 				if (is == null) {
 					System.err.println("Properties File: " + propertyFile
 							+ " not found");
-					throw new IllegalStateException("Properties File: " + propertyFile
-							+ " not found");
+					throw new IllegalStateException("Properties File: "
+							+ propertyFile + " not found");
 				} else {
 					prop.load(is);
 
@@ -71,7 +74,24 @@ abstract class AbstractParqDaoParent {
 		}
 	}
 
-	protected synchronized void connect() {
+	// configure and setup the cache objects
+	protected Cache setupCache(String cacheName) {
+		CacheManager.create();
+		Cache myCache = CacheManager.getInstance().getCache(cacheName);
+
+		if (myCache == null) {
+			throw new IllegalStateException(
+					"No cache configuration exist under this cache name: "
+							+ cacheName);
+		}
+		return myCache;
+	}
+
+	public AbstractParqDaoParent() {
+		initialize();
+	}
+
+	protected synchronized Connection getConnection() {
 		try {
 			con = DriverManager.getConnection(url + db, login, pwd);
 			System.out.println(url + db + " connected");
@@ -80,17 +100,22 @@ abstract class AbstractParqDaoParent {
 			System.err.println("Failed to connect to MySQL DB: " + e);
 			throw new RuntimeException(e);
 		}
+		return con;
 	}
 
-	protected synchronized void close() {
+	protected synchronized void closeConnection(Connection connection) {
 		try {
-			if (con != null && !con.isClosed()) {
-				con.close();
+			if (connection != null && !connection.isClosed()) {
+				connection.close();
 			}
 		} catch (SQLException e) {
 			System.err
 					.println("Error closing active mySQL DB connection: " + e);
 			throw new RuntimeException(e);
 		}
+	}
+	
+	protected synchronized void closeConnection() {
+		closeConnection(con);
 	}
 }
