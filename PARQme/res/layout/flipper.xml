@@ -8,13 +8,13 @@
 		android:layout_height="match_parent" android:id="@+id/view1">
 		<EditText android:id="@+id/spot_num" android:layout_height="wrap_content"
 			android:layout_width="wrap_content" android:singleLine="true"
-			android:layout_marginTop="72dp" android:textSize="32sp"
+			android:layout_marginTop="85dp" android:textSize="32sp"
 			android:inputType="number" android:hint="Spot #"
 			android:layout_centerHorizontal="true"/>
 		<ImageView android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_toRightOf="@id/spot_num"
-			android:layout_marginTop="72dp"/>
+			android:layout_marginTop="72dp" android:id="@+id/imageView1"/>
 		<Button android:layout_height="wrap_content"
 			android:layout_width="wrap_content" android:id="@+id/submitButton"
 			android:background="@drawable/submit"
@@ -25,6 +25,7 @@
 			android:background="@drawable/scan"
 			android:layout_below="@id/submitButton"
 			android:layout_marginTop="60dp"/>
+		<RadioButton android:layout_height="wrap_content" android:id="@+id/pingdot" android:text="Server Ready" android:layout_width="wrap_content" android:layout_alignBottom="@+id/imageView1" android:layout_centerHorizontal="true"></RadioButton>
 	</RelativeLayout>
 	
 	<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"

@@ -7,6 +7,8 @@
 
 package com.test;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -27,6 +29,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -45,6 +48,9 @@ import com.quietlycoding.android.picker.NumberPickerDialog;
 /**
  * connection ready display, ping server.  
  * robust communication model.  
+ * 
+ * new timer, crashes on timer end.  Also, two vars in saved pref holding endtime (endTime and TIMER).  use one.  
+ * erase unnecessary instance variables such as remainSeconds.  
  * 
  * by saving all info, you can resume properly.  on create, use string starttime to find out how much time is left, calculate it
  * and then use it to initiate timer.  service should still be running, to resume app and auto-unpark and stuff.  have service conduct autorefill,
@@ -138,7 +144,7 @@ public class MainActivity extends ActivityGroup {
 	private static MediaPlayer mediaPlayer;
 	private NumberPicker parkTimePicker;
 	private Date globalEndTime;
-
+	private RadioButton servPing;
 	/*final variables*/
 	public static final String SAVED_INFO = "ParqMeInfo";
 
@@ -146,7 +152,7 @@ public class MainActivity extends ActivityGroup {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-
+		
 
 		//check for internet on create, do it a lot later too.
 		//use flipper view
@@ -163,6 +169,7 @@ public class MainActivity extends ActivityGroup {
 		vf = (ViewFlipper) findViewById(R.id.flipper);
 		parkTimePicker = (NumberPicker) findViewById(R.id.parktimepicker);
 		mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.alarm);
+		servPing = (RadioButton) findViewById(R.id.pingdot);
 		final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 
 		/*	ON CREATE
@@ -194,6 +201,52 @@ public class MainActivity extends ActivityGroup {
 		} catch (ParseException e) {
 			//bad time in timer, thus no timer was active.  do nothing.  
 		}
+		
+		/*	Ping server in thread, 
+		 * 	if server reachable 
+		 * 		yay
+		 * 	else 
+		 * 		schedule runnable for 15 seconds later.  
+		 * 		repeat till yay
+		 * 
+		 * */
+		
+		new Thread(new Runnable() {
+		    public void run() {
+		    	String host = "http://www.parqme.com";
+				try {
+					URL url = new URL(host);
+					HttpURLConnection urlc = (HttpURLConnection) url.openConnection();
+					urlc.setConnectTimeout(1000 * 60); // mTimeout is in seconds
+					urlc.connect();
+					
+					if (urlc.getResponseCode() == 200) {
+						servPing.post(new Runnable(){
+							@Override
+							public void run() {
+								servPing.setChecked(true);
+								servPing.setText("Server Ready :D");
+							}
+						});
+					}else{
+						throw new Exception("LAAAA");
+					}
+				} catch (Exception e1) {
+					servPing.post(new Runnable(){
+
+						@Override
+						public void run() {
+							servPing.setChecked(false);
+							servPing.setText("No Service :(");
+						}
+						
+						
+					});
+				} 
+		    	
+		    }
+		  }).start();
+		
 		//initialize buttons and set actions
 		submitButton = (Button) findViewById(R.id.submitButton);
 		submitButton.setOnClickListener(new View.OnClickListener() {
