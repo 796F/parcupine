@@ -49,6 +49,12 @@ public class SavedInfo{
 		editor.putBoolean("firstTimeFlag", false);
 		editor.commit();
 	}
+	public static void eraseTimer(Context activity){
+		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO,0);
+		SharedPreferences.Editor editor = check.edit();
+		editor.putString("TIMER", "");
+		editor.commit();
+	}
 	//if parked return true, else false
 	public static boolean isParked(Context activity){
 		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO,0);

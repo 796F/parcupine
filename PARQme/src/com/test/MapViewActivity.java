@@ -208,15 +208,6 @@ public class MapViewActivity extends MapActivity {
 		locMan.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locListener);
 	}
 
-	@Override
-	public void onBackPressed(){
-		Log.d("CDA", "OnBackPressed Called");
-		Intent setIntent = new Intent(Intent.ACTION_MAIN);
-		setIntent.addCategory(Intent.CATEGORY_HOME);
-		setIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		startActivity(setIntent);
-		return;
-	}
 }
 
 /* Parking Lot Locations

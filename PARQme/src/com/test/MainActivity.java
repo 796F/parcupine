@@ -138,14 +138,16 @@ public class MainActivity extends ActivityGroup {
 	private static MediaPlayer mediaPlayer;
 	private NumberPicker parkTimePicker;
 	private Date globalEndTime;
-	
+
 	/*final variables*/
 	public static final String SAVED_INFO = "ParqMeInfo";
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
+
+
 		//check for internet on create, do it a lot later too.
 		//use flipper view
 		setContentView(R.layout.flipper);
@@ -158,16 +160,40 @@ public class MainActivity extends ActivityGroup {
 		userDisplay = (TextView) findViewById(R.id.welcomeuser);
 		locDisplay = (TextView) findViewById(R.id.location);
 		timeDisplay = (TextView) findViewById(R.id.timeleftdisplay);
-		 vf = (ViewFlipper) findViewById(R.id.flipper);
+		vf = (ViewFlipper) findViewById(R.id.flipper);
 		parkTimePicker = (NumberPicker) findViewById(R.id.parktimepicker);
 		mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.alarm);
 		final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 
-		if(SavedInfo.isParked(MainActivity.this)){
-			vf.showNext();
-			vf.showNext();
-		}
+		/*	ON CREATE
+		 * 	grab string from TIMER
+		 * 	parse it to a date
+		 * 	compare with current time
+		 * 	
+		 *	if time left, 
+		 *		showNext() x2, initiate timer
+		 *	if else
+		 *		set TIMER = "none"
+		 * 
+		 * */
 
+		try {
+			Date timerEnd = Global.sdf.parse(check.getString("TIMER", ""));
+			Date now = new Date();
+			int seconds = (int)(timerEnd.getTime() - now.getTime())/1000;
+			if(seconds>0){
+				vf.showNext();
+				vf.showNext();
+				timer = initiateTimer(timerEnd, vf);
+				timer.start();
+			}else{
+				SharedPreferences.Editor edit = check.edit();
+				edit.putString("TIMER", "none");
+				edit.commit();
+			}
+		} catch (ParseException e) {
+			//bad time in timer, thus no timer was active.  do nothing.  
+		}
 		//initialize buttons and set actions
 		submitButton = (Button) findViewById(R.id.submitButton);
 		submitButton.setOnClickListener(new View.OnClickListener() {
@@ -176,7 +202,7 @@ public class MainActivity extends ActivityGroup {
 				final String contents = spotNum.getText().toString();
 				// contents contains string "parqme.com/p/c36/p123456" or w/e...
 				SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
-				
+
 				mySpot = ServerCalls.getSpotInfo(contents,check.getString("email", "xia@umd.edu"));
 				// if we get the object successfully
 				if (mySpot != null) {
@@ -228,13 +254,13 @@ public class MainActivity extends ActivityGroup {
 					//if not logged in, alert user via dialog
 					ThrowDialog.show(MainActivity.this, ThrowDialog.MUST_LOGIN);
 				}else{
-				
+
 					//else start scan intent
 					IntentIntegrator.initiateScan(MainActivity.this);
 				}
 			}});
-		
-	
+
+
 		parkButton = (Button) findViewById(R.id.parkbutton);
 		parkButton.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -249,14 +275,19 @@ public class MainActivity extends ActivityGroup {
 						ThrowDialog.show(MainActivity.this, ThrowDialog.MAX_TIME);
 					}
 					vf.showNext();
-					
+
 					//TODO: DELETE ME FOR TESTING
 					remainSeconds = 60;
 					parkMinutes = 1;
 					//END TESTING CODE
 
 					//create and start countdown display
-					timer = initiateTimer(remainSeconds, vf);
+					try {
+						timer = initiateTimer(Global.sdf.parse(check.getString("TIMER", "")), vf);
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					timer.start();
 					//start timer background service
 					startService(new Intent(MainActivity.this, Background.class).putExtra("time", remainSeconds));
@@ -270,7 +301,7 @@ public class MainActivity extends ActivityGroup {
 					//display where user is parked and who they are
 					userDisplay.setText("Welcome " + check.getString("fname", "")); 
 					locDisplay.setText("You are parked at\n" + mySpot.getLocation()+"\nAt spot # " + mySpot.getSpotNum());
-					
+
 
 				}else{
 					ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
@@ -298,13 +329,14 @@ public class MainActivity extends ActivityGroup {
 							minimalIncrement=0;
 							maxTime=0;
 							parkCost=0;
-							
+
 							//change view back to initial one
 							vf.showPrevious();
 							vf.showPrevious();
 							//and set user as not currently parked
 							SharedPreferences.Editor editor = check.edit();
 							editor.putBoolean("parkState", false);
+							editor.putString("TIMER", "");
 							editor.commit();
 						}else{
 							Toast.makeText(MainActivity.this, unparkResult, Toast.LENGTH_LONG);
@@ -405,7 +437,7 @@ public class MainActivity extends ActivityGroup {
 			public void onClick(DialogInterface dialog, int id) {
 				if(totalTimeParked<maxTime)
 					refillMe(1);
-					//refillMe(minimalIncrement);
+				//refillMe(minimalIncrement);
 				else
 					ThrowDialog.show(MainActivity.this, ThrowDialog.MAX_TIME);
 				//mediaPlayer.stop();
@@ -431,7 +463,7 @@ public class MainActivity extends ActivityGroup {
 		String qrcode = check.getString("code", "badcode");
 		String email = check.getString("email", "bademail");
 		//use them to unpark the user serverside
-		
+
 		if (ServerCalls.unPark(qrcode, email)==1){
 			try{
 				//stop the countdown timer and service
@@ -462,7 +494,9 @@ public class MainActivity extends ActivityGroup {
 
 		if(ServerCalls.Park(contents, email, endtime)==1){
 			//Toast.makeText(MainActivity.this, ""+ServerCalls.addHistory(parkDate, starttime, endtime, contents, email, parkCost), Toast.LENGTH_SHORT).show();
-			
+			SharedPreferences.Editor edit = check.edit();
+			edit.putString("TIMER", endtime);
+			edit.commit();
 			ServerCalls.addHistory(parkDate, starttime, endtime, contents, email, parkCost);
 			//return a happy response
 			return 1;
@@ -477,22 +511,27 @@ public class MainActivity extends ActivityGroup {
 	private void refillMe(int refillMinutes){
 		//if we haven't gone past the total time we're allowed to park
 		if(totalTimeParked+refillMinutes<=maxTime){
-			
+
 			//update the total time parked and remaining time.
 			parkMinutes+=refillMinutes;
 			parkCost = getCostInCents(parkMinutes);
 			totalTimeParked+=refillMinutes;
 			remainSeconds+=refillMinutes*60;
 			updateDisplay();
-			
+
 			//TODO:  DELETE ME TESTING CODE
 			//remainSeconds+=60;
 			//END TESTING CODE
-			
+
 			//stop current timer, start new timer with current time + selectedNumber.
 			try{
+				
+				SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
+				Date oldEnd = Global.sdf.parse(check.getString("TIMER", ""));
+				oldEnd.setMinutes(oldEnd.getMinutes() + refillMinutes);
+				//calculate new endtime and initiate timer from it.  
 				timer.cancel();
-				timer = initiateTimer(remainSeconds, vf);
+				timer = initiateTimer(oldEnd, vf);
 				stopService(new Intent(MainActivity.this, Background.class));
 				int testing = unpark();
 				int testing2 = park();
@@ -516,10 +555,10 @@ public class MainActivity extends ActivityGroup {
 			if(selectedNumber>=minimalIncrement)
 				//TODO testing delete me
 				refillMe(1);
-				//refillMe(selectedNumber);
+			//refillMe(selectedNumber);
 		}
 	};
-	
+
 
 	//once we scan the qr code
 	@Override
@@ -538,16 +577,16 @@ public class MainActivity extends ActivityGroup {
 					//prepare time picker for this spot
 					parkTimePicker.setRange(mySpot.getMinIncrement(), mySpot.getMaxTime());
 					parkTimePicker.setMinInc(mySpot.getMinIncrement());
-					
+
 					//initialize all variables to match spot
 					minimalIncrement=mySpot.getMinIncrement();
 					maxTime = mySpot.getMaxTime();
-					
+
 					//TODO delete me testing
 					parkMinutes=1;
 					//parkMinutes=minimalIncrement;
 					remainSeconds=parkMinutes*60;
-					
+
 					//store some used info
 					SharedPreferences.Editor editor = check.edit();
 					editor.putString("code", contents);
@@ -594,13 +633,15 @@ public class MainActivity extends ActivityGroup {
 
 	/* THIS TIMER is only used for in-app visuals.  The actual server updating and such are
 	 * done via user button clicks, and the background service we run.  */
-	public CountDownTimer initiateTimer(int countDownSeconds, final ViewFlipper myvf){
+	public CountDownTimer initiateTimer(Date endTime, final ViewFlipper myvf){
 		//creates the countdown timer
+		Date now = new Date();
+		int countDownSeconds = (int)(endTime.getTime() - now.getTime())/1000;
 		return new CountDownTimer(countDownSeconds*1000, 1000){
 			//on each 1 second tick, 
 			@Override
 			public void onTick(long arg0) {
-				
+
 				int seconds = (int)arg0/1000;
 				//if the time is what our warning-time is set to
 				if(seconds==warnTime&&SavedInfo.autoRefill(MainActivity.this)==false){
@@ -622,6 +663,7 @@ public class MainActivity extends ActivityGroup {
 					alert.cancel();
 					refillMe(1);
 				}else{
+					SavedInfo.eraseTimer(MainActivity.this);
 					//else we cancel the running out of tie dialog
 					alert.cancel();
 					//and restore view
@@ -649,17 +691,6 @@ public class MainActivity extends ActivityGroup {
 		}
 	}
 
-	//override back press, keep app running in background
-	//TODO:  DANGEROUS METHOD -- you dont' know how this works, but just that it works...for 2.2
-	@Override
-	public void onBackPressed(){
-		Log.d("CDA", "OnBackPressed Called");
-		Intent setIntent = new Intent(Intent.ACTION_MAIN);
-		setIntent.addCategory(Intent.CATEGORY_HOME);
-		setIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		startActivity(setIntent);
-		return;
-	}
 
 	//converts cents to "$ x.xx"
 	public String moneyConverter (int cents){
