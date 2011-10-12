@@ -1,6 +1,6 @@
 <ehcache maxBytesLocalOnHeap="1g" maxBytesLocalOffHeap="4g"
 	maxBytesLocalDisk="1g">
-	<!-- This a sample template for a long duration cache
+	<!-- This a sample template for a long duration cache 
 	<cache name="LongDurationCache" maxBytesLocalHeap="50m"
 		maxBytesLocalOffHeap="200m" timeToLiveSeconds="86400"
 		overflowToDisk="false">
@@ -17,6 +17,16 @@
             maxElementsInMemory="10000"
             eternal="false"
             timeToIdleSeconds="43200"
+            timeToLiveSeconds="86400"
+            overflowToDisk="false"
+            memoryStoreEvictionPolicy="LRU">
+	</cache>
+	
+	<!-- this is the parking rate dao cache (1 day expiration) -->
+	<cache name="ParkingRateCache"
+            maxElementsInMemory="100000"
+            eternal="false"
+            timeToIdleSeconds="86400"
             timeToLiveSeconds="86400"
             overflowToDisk="false"
             memoryStoreEvictionPolicy="LRU">

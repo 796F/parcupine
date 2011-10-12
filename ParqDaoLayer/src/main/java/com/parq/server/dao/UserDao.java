@@ -21,20 +21,18 @@ public class UserDao extends AbstractParqDaoParent {
 	/**
 	 * Name of the local cache use by this dao
 	 */
-	private String cacheName = "UserCache";
+	private static final String cacheName = "UserCache";
 	private static Cache myCache;
 
-	private String sqlGetUserStatement = "SELECT User_ID, UserName, Password, eMail FROM User ";
-	private String sqlGetUserById = sqlGetUserStatement + "WHERE User_ID = ?";
-	private String sqlGetUserByUserName = sqlGetUserStatement + "WHERE UserName = ?";
-	private String sqlGetUserByEmail = sqlGetUserStatement + "WHERE eMail = ?";
+	private static final String sqlGetUserStatement = "SELECT User_ID, UserName, Password, eMail FROM User ";
+	private static final String sqlGetUserById = sqlGetUserStatement + "WHERE User_ID = ?";
+	private static final String sqlGetUserByUserName = sqlGetUserStatement + "WHERE UserName = ?";
+	private static final String sqlGetUserByEmail = sqlGetUserStatement + "WHERE eMail = ?";
 
-	private String sqlDeleteUserById = "DELETE FROM User WHERE User_ID = ?";
-
-	private String sqlUpdateUser = "UPDATE User SET UserName = ?, Password = ?, eMail = ? "
+	private static final String sqlDeleteUserById = "DELETE FROM User WHERE User_ID = ?";
+	private static final String sqlUpdateUser = "UPDATE User SET UserName = ?, Password = ?, eMail = ? "
 			+ " WHERE User_ID = ?";
-	
-	private String sqlCreateUser = "INSERT INTO User (UserName, Password, eMail) "
+	private static final String sqlCreateUser = "INSERT INTO User (UserName, Password, eMail) "
 			+ " VALUES (?, ?, ?)";
 
 	public UserDao() {
@@ -53,7 +51,7 @@ public class UserDao extends AbstractParqDaoParent {
 	 * @throws SQLException
 	 */
 	private User createUserObject(ResultSet rs) throws SQLException {
-		if (rs == null) {
+		if (rs == null || !rs.isBeforeFirst()) {
 			return null;
 		}
 		User user = new User();
@@ -72,9 +70,7 @@ public class UserDao extends AbstractParqDaoParent {
 		User user = null;
 		if (myCache.get(cacheKey) != null) {
 			user = (User) myCache.get(cacheKey).getValue();
-			if (user != null) {
-				return user;
-			}
+			return user;
 		}
 
 		// query the DB for the user object
@@ -96,9 +92,7 @@ public class UserDao extends AbstractParqDaoParent {
 		}
 
 		// put result into cache
-		if (user != null) {
-			myCache.put(new Element(cacheKey, user));
-		}
+		myCache.put(new Element(cacheKey, user));
 		
 		return user;
 	}
@@ -110,9 +104,7 @@ public class UserDao extends AbstractParqDaoParent {
 		User user = null;
 		if (myCache.get(cacheKey) != null) {
 			user = (User) myCache.get(cacheKey).getValue();
-			if (user != null) {
-				return user;
-			}
+			return user;
 		}
 
 		// query the DB for the user object
@@ -127,15 +119,14 @@ public class UserDao extends AbstractParqDaoParent {
 			user = createUserObject(rs);
 
 		} catch (SQLException sqle) {
-			user = null;
+			System.out.println("SQL statement is invalid: " + pstmt);
+			throw new RuntimeException(sqle);
 		} finally {
 			closeConnection(con);
 		}
 
 		// put result into cache
-		if (user != null) {
-			myCache.put(new Element(cacheKey, user));
-		}
+		myCache.put(new Element(cacheKey, user));
 		
 		return user;
 	}
@@ -147,9 +138,7 @@ public class UserDao extends AbstractParqDaoParent {
 		User user = null;
 		if (myCache.get(cacheKey) != null) {
 			user = (User) myCache.get(cacheKey).getValue();
-			if (user != null) {
-				return user;
-			}
+			return user;
 		}
 
 		// query the DB for the user object
@@ -171,9 +160,7 @@ public class UserDao extends AbstractParqDaoParent {
 		}
 
 		// put result into cache
-		if (user != null) {
-			myCache.put(new Element(cacheKey, user));
-		}
+		myCache.put(new Element(cacheKey, user));
 		
 		return user;
 	}
@@ -198,7 +185,7 @@ public class UserDao extends AbstractParqDaoParent {
 
 		// clear out the cache when delete is successful
 		if (deleteSuccessful) {
-			myCache.removeAll();
+			clearUserCache();
 		}
 
 		return deleteSuccessful;
@@ -227,7 +214,7 @@ public class UserDao extends AbstractParqDaoParent {
 
 		// clear out the cache when update is successful
 		if (updateSuccessful) {
-			myCache.removeAll();
+			clearUserCache();
 		}
 
 		return updateSuccessful;
@@ -258,7 +245,19 @@ public class UserDao extends AbstractParqDaoParent {
 			closeConnection(con);
 		}
 
+		// clear out the cache when new user is created
+		if (newUserCreated) {
+			clearUserCache();
+		}
 		return newUserCreated;
 	}
-
+	
+	/**
+	 * manually clear out the cache
+	 * @return
+	 */
+	public boolean clearUserCache() {
+		myCache.removeAll();
+		return true;
+	}
 }
