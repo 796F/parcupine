@@ -18,6 +18,8 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 	 */
 	private static final String cacheName = "ParkingRateCache";
 	private static Cache myCache;
+	
+	private static final String parkingRateByNamePrefix = "getParkingRateByName:";
 
 	private static final String sqlGetParkingIds = 
 		"SELECT R.Client_ID, R.Building_ID, R.Space_ID, R.Default_Parking_Rate, R.Priority " +
@@ -57,7 +59,7 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 			String buildingName, String spaceName) {
 		
 		// the cache key for this method call;
-		String cacheKey = "getParkingRateByName:" + clientName + ":" + buildingName + ":" + spaceName;
+		String cacheKey = parkingRateByNamePrefix + clientName + ":" + buildingName + ":" + spaceName;
 		
 		ParkingRate rate = null;
 		if (myCache.get(cacheKey) != null) {
@@ -119,5 +121,14 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 		} 
 		
 		return parkingRate;
+	}
+	
+	/**
+	 * manually clear out the cache
+	 * @return
+	 */
+	public boolean clearRateCache() {
+		myCache.removeAll();
+		return true;
 	}
 }

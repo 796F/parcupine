@@ -1,0 +1,5 @@
+1) the TestServices.java and TestServicePortType.java class are not meant to be changed. so touch the codes in there
+2) Create a custom service class that implement the TestSErvicePortType to insert custom application logic
+    
+ 3) the only way to create the TestResponseType object is through the ObjectFactory. 
+    Don't use any of the constructor in those generated types

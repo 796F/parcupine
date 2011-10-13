@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<endpoints version="2.0"
+	xmlns="http://java.sun.com/xml/ns/jax-ws/ri/runtime">
+
+	<!-- Bind the WSDL to the MyCustomService.java class-->
+	<endpoint implementation="testservice.MyCustomService"
+		name="TestService" url-pattern="/*"	wsdl="WEB-INF/wsdl/TestService.wsdl" 
+		service='{urn:TestService}TestService' port='{urn:TestService}TestService_v1.0_Port'/>
+
+</endpoints>
+

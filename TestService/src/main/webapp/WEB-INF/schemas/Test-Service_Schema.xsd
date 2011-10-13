@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="urn:TestServiceSchema"
+	xmlns:tns="urn:TestServiceSchema"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="unqualified" attributeFormDefault="unqualified"
+	blockDefault="substitution" version="2.0">
+	
+	<!-- A dummy request object that can contain anything -->
+	<xs:element name="TestRequest" type="tns:TestRequestType" />
+	<xs:complexType name="TestRequestType">
+		<sequence>
+			<xs:any minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+	</xs:complexType>
+	
+	<!-- A dummy response object that can contain anything -->
+	<xs:element name="TestResponse" type="tns:TestResponseType" />
+	<xs:complexType name="TestResponseType">
+		<sequence>
+			<xs:any minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+	</xs:complexType>
+	
+</schema>

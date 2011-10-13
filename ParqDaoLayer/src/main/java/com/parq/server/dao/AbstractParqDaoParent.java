@@ -118,4 +118,12 @@ abstract class AbstractParqDaoParent {
 	protected synchronized void closeConnection() {
 		closeConnection(con);
 	}
+	
+	protected boolean revokeCache(Cache cache, String keyPrefix, String value) {
+		if (cache == null || keyPrefix == null || value == null) {
+			return false;
+		}	
+		String cacheKey = keyPrefix + value;
+		return cache.remove(cacheKey);
+	}
 }

@@ -34,6 +34,11 @@ public class UserDao extends AbstractParqDaoParent {
 			+ " WHERE User_ID = ?";
 	private static final String sqlCreateUser = "INSERT INTO User (UserName, Password, eMail) "
 			+ " VALUES (?, ?, ?)";
+	
+	private static final String emailCache = "getUserByEmail:";
+	private static final String idCache = "getUserById:";
+	private static final String userNameCache = "getUserByUserName:";
+	
 
 	public UserDao() {
 		super();
@@ -65,7 +70,7 @@ public class UserDao extends AbstractParqDaoParent {
 
 	public User getUserById(int id) {
 		// the cache key for this method call;
-		String cacheKey = "getUserById:" + id;
+		String cacheKey = idCache + id;
 		
 		User user = null;
 		if (myCache.get(cacheKey) != null) {
@@ -99,7 +104,7 @@ public class UserDao extends AbstractParqDaoParent {
 
 	public User getUserByUserName(String userName) {
 		// the cache key for this method call;
-		String cacheKey = "getUserByUserName:" + userName;
+		String cacheKey = userNameCache + userName;
 
 		User user = null;
 		if (myCache.get(cacheKey) != null) {
@@ -133,7 +138,7 @@ public class UserDao extends AbstractParqDaoParent {
 
 	public User getUserByEmail(String emailAddress) {
 		// the cache key for this method call;
-		String cacheKey = "getUserByEmail:" + emailAddress;
+		String cacheKey = emailCache + emailAddress;
 
 		User user = null;
 		if (myCache.get(cacheKey) != null) {
@@ -167,6 +172,13 @@ public class UserDao extends AbstractParqDaoParent {
 
 	public synchronized boolean deleteUserById(int id) {
 
+		if (id <= 0) {
+			throw new IllegalStateException("Invalid user delete request");
+		}
+		
+		// clear out the cache entry for deleted user
+		revokeUserCacheById(id);
+		
 		PreparedStatement pstmt = null;
 		Connection con = null;
 		boolean deleteSuccessful = false;
@@ -182,17 +194,20 @@ public class UserDao extends AbstractParqDaoParent {
 		} finally {
 			closeConnection(con);
 		}
-
-		// clear out the cache when delete is successful
-		if (deleteSuccessful) {
-			clearUserCache();
-		}
-
+		
 		return deleteSuccessful;
 	}
 
-	public synchronized boolean updateUserById(User user) {
+	public synchronized boolean updateUser(User user) {
 
+		if (user == null || user.getUserName() == null
+				|| user.getEmail() == null || user.getUserID() <= 0) {
+			throw new IllegalStateException("Invalid user update request");
+		}
+		
+		// clear out the cache entry for user that is going to be updated
+		revokeUserCacheById(user.getUserID());
+		
 		PreparedStatement pstmt = null;
 		Connection con = null;
 		boolean updateSuccessful = false;
@@ -212,20 +227,27 @@ public class UserDao extends AbstractParqDaoParent {
 			closeConnection(con);
 		}
 
-		// clear out the cache when update is successful
-		if (updateSuccessful) {
-			clearUserCache();
-		}
-
 		return updateSuccessful;
 	}
-	
+
+
 	public synchronized boolean createNewUser(User user) {
 
-		// test to make sure no duplicate username is created
-		if (getUserByUserName(user.getUserName()) != null) {
+		if (user == null || user.getUserName() == null
+				|| user.getEmail() == null) {
+			throw new IllegalStateException("Invalid user create request");
+		}
+		// test to make sure no duplicate username is created or email used
+		else if (getUserByUserName(user.getUserName()) != null) {
 			throw new IllegalStateException("Userame: " + user.getUserName() + " already exist");
 		}
+		else if(getUserByEmail(user.getEmail()) != null) {
+			throw new IllegalStateException("Email: " + user.getEmail() + " already exist");
+		}
+		
+		// clear out the cache entry for user that is going to be updated
+		revokeCache(myCache, userNameCache, user.getUserName());
+		revokeCache(myCache, emailCache, user.getEmail());
 		
 		PreparedStatement pstmt = null;
 		Connection con = null;
@@ -244,14 +266,26 @@ public class UserDao extends AbstractParqDaoParent {
 		} finally {
 			closeConnection(con);
 		}
-
-		// clear out the cache when new user is created
-		if (newUserCreated) {
-			clearUserCache();
-		}
+		
 		return newUserCreated;
 	}
+
 	
+	/**
+	 * Revoke all the cache instance of this User by id, username, and email address.
+	 * @param userID
+	 */
+	private void revokeUserCacheById(int userID) {
+		if (userID < 0) {
+			return;
+		}
+		User user = getUserById(userID);
+		
+		revokeCache(myCache, idCache, "" + userID);
+		revokeCache(myCache, userNameCache, user.getUserName());
+		revokeCache(myCache, emailCache, user.getEmail());
+	}
+
 	/**
 	 * manually clear out the cache
 	 * @return

@@ -1,0 +1,11 @@
+<classpath>
+  <classpathentry kind="src" path="src/main/java" including="**/*.java"/>
+  <classpathentry kind="output" path="target/classes"/>
+  <classpathentry kind="var" path="M2_REPO/javax/servlet/servlet-api/2.4/servlet-api-2.4.jar"/>
+  <classpathentry kind="var" path="M2_REPO/javax/xml/webservices-api/1.3/webservices-api-1.3.jar"/>
+  <classpathentry kind="var" path="M2_REPO/javax/xml/webservices-extra-api/2.1-b16/webservices-extra-api-2.1-b16.jar"/>
+  <classpathentry kind="var" path="M2_REPO/mysql/mysql-connector-java/5.1.6/mysql-connector-java-5.1.6.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/sun/xml/ws/webservices-rt/1.3/webservices-rt-1.3.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/sun/tools/ws/webservices-tools/1.3/webservices-tools-1.3.jar"/>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+</classpath>

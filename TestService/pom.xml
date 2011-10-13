@@ -1,0 +1,174 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.test</groupId>
+	<artifactId>TestService</artifactId>
+	<packaging>war</packaging>
+	<version>1.0</version>
+	<name>Test WebService</name>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>javax.xml</groupId>
+			<artifactId>webservices-api</artifactId>
+			<version>1.3</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.xml</groupId>
+			<artifactId>webservices-extra-api</artifactId>
+			<version>2.1-b16</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.xml.ws</groupId>
+			<artifactId>webservices-rt</artifactId>
+			<version>1.3</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.tools.ws</groupId>
+			<artifactId>webservices-tools</artifactId>
+			<version>1.3</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.4</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.6</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<warName>TestService</warName>
+				</configuration>
+			</plugin>
+
+			<!-- Generate the binding java classes automagically -->
+			<!--
+				Once the source code is generated, this section can be commented out
+				until next time source code generation is needed, or change the
+				<phase> to DONT_RUN
+			-->
+			<!--
+				IMPORTANT, when you run the code generation, and code copy, all your
+				changes you made to the generated classes will be deleted, however
+				any classes you created yourself will not be impacted
+			-->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>WSIMPORT</id>
+						<!-- <phase>generate-sources</phase>-->
+						<phase>DONT_RUN</phase>
+						<configuration>
+							<tasks>
+								<taskdef name="wsimport" classname="com.sun.tools.ws.ant.WsImport"
+									classpathref="maven.compile.classpath" />
+								<mkdir dir="${project.build.directory}/generated-sources" />
+								<mkdir dir="${project.build.directory}/generated-classes" />
+								<wsimport fork="true" keep="true" extension="true"
+									sourcedestdir="${project.build.directory}/generated-sources"
+									destdir="${project.build.directory}/generated-classes"
+									wsdl="${project.build.directory}/../src/main/webapp/WEB-INF/wsdl/TestService.wsdl">
+								</wsimport>
+							</tasks>
+							<sourceRoot>
+								${project.build.directory}/generated-sources
+							</sourceRoot>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>com.sun.xml.bind</groupId>
+						<artifactId>jaxb-xjc</artifactId>
+						<version>2.1.9</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+
+			<!--
+				Copy the generated java code from the target\generated-sources
+				folder to the src/main/java folder, don't need to be rerun unless
+				new source code is generated from the above section, change <phase>
+				to DONT_RUN when not needed
+			-->
+			<!--
+				IMPORTANT, when you run the code generation, and code copy, all your
+				changes you made to the generated classes will be deleted, however
+				any classes you created yourself will not be impacted
+			-->
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.5</version>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<!-- <phase>generate-sources</phase> -->
+						<phase>DONT_RUN</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/src/main/java</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${basedir}/target/generated-sources</directory>
+									<filtering>true</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<repositories>
+		<repository>
+			<id>JBOSS</id>
+			<name>JBoss Repository</name>
+			<url>http://repository.jboss.org/maven2/</url>
+		</repository>
+		<repository>
+			<id>maven2-repository.dev.java.net</id>
+			<name>Java.net Maven 2 Repository</name>
+			<url>http://download.java.net/maven/2</url>
+		</repository>
+		<repository>
+			<id>maven1-repository.dev.java.net</id>
+			<name>Java.net Maven 1 Legacy Repository</name>
+			<url>http://download.java.net/maven/1</url>
+		</repository>
+		<repository>
+			<id>ibibiblio-repo</id>
+			<name>Ibiblio Repo</name>
+			<url>http://mirrors.ibiblio.org/pub/mirrors/maven/</url>
+		</repository>
+	</repositories>
+
+</project>

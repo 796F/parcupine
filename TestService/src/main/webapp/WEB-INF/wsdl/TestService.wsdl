@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"  xmlns:ts1="urn:TestServiceSchema"
+	xmlns:tns="urn:TestService" targetNamespace="urn:TestService">
+
+	<!-- import external schemas -->
+	<wsdl:types>
+		<xsd:schema>
+			<xsd:import namespace="urn:TestServiceSchema"
+				schemaLocation="../schemas/Test-Service_Schema.xsd" />
+		</xsd:schema>
+	</wsdl:types>
+	
+	<!-- Declare the test service, and bind it to the service-binding below -->
+	<wsdl:service name="TestService">
+		<wsdl:port name="TestService_v1.0_Port" 
+				   binding="tns:TestService_SOAPBinding">
+			<!-- The application server will fill in actual URL during deployment -->
+            <soap:address location="REPLACE_WITH_ACTUAL_URL"/> 
+		</wsdl:port>
+	</wsdl:service>
+
+	<!-- Define the request and response object (imported from the schema) -->
+	<wsdl:message name="DoSomethingRequest">
+		<wsdl:part name="Request" element="ts1:TestRequest" />
+	</wsdl:message>
+	<wsdl:message name="DoSomethingResponse">
+		<wsdl:part name="Response" element="ts1:TestResponse" />
+	</wsdl:message>
+
+	<!-- Bind the request and response object to a method (aka port) -->
+	<wsdl:portType name="TestService_PortType">
+		<wsdl:operation name="DoSomething">
+			<wsdl:input message="tns:DoSomethingRequest" />
+			<wsdl:output message="tns:DoSomethingResponse" />
+		</wsdl:operation>
+	</wsdl:portType>
+
+	<!-- Bind the methods to the service -->
+	<wsdl:binding name="TestService_SOAPBinding" type="tns:TestService_PortType">
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="DoSomething">
+			<soap:operation soapAction="http://www.oasis-open.org/committees/security" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+</wsdl:definitions>
