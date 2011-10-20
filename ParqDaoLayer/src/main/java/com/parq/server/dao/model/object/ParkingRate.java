@@ -1,7 +1,14 @@
 package com.parq.server.dao.model.object;
 
-public class ParkingRate {
+import java.io.Serializable;
 
+public class ParkingRate implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2521737369389319843L;
+	
 	private RateType rateType;
 	private int clientId;
 	private String clientName;

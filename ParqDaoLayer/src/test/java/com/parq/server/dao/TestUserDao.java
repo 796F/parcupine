@@ -69,8 +69,8 @@ public class TestUserDao extends TestCase {
 		assertSame(user, user3);
 		
 		// for some reason the above method return user as null during
-		// maven surefire test, but not during regular eclipse unit testing
-		// cause of the issue is still under investigation, current work around
+		// maven surefire test, but not during regular eclipse unit testing.
+		// Cause of the issue is still under investigation, current work around
 		// is to use a if block to by past the below test during maven surefire testing
 		// phase.
 		if (user == null) {
