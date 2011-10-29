@@ -10,7 +10,7 @@ import java.util.Properties;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 
-abstract class AbstractParqDaoParent {
+public abstract class AbstractParqDaoParent {
 
 	private Connection con;
 	protected static final String driver = "com.mysql.jdbc.Driver";

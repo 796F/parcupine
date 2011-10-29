@@ -16,6 +16,7 @@ public class ParkingRate implements Serializable {
 	private String buildingName;
 	private int spaceId;
 	private String spaceName;
+	private double parkingRate = -1.0;
 
 	/**
 	 * tell the rate type of this ParkingRate </br>
@@ -127,6 +128,20 @@ public class ParkingRate implements Serializable {
 	 */
 	public void setSpaceName(String spaceName) {
 		this.spaceName = spaceName;
+	}
+
+	/**
+	 * @return the parkingRate
+	 */
+	public double getParkingRate() {
+		return parkingRate;
+	}
+
+	/**
+	 * @param parkingRate the parkingRate to set
+	 */
+	public void setParkingRate(double parkingRate) {
+		this.parkingRate = parkingRate;
 	}
 
 	public enum RateType {

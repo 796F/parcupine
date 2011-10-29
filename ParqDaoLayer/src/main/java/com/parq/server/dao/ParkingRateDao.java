@@ -21,7 +21,7 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 	
 	private static final String parkingRateByNamePrefix = "getParkingRateByName:";
 
-	private static final String sqlGetParkingIds = 
+	private static final String sqlGetSpaceParkingRate = 
 		"SELECT R.Client_ID, R.Building_ID, R.Space_ID, R.Default_Parking_Rate, R.Priority " +
 			" FROM Client AS C, ParkingBuilding AS B, ParkingSpace AS S, ClientDefaultRate AS R " +
 			" WHERE C.Client_ID = B.Client_ID " +
@@ -33,6 +33,24 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 			" AND B.Building_Name = ? " +
 			" AND S.Space_Name = ? " +
 			" ORDER BY R.Priority DESC"; 
+	
+	private static final String sqlGetBuildingParkingRate = 
+		"SELECT R.Client_ID, R.Building_ID, R.Space_ID, R.Default_Parking_Rate, R.Priority " +
+			" FROM Client AS C, ParkingBuilding AS B, ClientDefaultRate AS R " +
+			" WHERE C.Client_ID = B.Client_ID " +
+			" AND R.Client_ID = C.Client_ID " +
+			" AND R.Building_ID IN(NULL, B.Building_ID) " +
+			" AND C.Name = ? " +
+			" AND B.Building_Name = ? " +
+			" ORDER BY R.Priority DESC"; 
+	
+	private static final String sqlGetClientParkingRate = 
+		"SELECT R.Client_ID, R.Building_ID, R.Space_ID, R.Default_Parking_Rate, R.Priority " +
+			" FROM Client AS C, ParkingBuilding AS B, ClientDefaultRate AS R " +
+			" WHERE R.Client_ID = C.Client_ID " +
+			" AND C.Name = ? " +
+			" ORDER BY R.Priority DESC"; 
+
 	
 	public ParkingRateDao() {
 		super();
@@ -72,10 +90,25 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 		Connection con = null;
 		try {
 			con = getConnection();
-			pstmt = con.prepareStatement(sqlGetParkingIds);
+			
+			String stmtToUse = sqlGetClientParkingRate;
+			if (buildingName != null && !buildingName.isEmpty()) {
+				stmtToUse = sqlGetBuildingParkingRate;
+			}
+			if (spaceName != null && !spaceName.isEmpty()) {
+				stmtToUse = sqlGetSpaceParkingRate;
+			}
+			
+			pstmt = con.prepareStatement(stmtToUse);
 			pstmt.setString(1, clientName);
-			pstmt.setString(2, buildingName);
-			pstmt.setString(3, spaceName);
+			if (buildingName != null && !buildingName.isEmpty()) {
+				pstmt.setString(2, buildingName);
+			}
+			if (spaceName != null && !spaceName.isEmpty()) {
+				pstmt.setString(3, spaceName);
+			}
+			
+			System.out.println(pstmt);
 			
 			ResultSet rs = pstmt.executeQuery();
 			rate = createParkingRate(clientName, buildingName, spaceName, rs);
@@ -99,15 +132,18 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 		if (rs == null || !rs.isBeforeFirst()) {
 			return null;
 		}
+		rs.first();
 		
 		int clientId = rs.getInt("Client_ID");
 		int buildingId = rs.getInt("Building_ID");
 		int spaceId = rs.getInt("Space_ID");
+		double rate = rs.getDouble("Default_Parking_Rate");
 		
 		ParkingRate parkingRate = new ParkingRate();
 		parkingRate.setRateType(RateType.Client);
 		parkingRate.setClientId(clientId);
 		parkingRate.setClientName(clientName);
+		parkingRate.setParkingRate(rate);
 		
 		if (buildingId > 0) {
 			parkingRate.setRateType(RateType.Building);
