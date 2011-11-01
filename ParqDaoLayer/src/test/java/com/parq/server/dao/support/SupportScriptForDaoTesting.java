@@ -1,14 +1,14 @@
 package com.parq.server.dao.support;
 
 
-public final class SupportScriptForClientAndParkRateDaoTesting {
+public final class SupportScriptForDaoTesting {
 
 	private static boolean fakeDataInserted = false;
 
 	public static void insertFakeData() {
 		if (!fakeDataInserted){
 			DaoForTestingPurposes testDao = new DaoForTestingPurposes();
-			for (String s : SupportScriptForClientAndParkRateDaoTesting.sqlInsertStmtList) {
+			for (String s : SupportScriptForDaoTesting.sqlInsertStmtList) {
 				testDao.executeSqlStatement(s);
 			}
 			fakeDataInserted = true;
@@ -17,7 +17,7 @@ public final class SupportScriptForClientAndParkRateDaoTesting {
 	
 	public static void deleteFakeData() {
 		DaoForTestingPurposes testDao = new DaoForTestingPurposes();
-		for (String s : SupportScriptForClientAndParkRateDaoTesting.sqlDeleteStmtList) {
+		for (String s : SupportScriptForDaoTesting.sqlDeleteStmtList) {
 			testDao.executeSqlStatement(s);
 		}
 		fakeDataInserted = false;
@@ -91,6 +91,8 @@ public final class SupportScriptForClientAndParkRateDaoTesting {
 	private static String deleteBuildings = "DELETE FROM ParkingBuilding WHERE building_name IN ('" + buildingNameMain + "', '" + fakeBuilding1 + "', '" + fakeBuilding2 + "')";
 	private static String deleteClients = "DELETE FROM client WHERE name IN ('" + clientNameMain + "', '" + fakeClient1 + "', '" + fakeClient2 + "')";
 	private static String deleteParkingRates = "DELETE FROM ClientDefaultRate WHERE priority < 0";
+	private static String deleteAllPayment = "DELETE FROM Payment";
+	private static String deleteAllParkingInstance = "DELETE FROM ParkingInstance";
 	
 	public static String[] sqlInsertStmtList = new String[] { insertClientMain,
 			insertClientFake1, insertClientFake2, insertBuildingMain,
@@ -101,6 +103,7 @@ public final class SupportScriptForClientAndParkRateDaoTesting {
 			insertBuildingParkingRate, insertSpaceParkingRate}; 
 	
 	public static String[] sqlDeleteStmtList = new String[] {
-			deleteParkingRates, deleteSpaces, deleteBuildings, deleteClients
+		deleteAllPayment, deleteAllParkingInstance, deleteParkingRates, 
+		deleteSpaces, deleteBuildings, deleteClients
 	};
 }

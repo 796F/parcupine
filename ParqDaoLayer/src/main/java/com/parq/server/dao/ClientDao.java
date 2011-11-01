@@ -24,13 +24,16 @@ public class ClientDao extends AbstractParqDaoParent {
 	private static final String cacheName = "ClientCache";
 	private static Cache myCache;
 
-	private static final String sqlGetClientByClientName = "SELECT client_id, name, address, client_desc FROM client WHERE name = ?";
-	private static final String sqlGetClientByClientId = "SELECT client_id, name, address, client_desc FROM client WHERE client_id = ?";
-	private static final String sqlGetAllSpacesByClientId = "SELECT B.Client_ID, B.Building_Name, B.Building_ID, S.Space_ID, S.Space_Name, S.Parking_Level "
-			+ " FROM ParkingBuilding AS B, ParkingSpace AS S "
-			+ " WHERE B.Building_ID = S.Building_ID "
-			+ " AND B.Client_ID = ?"
-			+ " ORDER BY B.Building_ID";
+	private static final String sqlGetClientByClientName = "SELECT client_id, name, address, client_desc FROM client WHERE name = ? AND Is_Deleted IS NOT TRUE";
+	private static final String sqlGetClientByClientId = "SELECT client_id, name, address, client_desc FROM client WHERE client_id = ? AND Is_Deleted IS NOT TRUE";
+	private static final String sqlGetAllSpacesByClientId = 
+		"SELECT B.Client_ID, B.Building_Name, B.Building_ID, S.Space_ID, S.Space_Name, S.Parking_Level " + 
+		" FROM ParkingBuilding AS B, ParkingSpace AS S " +
+		" WHERE B.Building_ID = S.Building_ID " +
+		" AND B.Client_ID = ?" +
+		" AND B.Is_Deleted IS NOT TRUE " +
+		" AND S.Is_Deleted IS NOT TRUE " +
+		" ORDER BY B.Building_ID";
 
 	private static final String clientNameCache = "getClientByClientName:";
 	private static final String clientIdCache = "getClientByClientId:";
@@ -68,6 +71,7 @@ public class ClientDao extends AbstractParqDaoParent {
 
 		} catch (SQLException sqle) {
 			System.out.println("SQL statement is invalid: " + pstmt);
+			sqle.printStackTrace();
 			throw new RuntimeException(sqle);
 		} finally {
 			closeConnection(con);
@@ -103,6 +107,7 @@ public class ClientDao extends AbstractParqDaoParent {
 
 		} catch (SQLException sqle) {
 			System.out.println("SQL statement is invalid: " + pstmt);
+			sqle.printStackTrace();
 			throw new RuntimeException(sqle);
 		} finally {
 			closeConnection(con);
@@ -208,5 +213,14 @@ public class ClientDao extends AbstractParqDaoParent {
 		client.setAddress(rs.getString("address"));
 		client.setClientDescription(rs.getString("client_desc"));
 		return client;
+	}
+	
+	/**
+	 * manually clear out the cache
+	 * @return
+	 */
+	public boolean clearUserCache() {
+		myCache.removeAll();
+		return true;
 	}
 }

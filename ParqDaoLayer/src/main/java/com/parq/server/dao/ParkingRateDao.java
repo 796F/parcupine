@@ -32,6 +32,9 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 			" AND C.Name = ? " +
 			" AND B.Building_Name = ? " +
 			" AND S.Space_Name = ? " +
+			" AND C.Is_Deleted IS NOT TRUE " +
+			" AND B.Is_Deleted IS NOT TRUE " +
+			" AND S.Is_Deleted IS NOT TRUE " +
 			" ORDER BY R.Priority DESC"; 
 	
 	private static final String sqlGetBuildingParkingRate = 
@@ -42,6 +45,8 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 			" AND R.Building_ID IN(NULL, B.Building_ID) " +
 			" AND C.Name = ? " +
 			" AND B.Building_Name = ? " +
+			" AND C.Is_Deleted IS NOT TRUE " +
+			" AND B.Is_Deleted IS NOT TRUE " +
 			" ORDER BY R.Priority DESC"; 
 	
 	private static final String sqlGetClientParkingRate = 
@@ -49,6 +54,8 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 			" FROM Client AS C, ParkingBuilding AS B, ClientDefaultRate AS R " +
 			" WHERE R.Client_ID = C.Client_ID " +
 			" AND C.Name = ? " +
+			" AND C.Is_Deleted IS NOT TRUE " +
+			" AND B.Is_Deleted IS NOT TRUE " +
 			" ORDER BY R.Priority DESC"; 
 
 	
@@ -115,6 +122,7 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 
 		} catch (SQLException sqle) {
 			System.out.println("SQL statement is invalid: " + pstmt);
+			sqle.printStackTrace();
 			throw new RuntimeException(sqle);
 		} finally {
 			closeConnection(con);

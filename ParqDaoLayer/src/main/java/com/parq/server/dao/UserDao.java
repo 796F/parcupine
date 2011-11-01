@@ -25,11 +25,12 @@ public class UserDao extends AbstractParqDaoParent {
 	private static Cache myCache;
 
 	private static final String sqlGetUserStatement = "SELECT User_ID, UserName, Password, eMail FROM User ";
-	private static final String sqlGetUserById = sqlGetUserStatement + "WHERE User_ID = ?";
-	private static final String sqlGetUserByUserName = sqlGetUserStatement + "WHERE UserName = ?";
-	private static final String sqlGetUserByEmail = sqlGetUserStatement + "WHERE eMail = ?";
+	private static final String isNotDeleted = " AND Is_Deleted IS NOT TRUE";
+	private static final String sqlGetUserById = sqlGetUserStatement + "WHERE User_ID = ? " + isNotDeleted;
+	private static final String sqlGetUserByUserName = sqlGetUserStatement + "WHERE UserName = ? " + isNotDeleted;
+	private static final String sqlGetUserByEmail = sqlGetUserStatement + "WHERE eMail = ? " + isNotDeleted;
 
-	private static final String sqlDeleteUserById = "DELETE FROM User WHERE User_ID = ?";
+	private static final String sqlDeleteUserById = "UPDATE User SET Is_Deleted = TRUE, UserName = ? WHERE User_ID = ?";
 	private static final String sqlUpdateUser = "UPDATE User SET UserName = ?, Password = ?, eMail = ? "
 			+ " WHERE User_ID = ?";
 	private static final String sqlCreateUser = "INSERT INTO User (UserName, Password, eMail) "
@@ -91,6 +92,7 @@ public class UserDao extends AbstractParqDaoParent {
 
 		} catch (SQLException sqle) {
 			System.out.println("SQL statement is invalid: " + pstmt);
+			sqle.printStackTrace();
 			throw new RuntimeException(sqle);
 		} finally {
 			closeConnection(con);
@@ -125,6 +127,7 @@ public class UserDao extends AbstractParqDaoParent {
 
 		} catch (SQLException sqle) {
 			System.out.println("SQL statement is invalid: " + pstmt);
+			sqle.printStackTrace();
 			throw new RuntimeException(sqle);
 		} finally {
 			closeConnection(con);
@@ -159,6 +162,7 @@ public class UserDao extends AbstractParqDaoParent {
 
 		} catch (SQLException sqle) {
 			System.out.println("SQL statement is invalid: " + pstmt);
+			sqle.printStackTrace();
 			throw new RuntimeException(sqle);
 		} finally {
 			closeConnection(con);
@@ -176,23 +180,30 @@ public class UserDao extends AbstractParqDaoParent {
 			throw new IllegalStateException("Invalid user delete request");
 		}
 		
+		User delUser = getUserById(id);
+		
 		// clear out the cache entry for deleted user
 		revokeUserCacheById(id);
 		
 		PreparedStatement pstmt = null;
 		Connection con = null;
 		boolean deleteSuccessful = false;
-		try {
-			con = getConnection();
-			pstmt = con.prepareStatement(sqlDeleteUserById);
-			pstmt.setInt(1, id);
-			deleteSuccessful = pstmt.executeUpdate() > 0;
-
-		} catch (SQLException sqle) {
-			System.out.println("SQL statement is invalid: " + pstmt);
-			throw new RuntimeException(sqle);
-		} finally {
-			closeConnection(con);
+		
+		if (delUser != null) {
+			try {
+				con = getConnection();
+				pstmt = con.prepareStatement(sqlDeleteUserById);
+				pstmt.setString(1, delUser.getUserName() + " deleted_On:" + System.currentTimeMillis());
+				pstmt.setInt(2, id);
+				deleteSuccessful = pstmt.executeUpdate() > 0;
+	
+			} catch (SQLException sqle) {
+				System.out.println("SQL statement is invalid: " + pstmt);
+				sqle.printStackTrace();
+				throw new RuntimeException(sqle);
+			} finally {
+				closeConnection(con);
+			}
 		}
 		
 		return deleteSuccessful;
@@ -222,6 +233,7 @@ public class UserDao extends AbstractParqDaoParent {
 
 		} catch (SQLException sqle) {
 			System.out.println("SQL statement is invalid: " + pstmt);
+			sqle.printStackTrace();
 			throw new RuntimeException(sqle);
 		} finally {
 			closeConnection(con);
@@ -262,6 +274,7 @@ public class UserDao extends AbstractParqDaoParent {
 
 		} catch (SQLException sqle) {
 			System.out.println("SQL statement is invalid: " + pstmt);
+			sqle.printStackTrace();
 			throw new RuntimeException(sqle);
 		} finally {
 			closeConnection(con);
@@ -275,7 +288,7 @@ public class UserDao extends AbstractParqDaoParent {
 	 * Revoke all the cache instance of this User by id, username, and email address.
 	 * @param userID
 	 */
-	private void revokeUserCacheById(int userID) {
+	private synchronized void revokeUserCacheById(int userID) {
 		if (userID < 0) {
 			return;
 		}
