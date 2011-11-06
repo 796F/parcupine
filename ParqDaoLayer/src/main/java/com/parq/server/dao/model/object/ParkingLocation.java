@@ -4,19 +4,19 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Building implements Serializable {
+public class ParkingLocation implements Serializable {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -234300066035879276L;
 
-	private int buildingId = -1;
-	private String buildingName;
+	private int locationId = -1;
+	private String locationName;
 	private int clientId;
 	private List<ParkingSpace> spaces;
 	
 	
-	public Building()
+	public ParkingLocation()
 	{
 		spaces = new ArrayList<ParkingSpace>();
 	}
@@ -24,26 +24,26 @@ public class Building implements Serializable {
 	/**
 	 * @return the buildingId
 	 */
-	public int getBuildingId() {
-		return buildingId;
+	public int getLocationId() {
+		return locationId;
 	}
 	/**
-	 * @param buildingId the buildingId to set
+	 * @param locationId the buildingId to set
 	 */
-	public void setBuildingId(int buildingId) {
-		this.buildingId = buildingId;
+	public void setLocationId(int locationId) {
+		this.locationId = locationId;
 	}
 	/**
 	 * @return the buildingName
 	 */
-	public String getBuildingName() {
-		return buildingName;
+	public String getLocationName() {
+		return locationName;
 	}
 	/**
-	 * @param buildingName the buildingName to set
+	 * @param locationName the buildingName to set
 	 */
-	public void setBuildingName(String buildingName) {
-		this.buildingName = buildingName;
+	public void setLocationName(String locationName) {
+		this.locationName = locationName;
 	}
 	/**
 	 * @return the clientId

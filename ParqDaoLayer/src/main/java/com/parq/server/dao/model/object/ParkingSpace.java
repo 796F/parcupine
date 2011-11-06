@@ -11,7 +11,7 @@ public class ParkingSpace implements Serializable {
 	private int spaceId = -1;
 	private String spaceName;
 	private String parkingLevel;
-	private int buildingId;
+	private int locationId;
 	/**
 	 * @return the id
 	 */
@@ -51,13 +51,13 @@ public class ParkingSpace implements Serializable {
 	/**
 	 * @return the buildingId
 	 */
-	public int getBuildingId() {
-		return buildingId;
+	public int getLocationId() {
+		return locationId;
 	}
 	/**
-	 * @param buildingId the buildingId to set
+	 * @param locationId the buildingId to set
 	 */
-	public void setBuildingId(int buildingId) {
-		this.buildingId = buildingId;
+	public void setLocationId(int locationId) {
+		this.locationId = locationId;
 	}
 }

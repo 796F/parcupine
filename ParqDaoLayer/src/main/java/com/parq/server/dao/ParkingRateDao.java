@@ -22,36 +22,36 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 	private static final String parkingRateByNamePrefix = "getParkingRateByName:";
 
 	private static final String sqlGetSpaceParkingRate = 
-		"SELECT R.Client_ID, R.Building_ID, R.Space_ID, R.Default_Parking_Rate, R.Priority " +
-			" FROM Client AS C, ParkingBuilding AS B, ParkingSpace AS S, ClientDefaultRate AS R " +
+		"SELECT R.Client_ID, R.Location_ID, R.Space_ID, R.Default_Parking_Rate, R.Priority " +
+			" FROM Client AS C, ParkingLocation AS B, ParkingSpace AS S, ClientDefaultRate AS R " +
 			" WHERE C.Client_ID = B.Client_ID " +
-			" AND B.Building_ID = S.Building_ID " +
+			" AND B.Location_ID = S.Location_ID " +
 			" AND R.Client_ID = C.Client_ID " +
-			" AND R.Building_ID IN(NULL, B.Building_ID) " +
+			" AND R.Location_ID IN(NULL, B.Location_ID) " +
 			" AND R.Space_ID IN(NULL, S.Space_ID) " +
 			" AND C.Name = ? " +
-			" AND B.Building_Name = ? " +
+			" AND B.Location_Name = ? " +
 			" AND S.Space_Name = ? " +
 			" AND C.Is_Deleted IS NOT TRUE " +
 			" AND B.Is_Deleted IS NOT TRUE " +
 			" AND S.Is_Deleted IS NOT TRUE " +
 			" ORDER BY R.Priority DESC"; 
 	
-	private static final String sqlGetBuildingParkingRate = 
-		"SELECT R.Client_ID, R.Building_ID, R.Space_ID, R.Default_Parking_Rate, R.Priority " +
-			" FROM Client AS C, ParkingBuilding AS B, ClientDefaultRate AS R " +
+	private static final String sqlGetParkingLocationParkingRate = 
+		"SELECT R.Client_ID, R.Location_ID, R.Space_ID, R.Default_Parking_Rate, R.Priority " +
+			" FROM Client AS C, ParkingLocation AS B, ClientDefaultRate AS R " +
 			" WHERE C.Client_ID = B.Client_ID " +
 			" AND R.Client_ID = C.Client_ID " +
-			" AND R.Building_ID IN(NULL, B.Building_ID) " +
+			" AND R.Location_ID IN(NULL, B.Location_ID) " +
 			" AND C.Name = ? " +
-			" AND B.Building_Name = ? " +
+			" AND B.Location_Name = ? " +
 			" AND C.Is_Deleted IS NOT TRUE " +
 			" AND B.Is_Deleted IS NOT TRUE " +
 			" ORDER BY R.Priority DESC"; 
 	
 	private static final String sqlGetClientParkingRate = 
-		"SELECT R.Client_ID, R.Building_ID, R.Space_ID, R.Default_Parking_Rate, R.Priority " +
-			" FROM Client AS C, ParkingBuilding AS B, ClientDefaultRate AS R " +
+		"SELECT R.Client_ID, R.Location_ID, R.Space_ID, R.Default_Parking_Rate, R.Priority " +
+			" FROM Client AS C, ParkingLocation AS B, ClientDefaultRate AS R " +
 			" WHERE R.Client_ID = C.Client_ID " +
 			" AND C.Name = ? " +
 			" AND C.Is_Deleted IS NOT TRUE " +
@@ -72,19 +72,19 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 	 *  parking rate available based on the information give</br>
 	 *  
 	 *  - parking space rate is the highest priority. </br>
-	 *  - building rate is medium priority </br>
+	 *  - parkingLocation rate is medium priority </br>
 	 *  - client rate is the lowest priority </br>
 	 * 
 	 * @param clientName cannot be <code>null</code>
-	 * @param buildingName can be <code>null</code> if only want to retrieve parking rate by client
+	 * @param parkingLocationName can be <code>null</code> if only want to retrieve parking rate by client
 	 * @param spaceName can be <code>null</code> if only want to retrieve parking rate by client or by builidng
 	 * @return <code>null</code> if no parking rate is found. 
 	 */
 	public ParkingRate getParkingRateByName(String clientName,
-			String buildingName, String spaceName) {
+			String parkingLocationName, String spaceName) {
 		
 		// the cache key for this method call;
-		String cacheKey = parkingRateByNamePrefix + clientName + ":" + buildingName + ":" + spaceName;
+		String cacheKey = parkingRateByNamePrefix + clientName + ":" + parkingLocationName + ":" + spaceName;
 		
 		ParkingRate rate = null;
 		if (myCache.get(cacheKey) != null) {
@@ -99,8 +99,8 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 			con = getConnection();
 			
 			String stmtToUse = sqlGetClientParkingRate;
-			if (buildingName != null && !buildingName.isEmpty()) {
-				stmtToUse = sqlGetBuildingParkingRate;
+			if (parkingLocationName != null && !parkingLocationName.isEmpty()) {
+				stmtToUse = sqlGetParkingLocationParkingRate;
 			}
 			if (spaceName != null && !spaceName.isEmpty()) {
 				stmtToUse = sqlGetSpaceParkingRate;
@@ -108,8 +108,8 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 			
 			pstmt = con.prepareStatement(stmtToUse);
 			pstmt.setString(1, clientName);
-			if (buildingName != null && !buildingName.isEmpty()) {
-				pstmt.setString(2, buildingName);
+			if (parkingLocationName != null && !parkingLocationName.isEmpty()) {
+				pstmt.setString(2, parkingLocationName);
 			}
 			if (spaceName != null && !spaceName.isEmpty()) {
 				pstmt.setString(3, spaceName);
@@ -118,7 +118,7 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 			System.out.println(pstmt);
 			
 			ResultSet rs = pstmt.executeQuery();
-			rate = createParkingRate(clientName, buildingName, spaceName, rs);
+			rate = createParkingRate(clientName, parkingLocationName, spaceName, rs);
 
 		} catch (SQLException sqle) {
 			System.out.println("SQL statement is invalid: " + pstmt);
@@ -135,7 +135,7 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 	}
 
 	private ParkingRate createParkingRate(String clientName,
-			String buildingName, String spaceName, ResultSet rs) throws SQLException {
+			String parkingLocationName, String spaceName, ResultSet rs) throws SQLException {
 		
 		if (rs == null || !rs.isBeforeFirst()) {
 			return null;
@@ -143,7 +143,7 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 		rs.first();
 		
 		int clientId = rs.getInt("Client_ID");
-		int buildingId = rs.getInt("Building_ID");
+		int parkingLocationId = rs.getInt("Location_ID");
 		int spaceId = rs.getInt("Space_ID");
 		double rate = rs.getDouble("Default_Parking_Rate");
 		
@@ -153,10 +153,10 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 		parkingRate.setClientName(clientName);
 		parkingRate.setParkingRate(rate);
 		
-		if (buildingId > 0) {
-			parkingRate.setRateType(RateType.Building);
-			parkingRate.setBuildingId(buildingId);
-			parkingRate.setBuildingName(buildingName);
+		if (parkingLocationId > 0) {
+			parkingRate.setRateType(RateType.ParkingLocation);
+			parkingRate.setLocationId(parkingLocationId);
+			parkingRate.setParkingLocationName(parkingLocationName);
 		}
 		if (spaceId > 0) {
 			parkingRate.setRateType(RateType.Space);

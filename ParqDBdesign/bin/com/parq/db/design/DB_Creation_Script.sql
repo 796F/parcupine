@@ -57,36 +57,45 @@ CREATE TABLE AdminClientRelationship
  FOREIGN KEY (Client_ID) references Client(Client_ID),
  FOREIGN KEY (AdminRole_ID) references AdminRole(AdminRole_ID));
  
-CREATE TABLE ParkingBuilding
-(Building_ID INT NOT NULL AUTO_INCREMENT,
- Building_Name TEXT(64) NOT NULL,
+CREATE TABLE ParkingLocation
+(Location_ID INT NOT NULL AUTO_INCREMENT,
+ Location_Name TEXT(64) NOT NULL,
  Client_ID INT NOT NULL,
  Is_Deleted BOOLEAN DEFAULT FALSE,
  LastUpdateDateTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
- PRIMARY KEY (Building_ID),
+ PRIMARY KEY (Location_ID),
  FOREIGN KEY (Client_ID) references Client(Client_ID));
+ 
+CREATE TABLE Geolocation
+(Geolocation_ID INT NOT NULL AUTO_INCREMENT,
+ Location_ID INT NOT NULL,
+ Latitude DOUBLE NOT NULL,
+ Longitude DOUBLE NOT NULL,
+ LastUpdateDateTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+ PRIMARY KEY (Geolocation_ID),
+ FOREIGN KEY (Location_ID) references ParkingLocation(Location_ID));
  
 CREATE TABLE ParkingSpace
 (Space_ID INT NOT NULL AUTO_INCREMENT,
  Space_Name TEXT(64) NOT NULL,
- Building_ID INT NOT NULL,
+ Location_ID INT NOT NULL,
  Parking_Level TEXT(16),
  Is_Deleted BOOLEAN DEFAULT FALSE,
  LastUpdateDateTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
  PRIMARY KEY (Space_ID),
- FOREIGN KEY (Building_ID) references ParkingBuilding(Building_ID));
+ FOREIGN KEY (Location_ID) references ParkingLocation(Location_ID));
 
 CREATE TABLE ClientDefaultRate
 (CDR_ID INT NOT NULL AUTO_INCREMENT,
  Client_ID INT NOT NULL,
  Default_Parking_Rate DECIMAL(5,3) NOT NULL,
  Priority INT NOT NULL,
- Building_ID INT,
+ Location_ID INT,
  Space_ID INT,
  LastUpdateDateTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
  PRIMARY KEY (CDR_ID),
  FOREIGN KEY (Client_ID) references Client(Client_ID),
- FOREIGN KEY (Building_ID) references ParkingBuilding(Building_ID),
+ FOREIGN KEY (Location_ID) references ParkingLocation(Location_ID),
  FOREIGN KEY (Space_ID) references ParkingSpace(Space_ID));
  
 CREATE TABLE UserClientRelationship
@@ -95,14 +104,14 @@ CREATE TABLE UserClientRelationship
  Client_ID INT NOT NULL,
  UserRole_ID INT NOT NULL,
  Priority INT NOT NULL,
- Building_ID INT,
+ Location_ID INT,
  Space_ID INT,
  LastUpdateDateTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
  PRIMARY KEY (UC_Rel_ID),
  FOREIGN KEY (User_ID) references User(User_ID),
  FOREIGN KEY (Client_ID) references Client(Client_ID),
  FOREIGN KEY (UserRole_ID) references UserRole(UserRole_ID),
- FOREIGN KEY (Building_ID) references ParkingBuilding(Building_ID),
+ FOREIGN KEY (Location_ID) references ParkingLocation(Location_ID),
  FOREIGN KEY (Space_ID) references ParkingSpace(Space_ID));
 
 CREATE TABLE ParkingInstance

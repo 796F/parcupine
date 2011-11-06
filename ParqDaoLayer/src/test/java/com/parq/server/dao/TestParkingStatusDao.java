@@ -5,7 +5,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import com.parq.server.dao.model.object.Building;
+import com.parq.server.dao.model.object.ParkingLocation;
 import com.parq.server.dao.model.object.ParkingInstance;
 import com.parq.server.dao.model.object.Payment;
 import com.parq.server.dao.model.object.User;
@@ -26,7 +26,6 @@ public class TestParkingStatusDao extends TestCase {
 	}
 	
 	public void testAddPaymentForParking() {
-		SupportScriptForDaoTesting.deleteFakeData();
 		SupportScriptForDaoTesting.insertFakeData();
 		
 		User newUser = new User();
@@ -39,7 +38,7 @@ public class TestParkingStatusDao extends TestCase {
 		User user = userDao.getUserByUserName("userName");
 		
 		ClientDao clientDao = new ClientDao();
-		List<Building> buildingList = clientDao.getBuildingsAndSpacesByClientId(
+		List<ParkingLocation> buildingList = clientDao.getParkingLocationsAndSpacesByClientId(
 				clientDao.getClientByName(SupportScriptForDaoTesting.clientNameMain).getId());
 		
 		ParkingInstance pi = new ParkingInstance();
@@ -76,7 +75,6 @@ public class TestParkingStatusDao extends TestCase {
 					pi.getPaymentInfo().getPaymentDateTime().getTime() / 1000);
 		assertEquals(resultInstance.getPaymentInfo().getPaymentType(), pi.getPaymentInfo().getPaymentType());
 		
-		 SupportScriptForDaoTesting.deleteFakeData();
 		 boolean deleteSuccessful = userDao.deleteUserById(user.getUserID());
 		 assertTrue(deleteSuccessful);
 	}

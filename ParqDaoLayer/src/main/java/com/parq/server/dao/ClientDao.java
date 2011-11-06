@@ -12,7 +12,7 @@ import java.util.List;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 
-import com.parq.server.dao.model.object.Building;
+import com.parq.server.dao.model.object.ParkingLocation;
 import com.parq.server.dao.model.object.Client;
 import com.parq.server.dao.model.object.ParkingSpace;
 
@@ -27,17 +27,17 @@ public class ClientDao extends AbstractParqDaoParent {
 	private static final String sqlGetClientByClientName = "SELECT client_id, name, address, client_desc FROM client WHERE name = ? AND Is_Deleted IS NOT TRUE";
 	private static final String sqlGetClientByClientId = "SELECT client_id, name, address, client_desc FROM client WHERE client_id = ? AND Is_Deleted IS NOT TRUE";
 	private static final String sqlGetAllSpacesByClientId = 
-		"SELECT B.Client_ID, B.Building_Name, B.Building_ID, S.Space_ID, S.Space_Name, S.Parking_Level " + 
-		" FROM ParkingBuilding AS B, ParkingSpace AS S " +
-		" WHERE B.Building_ID = S.Building_ID " +
+		"SELECT B.Client_ID, B.Location_Name, B.Location_ID, S.Space_ID, S.Space_Name, S.Parking_Level " + 
+		" FROM ParkingLocation AS B, ParkingSpace AS S " +
+		" WHERE B.Location_ID = S.Location_ID " +
 		" AND B.Client_ID = ?" +
 		" AND B.Is_Deleted IS NOT TRUE " +
 		" AND S.Is_Deleted IS NOT TRUE " +
-		" ORDER BY B.Building_ID";
+		" ORDER BY B.Location_ID";
 
 	private static final String clientNameCache = "getClientByClientName:";
 	private static final String clientIdCache = "getClientByClientId:";
-	private static final String getBuildingByClientIdCache = "getBuildingByClientId:";
+	private static final String getParkingLocationByClientIdCache = "getParkingLocationByClientId:";
 
 	public ClientDao() {
 		super();
@@ -120,14 +120,14 @@ public class ClientDao extends AbstractParqDaoParent {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Building> getBuildingsAndSpacesByClientId(int clientId) {
+	public List<ParkingLocation> getParkingLocationsAndSpacesByClientId(int clientId) {
 
 		// the cache key for this method call;
-		String cacheKey = getBuildingByClientIdCache + clientId;
+		String cacheKey = getParkingLocationByClientIdCache + clientId;
 
-		List<Building> buildings = null;
+		List<ParkingLocation> buildings = null;
 		if (myCache.get(cacheKey) != null) {
-			buildings = (List<Building>) myCache.get(cacheKey).getValue();
+			buildings = (List<ParkingLocation>) myCache.get(cacheKey).getValue();
 			return buildings;
 		}
 
@@ -140,7 +140,7 @@ public class ClientDao extends AbstractParqDaoParent {
 			pstmt.setInt(1, clientId);
 			ResultSet rs = pstmt.executeQuery();
 
-			buildings = createBuildingsObject(rs);
+			buildings = createLocationsObject(rs);
 
 		} catch (SQLException sqle) {
 			System.out.println("SQL statement is invalid: " + pstmt);
@@ -156,46 +156,46 @@ public class ClientDao extends AbstractParqDaoParent {
 		return buildings;
 	}
 
-	private List<Building> createBuildingsObject(ResultSet rs)
+	private List<ParkingLocation> createLocationsObject(ResultSet rs)
 			throws SQLException {
 		if (rs == null || !rs.isBeforeFirst()) {
 			return null;
 		}
-		List<Building> buildings = new ArrayList<Building>();
-		Building curBuilding = new Building();
+		List<ParkingLocation> buildings = new ArrayList<ParkingLocation>();
+		ParkingLocation curLocation = new ParkingLocation();
 
 		while (rs.next()) {
-			int buildingId = rs.getInt("Building_ID");
+			int buildingId = rs.getInt("Location_ID");
 
 			// create new building whenever new row encountered.
-			if (buildingId != curBuilding.getBuildingId()) {
-				curBuilding = new Building();
-				curBuilding.setBuildingId(buildingId);
-				curBuilding.setBuildingName(rs.getString("Building_Name"));
-				curBuilding.setClientId(rs.getInt("Client_ID"));
-				buildings.add(curBuilding);
+			if (buildingId != curLocation.getLocationId()) {
+				curLocation = new ParkingLocation();
+				curLocation.setLocationId(buildingId);
+				curLocation.setLocationName(rs.getString("Location_Name"));
+				curLocation.setClientId(rs.getInt("Client_ID"));
+				buildings.add(curLocation);
 			}
 
 			ParkingSpace curSpace = new ParkingSpace();
-			curSpace.setBuildingId(buildingId);
+			curSpace.setLocationId(buildingId);
 			curSpace.setSpaceId(rs.getInt("Space_ID"));
 			curSpace.setParkingLevel(rs.getString("Parking_Level"));
 			curSpace.setSpaceName(rs.getString("Space_Name"));
 
-			curBuilding.getSpaces().add(curSpace);
+			curLocation.getSpaces().add(curSpace);
 		}
 		// sort the list, so all the building are group together.
-		Collections.sort(buildings, new Comparator<Building>() {
+		Collections.sort(buildings, new Comparator<ParkingLocation>() {
 			@Override
-			public int compare(Building b1, Building b2) {
-				if (b1.getBuildingName() == null && b2.getBuildingName() == null) {
+			public int compare(ParkingLocation b1, ParkingLocation b2) {
+				if (b1.getLocationName() == null && b2.getLocationName() == null) {
 					return 0;
-				} else if (b1.getBuildingName() != null	&& b2.getBuildingName() == null) {
+				} else if (b1.getLocationName() != null	&& b2.getLocationName() == null) {
 					return 1;
-				} else if (b1.getBuildingName() == null	&& b2.getBuildingName() != null) {
+				} else if (b1.getLocationName() == null	&& b2.getLocationName() != null) {
 					return -1;
 				} else {
-					return b1.getBuildingName().compareTo(b2.getBuildingName());
+					return b1.getLocationName().compareTo(b2.getLocationName());
 				}
 			}
 		});

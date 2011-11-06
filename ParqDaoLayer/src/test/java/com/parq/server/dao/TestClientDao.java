@@ -3,7 +3,7 @@ package com.parq.server.dao;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.parq.server.dao.model.object.Building;
+import com.parq.server.dao.model.object.ParkingLocation;
 import com.parq.server.dao.model.object.Client;
 import com.parq.server.dao.model.object.ParkingSpace;
 import com.parq.server.dao.support.SupportScriptForDaoTesting;
@@ -59,23 +59,23 @@ public class TestClientDao extends TestCase {
 				.getClientByName(SupportScriptForDaoTesting.clientNameMain);
 		assertNotNull(tempClient);
 
-		List<Building> buildings = clientDao
-				.getBuildingsAndSpacesByClientId(tempClient.getId());
+		List<ParkingLocation> buildings = clientDao
+				.getParkingLocationsAndSpacesByClientId(tempClient.getId());
 		assertNotNull(buildings);
 		assertFalse(buildings.isEmpty());
 		
-		for (Building b : buildings) {
+		for (ParkingLocation b : buildings) {
 			assertNotNull(b);
-			assertNotNull(b.getBuildingName());
-			assertFalse(b.getBuildingName().isEmpty());
+			assertNotNull(b.getLocationName());
+			assertFalse(b.getLocationName().isEmpty());
 			assertNotNull(b.getSpaces());
 			assertFalse(b.getSpaces().isEmpty());
-			assertTrue(b.getBuildingId() > 0);
+			assertTrue(b.getLocationId() > 0);
 			assertTrue(b.getClientId() > 0);
 			
 			for (ParkingSpace s : b.getSpaces()){
 				assertNotNull(s);
-				assertEquals(s.getBuildingId(), b.getBuildingId());
+				assertEquals(s.getLocationId(), b.getLocationId());
 				assertTrue(s.getSpaceId() > 0);
 				assertNotNull(s.getParkingLevel());
 				assertFalse(s.getParkingLevel().isEmpty());
@@ -95,16 +95,12 @@ public class TestClientDao extends TestCase {
 		for (int i = 0; i < 10000; i++) {
 			tempHolder.add(clientDao.getClientByName(name));
 			tempHolder.add(clientDao.getClientById(id));
-			tempHolder.add(clientDao.getBuildingsAndSpacesByClientId(id));
+			tempHolder.add(clientDao.getParkingLocationsAndSpacesByClientId(id));
 		}
 
 		for (Object o : tempHolder) {
 			assertNotNull(o);
 		}
 
-	}
-
-	public void testCleanUp() {
-		SupportScriptForDaoTesting.deleteFakeData();
 	}
 }

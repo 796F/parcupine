@@ -12,8 +12,8 @@ public class ParkingRate implements Serializable {
 	private RateType rateType;
 	private int clientId;
 	private String clientName;
-	private int buildingId;
-	private String buildingName;
+	private int locationId;
+	private String parkingLocationName;
 	private int spaceId;
 	private String spaceName;
 	private double parkingRate = -1.0;
@@ -22,7 +22,7 @@ public class ParkingRate implements Serializable {
 	 * tell the rate type of this ParkingRate </br>
 	 * 
 	 * <code>RateType.Client</code> if rate type is applicable to all space within this client </br>
-	 * <code>RateType.Building</code> if rate type is applicable to only this building </br>
+	 * <code>RateType.Location</code> if rate type is applicable to only this parkingLocation </br>
 	 * <code>RateType.Space</code> if rate type is applicable to only this parking space </br>
 	 */
 	public RateType getRateType() {
@@ -71,37 +71,37 @@ public class ParkingRate implements Serializable {
 	}
 
 	/**
-	 * if the rate is only defined client, then building id is -1
+	 * if the rate is only defined client, then Location id is -1
 	 */
-	public int getBuildingId() {
-		return buildingId;
+	public int getLocationId() {
+		return locationId;
 	}
 
 	/**
-	 * @param buildingId
-	 *            the buildingId to set
+	 * @param LocationId
+	 *            the LocationId to set
 	 */
-	public void setBuildingId(int buildingId) {
-		this.buildingId = buildingId;
+	public void setLocationId(int locationId) {
+		this.locationId = locationId;
 	}
 
 	/**
 	 * null if rate is based only on client
 	 */
-	public String getBuildingName() {
-		return buildingName;
+	public String getLocationName() {
+		return parkingLocationName;
 	}
 
 	/**
-	 * @param buildingName
-	 *            the buildingName to set
+	 * @param parkingLocationName
+	 *            the parkingLocationName to set
 	 */
-	public void setBuildingName(String buildingName) {
-		this.buildingName = buildingName;
+	public void setParkingLocationName(String parkingLocationName) {
+		this.parkingLocationName = parkingLocationName;
 	}
 
 	/**
-	 * if the rate is only defined by client or by building, then space id is -1
+	 * if the rate is only defined by client or by parkingLocation, then space id is -1
 	 */
 	public int getSpaceId() {
 		return spaceId;
@@ -116,7 +116,7 @@ public class ParkingRate implements Serializable {
 	}
 
 	/**
-	 * null if rate is determine by client or by building
+	 * null if rate is determine by client or by parkingLocation
 	 */
 	public String getSpaceName() {
 		return spaceName;
@@ -145,6 +145,6 @@ public class ParkingRate implements Serializable {
 	}
 
 	public enum RateType {
-		Client, Building, Space;
+		Client, ParkingLocation, Space;
 	}
 }
