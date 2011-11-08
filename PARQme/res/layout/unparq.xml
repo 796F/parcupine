@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:orientation="vertical" android:layout_width="match_parent"
+		android:layout_height="match_parent" android:id="@+id/view2">
+		<TextView android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:id="@+id/username" android:layout_width="wrap_content"
+			android:text="" android:layout_marginRight="0px"
+			android:layout_alignParentRight="true"></TextView>
+		<TextView android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceLarge"
+			android:id="@+id/PARQbanner" android:layout_width="wrap_content"
+			android:text="PARQ" android:layout_alignParentLeft="true"></TextView>
+		<Button android:id="@+id/unparqbutton" android:layout_width="wrap_content"
+			android:background="@drawable/unparkbutton" android:layout_height="wrap_content"
+			android:layout_alignParentBottom="true"
+			android:layout_alignParentLeft="true"></Button>
+		<Button android:id="@+id/refillbutton" android:layout_width="match_parent"
+			android:background="@drawable/refillbutton" android:layout_height="wrap_content"
+			android:layout_above="@+id/unparqbutton"
+			android:layout_alignParentLeft="true"></Button>
+		<TextView android:layout_width="match_parent" android:id="@+id/location"
+			android:text="Enjoy your stay blah" android:textAppearance="?android:attr/textAppearanceMedium"
+			android:layout_height="wrap_content" android:layout_below="@+id/welcomeuser"
+			android:layout_alignParentLeft="true"></TextView>
+		<TextView android:layout_width="wrap_content" android:id="@+id/welcomeuser"
+			android:text="Welcome Bob!" android:textAppearance="?android:attr/textAppearanceLarge"
+			android:layout_height="wrap_content" android:layout_below="@+id/username"
+			android:layout_alignParentLeft="true" android:layout_marginTop="29dp"></TextView>
+		<TextView android:layout_width="wrap_content" android:id="@+id/timeleftdisplay"
+			android:text="0:00:00" android:textAppearance="?android:attr/textAppearanceLarge"
+			android:textSize="55sp"
+			android:layout_height="wrap_content" android:layout_below="@+id/location"
+			android:layout_centerHorizontal="true" android:layout_marginTop="46dp"></TextView>
+
+	</RelativeLayout>

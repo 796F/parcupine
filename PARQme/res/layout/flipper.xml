@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ViewFlipper xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/flipper" android:orientation="vertical"
+	android:layout_width="fill_parent" android:layout_height="fill_parent">
+
+	<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:orientation="vertical" android:layout_width="match_parent"
+		android:layout_height="match_parent" android:id="@+id/view1">
+		<EditText android:id="@+id/spot_num" android:layout_height="wrap_content"
+			android:layout_width="wrap_content" android:singleLine="true"
+			android:layout_marginTop="85dp" android:textSize="32sp"
+			android:inputType="number" android:hint="Spot #"
+			android:layout_centerHorizontal="true"/>
+		<ImageView android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_toRightOf="@id/spot_num"
+			android:layout_marginTop="72dp" android:id="@+id/imageView1"/>
+		<Button android:layout_height="wrap_content"
+			android:layout_width="wrap_content" android:id="@+id/submitButton"
+			android:background="@drawable/submit"
+			android:layout_below="@id/spot_num"
+			android:enabled="false"/>
+		<Button android:layout_height="wrap_content"
+			android:layout_width="wrap_content" android:id="@+id/scanButton"
+			android:background="@drawable/scan"
+			android:layout_below="@id/submitButton"
+			android:layout_marginTop="60dp"/>
+		<RadioButton android:layout_height="wrap_content" android:id="@+id/pingdot" android:text="Server Ready" android:layout_width="wrap_content" android:layout_alignBottom="@+id/imageView1" android:layout_centerHorizontal="true"></RadioButton>
+	</RelativeLayout>
+	
+	<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_width="match_parent"
+	android:layout_height="match_parent">
+	<Button android:text="Min" android:layout_height="wrap_content"
+		android:id="@+id/minparktime" android:layout_below="@+id/parktimepicker"
+		android:layout_alignLeft="@+id/parktimepicker" android:layout_width="100dp"></Button>
+	<Button android:text="Max" android:layout_height="wrap_content"
+		android:id="@+id/maxparktime" android:layout_below="@+id/parktimepicker"
+		android:layout_alignRight="@+id/parktimepicker" android:layout_width="100dp"></Button>
+	<Button android:text="Cancel Park" android:layout_width="match_parent"
+		android:id="@+id/cancelpark" android:layout_below="@+id/parkbutton"
+		android:layout_alignParentLeft="true" android:layout_height="match_parent"></Button>
+	<Button android:layout_height="wrap_content" 
+		android:layout_width="match_parent" android:id="@+id/parkbutton"
+		android:background="@drawable/parkbutton" android:layout_below="@+id/minparktime"
+		android:layout_alignParentLeft="true"></Button>
+	<TextView android:id="@+id/rate_display"
+		android:layout_height="wrap_content" android:layout_width="wrap_content"
+		android:textSize="20sp" android:text="1 Hour = $2, Full Day = $16"
+		android:layout_centerHorizontal="true" android:layout_marginTop="25dp" />
+	<TextView android:id="@+id/priceDisplay"
+		android:layout_height="wrap_content" android:layout_width="wrap_content"
+		android:textSize="30sp" android:text="$ 0.00"
+		android:layout_alignBottom="@+id/parktimepicker"
+		android:layout_centerHorizontal="true" android:layout_marginBottom="5dp"
+		android:layout_below="@id/rate_display" />
+	<com.quietlycoding.android.picker.NumberPicker android:id="@+id/parktimepicker" android:layout_height="wrap_content" android:layout_alignParentTop="true" android:layout_centerHorizontal="true" android:layout_marginTop="90dp" android:layout_width="200dp"></com.quietlycoding.android.picker.NumberPicker>
+
+</RelativeLayout>
+
+	<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:orientation="vertical" android:layout_width="match_parent"
+		android:layout_height="match_parent" android:id="@+id/view2">
+		<TextView android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:id="@+id/username" android:layout_width="wrap_content"
+			android:text="" android:layout_marginRight="0px"
+			android:layout_alignParentRight="true"></TextView>
+		<TextView android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceLarge"
+			android:id="@+id/PARQbanner" android:layout_width="wrap_content"
+			android:text="PARQ" android:layout_alignParentLeft="true"></TextView>
+		<Button android:id="@+id/unparqbutton" android:layout_width="wrap_content"
+			android:background="@drawable/unparkbutton" android:layout_height="wrap_content"
+			android:layout_alignParentBottom="true"
+			android:layout_alignParentLeft="true"></Button>
+		<Button android:id="@+id/refillbutton" android:layout_width="match_parent"
+			android:background="@drawable/refillbutton" android:layout_height="wrap_content"
+			android:layout_above="@+id/unparqbutton"
+			android:layout_alignParentLeft="true"></Button>
+		<TextView android:layout_width="match_parent" android:id="@+id/location"
+			android:text="Enjoy your stay blah" android:textAppearance="?android:attr/textAppearanceMedium"
+			android:layout_height="wrap_content" android:layout_below="@+id/welcomeuser"
+			android:layout_alignParentLeft="true"></TextView>
+		<TextView android:layout_width="wrap_content" android:id="@+id/welcomeuser"
+			android:text="Welcome Bob!" android:textAppearance="?android:attr/textAppearanceLarge"
+			android:layout_height="wrap_content" android:layout_below="@+id/username"
+			android:layout_alignParentLeft="true" android:layout_marginTop="29dp"></TextView>
+		<TextView android:layout_width="wrap_content" android:id="@+id/timeleftdisplay"
+			android:text="0:00:00" android:textAppearance="?android:attr/textAppearanceLarge"
+			android:textSize="55sp"
+			android:layout_height="wrap_content" android:layout_below="@+id/location"
+			android:layout_centerHorizontal="true" android:layout_marginTop="46dp"></TextView>
+
+	</RelativeLayout>
+
+
+
+</ViewFlipper>
