@@ -28,7 +28,7 @@
 				<groupId>org.apache.axis2</groupId>
 				<artifactId>axis2-java2wsdl-maven-plugin</artifactId>
 				<configuration>
-					<className>com.parq.server.servlet.ParqIncomingurlServlet</className>
+					<className>com.parq.server.servlet.ParqIncomingUrlServlet</className>
 				</configuration>
 				<executions>
 					<execution>
