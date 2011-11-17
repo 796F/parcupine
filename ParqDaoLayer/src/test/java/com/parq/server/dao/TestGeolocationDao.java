@@ -47,6 +47,7 @@ public class TestGeolocationDao extends TestCase {
 		assertEquals(locationById.getGeolocationId(), locationList.get(0).getGeolocationId());
 		assertEquals(locationById.getLocationId(), locationList.get(0).getLocationId());
 		
+
 	}
 
 	public void testCache() {
