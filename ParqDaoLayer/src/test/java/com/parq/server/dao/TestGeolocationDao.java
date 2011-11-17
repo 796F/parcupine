@@ -31,6 +31,23 @@ public class TestGeolocationDao extends TestCase {
 		assertTrue(locationFound.getGeolocationId() > 0);
 		assertTrue(locationFound.getLocationId() > 0);
 	}
+	
+	public void testGetLocationById()
+	{
+		List<Geolocation> locationList = geolocationDao.findCloseByParkingLocation(-1, 1, -1, 1);
+		assertNotNull(locationList);
+		assertFalse(locationList.isEmpty());
+		assertEquals(1, locationList.size());
+		
+		Geolocation locationById = geolocationDao.getLocationById(locationList.get(0).getLocationId());
+		assertNotNull(locationById);
+		assertEquals(locationById.getLocationIdentifier(), locationList.get(0).getLocationIdentifier());
+		assertEquals(locationById.getLatitude(), locationList.get(0).getLatitude());
+		assertEquals(locationById.getLongitude(), locationList.get(0).getLongitude());
+		assertEquals(locationById.getGeolocationId(), locationList.get(0).getGeolocationId());
+		assertEquals(locationById.getLocationId(), locationList.get(0).getLocationId());
+		
+	}
 
 	public void testCache() {
 		for (int i = 0; i < 10000; i++) {

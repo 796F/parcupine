@@ -22,6 +22,7 @@ public class GeolocationDao extends AbstractParqDaoParent {
 	private static Cache myCache;
 	
 	private static final String boundingBoxCache = "getCloseByParkingLocation:";
+	private static final String locationIdCache = "getLocationById:";
 	
 	private static final String sqlGetParkingLocationByBoundingBox = 
 		"SELECT GL.geolocation_id, GL.location_id, GL.latitude, GL.longitude, PL.location_identifier" +
@@ -32,6 +33,13 @@ public class GeolocationDao extends AbstractParqDaoParent {
 		" AND GL.latitude < ? " +
 		" AND GL.longitude > ? " +
 		" AND GL.longitude < ? ";
+	
+	private static final String sqlGetParkingLocationById =
+		"SELECT GL.geolocation_id, GL.location_id, GL.latitude, GL.longitude, PL.location_identifier" +
+		" FROM ParkingLocation AS PL, Geolocation AS GL " +
+		" WHERE PL.location_id = GL.location_id" +
+		" AND PL.is_deleted IS NOT TRUE " +
+		" AND GL.location_id = ? ";
 
 	public GeolocationDao() {
 		super();
@@ -75,7 +83,7 @@ public class GeolocationDao extends AbstractParqDaoParent {
 			pstmt.setDouble(4, longitudeMax);
 			ResultSet rs = pstmt.executeQuery();
 
-			geoLocations = createGeolocationObject(rs);
+			geoLocations = createGeolocationList(rs);
 
 		} catch (SQLException sqle) {
 			System.out.println("SQL statement is invalid: " + pstmt);
@@ -90,23 +98,68 @@ public class GeolocationDao extends AbstractParqDaoParent {
 		
 		return geoLocations;
 	}
+	
+	public Geolocation getLocationById(int locationId)
+	{
+		String cacheKey = locationIdCache + locationId;
+		Geolocation result = null;
+		if (myCache.get(cacheKey) != null) {
+			result = (Geolocation) myCache.get(cacheKey).getValue();
+			return result;
+		}
+		
+		// query the DB for the user object
+		PreparedStatement pstmt = null;
+		Connection con = null;
+		try {
+			con = getConnection();
+			pstmt = con.prepareStatement(sqlGetParkingLocationById);
+			pstmt.setInt(1, locationId);
+			ResultSet rs = pstmt.executeQuery();
+			
+			if (rs != null && rs.isBeforeFirst()) {
+				rs.next();
+				result = createGeolocation(rs);
+			}
 
-	private List<Geolocation> createGeolocationObject(ResultSet rs) throws SQLException {
+		} catch (SQLException sqle) {
+			System.out.println("SQL statement is invalid: " + pstmt);
+			sqle.printStackTrace();
+			throw new RuntimeException(sqle);
+		} finally {
+			closeConnection(con);
+		}
+
+		// put result into cache
+		myCache.put(new Element(cacheKey, result));
+		
+		return result;
+	}
+
+	private List<Geolocation> createGeolocationList(ResultSet rs) throws SQLException {
 		if (rs == null || !rs.isBeforeFirst()) {
 			return Collections.emptyList();
 		}
 		List<Geolocation> geoLocationList = new ArrayList<Geolocation>();
 
 		while (rs.next()) {
-			Geolocation geoLocation = new Geolocation();
-			geoLocation.setGeolocationId(rs.getInt("geolocation_id"));
-			geoLocation.setLocationId(rs.getInt("location_id"));
-			geoLocation.setLocationIdentifier(rs.getString("location_identifier"));
-			geoLocation.setLatitude(rs.getDouble("latitude"));
-			geoLocation.setLongitude(rs.getDouble("longitude"));
-			
-			geoLocationList.add(geoLocation);
+			geoLocationList.add(createGeolocation(rs));
 		}		
 		return geoLocationList;
+	}
+	
+	private Geolocation createGeolocation(ResultSet rs) throws SQLException {
+		if (rs == null) {
+			return null;
+		}
+		
+		Geolocation geoLocation = new Geolocation();
+		geoLocation.setGeolocationId(rs.getInt("geolocation_id"));
+		geoLocation.setLocationId(rs.getInt("location_id"));
+		geoLocation.setLocationIdentifier(rs.getString("location_identifier"));
+		geoLocation.setLatitude(rs.getDouble("latitude"));
+		geoLocation.setLongitude(rs.getDouble("longitude"));
+		
+		return geoLocation;
 	}
 }
