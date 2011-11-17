@@ -13,7 +13,7 @@ public class Payment implements Serializable {
 	private PaymentType paymentType;
 	private String paymentRefNumber;
 	private Date paymentDateTime;
-	private double amountPaid = -1;
+	private int amountPaid = -1;
 
 	public enum PaymentType {
 		CreditCard, PrePaid;
@@ -97,7 +97,7 @@ public class Payment implements Serializable {
 	/**
 	 * @return the amountPaid
 	 */
-	public double getAmountPaid() {
+	public int getAmountPaidCents() {
 		return amountPaid;
 	}
 
@@ -105,7 +105,7 @@ public class Payment implements Serializable {
 	 * @param amountPaid
 	 *            the amountPaid to set
 	 */
-	public void setAmountPaid(double amountPaid) {
+	public void setAmountPaidCents(int amountPaid) {
 		this.amountPaid = amountPaid;
 	}
 }

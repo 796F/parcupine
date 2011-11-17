@@ -27,7 +27,7 @@ public class ClientDao extends AbstractParqDaoParent {
 	private static final String sqlGetClientByClientName = "SELECT client_id, name, address, client_desc FROM client WHERE name = ? AND Is_Deleted IS NOT TRUE";
 	private static final String sqlGetClientByClientId = "SELECT client_id, name, address, client_desc FROM client WHERE client_id = ? AND Is_Deleted IS NOT TRUE";
 	private static final String sqlGetAllSpacesByClientId = 
-		"SELECT B.Client_ID, B.Location_Name, B.Location_ID, S.Space_ID, S.Space_Name, S.Parking_Level " + 
+		"SELECT B.Client_ID, B.Location_Identifier, B.Location_ID, S.Space_ID, S.Space_Identifier, S.Parking_Level " + 
 		" FROM ParkingLocation AS B, ParkingSpace AS S " +
 		" WHERE B.Location_ID = S.Location_ID " +
 		" AND B.Client_ID = ?" +
@@ -171,7 +171,7 @@ public class ClientDao extends AbstractParqDaoParent {
 			if (buildingId != curLocation.getLocationId()) {
 				curLocation = new ParkingLocation();
 				curLocation.setLocationId(buildingId);
-				curLocation.setLocationName(rs.getString("Location_Name"));
+				curLocation.setLocationIdentifier(rs.getString("Location_Identifier"));
 				curLocation.setClientId(rs.getInt("Client_ID"));
 				buildings.add(curLocation);
 			}
@@ -180,7 +180,7 @@ public class ClientDao extends AbstractParqDaoParent {
 			curSpace.setLocationId(buildingId);
 			curSpace.setSpaceId(rs.getInt("Space_ID"));
 			curSpace.setParkingLevel(rs.getString("Parking_Level"));
-			curSpace.setSpaceName(rs.getString("Space_Name"));
+			curSpace.setSpaceIdentifier(rs.getString("Space_Identifier"));
 
 			curLocation.getSpaces().add(curSpace);
 		}
@@ -188,14 +188,14 @@ public class ClientDao extends AbstractParqDaoParent {
 		Collections.sort(buildings, new Comparator<ParkingLocation>() {
 			@Override
 			public int compare(ParkingLocation b1, ParkingLocation b2) {
-				if (b1.getLocationName() == null && b2.getLocationName() == null) {
+				if (b1.getLocationIdentifier() == null && b2.getLocationIdentifier() == null) {
 					return 0;
-				} else if (b1.getLocationName() != null	&& b2.getLocationName() == null) {
+				} else if (b1.getLocationIdentifier() != null	&& b2.getLocationIdentifier() == null) {
 					return 1;
-				} else if (b1.getLocationName() == null	&& b2.getLocationName() != null) {
+				} else if (b1.getLocationIdentifier() == null	&& b2.getLocationIdentifier() != null) {
 					return -1;
 				} else {
-					return b1.getLocationName().compareTo(b2.getLocationName());
+					return b1.getLocationIdentifier().compareTo(b2.getLocationIdentifier());
 				}
 			}
 		});

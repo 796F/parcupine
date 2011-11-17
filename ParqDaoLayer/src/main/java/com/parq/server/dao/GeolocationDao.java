@@ -24,7 +24,7 @@ public class GeolocationDao extends AbstractParqDaoParent {
 	private static final String boundingBoxCache = "getCloseByParkingLocation:";
 	
 	private static final String sqlGetParkingLocationByBoundingBox = 
-		"SELECT GL.geolocation_id, GL.location_id, GL.latitude, GL.longitude, PL.location_name" +
+		"SELECT GL.geolocation_id, GL.location_id, GL.latitude, GL.longitude, PL.location_identifier" +
 		" FROM ParkingLocation AS PL, Geolocation AS GL " +
 		" WHERE PL.location_id = GL.location_id" +
 		" AND PL.is_deleted IS NOT TRUE " +
@@ -101,7 +101,7 @@ public class GeolocationDao extends AbstractParqDaoParent {
 			Geolocation geoLocation = new Geolocation();
 			geoLocation.setGeolocationId(rs.getInt("geolocation_id"));
 			geoLocation.setLocationId(rs.getInt("location_id"));
-			geoLocation.setLocationName(rs.getString("location_name"));
+			geoLocation.setLocationIdentifier(rs.getString("location_identifier"));
 			geoLocation.setLatitude(rs.getDouble("latitude"));
 			geoLocation.setLongitude(rs.getDouble("longitude"));
 			

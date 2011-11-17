@@ -18,61 +18,50 @@ public class TestParkingRateDao extends TestCase {
 		SupportScriptForDaoTesting.insertFakeData();
 
 		ParkingRate pRate = parkingRateDao.getParkingRateByName(
-				SupportScriptForDaoTesting.clientNameMain,
 				SupportScriptForDaoTesting.parkingLocationNameMain,
 				SupportScriptForDaoTesting.spaceNameMain);
 		assertNotNull(pRate);
 		assertEquals(pRate.getLocationName(),
 				SupportScriptForDaoTesting.parkingLocationNameMain);
-		assertEquals(pRate.getClientName(),
-				SupportScriptForDaoTesting.clientNameMain);
 		assertEquals(pRate.getSpaceName(),
 				SupportScriptForDaoTesting.spaceNameMain);
 		assertEquals(pRate.getRateType(), ParkingRate.RateType.Space);
-		assertEquals(pRate.getParkingRate(),
+		assertEquals(pRate.getParkingRateCents(),
 				SupportScriptForDaoTesting.spaceRate);
+		assertTrue(pRate.getTimeIncrementsMins() > 1);
 	}
 
 	public void testDifferentRates() {
 		SupportScriptForDaoTesting.insertFakeData();
 
 		ParkingRate spaceRateObj = parkingRateDao.getParkingRateByName(
-				SupportScriptForDaoTesting.clientNameMain,
 				SupportScriptForDaoTesting.parkingLocationNameMain,
 				SupportScriptForDaoTesting.spaceNameMain);
 		ParkingRate buildingRateObj = parkingRateDao.getParkingRateByName(
-				SupportScriptForDaoTesting.clientNameMain,
 				SupportScriptForDaoTesting.parkingLocationNameMain, null);
-		ParkingRate clientRateObj = parkingRateDao.getParkingRateByName(
-				SupportScriptForDaoTesting.clientNameMain, null, null);
+
 
 		assertNotNull(spaceRateObj);
 		assertNotNull(buildingRateObj);
-		assertNotNull(clientRateObj);
 
-		assertTrue(!(spaceRateObj.getParkingRate() == buildingRateObj
-				.getParkingRate()));
-		assertTrue(!(buildingRateObj.getParkingRate() == clientRateObj
-				.getParkingRate()));
 
-		assertTrue(spaceRateObj.getParkingRate() == SupportScriptForDaoTesting.spaceRate);
-		assertTrue(buildingRateObj.getParkingRate() == SupportScriptForDaoTesting.parkingLocationRate);
-		assertTrue(clientRateObj.getParkingRate() == SupportScriptForDaoTesting.clientRate);
+		assertTrue(!(buildingRateObj.getParkingRateCents() == spaceRateObj
+				.getParkingRateCents()));
+
+		assertTrue(spaceRateObj.getParkingRateCents() == SupportScriptForDaoTesting.spaceRate);
+		assertTrue(buildingRateObj.getParkingRateCents() == SupportScriptForDaoTesting.parkingLocationRate);
 	}
 
 	public void testCaching() {
 		SupportScriptForDaoTesting.insertFakeData();
 
 		ParkingRate pRate = parkingRateDao.getParkingRateByName(
-				SupportScriptForDaoTesting.clientNameMain,
 				SupportScriptForDaoTesting.parkingLocationNameMain,
 				SupportScriptForDaoTesting.spaceNameMain);
 		ParkingRate pRate1 = parkingRateDao.getParkingRateByName(
-				SupportScriptForDaoTesting.clientNameMain,
 				SupportScriptForDaoTesting.parkingLocationNameMain,
 				SupportScriptForDaoTesting.spaceNameMain);
 		ParkingRate pRate2 = parkingRateDao.getParkingRateByName(
-				SupportScriptForDaoTesting.clientNameMain,
 				SupportScriptForDaoTesting.parkingLocationNameMain,
 				SupportScriptForDaoTesting.spaceNameMain);
 

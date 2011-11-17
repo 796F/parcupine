@@ -11,7 +11,7 @@ public class ParkingLocation implements Serializable {
 	private static final long serialVersionUID = -234300066035879276L;
 
 	private int locationId = -1;
-	private String locationName;
+	private String locationIdentifier;
 	private int clientId;
 	private List<ParkingSpace> spaces;
 	
@@ -36,14 +36,14 @@ public class ParkingLocation implements Serializable {
 	/**
 	 * @return the buildingName
 	 */
-	public String getLocationName() {
-		return locationName;
+	public String getLocationIdentifier() {
+		return locationIdentifier;
 	}
 	/**
-	 * @param locationName the buildingName to set
+	 * @param locationIdentifier the buildingName to set
 	 */
-	public void setLocationName(String locationName) {
-		this.locationName = locationName;
+	public void setLocationIdentifier(String locationIdentifier) {
+		this.locationIdentifier = locationIdentifier;
 	}
 	/**
 	 * @return the clientId

@@ -22,42 +22,24 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 	private static final String parkingRateByNamePrefix = "getParkingRateByName:";
 
 	private static final String sqlGetSpaceParkingRate = 
-		"SELECT R.Client_ID, R.Location_ID, R.Space_ID, R.Default_Parking_Rate, R.Priority " +
-			" FROM Client AS C, ParkingLocation AS B, ParkingSpace AS S, ClientDefaultRate AS R " +
-			" WHERE C.Client_ID = B.Client_ID " +
-			" AND B.Location_ID = S.Location_ID " +
-			" AND R.Client_ID = C.Client_ID " +
-			" AND R.Location_ID IN(NULL, B.Location_ID) " +
+		"SELECT R.Location_ID, R.Space_ID, R.Parking_Rate_Cents, R.Priority, R.Time_Increment_Mins, R.Max_Park_Mins " +
+			" FROM ParkingLocation AS B, ParkingSpace AS S, ParkingRate AS R " +
+			" WHERE B.Location_ID = S.Location_ID " +
+			" AND R.Location_ID = B.Location_ID " +
 			" AND R.Space_ID IN(NULL, S.Space_ID) " +
-			" AND C.Name = ? " +
-			" AND B.Location_Name = ? " +
-			" AND S.Space_Name = ? " +
-			" AND C.Is_Deleted IS NOT TRUE " +
+			" AND B.Location_Identifier = ? " +
+			" AND S.Space_Identifier = ? " +
 			" AND B.Is_Deleted IS NOT TRUE " +
 			" AND S.Is_Deleted IS NOT TRUE " +
 			" ORDER BY R.Priority DESC"; 
 	
 	private static final String sqlGetParkingLocationParkingRate = 
-		"SELECT R.Client_ID, R.Location_ID, R.Space_ID, R.Default_Parking_Rate, R.Priority " +
-			" FROM Client AS C, ParkingLocation AS B, ClientDefaultRate AS R " +
-			" WHERE C.Client_ID = B.Client_ID " +
-			" AND R.Client_ID = C.Client_ID " +
-			" AND R.Location_ID IN(NULL, B.Location_ID) " +
-			" AND C.Name = ? " +
-			" AND B.Location_Name = ? " +
-			" AND C.Is_Deleted IS NOT TRUE " +
+		"SELECT R.Location_ID, R.Space_ID, R.Parking_Rate_Cents, R.Priority, R.Time_Increment_Mins, R.Max_Park_Mins " +
+			" FROM ParkingLocation AS B, ParkingRate AS R " +
+			" WHERE R.Location_ID = B.Location_ID " +
+			" AND B.Location_Identifier = ? " +
 			" AND B.Is_Deleted IS NOT TRUE " +
 			" ORDER BY R.Priority DESC"; 
-	
-	private static final String sqlGetClientParkingRate = 
-		"SELECT R.Client_ID, R.Location_ID, R.Space_ID, R.Default_Parking_Rate, R.Priority " +
-			" FROM Client AS C, ParkingLocation AS B, ClientDefaultRate AS R " +
-			" WHERE R.Client_ID = C.Client_ID " +
-			" AND C.Name = ? " +
-			" AND C.Is_Deleted IS NOT TRUE " +
-			" AND B.Is_Deleted IS NOT TRUE " +
-			" ORDER BY R.Priority DESC"; 
-
 	
 	public ParkingRateDao() {
 		super();
@@ -80,11 +62,10 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 	 * @param spaceName can be <code>null</code> if only want to retrieve parking rate by client or by builidng
 	 * @return <code>null</code> if no parking rate is found. 
 	 */
-	public ParkingRate getParkingRateByName(String clientName,
-			String parkingLocationName, String spaceName) {
+	public ParkingRate getParkingRateByName(String locationIdentifier, String spaceIdentifier) {
 		
 		// the cache key for this method call;
-		String cacheKey = parkingRateByNamePrefix + clientName + ":" + parkingLocationName + ":" + spaceName;
+		String cacheKey = parkingRateByNamePrefix + locationIdentifier + ":" + spaceIdentifier;
 		
 		ParkingRate rate = null;
 		if (myCache.get(cacheKey) != null) {
@@ -98,27 +79,25 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 		try {
 			con = getConnection();
 			
-			String stmtToUse = sqlGetClientParkingRate;
-			if (parkingLocationName != null && !parkingLocationName.isEmpty()) {
-				stmtToUse = sqlGetParkingLocationParkingRate;
+			String stmtToUse = sqlGetParkingLocationParkingRate;
+			if (locationIdentifier == null || locationIdentifier.isEmpty()) {
+				throw new IllegalStateException("locationIdentifier cannot be null");
 			}
-			if (spaceName != null && !spaceName.isEmpty()) {
+			if (spaceIdentifier != null && !spaceIdentifier.isEmpty()) {
 				stmtToUse = sqlGetSpaceParkingRate;
 			}
 			
 			pstmt = con.prepareStatement(stmtToUse);
-			pstmt.setString(1, clientName);
-			if (parkingLocationName != null && !parkingLocationName.isEmpty()) {
-				pstmt.setString(2, parkingLocationName);
-			}
-			if (spaceName != null && !spaceName.isEmpty()) {
-				pstmt.setString(3, spaceName);
+			pstmt.setString(1, locationIdentifier);
+			
+			if (spaceIdentifier != null && !spaceIdentifier.isEmpty()) {
+				pstmt.setString(2, spaceIdentifier);
 			}
 			
 			System.out.println(pstmt);
 			
 			ResultSet rs = pstmt.executeQuery();
-			rate = createParkingRate(clientName, parkingLocationName, spaceName, rs);
+			rate = createParkingRate(locationIdentifier, spaceIdentifier, rs);
 
 		} catch (SQLException sqle) {
 			System.out.println("SQL statement is invalid: " + pstmt);
@@ -134,29 +113,30 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 		return rate;
 	}
 
-	private ParkingRate createParkingRate(String clientName,
-			String parkingLocationName, String spaceName, ResultSet rs) throws SQLException {
+	private ParkingRate createParkingRate(String parkingLocationName, 
+			String spaceName, ResultSet rs) throws SQLException {
 		
 		if (rs == null || !rs.isBeforeFirst()) {
 			return null;
 		}
 		rs.first();
-		
-		int clientId = rs.getInt("Client_ID");
+
 		int parkingLocationId = rs.getInt("Location_ID");
 		int spaceId = rs.getInt("Space_ID");
-		double rate = rs.getDouble("Default_Parking_Rate");
+		int rate = rs.getInt("Parking_Rate_Cents");
+		int timeIncrements = rs.getInt("Time_Increment_Mins");
+		int maxParkTime = rs.getInt("Max_Park_Mins");
 		
 		ParkingRate parkingRate = new ParkingRate();
 		parkingRate.setRateType(RateType.Client);
-		parkingRate.setClientId(clientId);
-		parkingRate.setClientName(clientName);
-		parkingRate.setParkingRate(rate);
+		parkingRate.setParkingRateCents(rate);
+		parkingRate.setTimeIncrementsMins(timeIncrements);
+		parkingRate.setMaxParkMins(maxParkTime);
 		
 		if (parkingLocationId > 0) {
 			parkingRate.setRateType(RateType.ParkingLocation);
 			parkingRate.setLocationId(parkingLocationId);
-			parkingRate.setParkingLocationName(parkingLocationName);
+			parkingRate.setLocationName(parkingLocationName);
 		}
 		if (spaceId > 0) {
 			parkingRate.setRateType(RateType.Space);

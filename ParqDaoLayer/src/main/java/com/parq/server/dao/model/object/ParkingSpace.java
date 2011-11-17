@@ -9,7 +9,7 @@ public class ParkingSpace implements Serializable {
 	private static final long serialVersionUID = 1919122147177571986L;
 	
 	private int spaceId = -1;
-	private String spaceName;
+	private String spaceIdentifier;
 	private String parkingLevel;
 	private int locationId;
 	/**
@@ -27,14 +27,14 @@ public class ParkingSpace implements Serializable {
 	/**
 	 * @return the spaceName
 	 */
-	public String getSpaceName() {
-		return spaceName;
+	public String getSpaceIdentifier() {
+		return spaceIdentifier;
 	}
 	/**
 	 * @param spaceName the spaceName to set
 	 */
-	public void setSpaceName(String spaceName) {
-		this.spaceName = spaceName;
+	public void setSpaceIdentifier(String spaceIdentifier) {
+		this.spaceIdentifier = spaceIdentifier;
 	}
 	/**
 	 * @return the parkingLevel

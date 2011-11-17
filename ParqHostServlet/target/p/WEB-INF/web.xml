@@ -6,7 +6,11 @@
 	<display-name>PARQ server application</display-name>
 
 	<servlet>
+		<servlet-name>ParqIncomingUrlServlet</servlet-name>
+		<servlet-class>com.parq.server.servlet.ParqIncomingUrlServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
+		<servlet-name>ParqIncomingUrlServlet</servlet-name>
+		<url-pattern>/*</url-pattern>
 	</servlet-mapping>
 </web-app>

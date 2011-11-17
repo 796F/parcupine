@@ -59,8 +59,9 @@ CREATE TABLE AdminClientRelationship
  
 CREATE TABLE ParkingLocation
 (Location_ID INT NOT NULL AUTO_INCREMENT,
- Location_Name TEXT(64) NOT NULL,
+ Location_Identifier TEXT(16) NOT NULL,
  Client_ID INT NOT NULL,
+ Location_Name TEXT(64),
  Is_Deleted BOOLEAN DEFAULT FALSE,
  LastUpdateDateTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
  PRIMARY KEY (Location_ID),
@@ -77,24 +78,25 @@ CREATE TABLE Geolocation
  
 CREATE TABLE ParkingSpace
 (Space_ID INT NOT NULL AUTO_INCREMENT,
- Space_Name TEXT(64) NOT NULL,
+ Space_Identifier TEXT(16) NOT NULL,
  Location_ID INT NOT NULL,
+ Space_Name TEXT(64),
  Parking_Level TEXT(16),
  Is_Deleted BOOLEAN DEFAULT FALSE,
  LastUpdateDateTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
  PRIMARY KEY (Space_ID),
  FOREIGN KEY (Location_ID) references ParkingLocation(Location_ID));
 
-CREATE TABLE ClientDefaultRate
+CREATE TABLE ParkingRate
 (CDR_ID INT NOT NULL AUTO_INCREMENT,
- Client_ID INT NOT NULL,
- Default_Parking_Rate DECIMAL(5,3) NOT NULL,
+ Location_ID INT NOT NULL,
+ Parking_Rate_Cents INT NOT NULL,
+ Time_Increment_Mins INT NOT NULL,
  Priority INT NOT NULL,
- Location_ID INT,
+ Max_Park_Mins INT,
  Space_ID INT,
  LastUpdateDateTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
  PRIMARY KEY (CDR_ID),
- FOREIGN KEY (Client_ID) references Client(Client_ID),
  FOREIGN KEY (Location_ID) references ParkingLocation(Location_ID),
  FOREIGN KEY (Space_ID) references ParkingSpace(Space_ID));
  
@@ -132,7 +134,7 @@ CREATE TABLE Payment
  Payment_Type TEXT(64) NOT NULL,
  Payment_Ref_Num TEXT(64) NOT NULL,
  Payment_DateTime DATETIME NOT NULL,
- Amount_Paid DECIMAL(5,3) NOT NULL,
+ Amount_Paid_Cents INT NOT NULL,
  LastUpdateDateTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
  PRIMARY KEY (Payment_ID),
  FOREIGN KEY (ParkingInst_ID) references ParkingInstance(ParkingInst_ID));

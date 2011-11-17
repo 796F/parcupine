@@ -49,7 +49,7 @@ public class TestParkingStatusDao extends TestCase {
 		pi.setUserId(user.getUserID());
 		
 		Payment paymentInfo = new Payment();
-		paymentInfo.setAmountPaid(10.05);
+		paymentInfo.setAmountPaidCents(1005);
 		paymentInfo.setPaymentDateTime(new Date(System.currentTimeMillis()));
 		paymentInfo.setPaymentRefNumber("Test_Payment_Ref_Num_1");
 		paymentInfo.setPaymentType(PaymentType.CreditCard);
@@ -67,7 +67,7 @@ public class TestParkingStatusDao extends TestCase {
 		assertEquals(resultInstance.getParkingBeganTime().getTime() / 1000, pi.getParkingBeganTime().getTime() / 1000);
 		// time comparison is truncated to the nearest seconds
 		assertEquals(resultInstance.getParkingEndTime().getTime() / 1000, pi.getParkingEndTime().getTime() / 1000);
-		assertEquals(resultInstance.getPaymentInfo().getAmountPaid(), pi.getPaymentInfo().getAmountPaid());
+		assertEquals(resultInstance.getPaymentInfo().getAmountPaidCents(), pi.getPaymentInfo().getAmountPaidCents());
 		assertEquals(resultInstance.getPaymentInfo().getParkingInstId(), resultInstance.getParkingInstId());
 		assertEquals(resultInstance.getPaymentInfo().getPaymentRefNumber(), pi.getPaymentInfo().getPaymentRefNumber());
 		// time comparison is truncated to the nearest seconds

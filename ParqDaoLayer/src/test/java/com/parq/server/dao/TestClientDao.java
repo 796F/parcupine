@@ -59,15 +59,15 @@ public class TestClientDao extends TestCase {
 				.getClientByName(SupportScriptForDaoTesting.clientNameMain);
 		assertNotNull(tempClient);
 
-		List<ParkingLocation> buildings = clientDao
+		List<ParkingLocation> locations = clientDao
 				.getParkingLocationsAndSpacesByClientId(tempClient.getId());
-		assertNotNull(buildings);
-		assertFalse(buildings.isEmpty());
+		assertNotNull(locations);
+		assertFalse(locations.isEmpty());
 		
-		for (ParkingLocation b : buildings) {
+		for (ParkingLocation b : locations) {
 			assertNotNull(b);
-			assertNotNull(b.getLocationName());
-			assertFalse(b.getLocationName().isEmpty());
+			assertNotNull(b.getLocationIdentifier());
+			assertFalse(b.getLocationIdentifier().isEmpty());
 			assertNotNull(b.getSpaces());
 			assertFalse(b.getSpaces().isEmpty());
 			assertTrue(b.getLocationId() > 0);
@@ -79,8 +79,8 @@ public class TestClientDao extends TestCase {
 				assertTrue(s.getSpaceId() > 0);
 				assertNotNull(s.getParkingLevel());
 				assertFalse(s.getParkingLevel().isEmpty());
-				assertNotNull(s.getSpaceName());
-				assertFalse(s.getSpaceName().isEmpty());
+				assertNotNull(s.getSpaceIdentifier());
+				assertFalse(s.getSpaceIdentifier().isEmpty());
 			}
 		}
 	}

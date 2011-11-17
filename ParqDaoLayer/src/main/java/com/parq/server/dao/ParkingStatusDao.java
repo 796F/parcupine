@@ -27,7 +27,7 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 		"SELECT pi.ParkingInst_id, pi.user_id, pi.space_id, pi.park_began_time, " +
 		"       pi.park_end_time, pi.is_paid_parking, " +
 		"       p.payment_id, p.payment_type, p.payment_ref_num, p.payment_datetime, " +
-		"       p.amount_paid " +
+		"       p.amount_paid_cents " +
 		" FROM ParkingInstance as pi, Payment as p " +
 		" WHERE p.ParkingInst_id = pi.ParkingInst_id " +
 		" AND pi.ParkingInst_id IN (SELECT MAX(ParkingInst_id) FROM ParkingInstance WHERE space_id IN( ";
@@ -37,7 +37,7 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 		"INSERT INTO ParkingInstance (User_ID, Space_ID, Park_Began_Time, Park_End_Time, Is_Paid_Parking) " + 
 		" VALUES (?, ?, ?, ?, ?)";
 	private String sqlInsertPayment = 
-		"INSERT INTO Payment (ParkingInst_ID, Payment_Type, Payment_Ref_Num, Payment_DateTime, Amount_Paid) " +
+		"INSERT INTO Payment (ParkingInst_ID, Payment_Type, Payment_Ref_Num, Payment_DateTime, Amount_Paid_Cents) " +
 		" VALUES ((SELECT MAX(ParkingInst_ID) FROM ParkingInstance WHERE space_id = ?), ?, ?, ?, ?)";
 	
 	private static final String getParkingStatusBySpaceIdsCacheKey = "spaceId:";
@@ -145,7 +145,7 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 			paymentInfo.setPaymentType(Payment.PaymentType.valueOf(rs.getString("payment_type")));
 			paymentInfo.setPaymentRefNumber(rs.getString("payment_ref_num"));
 			paymentInfo.setPaymentDateTime(rs.getTimestamp("payment_datetime"));
-			paymentInfo.setAmountPaid(rs.getDouble("amount_paid"));
+			paymentInfo.setAmountPaidCents(rs.getInt("amount_paid_cents"));
 			
 			parkingInst.setPaymentInfo(paymentInfo);
 			
@@ -192,7 +192,7 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 				pstmt.setString(2, parkingInst.getPaymentInfo().getPaymentType().toString());
 				pstmt.setString(3, parkingInst.getPaymentInfo().getPaymentRefNumber());
 				pstmt.setTimestamp(4, new Timestamp(parkingInst.getPaymentInfo().getPaymentDateTime().getTime()));
-				pstmt.setDouble(5, parkingInst.getPaymentInfo().getAmountPaid());
+				pstmt.setInt(5, parkingInst.getPaymentInfo().getAmountPaidCents());
 				
 				parkingInstanceCreated = pstmt.executeUpdate() == 1;
 			}

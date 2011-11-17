@@ -11,7 +11,7 @@ public class Geolocation implements Serializable{
 	private double Latitude = -10000.00;
 	private double Longitude = -10000.00;
 	private int locationId = -1;
-	private String locationName;
+	private String locationIdentifier;
 
 	/**
 	 * @return the geolocationId
@@ -76,16 +76,16 @@ public class Geolocation implements Serializable{
 	/**
 	 * @return the locationName
 	 */
-	public String getLocationName() {
-		return locationName;
+	public String getLocationIdentifier() {
+		return locationIdentifier;
 	}
 
 	/**
 	 * @param locationName
 	 *            the locationName to set
 	 */
-	public void setLocationName(String locationName) {
-		this.locationName = locationName;
+	public void setLocationIdentifier(String locationIdentifier) {
+		this.locationIdentifier = locationIdentifier;
 	}
 
 }

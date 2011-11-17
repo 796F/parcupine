@@ -25,7 +25,7 @@ public class TestGeolocationDao extends TestCase {
 		assertEquals(1, locationList.size());
 
 		Geolocation locationFound = locationList.get(0);
-		assertEquals(SupportScriptForDaoTesting.parkingLocationNameMain, locationFound.getLocationName());
+		assertEquals(SupportScriptForDaoTesting.parkingLocationNameMain, locationFound.getLocationIdentifier());
 		assertEquals(SupportScriptForDaoTesting.parkingLocationMainLatitude, locationFound.getLatitude());
 		assertEquals(SupportScriptForDaoTesting.parkingLocationMainLongtitude, locationFound.getLongitude());
 		assertTrue(locationFound.getGeolocationId() > 0);
