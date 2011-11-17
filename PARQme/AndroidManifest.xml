@@ -32,7 +32,7 @@
 		</activity>
 		<activity android:name=".MapViewActivity" />
 		<activity android:name=".HelpActivity" />
-		<activity android:name="WebRegister" />
+		<activity android:name="RegisterActivity" />
 		<service android:name="Background" />
 		<activity android:name="MainActivity" />
 		<activity android:name=".AccountActivity" />

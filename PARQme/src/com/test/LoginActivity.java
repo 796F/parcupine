@@ -75,7 +75,7 @@ public class LoginActivity extends Activity {
 		register.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Intent myintent = new Intent(LoginActivity.this, WebRegister.class);
+				Intent myintent = new Intent(LoginActivity.this, RegisterActivity.class);
 				startActivity(myintent);
 			}});
 	}

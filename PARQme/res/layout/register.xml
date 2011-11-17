@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android=
+     "http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent"
+  android:id="@+id/register">
+  		<TableLayout android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:layout_marginTop="18dp"
+		android:layout_marginLeft="6dp" android:layout_marginRight="6dp"
+		android:layout_gravity="center_horizontal" android:stretchColumns="1">
+		<TableRow>
+			<TextView android:id="@+id/email_label" android:text="Email:"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:layout_marginRight="8dp"/>
+			<EditText android:id="@+id/emailForm"
+				android:inputType="textEmailAddress" android:layout_width="fill_parent"
+				android:layout_height="wrap_content" android:minWidth="50dp"/>
+		</TableRow>
+		<TableRow>
+			<TextView android:id="@+id/password_label" android:text="Password:"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:layout_marginRight="8dp"/>
+			<EditText android:id="@+id/passwordForm" android:inputType="textPassword"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:minWidth="50dp"/>
+		</TableRow>
+		<TableRow>
+			<TextView android:id="@+id/confirm_label" android:text="Confirm password:"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:layout_marginRight="8dp"/>
+			<EditText android:id="@+id/confirmForm" android:inputType="textPassword"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:minWidth="50dp"/>
+		</TableRow>
+		<TableRow>
+			<TextView android:id="@+id/first_label" android:text="First name:"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:layout_marginRight="8dp"/>
+			<EditText android:id="@+id/firstForm" android:inputType="textPersonName"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:minWidth="50dp"/>
+		</TableRow>
+		<TableRow>
+			<TextView android:id="@+id/last_label" android:text="Last name:"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:layout_marginRight="8dp"/>
+			<EditText android:id="@+id/lastForm" android:inputType="textPersonName"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:minWidth="50dp"/>
+		</TableRow>
+	</TableLayout>
+	<LinearLayout android:layout_height="wrap_content" android:layout_width="fill_parent"
+		android:layout_marginTop="18dp">
+		<Button android:id="@+id/submit" android:text="Submit" android:layout_width="150dp"
+			android:layout_margin="5dp"
+			android:layout_height="wrap_content" android:layout_alignParentLeft="true" />
+		<Button android:id="@+id/cancel" android:text="Cancel" android:layout_width="150dp"
+			android:layout_margin="5dp"
+			android:layout_height="wrap_content" android:layout_alignParentRight="true"/>
+	</LinearLayout>
+  </LinearLayout>
