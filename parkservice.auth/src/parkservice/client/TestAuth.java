@@ -31,7 +31,7 @@ public class TestAuth {
 
 	private static URI getBaseURI() {
 		return UriBuilder.fromUri(
-				"http://localhost:8080/parkservice.resources").build();
+				"http://localhost:8080/parkservice.auth").build();
 	}
 
 }
