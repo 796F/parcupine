@@ -89,7 +89,7 @@ public class GetRateResource {
 			int spotid = input.getSpot();
 			
 			ParkingRateDao p = new ParkingRateDao();
-			ParkingRate pr = p.getParkingRateByName(clientName, "main_lot", ""+spotid);
+			ParkingRate pr =p.getParkingRateByName("main_lot", ""+spotid);
 			//parkingrate object should be changed...
 			
 			return new RateResponse(0.86F, -0.51F, pr.getLocationName(), pr.getSpaceId(), 30, 300, 100, 30,null);
