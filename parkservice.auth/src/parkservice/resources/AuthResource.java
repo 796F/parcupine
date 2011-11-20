@@ -60,6 +60,6 @@ public class AuthResource {
 	@GET
 	@Produces(MediaType.TEXT_PLAIN)
 	public String sayPlainTextHello() {
-		return "Hello peter parker";
+		return "Hello Auth Service";
 	}
 }
