@@ -8,8 +8,8 @@ public class UserObject {
 	private String fname;
 	
 	private String lname;
-	private String phone;
 	private String email;
+	private String phone;
 	
 	public UserObject(){}
 	
@@ -19,6 +19,13 @@ public class UserObject {
 		this.lname=fields.get(1);
 		this.email=fields.get(2);
 		this.phone = fields.get(3);
+	}
+
+	public UserObject(String fname, String lname, String email, String phone) {
+		this.fname = fname;
+		this.lname = lname;
+		this.email = email;
+		this.phone = phone;
 	}
 //	public boolean checkIntegrity(){
 //		if(this.getFname().equals("0")){
@@ -33,26 +40,14 @@ public class UserObject {
 	public String getFname() {
 		return fname;
 	}
-	public void setFname(String fname) {
-		this.fname = fname;
-	}
 	public String getLname() {
 		return lname;
-	}
-	public void setLname(String lname) {
-		this.lname = lname;
 	}
 	public String getPhone() {
 		return phone;
 	}
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
 	public String getEmail() {
 		return email;
-	}
-	public void setEmail(String email) {
-		this.email = email;
 	}
 	
 }
