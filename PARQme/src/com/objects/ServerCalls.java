@@ -3,9 +3,14 @@ package com.objects;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.net.*;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
+
+import org.codehaus.jackson.JsonParser;
 
 /**
  * This object is used to store user preferences and such, passed between activities inside a bundle.  
@@ -16,21 +21,26 @@ public class ServerCalls {
 	/*returns if authentication passed.*/
 	public static UserObject getUser(String email, String hash){
 		try {
-			String data = URLEncoder.encode("email", "UTF-8") + "=" + URLEncoder.encode(email, "UTF-8");
-			data+="&"+ URLEncoder.encode("passhash", "UTF-8") + "=" + URLEncoder.encode(hash, "UTF-8");
 			//prepare data
-			URL url = new URL("http://parqme.com/applogin.php");
+			StringBuilder data = new StringBuilder();
+			data.append("{\"email\":\"");
+			data.append(email);
+			data.append("\", \"password\": \"");
+			data.append(hash);
+			data.append("\"}");
+			URL url = new URL("http://parqserv.student.umd.edu:8080/parkservice.auth/auth");
 			URLConnection conn = url.openConnection();
+			conn.setRequestProperty("Content-Type", "application/json");
 			//open connection
 			conn.setDoOutput(true);
 			OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-			wr.write(data);
+			wr.write(data.toString());
 			wr.flush();
 			//write data
-			BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			//[fname, lname, email, phone, history ] split by pipe char
-			//history is [recent & oldeer & ... & oldest]
-			return new UserObject(rd.readLine());
+			final InputStream in = conn.getInputStream();
+			BufferedReader rd = new BufferedReader(new InputStreamReader(in));
+			final JsonParser jp = Parsers.JSON_FACTORY.createJsonParser(rd);
+			return Parsers.parseUser(jp);
 		}catch (Exception e){
 			e.printStackTrace();
 		}
