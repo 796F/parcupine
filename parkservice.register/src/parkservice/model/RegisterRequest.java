@@ -3,14 +3,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class RegisterRequest {
-	private String CreditCard;
-	private int cccNumber;
-	private String holderName;
-	private String expDate;
-	private String billingAddress;
+	String CreditCard;
+	int cccNumber;
+	String holderName;
+	String expDate;
+	String billingAddress;
 	
-	private String email;
-	private String password;
+	String email;
+	String password;
 	/**
 	 * @return the creditCard
 	 */
