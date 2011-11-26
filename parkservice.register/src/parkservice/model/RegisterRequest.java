@@ -1,5 +1,7 @@
 package parkservice.model;
+import javax.xml.bind.annotation.XmlRootElement;
 
+@XmlRootElement
 public class RegisterRequest {
 	private String CreditCard;
 	private int cccNumber;
