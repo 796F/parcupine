@@ -24,12 +24,12 @@ public class TestRegister {
 		WebResource service = client.resource(getBaseURI());
 		
 		RegisterRequest in = new RegisterRequest();
-		in.setEmail("test@test.com");
-		in.setPassword("testpass");
-		in.setCccNumber(000);
+		in.setEmail("aaaaa");
+		in.setPassword("a");
+		in.setCccNumber("000");
 		in.setCreditCard("SAMP-LECR-EDIT-CARD");
 		in.setExpDate("ExExpirationDate");
-		in.setHolderName("USERNAME");
+		in.setHolderName("ss");
 		in.setBillingAddress("ExBillingAddress");
 
 		String outstring = service.path("register").type(MediaType.APPLICATION_JSON).post(String.class, in);
