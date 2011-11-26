@@ -26,7 +26,7 @@ public class TestRegister {
 		RegisterRequest in = new RegisterRequest();
 		in.setEmail("test@test.com");
 		in.setPassword("testpass");
-		in.setCccNumber(000);
+		in.setCccNumber("000");
 		in.setCreditCard("SAMP-LECR-EDIT-CARD");
 		in.setExpDate("ExExpirationDate");
 		in.setHolderName("USERNAME");
