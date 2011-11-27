@@ -47,6 +47,24 @@ public class RegisterResource {
 		}
 	}
 	
+	@Path("/delete")
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public RegisterResponse delete(JAXBElement<RegisterRequest> input){
+		RegisterRequest info = input.getValue();
+		UserDao userDb = new UserDao();
+		boolean result = userDb.deleteUserById(userDb.getUserByEmail(info.getEmail()).getUserID());
+		RegisterResponse test = new RegisterResponse();
+		
+		if(result){
+			test.setResponsecode("DELETE OK");
+			return test;
+		}else{
+			test.setResponsecode("DELETE BAD");
+			return test;
+		}
+	}
 	@GET
 	@Produces(MediaType.TEXT_PLAIN)
 	public String sayPlainTextHello() {
