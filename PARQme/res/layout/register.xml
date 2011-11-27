@@ -13,7 +13,7 @@
 			<TextView android:id="@+id/email_label" android:text="Email:"
 				android:layout_width="wrap_content" android:layout_height="wrap_content"
 				android:layout_marginRight="8dp"/>
-			<EditText android:id="@+id/emailForm"
+			<EditText android:id="@+id/emailBox"
 				android:inputType="textEmailAddress" android:layout_width="fill_parent"
 				android:layout_height="wrap_content" android:minWidth="50dp"/>
 		</TableRow>
@@ -21,7 +21,7 @@
 			<TextView android:id="@+id/password_label" android:text="Password:"
 				android:layout_width="wrap_content" android:layout_height="wrap_content"
 				android:layout_marginRight="8dp"/>
-			<EditText android:id="@+id/passwordForm" android:inputType="textPassword"
+			<EditText android:id="@+id/passwordBox" android:inputType="textPassword"
 				android:layout_width="fill_parent" android:layout_height="wrap_content"
 				android:minWidth="50dp"/>
 		</TableRow>
@@ -29,23 +29,23 @@
 			<TextView android:id="@+id/confirm_label" android:text="Confirm password:"
 				android:layout_width="wrap_content" android:layout_height="wrap_content"
 				android:layout_marginRight="8dp"/>
-			<EditText android:id="@+id/confirmForm" android:inputType="textPassword"
+			<EditText android:id="@+id/confirmBox" android:inputType="textPassword"
 				android:layout_width="fill_parent" android:layout_height="wrap_content"
 				android:minWidth="50dp"/>
 		</TableRow>
 		<TableRow>
-			<TextView android:id="@+id/first_label" android:text="First name:"
+			<TextView android:id="@+id/name_label" android:text="Full name:"
 				android:layout_width="wrap_content" android:layout_height="wrap_content"
 				android:layout_marginRight="8dp"/>
-			<EditText android:id="@+id/firstForm" android:inputType="textPersonName"
+			<EditText android:id="@+id/nameBox" android:inputType="textPersonName"
 				android:layout_width="fill_parent" android:layout_height="wrap_content"
 				android:minWidth="50dp"/>
 		</TableRow>
 		<TableRow>
-			<TextView android:id="@+id/last_label" android:text="Last name:"
+			<TextView android:id="@+id/cc_label" android:text="Credit card number:"
 				android:layout_width="wrap_content" android:layout_height="wrap_content"
 				android:layout_marginRight="8dp"/>
-			<EditText android:id="@+id/lastForm" android:inputType="textPersonName"
+			<EditText android:id="@+id/ccBox" android:inputType="number"
 				android:layout_width="fill_parent" android:layout_height="wrap_content"
 				android:minWidth="50dp"/>
 		</TableRow>

@@ -3,13 +3,17 @@ package com.objects;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 
+import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonParser;
 
 /**
@@ -17,35 +21,69 @@ import org.codehaus.jackson.JsonParser;
  * Remember to generate getters and setters
  * */
 public class ServerCalls {
+
+	public static final JsonFactory JSON_FACTORY = new JsonFactory();
+	private static final String SERVER_HOSTNAME = "http://parqserv.student.umd.edu:8080";
 	
 	/*returns if authentication passed.*/
 	public static UserObject getUser(String email, String hash){
 		try {
-			//prepare data
-			StringBuilder data = new StringBuilder();
-			data.append("{\"email\":\"");
-			data.append(email);
-			data.append("\", \"password\": \"");
-			data.append(hash);
-			data.append("\"}");
-			URL url = new URL("http://parqserv.student.umd.edu:8080/parkservice.auth/auth");
-			URLConnection conn = url.openConnection();
-			conn.setRequestProperty("Content-Type", "application/json");
 			//open connection
+			final URLConnection conn =
+					new URL(SERVER_HOSTNAME + "/parkservice.auth/auth").openConnection();
+			conn.setRequestProperty("Accept", "application/json");
+			conn.setRequestProperty("Content-Type", "application/json");
 			conn.setDoOutput(true);
-			OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-			wr.write(data.toString());
-			wr.flush();
 			//write data
-			final InputStream in = conn.getInputStream();
-			BufferedReader rd = new BufferedReader(new InputStreamReader(in));
-			final JsonParser jp = Parsers.JSON_FACTORY.createJsonParser(rd);
-			return Parsers.parseUser(jp);
-		}catch (Exception e){
+			final JsonGenerator jg = JSON_FACTORY.createJsonGenerator(conn.getOutputStream());
+			jg.writeStartObject();
+			jg.writeFieldName("email");
+			jg.writeString(email);
+			jg.writeFieldName("password");
+			jg.writeString(hash);
+			jg.writeEndObject();
+			jg.flush();
+			jg.close();
+			final JsonParser jp = JSON_FACTORY.createJsonParser(conn.getInputStream());
+			final UserObject user = Parsers.parseUser(jp);
+			jp.close();
+			return user;
+		} catch (IOException e){
 			e.printStackTrace();
 		}
 		return null;
 	
+	}
+
+	public static boolean registerNewUser(String email, String password, String name,
+			String ccNumber) {
+		try {	
+			final URLConnection conn =
+					new URL(SERVER_HOSTNAME + "/parkservice.register/register").openConnection();
+			conn.setRequestProperty("Accept", "application/json");
+			conn.setRequestProperty("Content-Type", "application/json");
+			conn.setDoOutput(true);
+			final JsonGenerator jg = JSON_FACTORY.createJsonGenerator(conn.getOutputStream());
+			jg.writeStartObject();
+			jg.writeFieldName("CreditCard");
+			jg.writeString(ccNumber);
+			jg.writeFieldName("holderName");
+			jg.writeString(name);
+			jg.writeFieldName("email");
+			jg.writeString(email);
+			jg.writeFieldName("password");
+			jg.writeString(password);
+			jg.writeEndObject();
+			jg.flush();
+			jg.close();
+			final JsonParser jp = JSON_FACTORY.createJsonParser(conn.getInputStream());
+			final boolean response = Parsers.parseResponseCode(jp);
+			jp.close();
+			return response;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 	
 	public static int unPark(String qrcode, String email){
