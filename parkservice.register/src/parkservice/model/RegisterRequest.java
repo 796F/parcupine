@@ -1,14 +1,28 @@
 package parkservice.model;
+import javax.xml.bind.annotation.XmlRootElement;
 
+@XmlRootElement
 public class RegisterRequest {
-	private String CreditCard;
-	private int cccNumber;
-	private String holderName;
-	private String expDate;
-	private String billingAddress;
+	String CreditCard;
+	String cccNumber;
+	String holderName;
+	String expDate;
+	String billingAddress;
 	
-	private String email;
-	private String password;
+	String email;
+	String password;
+	/**
+	 * @return the cccNumber
+	 */
+	public String getCccNumber() {
+		return cccNumber;
+	}
+	/**
+	 * @param cccNumber the cccNumber to set
+	 */
+	public void setCccNumber(String cccNumber) {
+		this.cccNumber = cccNumber;
+	}
 	/**
 	 * @return the creditCard
 	 */
@@ -21,18 +35,7 @@ public class RegisterRequest {
 	public void setCreditCard(String creditCard) {
 		CreditCard = creditCard;
 	}
-	/**
-	 * @return the cccNumber
-	 */
-	public int getCccNumber() {
-		return cccNumber;
-	}
-	/**
-	 * @param cccNumber the cccNumber to set
-	 */
-	public void setCccNumber(int cccNumber) {
-		this.cccNumber = cccNumber;
-	}
+	
 	/**
 	 * @return the holderName
 	 */

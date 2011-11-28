@@ -19,7 +19,7 @@ public class RegisterResource {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public RegisterResponse login(JAXBElement<RegisterRequest> input){
+	public RegisterResponse register(JAXBElement<RegisterRequest> input){
 		RegisterRequest info = input.getValue();
 		User newUser = new User();
 		newUser.setEmail(info.getEmail());
@@ -28,7 +28,7 @@ public class RegisterResource {
 		UserDao userDb = new UserDao();
 		//getByEmail throws exception when user is not in db, aka rs=null.
 		//thus user must be in db or this will throw exception.  
-		
+
 		/* user creation more verbose? */
 		boolean result = userDb.createNewUser(newUser);
 		/*  Dao layer needs to support these fields in table "User"
@@ -37,10 +37,13 @@ public class RegisterResource {
  			parkstate TINYINT(1) NOT NULL,
  			parkloc POINT NOT NULL,
 		 */
+		RegisterResponse test = new RegisterResponse();
 		if(result){
-			return new RegisterResponse(11);
+			test.setResponsecode("OK");
+			return test;
 		}else{
-			return new RegisterResponse(33);
+			test.setResponsecode("BAD");
+			return test;
 		}
 	}
 	
