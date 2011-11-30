@@ -38,6 +38,8 @@ to pinpoint the user to a parking_lot, which then gives us the client inevitably
  * 
  * */
 
+import java.util.ArrayList;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -55,6 +57,7 @@ import parkservice.model.AuthRequest;
 import parkservice.model.GpsRequest;
 import parkservice.model.QrcodeRequest;
 import parkservice.model.RateResponse;
+import parkservice.model.SpecialRate;
 
 @Path("/getrate")
 public class GetRateResource {
@@ -84,15 +87,19 @@ public class GetRateResource {
 		int uid;
 		if((uid=innerAuthenticate(userInfo))>0){
 			ClientDao x = new ClientDao();
-			Client client = x.getClientById(input.getClient());
-			String clientName = client.getName();
-			int spotid = input.getSpot();
+			//http://www.parqme.com/x86gg0/a80
+			input.getLot();
+			input.getSpot();
 			
 			ParkingRateDao p = new ParkingRateDao();
-			ParkingRate pr =p.getParkingRateByName("main_lot", ""+spotid);
+			//getbyname should use p.getParkingRateByName(x86gg0, a808);
+			ParkingRate pr =p.getParkingRateByName(input.getLot(), input.getSpot());
 			//parkingrate object should be changed...
-			
-			return new RateResponse(0.86F, -0.51F, pr.getLocationName(), pr.getSpaceId(), 30, 300, 100, 30,null);
+			return new RateResponse(
+					0.86F, -0.51F /*lat/lon info needs to be returned*/,
+					pr.getLocationName(), pr.getSpaceId(),
+					60 /*min park time*/, 
+					pr.getMaxParkMins(), pr.getParkingRateCents(), pr.getTimeIncrementsMins(),null);
 			
 			//if authenticated
 			//return getRate(uid, 0);

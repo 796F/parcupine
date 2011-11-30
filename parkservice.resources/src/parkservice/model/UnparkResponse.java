@@ -1,23 +1,14 @@
 package parkservice.model;
 
 public class UnparkResponse {
-	private int responseCode;
-	public UnparkResponse(int code){
-		super();
-		this.responseCode = code;
-	}
-	/**
-	 * @return the responseCode
-	 */
-	public int getResponseCode() {
-		return responseCode;
-	}
+	ResponseCode resp;
 
-	/**
-	 * @param responseCode the responseCode to set
-	 */
-	public void setResponseCode(int responseCode) {
-		this.responseCode = responseCode;
+	public UnparkResponse(ResponseCode resp) {
+		super();
+		this.resp = resp;
+	}
+	public String getResponseDescription(){
+		return resp.getInfo();
 	}
 	
 }

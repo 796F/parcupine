@@ -6,45 +6,34 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
 public class GpsRequest {
-
-	private float lat;
-	private float lon;
-	private int spot;
-	private AuthRequest userInfo;
-	/**
-	 * @return the lat
-	 */
-	public float getLat() {
+	int uid;
+	double lat;  //I think these come in as floats from Map API.  
+	double lon;
+	String spot; 
+	AuthRequest userInfo;
+	
+	public int getUid() {
+		return uid;
+	}
+	public void setUid(int uid) {
+		this.uid = uid;
+	}
+	public double getLat() {
 		return lat;
 	}
-	/**
-	 * @param lat the lat to set
-	 */
-	public void setLat(float lat) {
+	public void setLat(double lat) {
 		this.lat = lat;
 	}
-	/**
-	 * @return the lon
-	 */
-	public float getLon() {
+	public double getLon() {
 		return lon;
 	}
-	/**
-	 * @param lon the lon to set
-	 */
-	public void setLon(float lon) {
+	public void setLon(double lon) {
 		this.lon = lon;
 	}
-	/**
-	 * @return the spot
-	 */
-	public int getSpot() {
+	public String getSpot() {
 		return spot;
 	}
-	/**
-	 * @param spot the spot to set
-	 */
-	public void setSpot(int spot) {
+	public void setSpot(String spot) {
 		this.spot = spot;
 	}
 	/**

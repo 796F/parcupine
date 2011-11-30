@@ -34,8 +34,9 @@ public class TestGetRate {
 		//AU OR cid=11, main_lot, 1412
 		QrcodeRequest g = new QrcodeRequest();
 		g.setUserInfo(in);
-		g.setClient(11);
-		g.setSpot(1412);
+		g.setUid(11); //not used by getrate yet.  
+		g.setLot("main_lot");
+		g.setSpot("1412");
 		String output = service.path("getrate").path("qrcode").type(MediaType.APPLICATION_JSON).post(String.class, g);
 		System.out.println(output);
 		

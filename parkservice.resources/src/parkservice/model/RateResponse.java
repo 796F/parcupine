@@ -11,19 +11,19 @@ public class RateResponse {
 	 * Increment 
 	 * */
 
-	private float lat;
-	private float lon;
-	private String location;
-	private int spot;
+	double lat;
+	double lon;
+	String location;
+	int spot;
 	
 	/*these are the defaults*/
-	private int minTime;			//must park 1 hour
-	private int maxTime;			//max park 3 hours
-	private int defaultRate; 		//rate is x/increment
-	private int minIncrement;		//min increase 30mins
+	int minTime;			//must park 1 hour
+	int maxTime;			//max park 3 hours
+	int defaultRate; 		//rate is x/increment
+	int minIncrement;		//min increase 30mins
 	
 	/*specials, such as whole day parking, holiday/game parking, etc*/
-	private ArrayList<SpecialRate> specials;
+	ArrayList<SpecialRate> specials;
 
 	
 	public RateResponse(){
@@ -42,34 +42,6 @@ public class RateResponse {
 		this.defaultRate = defaultRate;
 		this.minIncrement = minIncrement;
 		this.specials = specials;
-	}
-
-	/**
-	 * @return the lat
-	 */
-	public float getLat() {
-		return lat;
-	}
-
-	/**
-	 * @param lat the lat to set
-	 */
-	public void setLat(float lat) {
-		this.lat = lat;
-	}
-
-	/**
-	 * @return the lon
-	 */
-	public float getLon() {
-		return lon;
-	}
-
-	/**
-	 * @param lon the lon to set
-	 */
-	public void setLon(float lon) {
-		this.lon = lon;
 	}
 
 	/**

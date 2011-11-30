@@ -5,24 +5,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class RegisterResponse {
 	//the app can check for bad password, email, stuff like that.  
 	//but the server must check credit card information.  
-	String responsecode;
+	ResponseCode resp;
 
-	/**
-	 * @return the responsecode
-	 */
-	public String getResponsecode() {
-		return responsecode;
+	public RegisterResponse(ResponseCode resp) {
+		super();
+		this.resp = resp;
 	}
-
-	/**
-	 * @param responsecode the responsecode to set
-	 */
-	public void setResponsecode(String responsecode) {
-		this.responsecode = responsecode;
+	public String getResponseDescription(){
+		return resp.getInfo();
 	}
-
-	/* 11: credit card valid
-	 * 22: credit card NOT valid
-	 * 33: could not connect to server*/
-	
 }

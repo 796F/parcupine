@@ -3,24 +3,25 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class AuthResponse {
-	//every user field has [uid, fname, lname, email, password, phone number, parkstate, parkeloc]
+	//future return CC info for app.
 	
 	//information about user that will be displayed. 
-	String fname;
-	String lname;
+	int uid;
 	String phone;
+	int parkstate; //0 not parked, 1 parked
 	
-	public String getFname() {
-		return fname;
+	
+	public int getUid() {
+		return uid;
 	}
-	public void setFname(String fname) {
-		this.fname = fname;
+	public void setUid(int uid) {
+		this.uid = uid;
 	}
-	public String getLname() {
-		return lname;
+	public int getParkstate() {
+		return parkstate;
 	}
-	public void setLname(String lname) {
-		this.lname = lname;
+	public void setParkstate(int parkstate) {
+		this.parkstate = parkstate;
 	}
 	public String getPhone() {
 		return phone;

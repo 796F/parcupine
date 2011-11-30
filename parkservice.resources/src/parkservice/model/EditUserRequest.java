@@ -1,7 +1,5 @@
 package parkservice.model;
 
-import java.util.HashMap;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -9,33 +7,54 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
 public class EditUserRequest {
+	int uid;
+	String email;
+	String password;
+	String phone;
+	AuthRequest userinfo;
 	
-	private HashMap<String, String> newVals;
-	private AuthRequest userinfo;
-	
-	public EditUserRequest(AuthRequest userinfo) {
-		super();
-		this.newVals = new HashMap<String, String>();
-		this.userinfo = userinfo;
+	public int getUid() {
+		return uid;
 	}
-	public void addEdit(String field, String val){
-		this.newVals.put(field, val);
+	public void setUid(int uid) {
+		this.uid = uid;
 	}
-	
 	/**
-	 * @return the newVals
+	 * @return the email
 	 */
-	public HashMap<String, String> getNewVals() {
-		return newVals;
+	public String getEmail() {
+		return email;
 	}
-
 	/**
-	 * @param newVals the newVals to set
+	 * @param email the email to set
 	 */
-	public void setNewVals(HashMap<String, String> newVals) {
-		this.newVals = newVals;
+	public void setEmail(String email) {
+		this.email = email;
 	}
-
+	/**
+	 * @return the password
+	 */
+	public String getPassword() {
+		return password;
+	}
+	/**
+	 * @param password the password to set
+	 */
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	/**
+	 * @return the phone
+	 */
+	public String getPhone() {
+		return phone;
+	}
+	/**
+	 * @param phone the phone to set
+	 */
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
 	/**
 	 * @return the userinfo
 	 */

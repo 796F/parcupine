@@ -9,9 +9,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
 public class UnparkRequest {
-	private AuthRequest userinfo;
-	private Date end;
+	int uid;
+	AuthRequest userinfo;
+	Date end;
 	
+	public int getUid() {
+		return uid;
+	}
+	public void setUid(int uid) {
+		this.uid = uid;
+	}
 	public UnparkRequest(AuthRequest userinfo){
 		super();
 		this.userinfo = userinfo;

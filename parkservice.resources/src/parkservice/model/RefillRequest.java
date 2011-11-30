@@ -9,11 +9,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
 public class RefillRequest {
-	private Date end;
-	private int amount;
-	private int paymentType;
+	Date end;
+	int amount;
+	int paymentType;
 	
-	private AuthRequest userinfo;
+	AuthRequest userinfo;
 	
 	
 	public RefillRequest(AuthRequest userinfo){
