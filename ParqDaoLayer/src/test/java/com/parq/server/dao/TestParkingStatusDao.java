@@ -29,13 +29,12 @@ public class TestParkingStatusDao extends TestCase {
 		SupportScriptForDaoTesting.insertFakeData();
 		
 		User newUser = new User();
-		newUser.setUserName("userName");
 		newUser.setPassword("password");
 		newUser.setEmail("eMail");
 		UserDao userDao = new UserDao();
 		boolean userCreationSuccessful = userDao.createNewUser(newUser);
 		assertTrue(userCreationSuccessful);
-		User user = userDao.getUserByUserName("userName");
+		User user = userDao.getUserByEmail("eMail");
 		
 		ClientDao clientDao = new ClientDao();
 		List<ParkingLocation> buildingList = clientDao.getParkingLocationsAndSpacesByClientId(
