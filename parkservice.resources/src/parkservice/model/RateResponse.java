@@ -24,7 +24,7 @@ public class RateResponse {
 	public RateResponse(){
 		
 	}
-	public RateResponse(float lat, float lon, String location, int spot,
+	public RateResponse(double lat, double lon, String location, int spot,
 			int minTime, int maxTime, int defaultRate, int minIncrement,
 			ArrayList<SpecialRate> specials) {
 		super();

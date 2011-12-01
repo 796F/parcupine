@@ -39,6 +39,7 @@ to pinpoint the user to a parking_lot, which then gives us the client inevitably
  * */
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -49,8 +50,10 @@ import javax.ws.rs.core.MediaType;
 import javax.xml.bind.JAXBElement;
 
 import com.parq.server.dao.ClientDao;
+import com.parq.server.dao.GeolocationDao;
 import com.parq.server.dao.ParkingRateDao;
 import com.parq.server.dao.model.object.Client;
+import com.parq.server.dao.model.object.Geolocation;
 import com.parq.server.dao.model.object.ParkingRate;
 
 import parkservice.model.AuthRequest;
@@ -88,20 +91,20 @@ public class GetRateResource {
 		if((uid=innerAuthenticate(userInfo))>0){
 			ClientDao x = new ClientDao();
 			//http://www.parqme.com/x86gg0/a80
-			
+
 			ParkingRateDao p = new ParkingRateDao();
 			//getbyname should use p.getParkingRateByName(x86gg0, a808);
 			ParkingRate pr =p.getParkingRateByName(input.getLot(), input.getSpot());
-			//parkingrate object should be changed...
+			GeolocationDao gdao = new GeolocationDao();
+			Geolocation loc = gdao.getLocationById(pr.getLocationId());
+			
 			return new RateResponse(
 					
-					0.86F, -0.51F /*lat/lon info needs to be returned*/,
+					loc.getLatitude(), loc.getLongitude() /*lat/lon info needs to be returned*/,
 					pr.getLocationName(), pr.getSpaceId(),
 					60 /*min park time*/, 
 					pr.getMaxParkMins(), pr.getParkingRateCents(), pr.getTimeIncrementsMins(),null);
-			
-			//if authenticated
-			//return getRate(uid, 0);
+
 		}else{
 
 			return null;
@@ -115,27 +118,34 @@ public class GetRateResource {
 	public RateResponse unwrapGps(JAXBElement<GpsRequest> gpsrequest){
 		GpsRequest input = gpsrequest.getValue();	
 		AuthRequest userInfo = input.getUserInfo();
-
-		input.getSpot();
-
-		//GeolocationDao.findCloseByParkingLocation(1,2,3,4)
-		int uid;
+		int uid=-1;
 		if((uid=innerAuthenticate(userInfo))>0){
-			return getRate(uid, 0);
+			double x = input.getLat();
+			double y = input.getLon();
+
+			GeolocationDao gdao = new GeolocationDao();
+			List<Geolocation> spots = gdao.findCloseByParkingLocation(x-0.0004, x+0.0004, y-0.0004, y+0.0004);
+			
+			for(Geolocation g: spots){
+				if(g.getLocationIdentifier().equals(input.getSpot())){
+					ParkingRateDao p = new ParkingRateDao();
+					ParkingRate pr = p.getParkingRateByName(g.getLocationIdentifier(), input.getSpot());
+					return new RateResponse(g.getLatitude(), g.getLongitude(),
+							pr.getLocationName(), pr.getSpaceId(),
+							60 /*min park time*/, 
+							pr.getMaxParkMins(), pr.getParkingRateCents(), pr.getTimeIncrementsMins(),null);
+				}
+			}
+			return null;
+		}else{
+			return null;
 		}
-		return null;
 	}
 
 	@GET
-	@Path("/hello1")
+	@Path("/hello")
 	@Produces(MediaType.TEXT_PLAIN)
 	public String sayPlainTextHello1() {
 		return "Hello getrate path1";
-	}
-	@GET
-	@Path("/hello2")
-	@Produces(MediaType.TEXT_PLAIN)
-	public String sayPlainTextHello2() {
-		return "Hello getrate path TWO";
 	}
 }
