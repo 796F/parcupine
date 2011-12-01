@@ -126,4 +126,11 @@ public abstract class AbstractParqDaoParent {
 		String cacheKey = keyPrefix + value;
 		return cache.remove(cacheKey);
 	}
+	
+	protected boolean revokeCache(Cache cache, String fullKey) {
+		if (cache == null || fullKey == null) {
+			return false;
+		}	
+		return cache.remove(fullKey);
+	}
 }

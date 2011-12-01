@@ -162,4 +162,13 @@ public class GeolocationDao extends AbstractParqDaoParent {
 		
 		return geoLocation;
 	}
+	
+	/**
+	 * manually clear out the cache
+	 * @return
+	 */
+	public boolean clearGeolocationCache() {
+		myCache.removeAll();
+		return true;
+	}
 }

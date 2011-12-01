@@ -11,6 +11,7 @@ public class User implements Serializable {
 	private int userID;
 	private String password;
 	private String email;
+	private String phoneNumber;
 
 	/**
 	 * @return the userID
@@ -55,5 +56,19 @@ public class User implements Serializable {
 	 */
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	/**
+	 * @param phoneNumber the phoneNumber to set
+	 */
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
+	/**
+	 * @return the phoneNumber
+	 */
+	public String getPhoneNumber() {
+		return phoneNumber;
 	}
 }

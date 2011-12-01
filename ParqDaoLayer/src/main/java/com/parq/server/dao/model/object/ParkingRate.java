@@ -17,6 +17,7 @@ public class ParkingRate implements Serializable {
 	private int parkingRateCents = -1;
 	private int timeIncrementsMins = -1;
 	private int maxParkMins = -1;
+	private int minParkMins = -1;
 
 	/**
 	 * @return the timeIncrementsMins
@@ -144,5 +145,19 @@ public class ParkingRate implements Serializable {
 
 	public enum RateType {
 		Client, ParkingLocation, Space;
+	}
+
+	/**
+	 * @return the minParkMins
+	 */
+	public int getMinParkMins() {
+		return minParkMins;
+	}
+
+	/**
+	 * @param minParkMins the minParkMins to set
+	 */
+	public void setMinParkMins(int minParkMins) {
+		this.minParkMins = minParkMins;
 	}
 }

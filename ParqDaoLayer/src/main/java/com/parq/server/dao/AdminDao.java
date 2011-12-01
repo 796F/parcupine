@@ -174,4 +174,12 @@ public class AdminDao extends AbstractParqDaoParent {
 		return admin;
 	}
 	
+	/**
+	 * manually clear out the cache
+	 * @return
+	 */
+	public boolean clearAdminCache() {
+		myCache.removeAll();
+		return true;
+	}
 }
