@@ -7,7 +7,6 @@ public class AuthResponse {
 	
 	//information about user that will be displayed. 
 	int uid;
-	String phone;
 	int parkstate; //0 not parked, 1 parked
 	
 	
@@ -22,12 +21,6 @@ public class AuthResponse {
 	}
 	public void setParkstate(int parkstate) {
 		this.parkstate = parkstate;
-	}
-	public String getPhone() {
-		return phone;
-	}
-	public void setPhone(String phone) {
-		this.phone = phone;
 	}
 	
 }

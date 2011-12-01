@@ -24,11 +24,12 @@ public class TestRegister {
 		WebResource service = client.resource(getBaseURI());
 		
 		RegisterRequest in = new RegisterRequest();
-		in.setEmail("test@test.com");
-		in.setPassword("testpass");
+		in.setEmail("mike@umd.edu");
+		in.setPassword("a");
 		in.setCccNumber("000");
 		in.setCreditCard("SAMP-LECR-EDIT-CARD");
-		in.setExpDate("ExExpirationDate");
+		in.setExpYear(15);
+		in.setExpMonth(4);
 		in.setHolderName("USERNAME");
 		in.setBillingAddress("ExBillingAddress");
 
@@ -42,7 +43,7 @@ public class TestRegister {
 	
 	private static URI getBaseURI() {
 		return UriBuilder.fromUri(
-				"http://parqserv.student.umd.edu:8080/parkservice.register").build();
+				"http://localhost:8080/parkservice.resources").build();
 	}
 
 }

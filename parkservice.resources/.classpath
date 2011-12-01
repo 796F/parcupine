@@ -15,5 +15,6 @@
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="lib" path="log4j"/>
+	<classpathentry kind="lib" path="authnet.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

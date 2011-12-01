@@ -6,11 +6,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class RateResponse {
 	
-	/*
-	 * Min and Max
-	 * Increment 
-	 * */
-
 	double lat;
 	double lon;
 	String location;
