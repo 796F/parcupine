@@ -88,14 +88,13 @@ public class GetRateResource {
 		if((uid=innerAuthenticate(userInfo))>0){
 			ClientDao x = new ClientDao();
 			//http://www.parqme.com/x86gg0/a80
-			input.getLot();
-			input.getSpot();
 			
 			ParkingRateDao p = new ParkingRateDao();
 			//getbyname should use p.getParkingRateByName(x86gg0, a808);
 			ParkingRate pr =p.getParkingRateByName(input.getLot(), input.getSpot());
 			//parkingrate object should be changed...
 			return new RateResponse(
+					
 					0.86F, -0.51F /*lat/lon info needs to be returned*/,
 					pr.getLocationName(), pr.getSpaceId(),
 					60 /*min park time*/, 
@@ -119,6 +118,7 @@ public class GetRateResource {
 
 		input.getSpot();
 
+		//GeolocationDao.findCloseByParkingLocation(1,2,3,4)
 		int uid;
 		if((uid=innerAuthenticate(userInfo))>0){
 			return getRate(uid, 0);

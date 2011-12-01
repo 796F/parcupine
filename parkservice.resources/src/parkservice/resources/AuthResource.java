@@ -48,8 +48,6 @@ public class AuthResource {
 			AuthResponse x = new AuthResponse();
 			x.setParkstate(0);
 			x.setUid(user.getUserID());
-			
-			x.setPhone("101-1337");
 			return x;
 		}else{
 			return null;

@@ -6,11 +6,25 @@ public class RegisterRequest {
 	String CreditCard;
 	String cccNumber;
 	String holderName;
-	String expDate;
+	int expMonth;
+	int expYear;
 	String billingAddress;
 	
 	String email;
 	String password;
+	
+	public int getExpMonth() {
+		return expMonth;
+	}
+	public void setExpMonth(int expMonth) {
+		this.expMonth = expMonth;
+	}
+	public int getExpYear() {
+		return expYear;
+	}
+	public void setExpYear(int expYear) {
+		this.expYear = expYear;
+	}
 	/**
 	 * @return the cccNumber
 	 */
@@ -48,18 +62,7 @@ public class RegisterRequest {
 	public void setHolderName(String holderName) {
 		this.holderName = holderName;
 	}
-	/**
-	 * @return the expDate
-	 */
-	public String getExpDate() {
-		return expDate;
-	}
-	/**
-	 * @param expDate the expDate to set
-	 */
-	public void setExpDate(String expDate) {
-		this.expDate = expDate;
-	}
+
 	/**
 	 * @return the billingAddress
 	 */

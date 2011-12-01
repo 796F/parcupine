@@ -1,5 +1,8 @@
 package parkservice.model;
 
+import javax.xml.bind.annotation.XmlEnum;
+
+@XmlEnum
 public enum ResponseCode {
 	//how verbose should responsecode be?
 	//EditUser, Park, Refill, Register, Unpark
