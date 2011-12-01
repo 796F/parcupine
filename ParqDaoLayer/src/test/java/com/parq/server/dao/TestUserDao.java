@@ -10,6 +10,7 @@ public class TestUserDao extends TestCase {
 
 	private static final String password = "Password123";
 	private static final String eMail = "TestUser12@testCorp.com";
+	private static final String phoneNumber = "123-555-4567";
 
 	@Override
 	protected void setUp() throws Exception {
@@ -20,6 +21,7 @@ public class TestUserDao extends TestCase {
 		User newUser = new User();
 		newUser.setPassword(password);
 		newUser.setEmail(eMail);
+		newUser.setPhoneNumber(phoneNumber);
 
 		boolean userCreationSuccessful = userDao.createNewUser(newUser);
 		assertTrue(userCreationSuccessful);
@@ -32,6 +34,7 @@ public class TestUserDao extends TestCase {
 		assertNotNull(user);
 		assertEquals(user.getPassword(), password);
 		assertEquals(user.getEmail(), eMail);
+		assertEquals(user.getPhoneNumber(), phoneNumber);
 		assertTrue(user.getUserID() > 0);
 	}
 	
@@ -41,6 +44,7 @@ public class TestUserDao extends TestCase {
 		assertNotNull(user);
 		assertEquals(user.getPassword(), password);
 		assertEquals(user.getEmail(), eMail);
+		assertEquals(user.getPhoneNumber(), phoneNumber);
 		assertTrue(user.getUserID() > 0);
 	}
 

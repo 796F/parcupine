@@ -22,7 +22,7 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 	private static final String parkingRateByNamePrefix = "getParkingRateByName:";
 
 	private static final String sqlGetSpaceParkingRate = 
-		"SELECT R.Location_ID, R.Space_ID, R.Parking_Rate_Cents, R.Priority, R.Time_Increment_Mins, R.Max_Park_Mins " +
+		"SELECT R.Location_ID, R.Space_ID, R.Parking_Rate_Cents, R.Priority, R.Time_Increment_Mins, R.Max_Park_Mins, R.Min_Park_Mins " +
 			" FROM ParkingLocation AS B, ParkingSpace AS S, ParkingRate AS R " +
 			" WHERE B.Location_ID = S.Location_ID " +
 			" AND R.Location_ID = B.Location_ID " +
@@ -34,7 +34,7 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 			" ORDER BY R.Priority DESC"; 
 	
 	private static final String sqlGetParkingLocationParkingRate = 
-		"SELECT R.Location_ID, R.Space_ID, R.Parking_Rate_Cents, R.Priority, R.Time_Increment_Mins, R.Max_Park_Mins " +
+		"SELECT R.Location_ID, R.Space_ID, R.Parking_Rate_Cents, R.Priority, R.Time_Increment_Mins, R.Max_Park_Mins, R.Min_Park_Mins " +
 			" FROM ParkingLocation AS B, ParkingRate AS R " +
 			" WHERE R.Location_ID = B.Location_ID " +
 			" AND B.Location_Identifier = ? " +
@@ -126,12 +126,14 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 		int rate = rs.getInt("Parking_Rate_Cents");
 		int timeIncrements = rs.getInt("Time_Increment_Mins");
 		int maxParkTime = rs.getInt("Max_Park_Mins");
+		int minParkTime = rs.getInt("Min_Park_Mins");
 		
 		ParkingRate parkingRate = new ParkingRate();
 		parkingRate.setRateType(RateType.Client);
 		parkingRate.setParkingRateCents(rate);
 		parkingRate.setTimeIncrementsMins(timeIncrements);
 		parkingRate.setMaxParkMins(maxParkTime);
+		parkingRate.setMinParkMins(minParkTime);
 		
 		if (parkingLocationId > 0) {
 			parkingRate.setRateType(RateType.ParkingLocation);

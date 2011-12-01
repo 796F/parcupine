@@ -20,6 +20,7 @@ public class TestPaymentAccountDao extends TestCase {
 	
 	private static final String testUserEmail = "TestUser@PaymentAccount.test";
 	private static final String testUserPW = "TestPassword";
+	private static final String testUserPhone = "123-555-7890";
 	
 	
 
@@ -33,6 +34,7 @@ public class TestPaymentAccountDao extends TestCase {
 			User newUser = new User();
 			newUser.setPassword(testUserPW);
 			newUser.setEmail(testUserEmail);
+			newUser.setPhoneNumber(testUserPhone);
 			boolean userCreationSuccessful = userDao.createNewUser(newUser);
 			assertTrue(userCreationSuccessful);
 			
@@ -157,6 +159,8 @@ public class TestPaymentAccountDao extends TestCase {
 	}
 	
 	public void testDeletePaymentMethod(){
+		// System.out.println("TestPaymentAccountDao Delete UnitTest");
+		
 		SupportScriptForDaoTesting.insertFakeData();
 		
 		int numOfPaymentToTest = 6;
@@ -191,6 +195,7 @@ public class TestPaymentAccountDao extends TestCase {
 
 	
 	public void testCacheForGetAllPaymentMethodForUser(){
+		// System.out.println("TestPaymentAccountDao Cache UnitTest");
 		
 		int numOfPaymentToTest = 4;
 		// create 4 dummy PA
@@ -207,14 +212,14 @@ public class TestPaymentAccountDao extends TestCase {
 		}
 		
 		long curSysTimeBeforeCacheCall = System.currentTimeMillis();
-		for (int i = 0; i < 10000; i++) {
+		for (int i = 0; i < 1000; i++) {
 			List<PaymentAccount> userNewPaList = payAccDao.getAllPaymentMethodForUser(testUser.getUserID()); 
 			assertNotNull(userNewPaList);
 			assertEquals(numOfPaymentToTest, userNewPaList.size());
 		}
 		long curSysTimeAfterCacheCall = System.currentTimeMillis();
 		
-		// check to see that the a call to the get method 10000 time result in runtime of less then 1 second
+		// check to see that the a call to the get method 1000 time result in runtime of less then 1 second
 		assertTrue(curSysTimeAfterCacheCall - curSysTimeBeforeCacheCall < 1000);
 		
 		// test the cache result is accurate

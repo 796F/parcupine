@@ -25,16 +25,16 @@ public class UserDao extends AbstractParqDaoParent {
 	private static final String cacheName = "UserCache";
 	private static Cache myCache;
 
-	private static final String sqlGetUserStatement = "SELECT User_ID, Password, eMail FROM User ";
+	private static final String sqlGetUserStatement = "SELECT User_ID, Password, eMail, Phone_Number FROM User ";
 	private static final String isNotDeleted = " AND Is_Deleted IS NOT TRUE";
 	private static final String sqlGetUserById = sqlGetUserStatement + "WHERE User_ID = ? " + isNotDeleted;
 	private static final String sqlGetUserByEmail = sqlGetUserStatement + "WHERE eMail = ? " + isNotDeleted;
 
 	private static final String sqlDeleteUserById = "UPDATE User SET Is_Deleted = TRUE, eMail = ? WHERE User_ID = ?";
-	private static final String sqlUpdateUser = "UPDATE User SET Password = ?, eMail = ? "
+	private static final String sqlUpdateUser = "UPDATE User SET Password = ?, eMail = ?, Phone_Number = ? "
 			+ " WHERE User_ID = ?";
-	private static final String sqlCreateUser = "INSERT INTO User (Password, eMail) "
-			+ " VALUES (?, ?)";
+	private static final String sqlCreateUser = "INSERT INTO User (Password, eMail, Phone_Number) "
+			+ " VALUES (?, ?, ?)";
 	
 	private static final String emailCache = "getUserByEmail:";
 	private static final String idCache = "getUserById:";
@@ -63,6 +63,7 @@ public class UserDao extends AbstractParqDaoParent {
 		user.setUserID(rs.getInt("User_ID"));
 		user.setPassword(rs.getString("Password"));
 		user.setEmail(rs.getString("eMail"));
+		user.setPhoneNumber(rs.getString("Phone_Number"));
 		return user;
 	}
 
@@ -188,7 +189,8 @@ public class UserDao extends AbstractParqDaoParent {
 			pstmt = con.prepareStatement(sqlUpdateUser);
 			pstmt.setString(1, user.getPassword());
 			pstmt.setString(2, user.getEmail());
-			pstmt.setInt(3, user.getUserID());
+			pstmt.setString(3, user.getPhoneNumber());
+			pstmt.setInt(4, user.getUserID());
 			updateSuccessful = pstmt.executeUpdate() > 0;
 
 		} catch (SQLException sqle) {
@@ -224,6 +226,7 @@ public class UserDao extends AbstractParqDaoParent {
 			pstmt = con.prepareStatement(sqlCreateUser);
 			pstmt.setString(1, user.getPassword());
 			pstmt.setString(2, user.getEmail());
+			pstmt.setString(3, user.getPhoneNumber());
 			newUserCreated = pstmt.executeUpdate() == 1;
 
 		} catch (SQLException sqle) {
@@ -249,7 +252,9 @@ public class UserDao extends AbstractParqDaoParent {
 		User user = getUserById(userID);
 		
 		revokeCache(myCache, idCache, "" + userID);
-		revokeCache(myCache, emailCache, user.getEmail());
+		if (user != null) {
+			revokeCache(myCache, emailCache, user.getEmail());
+		}
 	}
 
 	/**

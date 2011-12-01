@@ -105,6 +105,7 @@ CREATE TABLE ParkingRate
  Parking_Rate_Cents INT NOT NULL,
  Time_Increment_Mins INT NOT NULL,
  Priority INT NOT NULL,
+ Min_Park_Mins INT,
  Max_Park_Mins INT,
  Space_ID INT,
  LastUpdateDateTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 

@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.List;
 
 import net.sf.ehcache.Cache;
+import net.sf.ehcache.Element;
 
 import com.mysql.jdbc.Statement;
 import com.parq.server.dao.model.object.ParkingInstance;
@@ -23,7 +24,7 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 	private static final String cacheName = "ParkingStatusCache";
 	private static Cache myCache;
 	
-	private String sqlGetLatestParkingStatusByIdsSelectPart = 
+	private String sqlGetLatestParkingStatusBySpaceIdsSelectPart = 
 		"SELECT pi.ParkingInst_id, pi.user_id, pi.space_id, pi.park_began_time, " +
 		"       pi.park_end_time, pi.is_paid_parking, " +
 		"       p.payment_id, p.payment_type, p.payment_ref_num, p.payment_datetime, " +
@@ -33,6 +34,17 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 		" AND pi.ParkingInst_id IN (SELECT MAX(ParkingInst_id) FROM ParkingInstance WHERE space_id IN( ";
 	private String sqlOrderByPart =	") GROUP BY space_id) ORDER BY pi.space_id;";
 	
+	private String sqlGetParkingStatusByUserId = 
+		"SELECT pi.ParkingInst_id, pi.user_id, pi.space_id, pi.park_began_time, " +
+		"       pi.park_end_time, pi.is_paid_parking, " +
+		"       p.payment_id, p.payment_type, p.payment_ref_num, p.payment_datetime, " +
+		"       p.amount_paid_cents " +
+		" FROM ParkingInstance as pi, Payment as p " +
+		" WHERE p.ParkingInst_id = pi.ParkingInst_id " +
+		" AND pi.user_id = ? " +
+		" ORDER BY pi.ParkingInst_id DESC " + 
+		" LIMIT 1";
+	
 	private String sqlInsertParkingInstance = 
 		"INSERT INTO ParkingInstance (User_ID, Space_ID, Park_Began_Time, Park_End_Time, Is_Paid_Parking) " + 
 		" VALUES (?, ?, ?, ?, ?)";
@@ -41,6 +53,8 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 		" VALUES ((SELECT MAX(ParkingInst_ID) FROM ParkingInstance WHERE space_id = ?), ?, ?, ?, ?)";
 	
 	private static final String getParkingStatusBySpaceIdsCacheKey = "spaceId:";
+	private static final String getUserParkingStatusCacheKey = "userId:";
+	private static final String getSpaceIdByUserId = "spaceIdToUserId:";
 	
 	public ParkingStatusDao() {
 		super();
@@ -70,11 +84,11 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 		
 		
 		List<ParkingInstance> results = new ArrayList<ParkingInstance>();
-		List<Integer> spaceIdsToCheckInDB = new ArrayList<Integer>(spaceIdsToCheck);
+		List<Integer> spaceIdsToCheckInDB = new ArrayList<Integer>();
 		// check the cache for the spaces, space by space.
 		for (int spaceId : spaceIdsToCheck)
 		{
-			ParkingInstance parkInst = getParkingInstanceBySpaceId(spaceId);
+			ParkingInstance parkInst = getCachedParkingInstanceBySpaceId(spaceId);
 			if (parkInst != null) {
 				results.add(parkInst);
 			}
@@ -93,7 +107,7 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 			try {
 				con = getConnection();
 				// build the query statement.
-				StringBuilder sqlQuery = new StringBuilder(sqlGetLatestParkingStatusByIdsSelectPart);
+				StringBuilder sqlQuery = new StringBuilder(sqlGetLatestParkingStatusBySpaceIdsSelectPart);
 				int numSpaces = spaceIdsToCheckInDB.size();
 				for (int i = 0; i < numSpaces - 1; i++) {
 					sqlQuery.append(spaceIdsToCheckInDB.get(i));
@@ -116,7 +130,64 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 			}
 		}
 		
+		// put the individual ParkingStatus into cache
+		for (ParkingInstance pi : results) {
+			String cacheKey = createCacheKey(getParkingStatusBySpaceIdsCacheKey, pi.getSpaceId());
+			if (pi != null) {
+				myCache.put(new Element(cacheKey, pi));
+			}
+		}
+		
 		return results;
+	}
+	
+	
+	private String createCacheKey(String cacheKey, int id) {
+		return cacheKey + id;
+	}
+
+	public ParkingInstance getUserParkingStatus(int userId) {
+		ParkingInstance userParkingStatus = getCacheParkingInstanceByUserId(userId);
+
+		// if cache match is found, return result
+		if (userParkingStatus != null) {
+			return userParkingStatus;
+		}
+		
+		// query the DB for the user object
+		PreparedStatement pstmt = null;
+		Connection con = null;
+		try {
+			con = getConnection();
+			pstmt = con.prepareStatement(sqlGetParkingStatusByUserId);
+			pstmt.setInt(1, userId);
+			ResultSet rs = pstmt.executeQuery();
+
+			List<ParkingInstance> piList = createParkingStatusObject(rs);
+			if (piList != null && !piList.isEmpty()) {
+				userParkingStatus = piList.get(0);
+			}
+
+		} catch (SQLException sqle) {
+			System.out.println("SQL statement is invalid: " + pstmt);
+			sqle.printStackTrace();
+			throw new RuntimeException(sqle);
+		} finally {
+			closeConnection(con);
+		}
+
+		//put result into cache
+		if (userParkingStatus != null) {
+			// first create a spaceId to userId cache entry
+			myCache.put(new Element(createCacheKey(getSpaceIdByUserId,
+					userParkingStatus.getSpaceId()), userId));
+			// then create a userId to parking instance cache entry
+			myCache.put(new Element(createCacheKey(
+					getUserParkingStatusCacheKey, userId), userParkingStatus));
+		}
+		
+		return userParkingStatus;
+		
 	}
 
 	/**
@@ -217,19 +288,48 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 			return;
 		}
 		
-		ParkingInstance parkingInst = getParkingInstanceBySpaceId(spaceId);
+		// revoke the spaceId to Parking Instance cache
+		ParkingInstance parkingInst = getCachedParkingInstanceBySpaceId(spaceId);
 		if (parkingInst != null) {
-			revokeCache(myCache, getParkingStatusBySpaceIdsCacheKey, "" + spaceId);
+			revokeCache(myCache, createCacheKey(getParkingStatusBySpaceIdsCacheKey, spaceId));
+		}
+
+		// revoke the userId to Parking Instance cache
+		int userId = getCachedSpaceIdToUserId(spaceId);
+		if (userId > 0) {
+			revokeCache(myCache, createCacheKey(getUserParkingStatusCacheKey, userId));
+			// remove the spaceId to userId relationship
+			revokeCache(myCache, createCacheKey(getSpaceIdByUserId, spaceId));
 		}
 	}
 
-	private ParkingInstance getParkingInstanceBySpaceId(int spaceId) {
-		String cacheKey = getParkingStatusBySpaceIdsCacheKey + spaceId;
+	private ParkingInstance getCachedParkingInstanceBySpaceId(int spaceId) {
+		String cacheKey = createCacheKey(getParkingStatusBySpaceIdsCacheKey, spaceId);
 		ParkingInstance parkInst = null;
 		
 		if (myCache.get(cacheKey) != null) {
 			parkInst = (ParkingInstance) myCache.get(cacheKey).getValue();
 		}
 		return parkInst;
+	}
+	
+	private ParkingInstance getCacheParkingInstanceByUserId(int userId) {
+		String cacheKey = createCacheKey(getUserParkingStatusCacheKey, userId);
+
+		ParkingInstance userParkingStatus = null;
+		if (myCache.get(cacheKey) != null) {
+			userParkingStatus = (ParkingInstance) myCache.get(cacheKey).getValue();
+		}
+		return userParkingStatus;
+	}
+	
+	private int getCachedSpaceIdToUserId(int spaceId) {
+		String cacheKey = createCacheKey(getSpaceIdByUserId, spaceId);
+		
+		int userId = -1;
+		if (myCache.get(cacheKey) != null && myCache.get(cacheKey).getValue() != null) {
+			userId = (Integer) myCache.get(cacheKey).getValue();
+		}
+		return userId;
 	}
 }
