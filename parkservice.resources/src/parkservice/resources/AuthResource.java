@@ -46,9 +46,10 @@ public class AuthResource {
 		if(user.getPassword().equals(info.getPassword())){
 			//if the password for the email matches, return user info.  
 			AuthResponse x = new AuthResponse();
-			x.setFname(user.getEmail());
-			x.setLname(user.getUserName());
-			x.setPhone(""+user.getUserID());
+			x.setParkstate(0);
+			x.setUid(user.getUserID());
+			
+			x.setPhone("101-1337");
 			return x;
 		}else{
 			return null;

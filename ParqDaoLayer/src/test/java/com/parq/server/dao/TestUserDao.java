@@ -8,7 +8,6 @@ public class TestUserDao extends TestCase {
 
 	private UserDao userDao;
 
-	private static final String userName = "Test_User_1";
 	private static final String password = "Password123";
 	private static final String eMail = "TestUser12@testCorp.com";
 
@@ -19,7 +18,6 @@ public class TestUserDao extends TestCase {
 
 	public void testCreateUser() {
 		User newUser = new User();
-		newUser.setUserName(userName);
 		newUser.setPassword(password);
 		newUser.setEmail(eMail);
 
@@ -27,22 +25,11 @@ public class TestUserDao extends TestCase {
 		assertTrue(userCreationSuccessful);
 	}
 
-	public void testGetUserByUserName() {
-		User user = userDao.getUserByUserName(userName);
-
-		assertNotNull(user);
-		assertEquals(user.getUserName(), userName);
-		assertEquals(user.getPassword(), password);
-		assertEquals(user.getEmail(), eMail);
-		assertTrue(user.getUserID() > 0);
-	}
-	
 	public void testGetUserById() {
-		User userTemp = userDao.getUserByUserName(userName);
+		User userTemp = userDao.getUserByEmail(eMail);
 		User user = userDao.getUserById(userTemp.getUserID());
 
 		assertNotNull(user);
-		assertEquals(user.getUserName(), userName);
 		assertEquals(user.getPassword(), password);
 		assertEquals(user.getEmail(), eMail);
 		assertTrue(user.getUserID() > 0);
@@ -52,7 +39,6 @@ public class TestUserDao extends TestCase {
 		User user = userDao.getUserByEmail(eMail);
 
 		assertNotNull(user);
-		assertEquals(user.getUserName(), userName);
 		assertEquals(user.getPassword(), password);
 		assertEquals(user.getEmail(), eMail);
 		assertTrue(user.getUserID() > 0);
@@ -60,10 +46,10 @@ public class TestUserDao extends TestCase {
 
 	public void testCaching() {
 		
-		User user = userDao.getUserByUserName(userName);
-		User user1 = userDao.getUserByUserName(userName);
-		User user2 = userDao.getUserByUserName(userName);
-		User user3 = userDao.getUserByUserName(userName);
+		User user = userDao.getUserByEmail(eMail);
+		User user1 = userDao.getUserByEmail(eMail);
+		User user2 = userDao.getUserByEmail(eMail);
+		User user3 = userDao.getUserByEmail(eMail);
 		assertSame(user, user1);
 		assertSame(user, user2);
 		assertSame(user, user3);
@@ -97,7 +83,7 @@ public class TestUserDao extends TestCase {
 	}
 
 	public void testDeleteUser() {
-		User user = userDao.getUserByUserName(userName);
+		User user = userDao.getUserByEmail(eMail);
 		boolean deleteSuccessful = userDao.deleteUserById(user.getUserID());
 		assertTrue(deleteSuccessful);
 	}

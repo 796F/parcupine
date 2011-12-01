@@ -4,23 +4,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class ParkResponse {
-	private int responsecode;
+	ResponseCode resp;
 
-	public ParkResponse(int code){
+	public ParkResponse(ResponseCode resp) {
 		super();
-		this.responsecode = code;
+		this.resp = resp;
 	}
-	/**
-	 * @return the responsecode
-	 */
-	public int getResponsecode() {
-		return responsecode;
-	}
-
-	/**
-	 * @param responsecode the responsecode to set
-	 */
-	public void setResponsecode(int responsecode) {
-		this.responsecode = responsecode;
+	
+	public String getResponseDescription(){
+		return resp.getInfo();
 	}
 }

@@ -5,13 +5,25 @@ CREATE DATABASE parq;
 USE parq;
 
 CREATE TABLE User
-(User_ID INT NOT NULL AUTO_INCREMENT, 
- UserName TEXT(64) NOT NULL, 
+(User_ID INT NOT NULL AUTO_INCREMENT,  
  Password TEXT(64) NOT NULL, 
  eMail TEXT(64) NOT NULL,
+ Phone_Number TEXT(64),
  Is_Deleted BOOLEAN DEFAULT FALSE,
  LastUpdateDateTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
  PRIMARY KEY (User_ID));
+ 
+CREATE TABLE PaymentAccount
+(Account_ID INT NOT NULL AUTO_INCREMENT,  
+ User_ID INT NOT NULL,
+ Customer_ID TEXT(64), 
+ Payment_Method_ID TEXT(64),
+ CC_Stub Text(64),
+ Is_Default_Payment BOOLEAN DEFAULT FALSE,
+ Is_Deleted BOOLEAN DEFAULT FALSE,
+ LastUpdateDateTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+ PRIMARY KEY (Account_ID),
+ FOREIGN KEY (User_ID) references User(User_ID));
  
 CREATE TABLE UserRole
 (UserRole_ID INT NOT NULL AUTO_INCREMENT,
@@ -132,10 +144,12 @@ CREATE TABLE Payment
 (Payment_ID INT NOT NULL AUTO_INCREMENT,
  ParkingInst_ID INT NOT NULL,
  Payment_Type TEXT(64) NOT NULL,
+ Account_ID INT,
  Payment_Ref_Num TEXT(64) NOT NULL,
  Payment_DateTime DATETIME NOT NULL,
  Amount_Paid_Cents INT NOT NULL,
  LastUpdateDateTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
  PRIMARY KEY (Payment_ID),
- FOREIGN KEY (ParkingInst_ID) references ParkingInstance(ParkingInst_ID));
+ FOREIGN KEY (ParkingInst_ID) references ParkingInstance(ParkingInst_ID),
+ FOREIGN KEY (Account_ID) references PaymentAccount(Account_ID));
 

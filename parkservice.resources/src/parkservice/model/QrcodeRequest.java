@@ -6,46 +6,40 @@ import javax.xml.bind.annotation.XmlAccessType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
 public class QrcodeRequest {
-
-	private int client;
-	private int lot;
-	private int spot;
-	private AuthRequest userInfo;
-	/**
-	 * @return the client
-	 */
-	public int getClient() {
-		return client;
+	int uid;
+	String lot;
+	String spot;
+	AuthRequest userInfo;
+	
+	public int getUid() {
+		return uid;
 	}
-	/**
-	 * @param client the client to set
-	 */
-	public void setClient(int client) {
-		this.client = client;
-	}
-	/**
-	 * @return the spot
-	 */
-	public int getSpot() {
-		return spot;
-	}
-	/**
-	 * @param spot the spot to set
-	 */
-	public void setSpot(int spot) {
-		this.spot = spot;
+	public void setUid(int uid) {
+		this.uid = uid;
 	}
 	/**
 	 * @return the lot
 	 */
-	public int getLot() {
+	public String getLot() {
 		return lot;
 	}
 	/**
 	 * @param lot the lot to set
 	 */
-	public void setLot(int lot) {
+	public void setLot(String lot) {
 		this.lot = lot;
+	}
+	/**
+	 * @return the spot
+	 */
+	public String getSpot() {
+		return spot;
+	}
+	/**
+	 * @param spot the spot to set
+	 */
+	public void setSpot(String spot) {
+		this.spot = spot;
 	}
 	/**
 	 * @return the userInfo

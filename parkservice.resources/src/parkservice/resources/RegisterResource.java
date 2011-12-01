@@ -10,6 +10,7 @@ import javax.xml.bind.JAXBElement;
 
 import parkservice.model.RegisterRequest;
 import parkservice.model.RegisterResponse;
+import parkservice.model.ResponseCode;
 
 import com.parq.server.dao.UserDao;
 import com.parq.server.dao.model.object.User;
@@ -24,7 +25,6 @@ public class RegisterResource {
 		User newUser = new User();
 		newUser.setEmail(info.getEmail());
 		newUser.setPassword(info.getPassword());
-		newUser.setUserName(info.getHolderName());
 		UserDao userDb = new UserDao();
 		//getByEmail throws exception when user is not in db, aka rs=null.
 		//thus user must be in db or this will throw exception.  
@@ -37,13 +37,11 @@ public class RegisterResource {
  			parkstate TINYINT(1) NOT NULL,
  			parkloc POINT NOT NULL,
 		 */
-		RegisterResponse test = new RegisterResponse();
+
 		if(result){
-			test.setResponsecode("OK");
-			return test;
+			return new RegisterResponse(ResponseCode.OK);
 		}else{
-			test.setResponsecode("BAD");
-			return test;
+			return new RegisterResponse(ResponseCode.BAD_INFO);
 		}
 	}
 	

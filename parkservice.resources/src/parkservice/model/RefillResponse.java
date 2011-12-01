@@ -1,27 +1,14 @@
 package parkservice.model;
 
 public class RefillResponse {
-	private int responseCode;
-	
-	public RefillResponse(int code){
+	ResponseCode resp;
+
+	public RefillResponse(ResponseCode resp) {
 		super();
-		this.responseCode = code;
+		this.resp = resp;
 	}
-
-	/**
-	 * @return the responseCode
-	 */
-	public int getResponseCode() {
-		return responseCode;
+	public String getResponseDescription(){
+		return resp.getInfo();
 	}
-
-	/**
-	 * @param responseCode the responseCode to set
-	 */
-	public void setResponseCode(int responseCode) {
-		this.responseCode = responseCode;
-	}
-	
-	
 	
 }

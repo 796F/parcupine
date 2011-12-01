@@ -3,19 +3,26 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
 public class ParkRequest {
+	int uid;
+	int spotid;
+	Date start;
+	Date end;
+	int paymentType;
+	int amount;
+	AuthRequest userinfo;
 	
-	private int spotid;
-	private Date start;
-	private Date end;
-	private int paymentType;
-	private int amount;
-	private AuthRequest userinfo;
+	
+	public int getUid() {
+		return uid;
+	}
+	public void setUid(int uid) {
+		this.uid = uid;
+	}
 	/**
 	 * @return the spotid
 	 */
