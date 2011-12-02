@@ -8,6 +8,8 @@ package parkservice.resources;
  * 4.  Auth database is different from others, restricts access and thus more secure.  
  * */
 
+import java.util.Date;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -16,6 +18,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.JAXBElement;
 
+import com.parq.server.dao.ParkingStatusDao;
 import com.parq.server.dao.UserDao;
 import com.parq.server.dao.model.object.User;
 
@@ -44,9 +47,18 @@ public class AuthResource {
 		 */
 
 		if(user.getPassword().equals(info.getPassword())){
+			ParkingStatusDao gg = new ParkingStatusDao();
+			
 			//if the password for the email matches, return user info.  
 			AuthResponse x = new AuthResponse();
-			x.setParkstate(0);
+			Date endTime = gg.getUserParkingStatus(user.getUserID()).getParkingEndTime();
+			if(endTime.compareTo(new Date())<0){
+				//if end time is before now
+				x.setParkstate(0);
+			}else{
+				//if end time is after now
+				x.setParkstate(1);
+			}
 			x.setUid(user.getUserID());
 			return x;
 		}else{
