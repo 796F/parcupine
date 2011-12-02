@@ -7,10 +7,8 @@ import org.codehaus.jackson.JsonToken;
 
 public class Parsers {
 	// User parameters
-	private static final String PARAM_FNAME = "fname";
-	private static final String PARAM_LNAME = "lname";
-	private static final String PARAM_EMAIL = "email";
-	private static final String PARAM_PHONE = "phone";
+	private static final String PARAM_UID = "uid";
+	private static final String PARAM_PARKSTATE = "parkstate";
 
 	// Response code parameter
 	private static final String PARAM_RESP_CODE = "responsecode";
@@ -18,29 +16,23 @@ public class Parsers {
 
 	// {"fname":"xia@umd.edu","lname":"Mikey","phone":"1337"}
 	public static UserObject parseUser(JsonParser jp) throws IOException {
-		String fname = null;
-		String lname = null;
-		String email = null;
-		String phone = null;
+		long uid = -1;
+		boolean parkState = false;
 
 		JsonToken t = jp.nextToken();
 		String curr;
 		while (t != null && t != JsonToken.END_OBJECT) {
-			if (t == JsonToken.VALUE_STRING) {
+			if (t == JsonToken.VALUE_NUMBER_INT) {
 				curr = jp.getCurrentName();
-				if (PARAM_FNAME.equals(curr)) {
-					fname = jp.getText();
-				} else if (PARAM_LNAME.equals(curr)) {
-					lname = jp.getText();
-				} else if (PARAM_EMAIL.equals(curr)) {
-					email = jp.getText();
-				} else if (PARAM_PHONE.equals(curr)) {
-					phone = jp.getText();
+				if (PARAM_UID.equals(curr)) {
+					uid = jp.getIntValue();
+				} else if (PARAM_PARKSTATE.equals(curr)) {
+					parkState = jp.getIntValue() == 1;
 				}
 			}
 			t = jp.nextToken();
 		}
-		return new UserObject(fname, lname, email, phone);
+		return new UserObject(uid, parkState);
 	}
 
 	public static boolean parseResponseCode(JsonParser jp) throws IOException {
