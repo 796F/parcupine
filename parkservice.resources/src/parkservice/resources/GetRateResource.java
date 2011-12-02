@@ -52,6 +52,7 @@ import javax.xml.bind.JAXBElement;
 import com.parq.server.dao.ClientDao;
 import com.parq.server.dao.GeolocationDao;
 import com.parq.server.dao.ParkingRateDao;
+import com.parq.server.dao.ParkingStatusDao;
 import com.parq.server.dao.model.object.Client;
 import com.parq.server.dao.model.object.Geolocation;
 import com.parq.server.dao.model.object.ParkingRate;
@@ -100,10 +101,9 @@ public class GetRateResource {
 			
 			return new RateResponse(
 					
-					loc.getLatitude(), loc.getLongitude() /*lat/lon info needs to be returned*/,
+					loc.getLatitude(), loc.getLongitude(),
 					pr.getLocationName(), pr.getSpaceId(),
-					60 /*min park time*/, 
-					pr.getMaxParkMins(), pr.getParkingRateCents(), pr.getTimeIncrementsMins(),null);
+					pr.getMinParkMins(), pr.getMaxParkMins(), pr.getParkingRateCents(), pr.getTimeIncrementsMins(),null);
 
 		}else{
 
@@ -132,8 +132,7 @@ public class GetRateResource {
 					ParkingRate pr = p.getParkingRateByName(g.getLocationIdentifier(), input.getSpot());
 					return new RateResponse(g.getLatitude(), g.getLongitude(),
 							pr.getLocationName(), pr.getSpaceId(),
-							60 /*min park time*/, 
-							pr.getMaxParkMins(), pr.getParkingRateCents(), pr.getTimeIncrementsMins(),null);
+							pr.getMinParkMins(), pr.getMaxParkMins(), pr.getParkingRateCents(), pr.getTimeIncrementsMins(),null);
 				}
 			}
 			return null;

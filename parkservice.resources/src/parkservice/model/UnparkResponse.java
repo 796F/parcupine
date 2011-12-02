@@ -1,14 +1,11 @@
 package parkservice.model;
 
 public class UnparkResponse {
-	ResponseCode resp;
+	String resp;
 
-	public UnparkResponse(ResponseCode resp) {
+	public UnparkResponse(String resp) {
 		super();
 		this.resp = resp;
-	}
-	public String getResponseDescription(){
-		return resp.getInfo();
 	}
 	
 }

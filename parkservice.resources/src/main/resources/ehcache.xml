@@ -22,6 +22,16 @@
             memoryStoreEvictionPolicy="LRU">
 	</cache>
 	
+	<!-- this is the user payment account table's cache (1 day expiration) -->
+	<cache name="PaymentAccountCache"
+            maxElementsInMemory="100000"
+            eternal="false"
+            timeToIdleSeconds="43200"
+            timeToLiveSeconds="86400"
+            overflowToDisk="false"
+            memoryStoreEvictionPolicy="LRU">
+	</cache>
+	
 	<!-- this is the parking rate dao cache (1 day expiration) -->
 	<cache name="ParkingRateCache"
             maxElementsInMemory="100000"
@@ -35,6 +45,36 @@
 	<!-- this is the client dao cache (1 day expiration) -->
 	<cache name="ClientCache"
             maxElementsInMemory="1000"
+            eternal="false"
+            timeToIdleSeconds="86400"
+            timeToLiveSeconds="86400"
+            overflowToDisk="false"
+            memoryStoreEvictionPolicy="LRU">
+	</cache>
+	
+	<!-- this is the parking status dao cache (1 to 4 hour expiration) -->
+	<cache name="ParkingStatusCache"
+            maxElementsInMemory="100000"
+            eternal="false"
+            timeToIdleSeconds="3600"
+            timeToLiveSeconds="144400"
+            overflowToDisk="false"
+            memoryStoreEvictionPolicy="LRU">
+	</cache>
+	
+	<!-- this is the Admin table's cache (1 day expiration) -->
+	<cache name="AdminCache"
+            maxElementsInMemory="100000"
+            eternal="false"
+            timeToIdleSeconds="43200"
+            timeToLiveSeconds="86400"
+            overflowToDisk="false"
+            memoryStoreEvictionPolicy="LRU">
+	</cache>
+
+	<!-- this is the Admin table's cache (1 day expiration) -->
+	<cache name="GeoLocationCache"
+            maxElementsInMemory="100000"
             eternal="false"
             timeToIdleSeconds="86400"
             timeToLiveSeconds="86400"

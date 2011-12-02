@@ -6,14 +6,14 @@ public class AuthResponse {
 	//future return CC info for app.
 	
 	//information about user that will be displayed. 
-	int uid;
+	long uid;
 	int parkstate; //0 not parked, 1 parked
 	
 	
-	public int getUid() {
+	public long getUid() {
 		return uid;
 	}
-	public void setUid(int uid) {
+	public void setUid(long uid) {
 		this.uid = uid;
 	}
 	public int getParkstate() {

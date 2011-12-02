@@ -11,7 +11,6 @@ import javax.xml.bind.JAXBElement;
 import parkservice.model.RegisterRequest;
 import parkservice.model.RegisterResponse;
 import parkservice.model.ResponseCode;
-import parkservice.model.TestResponseCode;
 
 import AuthNet.Rebill.ArrayOfCustomerPaymentProfileType;
 import AuthNet.Rebill.CreateCustomerProfileResponseType;
@@ -22,12 +21,62 @@ import AuthNet.Rebill.PaymentType;
 import AuthNet.Rebill.ServiceSoap;
 import AuthNet.Rebill.ValidationModeEnum;
 
+import com.parq.server.dao.PaymentAccountDao;
 import com.parq.server.dao.UserDao;
 import com.parq.server.dao.exception.DuplicateEmailException;
+import com.parq.server.dao.model.object.PaymentAccount;
 import com.parq.server.dao.model.object.User;
+
+
 
 @Path("/register")
 public class RegisterResource {
+
+	private CustomerProfileType createUserProfile(int uid, String email, String desc){
+		CustomerProfileType xx = new CustomerProfileType();
+		xx.setDescription(desc);
+		xx.setEmail(email);
+		xx.setMerchantCustomerId(""+uid);
+		return xx;
+	}
+
+	private CreateCustomerProfileResponseType validateCard(CustomerProfileType customer, String ccNum, String csc, int month, int year){
+		try{
+			ServiceSoap soap = SoapAPIUtilities.getServiceSoap();
+
+			CustomerPaymentProfileType new_payment_profile = new CustomerPaymentProfileType();
+
+			PaymentType new_payment = new PaymentType();
+			CreditCardType new_card = new CreditCardType();
+			new_card.setCardNumber(ccNum);
+			new_card.setCardCode(csc);
+
+			try{
+				javax.xml.datatype.XMLGregorianCalendar cal = javax.xml.datatype.DatatypeFactory.newInstance().newXMLGregorianCalendar();
+				cal.setMonth(month);
+				cal.setYear(year);
+				new_card.setExpirationDate(cal);
+			}
+			catch(javax.xml.datatype.DatatypeConfigurationException dce){
+				return null;
+			}
+
+			new_payment.setCreditCard(new_card);
+			new_payment_profile.setPayment(new_payment);
+
+			ArrayOfCustomerPaymentProfileType pay_list = new ArrayOfCustomerPaymentProfileType();
+			pay_list.getCustomerPaymentProfileType().add(new_payment_profile);
+
+			customer.setPaymentProfiles(pay_list);
+
+			return soap.createCustomerProfile(SoapAPIUtilities.getMerchantAuthentication(),customer
+					,ValidationModeEnum.LIVE_MODE);
+		}catch(Exception e){
+			return null;
+		}
+
+	}
+
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -37,81 +86,61 @@ public class RegisterResource {
 		newUser.setEmail(info.getEmail());
 		newUser.setPassword(info.getPassword());
 		UserDao userDb = new UserDao();
-		//getByEmail throws exception when user is not in db, aka rs=null.
-		//thus user must be in db or this will throw exception.  
 
-		
+
+		RegisterResponse output = new RegisterResponse();
 		boolean result = false;
 		try{
+			//try to create user account, catching errors.  
 			result = userDb.createNewUser(newUser);
-			
 		}catch(DuplicateEmailException dup){
-			
+			output.setResp("USER_EXISTS");
 		}catch(IllegalStateException e){
-			
+			output.setResp("DAO_ERROR");
 		}
+		String email = info.getEmail();
+		int uid = userDb.getUserByEmail(email).getUserID();
+		String description = "UID:" + uid +" Email:" +email;
+		CustomerProfileType newCustomer = createUserProfile(uid, info.getEmail(), description);
+
 		if(result){
-				return new RegisterResponse(TestResponseCode.OK);
+			CreateCustomerProfileResponseType response = validateCard(newCustomer, 
+					info.getCreditCard(), info.getCscNumber(), info.getExpMonth(), info.getExpYear());
+			if(response != null){
+
+				long profileId = response.getCustomerProfileId();
+				long paymentProfileId = response.getCustomerPaymentProfileIdList().getLong().get(0);
+
+				if(response.getResultCode().value().equalsIgnoreCase("Ok")){
+					PaymentAccountDao pad = new PaymentAccountDao();
+
+					PaymentAccount newPA = new PaymentAccount();
+					newPA.setCcStub(info.getCreditCard().substring(12, 16));
+					newPA.setCustomerId(""+profileId);
+					newPA.setDefaultPaymentMethod(true);
+					newPA.setPaymentMethodId(""+paymentProfileId);
+					newPA.setUserId(uid);
+
+					boolean paCreationSuccessful = true;//pad.createNewPaymentMethod(newPA);
+					if(paCreationSuccessful){
+						output.setResp("OK");
+					}else{
+						//payment account creation error
+						output.setResp("PAY_ACC_ERROR");
+					}
+				}else{
+					//cc didn't verify
+					output.setResp("BAD_CC");
+				}
+			}else{
+				//response is null
+				output.setResp("MERCHANT_ERROR");
+			}
 		}else{
-			return new RegisterResponse(TestResponseCode.BAD_INFO);
+			//result is null
+			output.setResp("SERVER_ERROR");
 		}
-		
-//		ServiceSoap soap = SoapAPIUtilities.getServiceSoap();
-//		CustomerPaymentProfileType new_payment_profile = new CustomerPaymentProfileType();
-//
-//		PaymentType new_payment = new PaymentType();
-//
-//		CreditCardType new_card = new CreditCardType();
-//		new_card.setCardNumber(info.getCreditCard());
-//		new_card.setCardCode(info.getCccNumber());
-//
-//		try{
-//			javax.xml.datatype.XMLGregorianCalendar cal = javax.xml.datatype.DatatypeFactory.newInstance().newXMLGregorianCalendar();
-//			cal.setMonth(info.getExpMonth());
-//			cal.setYear(info.getExpYear());
-//			new_card.setExpirationDate(cal);
-//			// System.out.println(new_card.getExpirationDate().toXMLFormat());
-//		}
-//		catch(javax.xml.datatype.DatatypeConfigurationException dce){
-//			System.out.println(dce.getMessage());
-//		}
-//
-//		new_payment.setCreditCard(new_card);
-//		//new_payment.setBankAccount(new_bank);
-//
-//		new_payment_profile.setPayment(new_payment);
-//
-//		CustomerProfileType m_new_cust = new CustomerProfileType();
-//		//TODO: grab returned UID and stick here. 
-//		m_new_cust.setMerchantCustomerId("ourkey");
-//
-//		m_new_cust.setEmail(info.getEmail());
-//		m_new_cust.setDescription("User_ID:" + "ourkey " + "Name:" +info.getHolderName());
-//
-//		ArrayOfCustomerPaymentProfileType pay_list = new ArrayOfCustomerPaymentProfileType();
-//		pay_list.getCustomerPaymentProfileType().add(new_payment_profile);
-//
-//		m_new_cust.setPaymentProfiles(pay_list);
-//
-//		CreateCustomerProfileResponseType response = soap.createCustomerProfile(SoapAPIUtilities.getMerchantAuthentication(),m_new_cust,ValidationModeEnum.LIVE_MODE);
-//		if(result){
-//
-//			if(response != null){
-//
-//				long profileId = response.getCustomerProfileId();
-//				long paymentProfileId = response.getCustomerPaymentProfileIdList().getLong().get(0);
-//
-//				//store profileID and paymentProfileId using dao.
-//				return new RegisterResponse(ResponseCode.OK);
-//
-//			}
-//			else{
-//				return new RegisterResponse(ResponseCode.BAD_PAY);
-//			}
-//
-//		}else{
-//			return new RegisterResponse(ResponseCode.BAD_INFO);
-//		}
+		return output;
 	}
 
 	@GET

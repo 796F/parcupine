@@ -4,15 +4,33 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class RegisterRequest {
 	String CreditCard;
-	String cccNumber;
+	String cscNumber;
 	String holderName;
 	int expMonth;
 	int expYear;
-	String billingAddress;
+	String zipcode;
 	
 	String email;
 	String password;
 	
+	public String getCreditCard() {
+		return CreditCard;
+	}
+	public void setCreditCard(String creditCard) {
+		CreditCard = creditCard;
+	}
+	public String getCscNumber() {
+		return cscNumber;
+	}
+	public void setCscNumber(String cscNumber) {
+		this.cscNumber = cscNumber;
+	}
+	public String getHolderName() {
+		return holderName;
+	}
+	public void setHolderName(String holderName) {
+		this.holderName = holderName;
+	}
 	public int getExpMonth() {
 		return expMonth;
 	}
@@ -25,77 +43,21 @@ public class RegisterRequest {
 	public void setExpYear(int expYear) {
 		this.expYear = expYear;
 	}
-	/**
-	 * @return the cccNumber
-	 */
-	public String getCccNumber() {
-		return cccNumber;
+	public String getZipcode() {
+		return zipcode;
 	}
-	/**
-	 * @param cccNumber the cccNumber to set
-	 */
-	public void setCccNumber(String cccNumber) {
-		this.cccNumber = cccNumber;
+	public void setZipcode(String zipcode) {
+		this.zipcode = zipcode;
 	}
-	/**
-	 * @return the creditCard
-	 */
-	public String getCreditCard() {
-		return CreditCard;
-	}
-	/**
-	 * @param creditCard the creditCard to set
-	 */
-	public void setCreditCard(String creditCard) {
-		CreditCard = creditCard;
-	}
-	
-	/**
-	 * @return the holderName
-	 */
-	public String getHolderName() {
-		return holderName;
-	}
-	/**
-	 * @param holderName the holderName to set
-	 */
-	public void setHolderName(String holderName) {
-		this.holderName = holderName;
-	}
-
-	/**
-	 * @return the billingAddress
-	 */
-	public String getBillingAddress() {
-		return billingAddress;
-	}
-	/**
-	 * @param billingAddress the billingAddress to set
-	 */
-	public void setBillingAddress(String billingAddress) {
-		this.billingAddress = billingAddress;
-	}
-	/**
-	 * @return the email
-	 */
 	public String getEmail() {
 		return email;
 	}
-	/**
-	 * @param email the email to set
-	 */
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	/**
-	 * @return the password
-	 */
 	public String getPassword() {
 		return password;
 	}
-	/**
-	 * @param password the password to set
-	 */
 	public void setPassword(String password) {
 		this.password = password;
 	}

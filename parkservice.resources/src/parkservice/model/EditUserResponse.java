@@ -5,15 +5,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class EditUserResponse {
-	ResponseCode resp;
-	
-	public EditUserResponse(ResponseCode responseCode){
-		super();
-		this.resp = responseCode;
-	}
+	String resp;
 
-	public String getResponseDescription(){
-		return resp.getInfo();
+	public EditUserResponse(String resp) {
+		super();
+		this.resp = resp;
 	}
+	
 	
 }
