@@ -4,10 +4,9 @@ package com.objects;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -23,14 +22,16 @@ import org.codehaus.jackson.JsonParser;
 public class ServerCalls {
 
 	public static final JsonFactory JSON_FACTORY = new JsonFactory();
-	private static final String SERVER_HOSTNAME = "http://parqserv.student.umd.edu:8080";
+	private static final String SERVER_HOSTNAME = "http://75.101.132.219:8080";
 	
 	/*returns if authentication passed.*/
 	public static UserObject getUser(String email, String hash){
 		try {
 			//open connection
-			final URLConnection conn =
-					new URL(SERVER_HOSTNAME + "/parkservice.auth/auth").openConnection();
+			final HttpURLConnection conn =
+					(HttpURLConnection)
+						new URL(SERVER_HOSTNAME + "/parkservice.resources/auth")
+						.openConnection();
 			conn.setRequestProperty("Accept", "application/json");
 			conn.setRequestProperty("Content-Type", "application/json");
 			conn.setDoOutput(true);
@@ -44,10 +45,13 @@ public class ServerCalls {
 			jg.writeEndObject();
 			jg.flush();
 			jg.close();
-			final JsonParser jp = JSON_FACTORY.createJsonParser(conn.getInputStream());
-			final UserObject user = Parsers.parseUser(jp);
-			jp.close();
-			return user;
+			if (conn.getResponseCode() == 200) {
+				final JsonParser jp = JSON_FACTORY.createJsonParser(conn
+						.getInputStream());
+				final UserObject user = Parsers.parseUser(jp);
+				jp.close();
+				return user;
+			}
 		} catch (IOException e){
 			e.printStackTrace();
 		}
@@ -56,10 +60,13 @@ public class ServerCalls {
 	}
 
 	public static boolean registerNewUser(String email, String password, String name,
-			String ccNumber) {
+			String ccNumber, String cscNumber, int expMonth, int expYear,
+			String street, String zip) {
 		try {	
-			final URLConnection conn =
-					new URL(SERVER_HOSTNAME + "/parkservice.register/register").openConnection();
+			final HttpURLConnection conn =
+					(HttpURLConnection)
+						new URL(SERVER_HOSTNAME + "/parkservice.resources/register")
+						.openConnection();
 			conn.setRequestProperty("Accept", "application/json");
 			conn.setRequestProperty("Content-Type", "application/json");
 			conn.setDoOutput(true);
@@ -69,17 +76,30 @@ public class ServerCalls {
 			jg.writeString(ccNumber);
 			jg.writeFieldName("holderName");
 			jg.writeString(name);
+			jg.writeFieldName("cscNumber");
+			jg.writeString(cscNumber);
+			jg.writeFieldName("expMonth");
+			jg.writeNumber(expMonth);
+			jg.writeFieldName("expYear");
+			jg.writeNumber(expYear);
 			jg.writeFieldName("email");
 			jg.writeString(email);
 			jg.writeFieldName("password");
 			jg.writeString(password);
+			jg.writeFieldName("street");
+			jg.writeString(street);
+			jg.writeFieldName("zipcode");
+			jg.writeString(zip);
 			jg.writeEndObject();
 			jg.flush();
 			jg.close();
-			final JsonParser jp = JSON_FACTORY.createJsonParser(conn.getInputStream());
-			final boolean response = Parsers.parseResponseCode(jp);
-			jp.close();
-			return response;
+			if (conn.getResponseCode() == 200) {
+				final JsonParser jp = JSON_FACTORY.createJsonParser(conn
+						.getInputStream());
+				final boolean response = Parsers.parseResponseCode(jp);
+				jp.close();
+				return response;
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

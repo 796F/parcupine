@@ -1,21 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android=
      "http://schemas.android.com/apk/res/android"
-  android:orientation="vertical"
   android:layout_width="fill_parent"
-  android:layout_height="fill_parent"
-  android:id="@+id/register">
+  android:layout_height="fill_parent">
+	<ScrollView android:layout_width="fill_parent" android:layout_height="fill_parent">
+	<LinearLayout android:layout_width = "fill_parent"
+			android:layout_height="fill_parent"
+			 android:id="@+id/register"
+			 android:orientation="vertical">
   		<TableLayout android:layout_width="wrap_content"
 		android:layout_height="wrap_content" android:layout_marginTop="18dp"
 		android:layout_marginLeft="6dp" android:layout_marginRight="6dp"
-		android:layout_gravity="center_horizontal" android:stretchColumns="1">
+		android:layout_gravity="center_horizontal" android:stretchColumns="1,2">
 		<TableRow>
 			<TextView android:id="@+id/email_label" android:text="Email:"
 				android:layout_width="wrap_content" android:layout_height="wrap_content"
 				android:layout_marginRight="8dp"/>
 			<EditText android:id="@+id/emailBox"
 				android:inputType="textEmailAddress" android:layout_width="fill_parent"
-				android:layout_height="wrap_content" android:minWidth="50dp"/>
+				android:layout_height="wrap_content" android:minWidth="50dp" android:layout_span="2"/>
 		</TableRow>
 		<TableRow>
 			<TextView android:id="@+id/password_label" android:text="Password:"
@@ -23,7 +26,7 @@
 				android:layout_marginRight="8dp"/>
 			<EditText android:id="@+id/passwordBox" android:inputType="textPassword"
 				android:layout_width="fill_parent" android:layout_height="wrap_content"
-				android:minWidth="50dp"/>
+				android:minWidth="50dp" android:layout_span="2"/>
 		</TableRow>
 		<TableRow>
 			<TextView android:id="@+id/confirm_label" android:text="Confirm password:"
@@ -31,7 +34,7 @@
 				android:layout_marginRight="8dp"/>
 			<EditText android:id="@+id/confirmBox" android:inputType="textPassword"
 				android:layout_width="fill_parent" android:layout_height="wrap_content"
-				android:minWidth="50dp"/>
+				android:minWidth="50dp" android:layout_span="2"/>
 		</TableRow>
 		<TableRow>
 			<TextView android:id="@+id/name_label" android:text="Full name:"
@@ -39,7 +42,7 @@
 				android:layout_marginRight="8dp"/>
 			<EditText android:id="@+id/nameBox" android:inputType="textPersonName"
 				android:layout_width="fill_parent" android:layout_height="wrap_content"
-				android:minWidth="50dp"/>
+				android:minWidth="50dp" android:layout_span="2"/>
 		</TableRow>
 		<TableRow>
 			<TextView android:id="@+id/cc_label" android:text="Credit card number:"
@@ -47,7 +50,46 @@
 				android:layout_marginRight="8dp"/>
 			<EditText android:id="@+id/ccBox" android:inputType="number"
 				android:layout_width="fill_parent" android:layout_height="wrap_content"
-				android:minWidth="50dp"/>
+				android:minWidth="50dp" android:layout_span="2"/>
+		</TableRow>
+		<TableRow>
+			<TextView android:id="@+id/csc_label" android:text="Card security code:"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:layout_marginRight="8dp"/>
+			<EditText android:id="@+id/cscBox" android:inputType="number"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:minWidth="50dp" android:layout_span="2"/>
+		</TableRow>
+		<TableRow>
+			<TextView android:id="@+id/ccexp_label" android:text="Expiration:"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:layout_marginRight="8dp"/>
+			<Spinner
+		        android:id="@+id/expmonth_spinner"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		    />
+			<Spinner
+		        android:id="@+id/expyear_spinner"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		    />
+		</TableRow>
+		<TableRow>
+			<TextView android:id="@+id/street_label" android:text="Street address:"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:layout_marginRight="8dp"/>
+			<EditText android:id="@+id/streetBox" android:inputType="textPostalAddress"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:minWidth="50dp" android:layout_span="2"/>
+		</TableRow>
+		<TableRow>
+			<TextView android:id="@+id/zip_label" android:text="ZIP Code:"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:layout_marginRight="8dp"/>
+			<EditText android:id="@+id/zipBox" android:inputType="number"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:minWidth="50dp" android:layout_span="2"/>
 		</TableRow>
 	</TableLayout>
 	<LinearLayout android:layout_height="wrap_content" android:layout_width="fill_parent"
@@ -59,4 +101,6 @@
 			android:layout_margin="5dp"
 			android:layout_height="wrap_content" android:layout_alignParentRight="true"/>
 	</LinearLayout>
+	</LinearLayout>
+	</ScrollView>
   </LinearLayout>
