@@ -27,33 +27,35 @@ import parkservice.model.AuthResponse;
 
 @Path("/auth")
 public class AuthResource {
-	
+
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public AuthResponse login(JAXBElement<AuthRequest> input){
 		AuthRequest info = input.getValue();
-		UserDao userDb = new UserDao();
-		//getByEmail throws exception when user is not in db, aka rs=null.
-		//thus user must be in db or this will throw exception.  
-		User user = userDb.getUserByEmail(info.getEmail());
-
-		/*  Dao layer needs to support these fields in table "User"
- 			fname TEXT(64) NOT NULL, 
- 			lname TEXT(64) NOT NULL,
- 			parkstate TINYINT(1) NOT NULL,
- 			parkloc POINT NOT NULL,
-		 */
 		AuthResponse x = new AuthResponse();
-		if(user.getPassword().equals(info.getPassword())){
+		UserDao userDb = new UserDao();
+		User user = null;
+		try{
+			user = userDb.getUserByEmail(info.getEmail());
+		}catch(RuntimeException e){
+			x.setUid(-1);
+			x.setParkstate(-1);
+			return x;
+		}
+		if(user==null){
+			x.setUid(-1);
+			x.setParkstate(-1);
+			return x;
+		}else if(user.getPassword().equals(info.getPassword())){
 			ParkingStatusDao gg = new ParkingStatusDao();
-			
+
 			//if the password for the email matches, return user info.  
-			
+
 			Date endTime = null;
 			try{
-				 endTime = gg.getUserParkingStatus(user.getUserID()).getParkingEndTime();
+				endTime = gg.getUserParkingStatus(user.getUserID()).getParkingEndTime();
 			}catch(Exception e){
 				x.setParkstate(0);
 			}
@@ -77,7 +79,7 @@ public class AuthResource {
 
 	}
 
-	
+
 	@GET
 	@Produces(MediaType.TEXT_PLAIN)
 	public String sayPlainTextHello() {

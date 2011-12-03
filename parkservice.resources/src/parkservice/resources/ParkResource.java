@@ -1,5 +1,7 @@
 package parkservice.resources;
 
+import java.util.Date;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -8,6 +10,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.JAXBElement;
 
+import com.parq.server.dao.UserDao;
+import com.parq.server.dao.model.object.User;
+
+import parkservice.model.AuthRequest;
 import parkservice.model.ParkRequest;
 import parkservice.model.ParkResponse;
 import parkservice.model.QrcodeRequest;
@@ -19,7 +25,20 @@ import parkservice.model.UnparkResponse;
 
 @Path("/park")
 public class ParkResource {
-	
+	private int innerAuthenticate(AuthRequest in){
+		UserDao userDb = new UserDao();
+		User user = null;
+		try{
+			user = userDb.getUserByEmail(in.getEmail());
+		}catch(RuntimeException e){
+			return -1;
+		}
+		if(user==null){
+			return -1;
+		}else{
+			return user.getUserID();
+		}
+	}
 	//Refill, Park, Unpark
 	@POST
 	@Path("/park")
@@ -27,8 +46,28 @@ public class ParkResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public ParkResponse parkUser(JAXBElement<ParkRequest> info){
 		ParkResponse output = new ParkResponse();
+		ParkRequest in = info.getValue();
+		int pay_amount = in.getAmount();
+		Date start = in.getStart();
+		Date end = in.getEnd();
+		int payment_type = in.getPaymentType();
+		int spot_id = in.getSpotid();
+		int uid = in.getUid();
 		
-		
+		AuthRequest userInfo = in.getUserinfo();
+		if(uid == innerAuthenticate(userInfo)){
+			//if auth goes through
+			
+			//get user payment info
+			
+			//try to charge their payment profile the pay_amount
+			
+			//if charge completes, store parking instance into db
+			
+			//then set output to ok
+		}else{
+			output.setResp("BAD_AUTH");
+		}
 		return output;
 	}
 	

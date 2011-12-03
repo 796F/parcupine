@@ -51,8 +51,10 @@ import javax.xml.bind.JAXBElement;
 import com.parq.server.dao.ClientDao;
 import com.parq.server.dao.GeolocationDao;
 import com.parq.server.dao.ParkingRateDao;
+import com.parq.server.dao.UserDao;
 import com.parq.server.dao.model.object.Geolocation;
 import com.parq.server.dao.model.object.ParkingRate;
+import com.parq.server.dao.model.object.User;
 
 import parkservice.model.AuthRequest;
 import parkservice.model.GpsRequest;
@@ -65,9 +67,19 @@ public class GetRateResource {
 	/**
 	 * returns User_ID, or -1 if bad
 	 * */
-	private int innerAuthenticate(AuthRequest input){
-		//methods call this to request permission to park/unparq/refill etc.
-		return 1;
+	private int innerAuthenticate(AuthRequest in){
+		UserDao userDb = new UserDao();
+		User user = null;
+		try{
+			user = userDb.getUserByEmail(in.getEmail());
+		}catch(RuntimeException e){
+			return -1;
+		}
+		if(user==null){
+			return -1;
+		}else{
+			return user.getUserID();
+		}
 	}
 
 	private RateResponse getRate(int uid, int spot){
