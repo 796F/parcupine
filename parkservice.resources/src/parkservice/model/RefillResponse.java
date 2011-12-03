@@ -3,10 +3,14 @@ package parkservice.model;
 public class RefillResponse {
 	String resp;
 
-	public RefillResponse(String resp) {
-		super();
+	public String getResp() {
+		return resp;
+	}
+
+	public void setResp(String resp) {
 		this.resp = resp;
 	}
+
 	
 	
 }

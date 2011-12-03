@@ -6,10 +6,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class ParkResponse {
 	String resp;
 
-	public ParkResponse(String resp) {
-		super();
+	public String getResp() {
+		return resp;
+	}
+
+	public void setResp(String resp) {
 		this.resp = resp;
 	}
+
 
 	
 }

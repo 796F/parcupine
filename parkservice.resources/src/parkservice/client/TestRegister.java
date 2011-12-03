@@ -32,7 +32,7 @@ public class TestRegister {
 		in.setCreditCard("5466160160030126");
 		in.setExpYear(2015);
 		in.setExpMonth(4);
-		in.setHolderName("Joker");
+		in.setHolderName("LaughingMan");
 		in.setZipcode("10101");
 
 		String outstring = service.path("register").type(MediaType.APPLICATION_JSON).post(String.class, in);
@@ -44,7 +44,7 @@ public class TestRegister {
 	
 	private static URI getBaseURI() {
 		return UriBuilder.fromUri(
-				"http://localhost:8080/parkservice.resources").build();
+				"http://75.101.132.219:8080/parkservice.resources").build();
 	}
 
 }

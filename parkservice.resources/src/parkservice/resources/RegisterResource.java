@@ -8,6 +8,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.JAXBElement;
 
+import parkservice.model.EditUserRequest;
+import parkservice.model.EditUserResponse;
 import parkservice.model.RegisterRequest;
 import parkservice.model.RegisterResponse;
 import parkservice.model.ResponseCode;
@@ -121,7 +123,7 @@ public class RegisterResource {
 					newPA.setPaymentMethodId(""+paymentProfileId);
 					newPA.setUserId(uid);
 
-					boolean paCreationSuccessful = true;//pad.createNewPaymentMethod(newPA);
+					boolean paCreationSuccessful = pad.createNewPaymentMethod(newPA);
 					if(paCreationSuccessful){
 						output.setResp("OK");
 					}else{
@@ -143,6 +145,36 @@ public class RegisterResource {
 		return output;
 	}
 
+	
+	@POST
+	@Path("/update")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public EditUserResponse parkUser(JAXBElement<EditUserRequest> info){
+		EditUserResponse output = new EditUserResponse();
+		EditUserRequest in = info.getValue();
+		UserDao userDb = new UserDao();
+		User editedUser = new User();
+		editedUser.setEmail(in.getEmail());
+		editedUser.setPassword(in.getPassword());
+		editedUser.setPhoneNumber(in.getPhone());
+		editedUser.setUserID(in.getUid());
+		
+		boolean result = true;
+		try{
+			result = userDb.updateUser(editedUser);
+		}catch(IllegalStateException ex){
+			output.setResp("illegal state");
+		}catch(RuntimeException e){
+			output.setResp("runtime exception");
+		}
+		if(result){
+			output.setResp("OK");
+		}else{
+			output.setResp("BAD");
+		}
+		return output;
+	}
 	@GET
 	@Produces(MediaType.TEXT_PLAIN)
 	public String sayPlainTextHello() {

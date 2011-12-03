@@ -38,7 +38,6 @@ to pinpoint the user to a parking_lot, which then gives us the client inevitably
  * 
  * */
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -52,8 +51,6 @@ import javax.xml.bind.JAXBElement;
 import com.parq.server.dao.ClientDao;
 import com.parq.server.dao.GeolocationDao;
 import com.parq.server.dao.ParkingRateDao;
-import com.parq.server.dao.ParkingStatusDao;
-import com.parq.server.dao.model.object.Client;
 import com.parq.server.dao.model.object.Geolocation;
 import com.parq.server.dao.model.object.ParkingRate;
 
@@ -61,7 +58,6 @@ import parkservice.model.AuthRequest;
 import parkservice.model.GpsRequest;
 import parkservice.model.QrcodeRequest;
 import parkservice.model.RateResponse;
-import parkservice.model.SpecialRate;
 
 @Path("/getrate")
 public class GetRateResource {
