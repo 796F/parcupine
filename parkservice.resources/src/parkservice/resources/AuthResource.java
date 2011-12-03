@@ -45,14 +45,22 @@ public class AuthResource {
  			parkstate TINYINT(1) NOT NULL,
  			parkloc POINT NOT NULL,
 		 */
-
+		AuthResponse x = new AuthResponse();
 		if(user.getPassword().equals(info.getPassword())){
 			ParkingStatusDao gg = new ParkingStatusDao();
 			
 			//if the password for the email matches, return user info.  
-			AuthResponse x = new AuthResponse();
-			Date endTime = gg.getUserParkingStatus(user.getUserID()).getParkingEndTime();
-			if(endTime.compareTo(new Date())<0){
+			
+			Date endTime = null;
+			try{
+				 endTime = gg.getUserParkingStatus(user.getUserID()).getParkingEndTime();
+			}catch(Exception e){
+				x.setParkstate(0);
+			}
+			if(endTime==null){
+				//no endtime stored
+				x.setParkstate(0);
+			}else if(endTime.compareTo(new Date())<0){
 				//if end time is before now
 				x.setParkstate(0);
 			}else{
@@ -62,7 +70,9 @@ public class AuthResource {
 			x.setUid(user.getUserID());
 			return x;
 		}else{
-			return null;
+			x.setParkstate(-1);
+			x.setUid(-1);
+			return x;
 		}
 
 	}

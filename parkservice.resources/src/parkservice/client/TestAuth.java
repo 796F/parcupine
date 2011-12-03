@@ -21,17 +21,18 @@ public class TestAuth {
 		WebResource service = client.resource(getBaseURI());
 		
 		AuthRequest in = new AuthRequest();
-		in.setEmail("xia@umd.edu");
-		in.setPassword("a");
+		in.setEmail("user@parqme.com");
+		in.setPassword("password");
 		
 		String outstring = service.path("auth").type(MediaType.APPLICATION_JSON).post(String.class, in);
-		
 		System.out.println(outstring);
+		
 	}
+		
 
 	private static URI getBaseURI() {
 		return UriBuilder.fromUri(
-				"http://parqserv.student.umd.edu:8080/parkservice.auth").build();
+				"http://75.101.132.219:8080/parkservice.resources").build();
 	}
 
 }
