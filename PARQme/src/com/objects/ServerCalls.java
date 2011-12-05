@@ -2,9 +2,7 @@ package com.objects;
 
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -14,6 +12,8 @@ import java.net.URLEncoder;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonParser;
+
+import android.content.SharedPreferences;
 
 /**
  * This object is used to store user preferences and such, passed between activities inside a bundle.  
@@ -132,26 +132,48 @@ public class ServerCalls {
 		}
 		return -1;
 	}
-	public static ParkObject getSpotInfo(String qrcode,String email){
+	public static ParkObject getSpotInfo(String qrcode, SharedPreferences prefs){
+		final String[] tokens = qrcode.split("/");
+		if (tokens.length != 2) {
+			return null;
+		}
+		final long uid = prefs.getLong("uid", -1);
+		final String email = prefs.getString("email", "");
+		final String password = prefs.getString("password", "");
 		try {
-			String data = URLEncoder.encode("code", "UTF-8") + "=" + URLEncoder.encode(qrcode, "UTF-8");
-			data+= "&"+URLEncoder.encode("email", "UTF-8") + "=" + URLEncoder.encode(email, "UTF-8");
-			// Send data
-			URL url = new URL("http://parqme.com/loc_info.php");
-			URLConnection conn = url.openConnection();
-			
+			final HttpURLConnection conn =
+					(HttpURLConnection)
+						new URL(SERVER_HOSTNAME + "/parkservice.resources/qrcode")
+						.openConnection();
+			conn.setRequestProperty("Accept", "application/json");
+			conn.setRequestProperty("Content-Type", "application/json");
 			conn.setDoOutput(true);
-			OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-			wr.write(data);
-			wr.flush();
-			//write data
-			BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			//List<String> fields = Arrays.asList(rd.readLine().split("@"));
-			// [ location, lat, lon, spot# ]
-			return new ParkObject(rd.readLine());
-			//return new ParkObject(fields.get(0),Float.parseFloat(fields.get(1)), Float.parseFloat(fields.get(2)), Integer.parseInt(fields.get(3)));
-			
-		}catch (Exception e){
+			final JsonGenerator jg = JSON_FACTORY.createJsonGenerator(conn.getOutputStream());
+			jg.writeStartObject();
+			jg.writeFieldName("uid");
+			jg.writeNumber(uid);
+			jg.writeFieldName("lot");
+			jg.writeString(tokens[0]);
+			jg.writeFieldName("spot");
+			jg.writeString(tokens[1]);
+			jg.writeFieldName("userInfo");
+			jg.writeStartObject();
+			jg.writeFieldName("email");
+			jg.writeString(email);
+			jg.writeFieldName("password");
+			jg.writeString(password);
+			jg.writeEndObject();
+			jg.writeEndObject();
+			jg.flush();
+			jg.close();
+			if (conn.getResponseCode() == 200) {
+				final JsonParser jp = JSON_FACTORY.createJsonParser(conn
+						.getInputStream());
+				final UserObject user = Parsers.parseUser(jp);
+				jp.close();
+				return null;
+			}
+		} catch (IOException e){
 			e.printStackTrace();
 		}
 		return null;

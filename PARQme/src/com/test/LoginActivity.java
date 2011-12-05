@@ -62,6 +62,7 @@ public class LoginActivity extends Activity {
 					editor.putBoolean("parkState", user.getParkState());
 					editor.putString("email", email);
 					editor.putLong("uid", user.getUid());
+					editor.putString("password", pass);
 					editor.commit();
 					startActivity(new Intent(LoginActivity.this, TabsActivity.class));
 					finish();

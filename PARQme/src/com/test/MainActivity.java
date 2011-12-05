@@ -25,7 +25,6 @@ import android.os.CountDownTimer;
 import android.os.Vibrator;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -256,7 +255,7 @@ public class MainActivity extends ActivityGroup {
 				// contents contains string "parqme.com/p/c36/p123456" or w/e...
 				SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 
-				mySpot = ServerCalls.getSpotInfo(contents,check.getString("email", "xia@umd.edu"));
+				mySpot = ServerCalls.getSpotInfo(contents,check);
 				// if we get the object successfully
 				if (mySpot != null) {
 					vf.showNext();
@@ -274,8 +273,8 @@ public class MainActivity extends ActivityGroup {
 					// store some used info
 					SharedPreferences.Editor editor = check.edit();
 					editor.putString("code", contents);
-					editor.putFloat("lat", mySpot.getLat());
-					editor.putFloat("lon", mySpot.getLon());
+					editor.putFloat("lat", (float) mySpot.getLat());
+					editor.putFloat("lon", (float) mySpot.getLon());
 					editor.commit();
 					updateDisplay();
 				} else {
@@ -353,7 +352,7 @@ public class MainActivity extends ActivityGroup {
 
 					//display where user is parked and who they are
 					userDisplay.setText("Welcome " + check.getString("fname", "")); 
-					locDisplay.setText("You are parked at\n" + mySpot.getLocation()+"\nAt spot # " + mySpot.getSpotNum());
+					locDisplay.setText("You are parked at\n" + mySpot.getLocation()+"\nAt spot # " + mySpot.getSpot());
 
 
 				}else{
@@ -623,7 +622,7 @@ public class MainActivity extends ActivityGroup {
 			if (contents != null) {
 				//contents contains string "parqme.com/p/c36/p123456" or w/e...
 				SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
-				mySpot = ServerCalls.getSpotInfo(contents, check.getString("email", "xia@umd.edu"));
+				mySpot = ServerCalls.getSpotInfo(contents, check);
 				//if we get the object successfully
 				if(mySpot!=null){
 					vf.showNext();
@@ -643,8 +642,8 @@ public class MainActivity extends ActivityGroup {
 					//store some used info
 					SharedPreferences.Editor editor = check.edit();
 					editor.putString("code", contents);
-					editor.putFloat("lat", mySpot.getLat());
-					editor.putFloat("lon", mySpot.getLon());
+					editor.putFloat("lat", (float) mySpot.getLat());
+					editor.putFloat("lon", (float) mySpot.getLon());
 					editor.commit();
 					updateDisplay();
 				}else{
@@ -656,7 +655,7 @@ public class MainActivity extends ActivityGroup {
 				contents = "3";
 				SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 				//contents contains string "parqme.com/p/c36/p123456" or w/e...
-				mySpot = ServerCalls.getSpotInfo(contents, check.getString("email", "xia@umd.edu"));
+				mySpot = ServerCalls.getSpotInfo(contents, check);
 				//if we get the object successfully
 				if(mySpot!=null){
 					vf.showNext();
@@ -673,8 +672,8 @@ public class MainActivity extends ActivityGroup {
 					//store some used info
 					SharedPreferences.Editor editor = check.edit();
 					editor.putString("code", contents);
-					editor.putFloat("lat", mySpot.getLat());
-					editor.putFloat("lon", mySpot.getLon());
+					editor.putFloat("lat", (float) mySpot.getLat());
+					editor.putFloat("lon", (float) mySpot.getLon());
 					editor.commit();
 					updateDisplay();
 				}else{
@@ -778,7 +777,7 @@ public class MainActivity extends ActivityGroup {
 	//TODO:  THIN METHOD -- will become robust later.  must support varying units and different parking minutes and all day parking etc.
 	private static int getCostInCents(int mins) {
 		//number of minutes parked, divided by the minimum increment (aka unit of time), multiplied by price per unit in cents
-		return (mins/(mySpot.getMinIncrement())) * mySpot.getUnitPrice();
+		return (mins/(mySpot.getMinIncrement())) * mySpot.getDefaultRate();
 	}
 	private void updateDisplay() {	
 		priceDisplay.setText(moneyConverter(getCostInCents(parkMinutes)));

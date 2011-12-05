@@ -14,6 +14,16 @@ public class Parsers {
 	private static final String PARAM_RESP_CODE = "responsecode";
 	private static final String RESP_CODE_OK = "OK";
 
+	// Park rate parameters
+	private static final String PARAM_LAT = "lat";
+	private static final String PARAM_LONG = "lon";
+	private static final String PARAM_LOCATION = "location";
+	private static final String PARAM_SPOT = "spot";
+	private static final String PARAM_MIN_TIME = "minTime";
+	private static final String PARAM_MAX_TIME = "maxTime";
+	private static final String PARAM_DEFAULT_RATE = "defaultRate";
+	private static final String PARAM_MIN_INCREMENT = "minIncrement";
+
 	// {"fname":"xia@umd.edu","lname":"Mikey","phone":"1337"}
 	public static UserObject parseUser(JsonParser jp) throws IOException {
 		long uid = -1;
@@ -47,5 +57,51 @@ public class Parsers {
 			}
 		}
 		return false;
+	}
+
+	public static ParkObject parseRate(JsonParser jp) throws IOException {
+		double lat = 0;
+		double lon = 0;
+		String location = "";
+		int spot = 0;
+		int minTime = 1;
+		int maxTime = 3;
+		int defaultRate = 1;
+		int minIncrement = 30;
+
+		JsonToken t = jp.nextToken();
+		String curr;
+		while (t != null && t != JsonToken.END_OBJECT) {
+			curr = jp.getCurrentName();
+			switch (t) {
+				case VALUE_NUMBER_INT: {
+					if (PARAM_SPOT.equals(curr)) {
+						spot = jp.getIntValue();
+					} else if (PARAM_MIN_TIME.equals(curr)) {
+						minTime = jp.getIntValue();
+					} else if (PARAM_MAX_TIME.equals(curr)) {
+						maxTime = jp.getIntValue();
+					} else if (PARAM_DEFAULT_RATE.equals(curr)) {
+						defaultRate = jp.getIntValue();
+					} else if (PARAM_MIN_INCREMENT.equals(curr)) {
+						minIncrement = jp.getIntValue();
+					}
+				}
+				case VALUE_NUMBER_FLOAT: {
+					if (PARAM_LAT.equals(curr)) {
+						lat = jp.getDoubleValue();
+					} else if (PARAM_LONG.equals(curr)) {
+						lon = jp.getDoubleValue();
+					}
+				}
+				case VALUE_STRING: {
+					if (PARAM_LOCATION.equals(curr)) {
+						location = jp.getText();
+					}
+				}
+			}
+		}
+		return new ParkObject(lat, lon, location, spot, minTime, maxTime,
+				defaultRate, minIncrement);
 	}
 }
