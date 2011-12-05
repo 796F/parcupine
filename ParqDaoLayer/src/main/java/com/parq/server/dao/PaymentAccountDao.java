@@ -13,6 +13,12 @@ import net.sf.ehcache.Element;
 
 import com.parq.server.dao.model.object.PaymentAccount;
 
+/**
+ * Dao class responsible for accessing and updating the PaymentAccount Table
+ * 
+ * @author GZ
+ *
+ */
 public class PaymentAccountDao extends AbstractParqDaoParent {
 	/**
 	 * Name of the local cache use by this dao
@@ -48,8 +54,10 @@ public class PaymentAccountDao extends AbstractParqDaoParent {
 	}
 	
 	/**
+	 * Create a new payment account.
+	 * 
 	 * @param paymentRequest
-	 * @return
+	 * @return <code>true</code> if account creation was successful. <code>false</code> otherwise
 	 */
 	public boolean createNewPaymentMethod(PaymentAccount request) {
 		

@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import net.sf.ehcache.Cache;
@@ -24,7 +25,7 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 	private static final String cacheName = "ParkingStatusCache";
 	private static Cache myCache;
 	
-	private String sqlGetLatestParkingStatusBySpaceIdsSelectPart = 
+	private static final String sqlGetLatestParkingStatusBySpaceIdsSelectPart = 
 		"SELECT pi.ParkingInst_id, pi.user_id, pi.space_id, pi.park_began_time, " +
 		"       pi.park_end_time, pi.is_paid_parking, " +
 		"       p.payment_id, p.payment_type, p.payment_ref_num, p.payment_datetime, " +
@@ -32,9 +33,9 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 		" FROM ParkingInstance as pi, Payment as p " +
 		" WHERE p.ParkingInst_id = pi.ParkingInst_id " +
 		" AND pi.ParkingInst_id IN (SELECT MAX(ParkingInst_id) FROM ParkingInstance WHERE space_id IN( ";
-	private String sqlOrderByPart =	") GROUP BY space_id) ORDER BY pi.space_id;";
+	private static final String sqlOrderByPart =	") GROUP BY space_id) ORDER BY pi.space_id;";
 	
-	private String sqlGetParkingStatusByUserId = 
+	private static final String sqlGetParkingStatusByUserId = 
 		"SELECT pi.ParkingInst_id, pi.user_id, pi.space_id, pi.park_began_time, " +
 		"       pi.park_end_time, pi.is_paid_parking, " +
 		"       p.payment_id, p.payment_type, p.payment_ref_num, p.payment_datetime, " +
@@ -45,12 +46,15 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 		" ORDER BY pi.ParkingInst_id DESC " + 
 		" LIMIT 1";
 	
-	private String sqlInsertParkingInstance = 
+	private static final String sqlInsertParkingInstance = 
 		"INSERT INTO ParkingInstance (User_ID, Space_ID, Park_Began_Time, Park_End_Time, Is_Paid_Parking) " + 
 		" VALUES (?, ?, ?, ?, ?)";
-	private String sqlInsertPayment = 
+	private static final String sqlInsertPayment = 
 		"INSERT INTO Payment (ParkingInst_ID, Payment_Type, Payment_Ref_Num, Payment_DateTime, Amount_Paid_Cents) " +
 		" VALUES ((SELECT MAX(ParkingInst_ID) FROM ParkingInstance WHERE space_id = ?), ?, ?, ?, ?)";
+	
+	private static final String sqlUpdateParkingEndTime =
+		"UPDATE ParkingInstance SET Park_End_Time = ? WHERE ParkingInst_id = ? AND Space_ID = ? ";
 	
 	private static final String getParkingStatusBySpaceIdsCacheKey = "spaceId:";
 	private static final String getUserParkingStatusCacheKey = "userId:";
@@ -277,6 +281,40 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 		}
 		
 		return parkingInstanceCreated;
+	}
+	
+	public boolean updateParkingEndTimeBySpaceId(int spaceId, int parkingInstanceId, Date endTime) {
+		
+		if (spaceId < 1 || parkingInstanceId < 1) {
+			throw new IllegalStateException(
+					"updateParkingEndTimeBySpaceId(...) method parmeters is invalid, spaceId: "
+							+ spaceId + ", parkingInstanceId: "
+							+ parkingInstanceId);
+		}
+		revokeSpaceCacheById(spaceId);
+		
+		PreparedStatement pstmt = null;
+		Connection con = null;
+		boolean parkingEndTimeUpdated = false;
+		try {
+			con = getConnection();
+			pstmt = con.prepareStatement(sqlUpdateParkingEndTime);
+			pstmt.setTimestamp(1, new Timestamp(endTime.getTime()));
+			pstmt.setInt(2, parkingInstanceId);
+			pstmt.setInt(3, spaceId);
+			if (pstmt.executeUpdate() == 1) {
+				parkingEndTimeUpdated = true;
+			}
+			
+		} catch (SQLException sqle) {
+			System.out.println("SQL statement is invalid: " + pstmt);
+			sqle.printStackTrace();
+			throw new RuntimeException(sqle);
+		} finally {
+			closeConnection(con);
+		}
+		
+		return parkingEndTimeUpdated;
 	}
 	
 	/**

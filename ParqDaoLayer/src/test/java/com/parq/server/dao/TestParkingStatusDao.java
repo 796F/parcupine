@@ -220,5 +220,25 @@ public class TestParkingStatusDao extends TestCase {
 		assertTrue(deleteSuccessful);
 	}
 	
+	public void testUpdateParkingEndTimeBySpaceId() {
+		assertTrue(statusDao.addPaymentForParking(pi));
+
+		// update the parking endtime to current time minus 60 sec
+		ParkingInstance oldPiStatus = statusDao.getUserParkingStatus(user
+				.getUserID());
+		long curTime = System.currentTimeMillis() - (60 * 1000);
+
+		statusDao.updateParkingEndTimeBySpaceId(oldPiStatus.getSpaceId(),
+				oldPiStatus.getParkingInstId(), new Date(curTime));
+		
+		ParkingInstance newPiStatus = statusDao.getUserParkingStatus(user
+				.getUserID());
+		// timestamp stored in the DB is only accurate to the second interval.
+		assertEquals(newPiStatus.getParkingEndTime().getTime() / 1000,  curTime / 1000);
+		
+		// user object cleanup
+		 boolean deleteSuccessful = userDao.deleteUserById(user.getUserID());
+		 assertTrue(deleteSuccessful);
+	}
 	
 }

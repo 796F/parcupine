@@ -87,10 +87,18 @@ public abstract class AbstractParqDaoParent {
 		return myCache;
 	}
 
+	/**
+	 * Default constructor
+	 */
 	public AbstractParqDaoParent() {
 		initialize();
 	}
 
+	/**
+	 * Obtain a DB connection from the JDBC driver to the PARQ DB
+	 * 
+	 * @return
+	 */
 	protected synchronized Connection getConnection() {
 		try {
 			con = DriverManager.getConnection(url + db, login, pwd);
@@ -103,6 +111,11 @@ public abstract class AbstractParqDaoParent {
 		return con;
 	}
 
+	/**
+	 * Close the DB connection to the PARQ DB
+	 * 
+	 * @param connection
+	 */
 	protected synchronized void closeConnection(Connection connection) {
 		try {
 			if (connection != null && !connection.isClosed()) {
@@ -115,22 +128,52 @@ public abstract class AbstractParqDaoParent {
 		}
 	}
 	
-	protected synchronized void closeConnection() {
+	
+	/**
+	 * A short cut method to close the connection if somehow the caller lost the
+	 * reference to the original DB connection
+	 */
+	protected void closeConnection() {
 		closeConnection(con);
 	}
-	
+
+	/**
+	 * Revoke an cache entry based on the cache, and 2 piece of the cache key.
+	 * The full cache key is constructed by the string concatenation of the
+	 * keyPrefix with the key value
+	 * 
+	 * @param cache the cache that contain the entry to be revoked
+	 * @param keyPrefix the first part of the cache key.
+	 * @param value the second part of the cache key
+	 * @return <code>true</code> if the cache entry revocation is successful, <code>false</code> otherwise
+	 */
 	protected boolean revokeCache(Cache cache, String keyPrefix, String value) {
-		if (cache == null || keyPrefix == null || value == null) {
-			return false;
-		}	
-		String cacheKey = keyPrefix + value;
-		return cache.remove(cacheKey);
+		return revokeCache(cache, keyPrefix + value);
 	}
 	
+	/**
+	 * Revoke an cache entry based on the cache and the cache key.
+	 * 
+	 * @param cache the cache that contain the entry to be revoked
+	 * @param fullKey key to the cache entry that is going to revoked
+	 * @return <code>true</code> if the cache entry revocation is successful, <code>false</code> otherwise
+	 */
 	protected boolean revokeCache(Cache cache, String fullKey) {
 		if (cache == null || fullKey == null) {
 			return false;
 		}	
 		return cache.remove(fullKey);
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#finalize()
+	 */
+	@Override
+	protected void finalize() throws Throwable {
+		// TODO Auto-generated method stub
+		super.finalize();
+		closeConnection();
+	}
+	
+	
 }

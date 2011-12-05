@@ -67,6 +67,17 @@ public class UserDao extends AbstractParqDaoParent {
 		return user;
 	}
 
+	/**
+	 * Retrieve the <code>User</code> object based on the userId, if no
+	 * <code>User</code> exist based on the userId or if the <code>User</code>
+	 * with this id has been deleted, then <code>NULL</code> is returned.
+	 * 
+	 * @param id
+	 *            The id of the user to retrive, must be > 0
+	 * @return <code>User</code> corresponding to the id, or <code>NULL</code>
+	 *         is no such user exist or the user has been deleted
+	 *         <code>NULL</code>
+	 */
 	public User getUserById(int id) {
 		// the cache key for this method call;
 		String cacheKey = idCache + id;
@@ -102,6 +113,18 @@ public class UserDao extends AbstractParqDaoParent {
 		return user;
 	}
 
+	/**
+	 * Retrieve the <code>User</code> based on his/her email address. If the no
+	 * <code>User</code> exist for this email address or the user has been
+	 * delete. <code>NULL</code> is returned.
+	 * 
+	 * @param emailAddress
+	 *            the email address to search the user based on, must not be
+	 *            <code>NULL</code>
+	 * @return <code>User</code> corresponding to the email address, or
+	 *         <code>NULL</code> is no such user exist or the user has been
+	 *         deleted <code>NULL</code>
+	 */
 	public User getUserByEmail(String emailAddress) {
 		// the cache key for this method call;
 		String cacheKey = emailCache + emailAddress;
@@ -137,6 +160,14 @@ public class UserDao extends AbstractParqDaoParent {
 		return user;
 	}
 
+	/**
+	 * Delete the user with the id provided.
+	 * 
+	 * @param id
+	 *            the user id, must be > 0
+	 * @return <code>True</code> if delete is successful, <code>false</code>
+	 *         other wise.
+	 */
 	public synchronized boolean deleteUserById(int id) {
 
 		if (id <= 0) {
@@ -172,10 +203,27 @@ public class UserDao extends AbstractParqDaoParent {
 		return deleteSuccessful;
 	}
 
+	/**
+	 * Update the user information. Note all the field on the <code>User</code>
+	 * object must be set, if the field is not set, then the value in DB will be
+	 * set to <code>Null</code>
+	 * 
+	 * @param user
+	 * @return <code>true</code> if the user was updated successfully, <code>false</code> otherwise
+	 * 
+	 * @throws <code>com.parq.server.dao.exception.DuplicateEmailException</code> if
+	 *         the email already exist in the system, and is not tied to this user.
+	 */
 	public synchronized boolean updateUser(User user) {
 
 		if (user == null || user.getEmail() == null || user.getUserID() <= 0) {
 			throw new IllegalStateException("Invalid user update request");
+		}
+		
+		// test to make sure no duplicate email is used
+		User tempUser = getUserByEmail(user.getEmail());
+		if(tempUser != null && tempUser.getUserID() != user.getUserID()) {
+			throw new DuplicateEmailException("Email: " + user.getEmail() + " already exist");
 		}
 		
 		// clear out the cache entry for user that is going to be updated
@@ -205,6 +253,17 @@ public class UserDao extends AbstractParqDaoParent {
 	}
 
 
+	/**
+	 * Create a new user. Note all the field on the <code>User</code>, expect
+	 * the userId field object must be set, if any of the the fields is not set,
+	 * then the value in DB will be set to <code>Null</code>
+	 * 
+	 * @param user
+	 * @return <code>true</code> if the user was updated successfully,
+	 *         <code>false</code> otherwise
+	 * @throws <code>com.parq.server.dao.exception.DuplicateEmailException</code> if
+	 *         the email associated with this new user already exist.
+	 */
 	public synchronized boolean createNewUser(User user) {
 
 		if (user == null || user.getEmail() == null) {
