@@ -58,12 +58,10 @@ public class TabsActivity extends TabActivity {
 //        	tabHost.setCurrentTab(3);
 //        	//initialize all needed fields to starting values
 //        	SavedInfo.reset(TabsActivity.this);
-        /*}else*/ if(check.getBoolean("loginState", false))
-        	tabHost.setCurrentTab(0);
-        else{
+        /*}else*/ if(check.getBoolean("parkState", false))
         	tabHost.setCurrentTab(2);
-        	//show dialog saying you must login/register
-        	ThrowDialog.show(TabsActivity.this, ThrowDialog.MUST_LOGIN);
+        else{
+        	tabHost.setCurrentTab(0);
         }
     }
     

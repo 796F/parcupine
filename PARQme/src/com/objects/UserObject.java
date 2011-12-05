@@ -21,7 +21,7 @@ public class UserObject {
 	/**
 	 * @return the parkState
 	 */
-	public boolean isParkState() {
+	public boolean getParkState() {
 		return parkState;
 	}	
 }

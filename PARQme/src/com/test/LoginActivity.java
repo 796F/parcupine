@@ -59,8 +59,9 @@ public class LoginActivity extends Activity {
 				UserObject user = ServerCalls.getUser(email, pass);
 				if(user!=null){
 					SharedPreferences.Editor editor = check.edit();
-					editor.putBoolean("loginState", true);
+					editor.putBoolean("parkState", user.getParkState());
 					editor.putString("email", email);
+					editor.putLong("uid", user.getUid());
 					editor.commit();
 					startActivity(new Intent(LoginActivity.this, TabsActivity.class));
 					finish();
