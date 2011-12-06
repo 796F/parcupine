@@ -94,7 +94,7 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 				pstmt.setString(2, spaceIdentifier);
 			}
 			
-			System.out.println(pstmt);
+			// System.out.println(pstmt);
 			
 			ResultSet rs = pstmt.executeQuery();
 			rate = createParkingRate(locationIdentifier, spaceIdentifier, rs);

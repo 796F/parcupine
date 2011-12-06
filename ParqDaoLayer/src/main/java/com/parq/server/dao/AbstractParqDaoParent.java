@@ -102,7 +102,7 @@ public abstract class AbstractParqDaoParent {
 	protected synchronized Connection getConnection() {
 		try {
 			con = DriverManager.getConnection(url + db, login, pwd);
-			System.out.println(url + db + " connected");
+			// System.out.println(url + db + " connected");
 
 		} catch (SQLException e) {
 			System.err.println("Failed to connect to MySQL DB: " + e);

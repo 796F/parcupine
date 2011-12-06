@@ -28,7 +28,7 @@ public class DaoForTestingPurposes extends AbstractParqDaoParent {
 					stmt.setObject(i + 1, parms[i]);
 				}
 			}
-			System.out.println("  " + stmt.toString());
+			// System.out.println("  " + stmt.toString());
 			
 			// run the sql statement
 			executionResult = stmt.executeUpdate() > 0;
