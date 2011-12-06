@@ -25,15 +25,15 @@ public class UserDao extends AbstractParqDaoParent {
 	private static final String cacheName = "UserCache";
 	private static Cache myCache;
 
-	private static final String sqlGetUserStatement = "SELECT User_ID, Password, eMail, Phone_Number FROM User ";
-	private static final String isNotDeleted = " AND Is_Deleted IS NOT TRUE";
-	private static final String sqlGetUserById = sqlGetUserStatement + "WHERE User_ID = ? " + isNotDeleted;
-	private static final String sqlGetUserByEmail = sqlGetUserStatement + "WHERE eMail = ? " + isNotDeleted;
+	private static final String sqlGetUserStatement = "SELECT user_id, password, email, phone_number FROM user ";
+	private static final String isNotDeleted = " AND is_deleted IS NOT TRUE";
+	private static final String sqlGetUserById = sqlGetUserStatement + "WHERE user_id = ? " + isNotDeleted;
+	private static final String sqlGetUserByEmail = sqlGetUserStatement + "WHERE email = ? " + isNotDeleted;
 
-	private static final String sqlDeleteUserById = "UPDATE User SET Is_Deleted = TRUE, eMail = ? WHERE User_ID = ?";
-	private static final String sqlUpdateUser = "UPDATE User SET Password = ?, eMail = ?, Phone_Number = ? "
-			+ " WHERE User_ID = ?";
-	private static final String sqlCreateUser = "INSERT INTO User (Password, eMail, Phone_Number) "
+	private static final String sqlDeleteUserById = "UPDATE user SET is_deleted = TRUE, email = ? WHERE user_id = ?";
+	private static final String sqlUpdateUser = "UPDATE user SET password = ?, email = ?, phone_number = ? "
+			+ " WHERE user_id = ?";
+	private static final String sqlCreateUser = "INSERT INTO user (password, email, phone_number) "
 			+ " VALUES (?, ?, ?)";
 	
 	private static final String emailCache = "getUserByEmail:";
@@ -60,10 +60,10 @@ public class UserDao extends AbstractParqDaoParent {
 		}
 		User user = new User();
 		rs.first();
-		user.setUserID(rs.getInt("User_ID"));
-		user.setPassword(rs.getString("Password"));
-		user.setEmail(rs.getString("eMail"));
-		user.setPhoneNumber(rs.getString("Phone_Number"));
+		user.setUserID(rs.getInt("user_id"));
+		user.setPassword(rs.getString("password"));
+		user.setEmail(rs.getString("email"));
+		user.setPhoneNumber(rs.getString("phone_number"));
 		return user;
 	}
 

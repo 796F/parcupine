@@ -1,9 +1,9 @@
 package com.parq.server.dao.support;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import com.mysql.jdbc.Statement;
 import com.parq.server.dao.AbstractParqDaoParent;
 
 /**
@@ -14,17 +14,25 @@ import com.parq.server.dao.AbstractParqDaoParent;
  */
 public class DaoForTestingPurposes extends AbstractParqDaoParent {
 		
-	public boolean executeSqlStatement(String sql) {
+	public boolean executeSqlStatement(String sql, Object[] parms) {
 		
-		System.out.println("Test SQL Statement:\n   " + sql);
-		Statement stmt = null;
+		CallableStatement stmt = null;
 		Connection con = null;
 		boolean executionResult = false;
 		try {
 			con = getConnection();
-			stmt = (Statement) con.createStatement();
+			stmt = con.prepareCall(sql);
+			// set the parameter of the sql statement
+			if (parms != null) {
+				for (int i = 0; i < parms.length; i++) {
+					stmt.setObject(i + 1, parms[i]);
+				}
+			}
+			System.out.println("  " + stmt.toString());
 			
-			executionResult = stmt.execute(sql);
+			// run the sql statement
+			executionResult = stmt.executeUpdate() > 0;
+			
 		} catch (SQLException sqle) {
 			System.out.println("SQL statement is invalid: " + stmt);
 			throw new RuntimeException(sqle);
@@ -33,5 +41,9 @@ public class DaoForTestingPurposes extends AbstractParqDaoParent {
 		}
 		
 		return executionResult;
+	}
+	
+	public boolean executeSqlStatement(String sql) {
+		return executeSqlStatement(sql, null);
 	}
 }

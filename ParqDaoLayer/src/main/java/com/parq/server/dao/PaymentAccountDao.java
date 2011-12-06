@@ -27,20 +27,20 @@ public class PaymentAccountDao extends AbstractParqDaoParent {
 	private static Cache myCache;
 
 	private static final String sqlCreatePaymentAccount = 
-		"INSERT INTO PaymentAccount (User_ID, Customer_ID, Payment_Method_ID, CC_stub, Is_Default_Payment) " + 
+		"INSERT INTO paymentaccount (user_id, customer_id, payment_method_id, cc_stub, is_default_payment) " + 
 		"	VALUES (?, ?, ?, ?, ?)";
 	private static final String sqlDeletePaymentAccountById =
-		"UPDATE PaymentAccount SET Is_Deleted = TRUE WHERE Account_ID = ?";
+		"UPDATE paymentaccount SET is_deleted = TRUE WHERE account_id = ?";
 	private static final String sqlGetAccountByUserId = 
-		"SELECT Account_ID, User_ID, Customer_ID, Payment_Method_ID, CC_stub, Is_Default_Payment " +
-		"	FROM PaymentAccount " +
-		"	WHERE User_ID = ? " +
-		" 	AND Is_Deleted IS NOT TRUE"; 
+		"SELECT account_id, user_id, customer_id, payment_method_id, cc_stub, is_default_payment " +
+		"	FROM paymentaccount " +
+		"	WHERE user_id = ? " +
+		" 	AND is_deleted IS NOT TRUE"; 
 	private static final String sqlClearDefaultPaymentMethodByUserId = 
-		"UPDATE PaymentAccount SET Is_Default_Payment = FALSE " +
-		" 	WHERE User_ID = ?";
+		"UPDATE paymentaccount SET is_default_payment = FALSE " +
+		" 	WHERE user_id = ?";
 	private static final String sqlGetUserIdByAccountId = 
-		"SELECT User_ID FROM PaymentAccount WHERE Account_ID = ?";
+		"SELECT user_id FROM paymentaccount WHERE account_id = ?";
 	
 
 	private static final String paymentMethodsCache = "getAllPaymentMethodForUser:";
@@ -168,7 +168,7 @@ public class PaymentAccountDao extends AbstractParqDaoParent {
 			ResultSet rs = pstmt.executeQuery();
 			
 			if (rs.isBeforeFirst() && rs.next()) {
-				userId = rs.getInt("User_ID");
+				userId = rs.getInt("user_id");
 			}
 
 		} catch (SQLException sqle) {
@@ -231,12 +231,12 @@ public class PaymentAccountDao extends AbstractParqDaoParent {
 		
 		while (rs.next()) {
 			PaymentAccount pa = new PaymentAccount();
-			int accountId = rs.getInt("Account_ID");
-			int userId = rs.getInt("User_ID");
-			String customerId = rs.getString("Customer_ID");
-			String paymentMethodId = rs.getString("Payment_Method_ID");
-			String ccStub = rs.getString("CC_stub");
-			boolean isDefaultPaymentMethod = rs.getBoolean("Is_Default_Payment");
+			int accountId = rs.getInt("account_id");
+			int userId = rs.getInt("user_id");
+			String customerId = rs.getString("customer_id");
+			String paymentMethodId = rs.getString("payment_method_id");
+			String ccStub = rs.getString("cc_stub");
+			boolean isDefaultPaymentMethod = rs.getBoolean("is_default_payment");
 			
 			pa.setAccountId(accountId);
 			pa.setUserId(userId);

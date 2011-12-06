@@ -24,16 +24,16 @@ public class ClientDao extends AbstractParqDaoParent {
 	private static final String cacheName = "ClientCache";
 	private static Cache myCache;
 
-	private static final String sqlGetClientByClientName = "SELECT client_id, name, address, client_desc FROM client WHERE name = ? AND Is_Deleted IS NOT TRUE";
-	private static final String sqlGetClientByClientId = "SELECT client_id, name, address, client_desc FROM client WHERE client_id = ? AND Is_Deleted IS NOT TRUE";
+	private static final String sqlGetClientByClientName = "SELECT client_id, name, address, client_desc FROM client WHERE name = ? AND is_deleted IS NOT TRUE";
+	private static final String sqlGetClientByClientId = "SELECT client_id, name, address, client_desc FROM client WHERE client_id = ? AND is_deleted IS NOT TRUE";
 	private static final String sqlGetAllSpacesByClientId = 
-		"SELECT B.Client_ID, B.Location_Identifier, B.Location_ID, S.Space_ID, S.Space_Identifier, S.Parking_Level " + 
-		" FROM ParkingLocation AS B, ParkingSpace AS S " +
-		" WHERE B.Location_ID = S.Location_ID " +
-		" AND B.Client_ID = ?" +
-		" AND B.Is_Deleted IS NOT TRUE " +
-		" AND S.Is_Deleted IS NOT TRUE " +
-		" ORDER BY B.Location_ID";
+		"SELECT b.client_id, b.location_identifier, b.location_id, s.space_id, s.space_identifier, s.parking_level " + 
+		" FROM parkinglocation AS b, parkingspace AS s " +
+		" WHERE b.location_id = s.location_id " +
+		" AND b.client_id = ?" +
+		" AND b.is_deleted IS NOT TRUE " +
+		" AND s.is_deleted IS NOT TRUE " +
+		" ORDER BY b.location_id";
 
 	private static final String clientNameCache = "getClientByClientName:";
 	private static final String clientIdCache = "getClientByClientId:";
@@ -165,22 +165,22 @@ public class ClientDao extends AbstractParqDaoParent {
 		ParkingLocation curLocation = new ParkingLocation();
 
 		while (rs.next()) {
-			int buildingId = rs.getInt("Location_ID");
+			int buildingId = rs.getInt("location_id");
 
 			// create new building whenever new row encountered.
 			if (buildingId != curLocation.getLocationId()) {
 				curLocation = new ParkingLocation();
 				curLocation.setLocationId(buildingId);
-				curLocation.setLocationIdentifier(rs.getString("Location_Identifier"));
-				curLocation.setClientId(rs.getInt("Client_ID"));
+				curLocation.setLocationIdentifier(rs.getString("location_identifier"));
+				curLocation.setClientId(rs.getInt("client_id"));
 				buildings.add(curLocation);
 			}
 
 			ParkingSpace curSpace = new ParkingSpace();
 			curSpace.setLocationId(buildingId);
-			curSpace.setSpaceId(rs.getInt("Space_ID"));
-			curSpace.setParkingLevel(rs.getString("Parking_Level"));
-			curSpace.setSpaceIdentifier(rs.getString("Space_Identifier"));
+			curSpace.setSpaceId(rs.getInt("space_id"));
+			curSpace.setParkingLevel(rs.getString("parking_level"));
+			curSpace.setSpaceIdentifier(rs.getString("space_identifier"));
 
 			curLocation.getSpaces().add(curSpace);
 		}

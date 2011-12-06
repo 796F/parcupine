@@ -4,153 +4,152 @@ CREATE DATABASE parq;
 
 USE parq;
 
-CREATE TABLE User
-(User_ID INT NOT NULL AUTO_INCREMENT,  
- Password TEXT(64) NOT NULL, 
- eMail TEXT(64) NOT NULL,
- Phone_Number TEXT(64),
- Is_Deleted BOOLEAN DEFAULT FALSE,
- LastUpdateDateTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
- PRIMARY KEY (User_ID));
+CREATE TABLE user
+(user_id INT NOT NULL AUTO_INCREMENT,  
+ password TEXT(64) NOT NULL, 
+ email TEXT(64) NOT NULL,
+ phone_number TEXT(64),
+ is_deleted BOOLEAN DEFAULT FALSE,
+ lastupdatedatetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+ PRIMARY KEY (user_id));
  
-CREATE TABLE PaymentAccount
-(Account_ID INT NOT NULL AUTO_INCREMENT,  
- User_ID INT NOT NULL,
- Customer_ID TEXT(64), 
- Payment_Method_ID TEXT(64),
- CC_Stub Text(64),
- Is_Default_Payment BOOLEAN DEFAULT FALSE,
- Is_Deleted BOOLEAN DEFAULT FALSE,
- LastUpdateDateTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
- PRIMARY KEY (Account_ID),
- FOREIGN KEY (User_ID) references User(User_ID));
+CREATE TABLE paymentaccount
+(account_id INT NOT NULL AUTO_INCREMENT,  
+ user_id INT NOT NULL,
+ customer_id TEXT(64), 
+ payment_method_id TEXT(64),
+ cc_stub TEXT(64),
+ is_default_payment BOOLEAN DEFAULT FALSE,
+ is_deleted BOOLEAN DEFAULT FALSE,
+ lastupdatedatetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+ PRIMARY KEY (account_id),
+ FOREIGN KEY (user_id) references user(user_id));
  
-CREATE TABLE UserRole
-(UserRole_ID INT NOT NULL AUTO_INCREMENT,
- Role_Name TEXT(64) NOT NULL,
- Role_DESC TEXT(256),
- Parking_Rate DECIMAL(5,3),
- LastUpdateDateTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
- PRIMARY KEY (UserRole_ID));
+CREATE TABLE userrole
+(userrole_id INT NOT NULL AUTO_INCREMENT,
+ role_name TEXT(64) NOT NULL,
+ role_desc TEXT(256),
+ parking_rate DECIMAL(5,3),
+ lastupdatedatetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+ PRIMARY KEY (userrole_id));
 
-CREATE TABLE Admin
-(Admin_ID INT NOT NULL AUTO_INCREMENT,
- UserName TEXT(64) NOT NULL,
- Password TEXT(64) NOT NULL,
- eMail TEXT(64) NOT NULL,
- Is_Deleted BOOLEAN DEFAULT FALSE,
- LastUpdateDateTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
- PRIMARY KEY (Admin_ID));
+CREATE TABLE admin
+(admin_id INT NOT NULL AUTO_INCREMENT,
+ username TEXT(64) NOT NULL,
+ password TEXT(64) NOT NULL,
+ email TEXT(64) NOT NULL,
+ is_deleted BOOLEAN DEFAULT FALSE,
+ lastupdatedatetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+ PRIMARY KEY (admin_id));
  
-CREATE TABLE Client
-(Client_ID INT NOT NULL AUTO_INCREMENT,
- Name TEXT(64) NOT NULL,
- Address TEXT(256),
- Client_Desc TEXT(256),
- Is_Deleted BOOLEAN DEFAULT FALSE,
- LastUpdateDateTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
- PRIMARY KEY (Client_ID)); 
+CREATE TABLE client
+(client_id INT NOT NULL AUTO_INCREMENT,
+ name TEXT(64) NOT NULL,
+ address TEXT(256),
+ client_desc TEXT(256),
+ is_deleted BOOLEAN DEFAULT FALSE,
+ lastupdatedatetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+ PRIMARY KEY (client_id)); 
  
-CREATE TABLE AdminRole
-(AdminRole_ID INT NOT NULL AUTO_INCREMENT,
- Role_Name TEXT(64) NOT NULL,
- Role_Desc TEXT(256),
- LastUpdateDateTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
- PRIMARY KEY (AdminRole_ID)); 
+CREATE TABLE adminrole
+(adminrole_id INT NOT NULL AUTO_INCREMENT,
+ role_name TEXT(64) NOT NULL,
+ role_desc TEXT(256),
+ lastupdatedatetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+ PRIMARY KEY (adminrole_id)); 
  
-CREATE TABLE AdminClientRelationship
-(AC_Rel_ID INT NOT NULL AUTO_INCREMENT,
- Admin_ID INT NOT NULL,
- Client_ID INT NOT NULL,
- AdminRole_ID INT NOT NULL,
- LastUpdateDateTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
- PRIMARY KEY (AC_Rel_ID),
- FOREIGN KEY (Admin_ID) references Admin(Admin_ID),
- FOREIGN KEY (Client_ID) references Client(Client_ID),
- FOREIGN KEY (AdminRole_ID) references AdminRole(AdminRole_ID));
+CREATE TABLE adminclientrelationship
+(ac_rel_id INT NOT NULL AUTO_INCREMENT,
+ admin_id INT NOT NULL,
+ client_id INT NOT NULL,
+ adminrole_id INT NOT NULL,
+ lastupdatedatetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+ PRIMARY KEY (ac_rel_id),
+ FOREIGN KEY (admin_id) references admin(admin_id),
+ FOREIGN KEY (client_id) references client(client_id),
+ FOREIGN KEY (adminrole_id) references adminrole(adminrole_id));
  
-CREATE TABLE ParkingLocation
-(Location_ID INT NOT NULL AUTO_INCREMENT,
- Location_Identifier TEXT(16) NOT NULL,
- Client_ID INT NOT NULL,
- Location_Name TEXT(64),
- Is_Deleted BOOLEAN DEFAULT FALSE,
- LastUpdateDateTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
- PRIMARY KEY (Location_ID),
- FOREIGN KEY (Client_ID) references Client(Client_ID));
+CREATE TABLE parkinglocation
+(location_id INT NOT NULL AUTO_INCREMENT,
+ location_identifier TEXT(16) NOT NULL,
+ client_id INT NOT NULL,
+ location_name TEXT(64),
+ is_deleted BOOLEAN DEFAULT FALSE,
+ lastupdatedatetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+ PRIMARY KEY (location_id),
+ FOREIGN KEY (client_id) references client(client_id));
  
-CREATE TABLE Geolocation
-(Geolocation_ID INT NOT NULL AUTO_INCREMENT,
- Location_ID INT NOT NULL,
- Latitude DOUBLE NOT NULL,
- Longitude DOUBLE NOT NULL,
- LastUpdateDateTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
- PRIMARY KEY (Geolocation_ID),
- FOREIGN KEY (Location_ID) references ParkingLocation(Location_ID));
+CREATE TABLE geolocation
+(geolocation_id INT NOT NULL AUTO_INCREMENT,
+ location_id INT NOT NULL,
+ latitude DOUBLE NOT NULL,
+ longitude DOUBLE NOT NULL,
+ lastupdatedatetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+ PRIMARY KEY (geolocation_id),
+ FOREIGN KEY (location_id) references parkinglocation(location_id));
  
-CREATE TABLE ParkingSpace
-(Space_ID INT NOT NULL AUTO_INCREMENT,
- Space_Identifier TEXT(16) NOT NULL,
- Location_ID INT NOT NULL,
- Space_Name TEXT(64),
- Parking_Level TEXT(16),
- Is_Deleted BOOLEAN DEFAULT FALSE,
- LastUpdateDateTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
- PRIMARY KEY (Space_ID),
- FOREIGN KEY (Location_ID) references ParkingLocation(Location_ID));
+CREATE TABLE parkingspace
+(space_id INT NOT NULL AUTO_INCREMENT,
+ space_identifier TEXT(16) NOT NULL,
+ location_id INT NOT NULL,
+ space_name TEXT(64),
+ parking_level TEXT(16),
+ is_deleted BOOLEAN DEFAULT FALSE,
+ lastupdatedatetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+ PRIMARY KEY (space_id),
+ FOREIGN KEY (location_id) references parkinglocation(location_id));
 
-CREATE TABLE ParkingRate
-(CDR_ID INT NOT NULL AUTO_INCREMENT,
- Location_ID INT NOT NULL,
- Parking_Rate_Cents INT NOT NULL,
- Time_Increment_Mins INT NOT NULL,
- Priority INT NOT NULL,
- Min_Park_Mins INT,
- Max_Park_Mins INT,
- Space_ID INT,
- LastUpdateDateTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
- PRIMARY KEY (CDR_ID),
- FOREIGN KEY (Location_ID) references ParkingLocation(Location_ID),
- FOREIGN KEY (Space_ID) references ParkingSpace(Space_ID));
+CREATE TABLE parkingrate
+(rate_id INT NOT NULL AUTO_INCREMENT,
+ location_id INT NOT NULL,
+ parking_rate_cents INT NOT NULL,
+ time_increment_mins INT NOT NULL,
+ priority INT NOT NULL,
+ min_park_mins INT,
+ max_park_mins INT,
+ space_id INT,
+ lastupdatedatetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+ PRIMARY KEY (rate_id),
+ FOREIGN KEY (location_id) references parkinglocation(location_id),
+ FOREIGN KEY (space_id) references parkingspace(space_id));
  
-CREATE TABLE UserClientRelationship
-(UC_Rel_ID INT NOT NULL AUTO_INCREMENT,
- User_ID INT NOT NULL,
- Client_ID INT NOT NULL,
- UserRole_ID INT NOT NULL,
- Priority INT NOT NULL,
- Location_ID INT,
- Space_ID INT,
- LastUpdateDateTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
- PRIMARY KEY (UC_Rel_ID),
- FOREIGN KEY (User_ID) references User(User_ID),
- FOREIGN KEY (Client_ID) references Client(Client_ID),
- FOREIGN KEY (UserRole_ID) references UserRole(UserRole_ID),
- FOREIGN KEY (Location_ID) references ParkingLocation(Location_ID),
- FOREIGN KEY (Space_ID) references ParkingSpace(Space_ID));
+CREATE TABLE userclientrelationship
+(uc_rel_id INT NOT NULL AUTO_INCREMENT,
+ user_id INT NOT NULL,
+ client_id INT NOT NULL,
+ userrole_id INT NOT NULL,
+ priority INT NOT NULL,
+ location_id INT,
+ space_id INT,
+ lastupdatedatetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+ PRIMARY KEY (uc_rel_id),
+ FOREIGN KEY (user_id) references user(user_id),
+ FOREIGN KEY (client_id) references client(client_id),
+ FOREIGN KEY (userrole_id) references userrole(userrole_id),
+ FOREIGN KEY (location_id) references parkinglocation(location_id),
+ FOREIGN KEY (space_id) references parkingspace(space_id));
 
-CREATE TABLE ParkingInstance
-(ParkingInst_ID INT NOT NULL AUTO_INCREMENT,
- User_ID INT NOT NULL,
- Space_ID INT NOT NULL,
- Park_Began_Time DATETIME NOT NULL,
- Park_End_Time DATETIME NOT NULL,
- Is_Paid_Parking BOOLEAN NOT NULL,
- LastUpdateDateTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
- PRIMARY KEY (ParkingInst_ID),
- FOREIGN KEY (User_ID) references User(User_ID),
- FOREIGN KEY (Space_ID) references ParkingSpace(Space_ID));
+CREATE TABLE parkinginstance
+(parkinginst_id INT NOT NULL AUTO_INCREMENT,
+ user_id INT NOT NULL,
+ space_id INT NOT NULL,
+ park_began_time DATETIME NOT NULL,
+ park_end_time DATETIME NOT NULL,
+ is_paid_parking BOOLEAN NOT NULL,
+ lastupdatedatetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+ PRIMARY KEY (parkinginst_id),
+ FOREIGN KEY (user_id) references user(user_id),
+ FOREIGN KEY (space_id) references parkingspace(space_id));
  
-CREATE TABLE Payment
-(Payment_ID INT NOT NULL AUTO_INCREMENT,
- ParkingInst_ID INT NOT NULL,
- Payment_Type TEXT(64) NOT NULL,
- Account_ID INT,
- Payment_Ref_Num TEXT(64) NOT NULL,
- Payment_DateTime DATETIME NOT NULL,
- Amount_Paid_Cents INT NOT NULL,
- LastUpdateDateTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
- PRIMARY KEY (Payment_ID),
- FOREIGN KEY (ParkingInst_ID) references ParkingInstance(ParkingInst_ID),
- FOREIGN KEY (Account_ID) references PaymentAccount(Account_ID));
-
+CREATE TABLE payment
+(payment_id INT NOT NULL AUTO_INCREMENT,
+ parkinginst_id INT NOT NULL,
+ payment_type TEXT(64) NOT NULL,
+ account_id INT,
+ payment_ref_num TEXT(64) NOT NULL,
+ payment_datetime DATETIME NOT NULL,
+ amount_paid_cents INT NOT NULL,
+ lastupdatedatetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+ PRIMARY KEY (payment_id),
+ FOREIGN KEY (parkinginst_id) references parkinginstance(parkinginst_id),
+ FOREIGN KEY (account_id) references paymentaccount(account_id));

@@ -26,35 +26,35 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 	private static Cache myCache;
 	
 	private static final String sqlGetLatestParkingStatusBySpaceIdsSelectPart = 
-		"SELECT pi.ParkingInst_id, pi.user_id, pi.space_id, pi.park_began_time, " +
+		"SELECT pi.parkinginst_id, pi.user_id, pi.space_id, pi.park_began_time, " +
 		"       pi.park_end_time, pi.is_paid_parking, " +
 		"       p.payment_id, p.payment_type, p.payment_ref_num, p.payment_datetime, " +
 		"       p.amount_paid_cents " +
-		" FROM ParkingInstance as pi, Payment as p " +
-		" WHERE p.ParkingInst_id = pi.ParkingInst_id " +
-		" AND pi.ParkingInst_id IN (SELECT MAX(ParkingInst_id) FROM ParkingInstance WHERE space_id IN( ";
+		" FROM parkinginstance as pi, payment as p " +
+		" WHERE p.parkinginst_id = pi.parkinginst_id " +
+		" AND pi.parkinginst_id IN (SELECT MAX(parkinginst_id) FROM parkinginstance WHERE space_id IN( ";
 	private static final String sqlOrderByPart =	") GROUP BY space_id) ORDER BY pi.space_id;";
 	
 	private static final String sqlGetParkingStatusByUserId = 
-		"SELECT pi.ParkingInst_id, pi.user_id, pi.space_id, pi.park_began_time, " +
+		"SELECT pi.parkinginst_id, pi.user_id, pi.space_id, pi.park_began_time, " +
 		"       pi.park_end_time, pi.is_paid_parking, " +
 		"       p.payment_id, p.payment_type, p.payment_ref_num, p.payment_datetime, " +
 		"       p.amount_paid_cents " +
-		" FROM ParkingInstance as pi, Payment as p " +
-		" WHERE p.ParkingInst_id = pi.ParkingInst_id " +
+		" FROM parkinginstance as pi, payment as p " +
+		" WHERE p.parkinginst_id = pi.parkinginst_id " +
 		" AND pi.user_id = ? " +
-		" ORDER BY pi.ParkingInst_id DESC " + 
+		" ORDER BY pi.parkinginst_id DESC " + 
 		" LIMIT 1";
 	
 	private static final String sqlInsertParkingInstance = 
-		"INSERT INTO ParkingInstance (User_ID, Space_ID, Park_Began_Time, Park_End_Time, Is_Paid_Parking) " + 
+		"INSERT INTO parkinginstance (user_id, space_id, park_began_time, park_end_time, is_paid_parking) " + 
 		" VALUES (?, ?, ?, ?, ?)";
 	private static final String sqlInsertPayment = 
-		"INSERT INTO Payment (ParkingInst_ID, Payment_Type, Payment_Ref_Num, Payment_DateTime, Amount_Paid_Cents) " +
-		" VALUES ((SELECT MAX(ParkingInst_ID) FROM ParkingInstance WHERE space_id = ?), ?, ?, ?, ?)";
+		"INSERT INTO payment (parkinginst_id, payment_type, payment_ref_num, payment_datetime, amount_paid_cents) " +
+		" VALUES ((SELECT MAX(parkinginst_id) FROM parkinginstance WHERE space_id = ?), ?, ?, ?, ?)";
 	
 	private static final String sqlUpdateParkingEndTime =
-		"UPDATE ParkingInstance SET Park_End_Time = ? WHERE ParkingInst_id = ? AND Space_ID = ? ";
+		"UPDATE parkinginstance SET park_end_time = ? WHERE parkinginst_id = ? AND space_id = ? ";
 	
 	private static final String getParkingStatusBySpaceIdsCacheKey = "spaceId:";
 	private static final String getUserParkingStatusCacheKey = "userId:";
@@ -208,7 +208,7 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 
 		while (rs.next()) {
 			ParkingInstance parkingInst = new ParkingInstance();
-			parkingInst.setParkingInstId(rs.getInt("ParkingInst_id"));
+			parkingInst.setParkingInstId(rs.getInt("parkinginst_id"));
 			parkingInst.setUserId(rs.getInt("user_id"));
 			parkingInst.setSpaceId(rs.getInt("space_id"));
 			parkingInst.setParkingBeganTime(rs.getTimestamp("park_began_time"));

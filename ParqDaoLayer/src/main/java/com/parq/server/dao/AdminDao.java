@@ -20,13 +20,13 @@ public class AdminDao extends AbstractParqDaoParent {
 	private static Cache myCache;
 
 	private static final String sqlGetAdminStatement = 
-		"SELECT a.Admin_Id, a.UserName, a.Password, a.eMail, r.AC_Rel_Id, r.client_id, r.AdminRole_id " +
-		" FROM Admin AS a, AdminClientRelationship AS r " +
-		" WHERE r.Admin_Id = a.Admin_Id " +
-		" AND a.Is_Deleted IS NOT TRUE ";
-	private static final String sqlGetAdminById = sqlGetAdminStatement + " AND a.Admin_Id = ? ";
-	private static final String sqlGetAdminByUserName = sqlGetAdminStatement + " AND a.UserName = ? ";
-	private static final String sqlGetAdminByEmail = sqlGetAdminStatement + " AND a.eMail = ? ";
+		"SELECT a.admin_id, a.username, a.password, a.email, r.ac_rel_id, r.client_id, r.adminrole_id " +
+		" FROM admin AS a, adminclientrelationship AS r " +
+		" WHERE r.admin_id = a.admin_id " +
+		" AND a.is_deleted IS NOT TRUE ";
+	private static final String sqlGetAdminById = sqlGetAdminStatement + " AND a.admin_id = ? ";
+	private static final String sqlGetAdminByUserName = sqlGetAdminStatement + " AND a.username = ? ";
+	private static final String sqlGetAdminByEmail = sqlGetAdminStatement + " AND a.email = ? ";
 
 	private static final String emailCache = "getAdminByEmail:";
 	private static final String idCache = "getAdminById:";
@@ -54,17 +54,17 @@ public class AdminDao extends AbstractParqDaoParent {
 		}
 		Admin admin = new Admin();
 		rs.first();
-		admin.setAdminId(rs.getInt("Admin_Id"));
-		admin.setUserName(rs.getString("UserName"));
-		admin.setPassword(rs.getString("Password"));
-		admin.setEmail(rs.getString("eMail"));
+		admin.setAdminId(rs.getInt("admin_id"));
+		admin.setUserName(rs.getString("username"));
+		admin.setPassword(rs.getString("password"));
+		admin.setEmail(rs.getString("email"));
 		
 		ClientRelationShip relationship = new ClientRelationShip();
 		admin.getClientRelationships().add(relationship);
-		relationship.setAdminId(rs.getInt("Admin_Id"));
+		relationship.setAdminId(rs.getInt("admin_id"));
 		relationship.setClientId(rs.getInt("client_id"));
-		relationship.setRelationShipId(rs.getInt("AC_Rel_Id"));
-		relationship.setRoleId(rs.getInt("AdminRole_id"));
+		relationship.setRelationShipId(rs.getInt("ac_rel_id"));
+		relationship.setRoleId(rs.getInt("adminrole_id"));
 		
 		return admin;
 	}

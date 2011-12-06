@@ -22,24 +22,24 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 	private static final String parkingRateByNamePrefix = "getParkingRateByName:";
 
 	private static final String sqlGetSpaceParkingRate = 
-		"SELECT R.Location_ID, R.Space_ID, R.Parking_Rate_Cents, R.Priority, R.Time_Increment_Mins, R.Max_Park_Mins, R.Min_Park_Mins " +
-			" FROM ParkingLocation AS B, ParkingSpace AS S, ParkingRate AS R " +
-			" WHERE B.Location_ID = S.Location_ID " +
-			" AND R.Location_ID = B.Location_ID " +
-			" AND R.Space_ID IN(NULL, S.Space_ID) " +
-			" AND B.Location_Identifier = ? " +
-			" AND S.Space_Identifier = ? " +
-			" AND B.Is_Deleted IS NOT TRUE " +
-			" AND S.Is_Deleted IS NOT TRUE " +
-			" ORDER BY R.Priority DESC"; 
+		"SELECT r.location_id, r.space_id, r.parking_rate_cents, r.priority, r.time_increment_mins, r.max_park_mins, r.min_park_mins " +
+			" FROM parkinglocation AS b, parkingspace AS s, parkingrate AS r " +
+			" WHERE b.location_id = s.location_id " +
+			" AND r.location_id = b.location_id " +
+			" AND r.space_id IN(NULL, s.space_id) " +
+			" AND b.location_identifier = ? " +
+			" AND s.space_identifier = ? " +
+			" AND b.is_deleted IS NOT TRUE " +
+			" AND s.is_deleted IS NOT TRUE " +
+			" ORDER BY r.priority DESC"; 
 	
 	private static final String sqlGetParkingLocationParkingRate = 
-		"SELECT R.Location_ID, R.Space_ID, R.Parking_Rate_Cents, R.Priority, R.Time_Increment_Mins, R.Max_Park_Mins, R.Min_Park_Mins " +
-			" FROM ParkingLocation AS B, ParkingRate AS R " +
-			" WHERE R.Location_ID = B.Location_ID " +
-			" AND B.Location_Identifier = ? " +
-			" AND B.Is_Deleted IS NOT TRUE " +
-			" ORDER BY R.Priority DESC"; 
+		"SELECT r.location_id, r.space_id, r.parking_rate_cents, r.priority, r.time_increment_mins, r.max_park_mins, r.min_park_mins " +
+			" FROM parkinglocation AS b, parkingrate AS r " +
+			" WHERE r.location_id = b.location_id " +
+			" AND b.location_identifier = ? " +
+			" AND b.is_deleted IS NOT TRUE " +
+			" ORDER BY r.priority DESC"; 
 	
 	public ParkingRateDao() {
 		super();
@@ -121,12 +121,12 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 		}
 		rs.first();
 
-		int parkingLocationId = rs.getInt("Location_ID");
-		int spaceId = rs.getInt("Space_ID");
-		int rate = rs.getInt("Parking_Rate_Cents");
-		int timeIncrements = rs.getInt("Time_Increment_Mins");
-		int maxParkTime = rs.getInt("Max_Park_Mins");
-		int minParkTime = rs.getInt("Min_Park_Mins");
+		int parkingLocationId = rs.getInt("location_id");
+		int spaceId = rs.getInt("space_id");
+		int rate = rs.getInt("parking_rate_cents");
+		int timeIncrements = rs.getInt("time_increment_mins");
+		int maxParkTime = rs.getInt("max_park_mins");
+		int minParkTime = rs.getInt("min_park_mins");
 		
 		ParkingRate parkingRate = new ParkingRate();
 		parkingRate.setRateType(RateType.Client);

@@ -25,21 +25,21 @@ public class GeolocationDao extends AbstractParqDaoParent {
 	private static final String locationIdCache = "getLocationById:";
 	
 	private static final String sqlGetParkingLocationByBoundingBox = 
-		"SELECT GL.geolocation_id, GL.location_id, GL.latitude, GL.longitude, PL.location_identifier" +
-		" FROM ParkingLocation AS PL, Geolocation AS GL " +
-		" WHERE PL.location_id = GL.location_id" +
-		" AND PL.is_deleted IS NOT TRUE " +
-		" AND GL.latitude > ? " +
-		" AND GL.latitude < ? " +
-		" AND GL.longitude > ? " +
-		" AND GL.longitude < ? ";
+		"SELECT gl.geolocation_id, gl.location_id, gl.latitude, gl.longitude, pl.location_identifier" +
+		" FROM parkinglocation AS pl, geolocation AS gl " +
+		" WHERE pl.location_id = gl.location_id" +
+		" AND pl.is_deleted IS NOT TRUE " +
+		" AND gl.latitude > ? " +
+		" AND gl.latitude < ? " +
+		" AND gl.longitude > ? " +
+		" AND gl.longitude < ? ";
 	
 	private static final String sqlGetParkingLocationById =
-		"SELECT GL.geolocation_id, GL.location_id, GL.latitude, GL.longitude, PL.location_identifier" +
-		" FROM ParkingLocation AS PL, Geolocation AS GL " +
-		" WHERE PL.location_id = GL.location_id" +
-		" AND PL.is_deleted IS NOT TRUE " +
-		" AND GL.location_id = ? ";
+		"SELECT gl.geolocation_id, gl.location_id, gl.latitude, gl.longitude, pl.location_identifier" +
+		" FROM parkinglocation AS pl, geolocation AS gl " +
+		" WHERE pl.location_id = gl.location_id" +
+		" AND pl.is_deleted IS NOT TRUE " +
+		" AND gl.location_id = ? ";
 
 	public GeolocationDao() {
 		super();

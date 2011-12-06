@@ -30,25 +30,25 @@ public class TestAdminDao extends TestCase {
 			
 			DaoForTestingPurposes testDao = new DaoForTestingPurposes();
 			
-			testDao.executeSqlStatement("DELETE FROM AdminClientRelationship WHERE client_id = (SELECT client_id FROM Client WHERE name='" + clientName + "')");
-			testDao.executeSqlStatement("DELETE FROM AdminRole WHERE Role_Name = '" + roleName + "'");
-			testDao.executeSqlStatement("DELETE FROM Admin WHERE username = '" + adminName + "'");
-			testDao.executeSqlStatement("DELETE FROM Client WHERE name='" + clientName + "'");
+			testDao.executeSqlStatement("DELETE FROM adminclientrelationship WHERE client_id = (SELECT client_id FROM client WHERE name='" + clientName + "')");
+			testDao.executeSqlStatement("DELETE FROM adminrole WHERE role_name = '" + roleName + "'");
+			testDao.executeSqlStatement("DELETE FROM admin WHERE username = '" + adminName + "'");
+			testDao.executeSqlStatement("DELETE FROM client WHERE name='" + clientName + "'");
 			
-			String sqlInsertAdmin = "INSERT INTO Admin (UserName, Password, eMail) " +
+			String sqlInsertAdmin = "INSERT INTO admin (username, password, email) " +
 			"VALUES ('" + adminName + "', '" + password +"', '" + eMail + "')";
 			
-			String sqlInsertRole =  "INSERT INTO AdminRole (Role_Name) " +
+			String sqlInsertRole =  "INSERT INTO adminrole (role_name) " +
 			"VALUES ('" + roleName + "')";
 			
-			String sqlInsertClient = "INSERT INTO Client (Name) VALUES ('" + clientName + "')";
+			String sqlInsertClient = "INSERT INTO client (name) VALUES ('" + clientName + "')";
 			
 			String sqlInsertAdminClientRelationship = 
-				"INSERT INTO AdminClientRelationship (Admin_Id, Client_Id, AdminRole_Id) " +
+				"INSERT INTO adminclientrelationship (admin_id, client_id, adminrole_id) " +
 				"VALUES (" +
-				"(SELECT Admin_Id FROM Admin WHERE UserName = '" + adminName  + "'), " +
-				"(SELECT Client_Id FROM Client WHERE name = '" + clientName + "'), " +
-				"(SELECT AdminRole_Id FROM AdminRole WHERE Role_Name = '" + roleName + "'))";
+				"(SELECT admin_id FROM admin WHERE username = '" + adminName  + "'), " +
+				"(SELECT client_id FROM client WHERE name = '" + clientName + "'), " +
+				"(SELECT adminrole_id FROM adminrole WHERE role_name = '" + roleName + "'))";
 			
 			testDao.executeSqlStatement(sqlInsertAdmin);
 			testDao.executeSqlStatement(sqlInsertRole);
