@@ -26,7 +26,7 @@ public class TestRegister {
 		WebResource service = client.resource(getBaseURI());
 		
 		RegisterRequest in = new RegisterRequest();
-		in.setEmail("tralala@bwahaha.com");
+		in.setEmail("hmmmmwhy@bwahaha.com");
 		in.setPassword("singlaugh");
 		in.setCscNumber("000");
 		in.setCreditCard("5466160160030126");

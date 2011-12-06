@@ -3,7 +3,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class RegisterRequest {
-	String CreditCard;
+	String creditCard;
 	String cscNumber;
 	String holderName;
 	int expMonth;
@@ -13,11 +13,12 @@ public class RegisterRequest {
 	String email;
 	String password;
 	
+	
 	public String getCreditCard() {
-		return CreditCard;
+		return creditCard;
 	}
 	public void setCreditCard(String creditCard) {
-		CreditCard = creditCard;
+		this.creditCard = creditCard;
 	}
 	public String getCscNumber() {
 		return cscNumber;

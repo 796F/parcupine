@@ -46,8 +46,8 @@ public class TestGetRate {
 		gg.setLon(0);
 		gg.setSpot("1412");
 		gg.setUid(66);
-		//String output2 = service.path("getrate").path("gps").type(MediaType.APPLICATION_JSON).post(String.class, gg);
-		//System.out.println(output2);
+		String output2 = service.path("getrate").path("gps").type(MediaType.APPLICATION_JSON).post(String.class, gg);
+		System.out.println(output2);
 		//lat/lon try 0, 0
 	}
 

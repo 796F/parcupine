@@ -1,5 +1,7 @@
 package parkservice.resources;
 
+import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -19,6 +21,7 @@ import AuthNet.Rebill.CreateCustomerProfileResponseType;
 import AuthNet.Rebill.CreditCardType;
 import AuthNet.Rebill.CustomerPaymentProfileType;
 import AuthNet.Rebill.CustomerProfileType;
+import AuthNet.Rebill.MessagesTypeMessage;
 import AuthNet.Rebill.PaymentType;
 import AuthNet.Rebill.ServiceSoap;
 import AuthNet.Rebill.ValidationModeEnum;
@@ -108,44 +111,47 @@ public class RegisterResource {
 		if(result){
 			CreateCustomerProfileResponseType response = validateCard(newCustomer, 
 					info.getCreditCard(), info.getCscNumber(), info.getExpMonth(), info.getExpYear());
-			if(response != null){
 
+
+			if(response.getResultCode().value().equalsIgnoreCase("Ok")){
 				long profileId = response.getCustomerProfileId();
-				long paymentProfileId = response.getCustomerPaymentProfileIdList().getLong().get(0);
+				List<Long> test = response.getCustomerPaymentProfileIdList().getLong();
+				long paymentProfileId = test.get(0);
+				PaymentAccountDao pad = new PaymentAccountDao();
 
-				if(response.getResultCode().value().equalsIgnoreCase("Ok")){
-					PaymentAccountDao pad = new PaymentAccountDao();
-
-					PaymentAccount newPA = new PaymentAccount();
+				PaymentAccount newPA = new PaymentAccount();
+				if(info.getCreditCard().length()==16){
 					newPA.setCcStub(info.getCreditCard().substring(12, 16));
 					newPA.setCustomerId(""+profileId);
 					newPA.setDefaultPaymentMethod(true);
 					newPA.setPaymentMethodId(""+paymentProfileId);
 					newPA.setUserId(uid);
-
-					boolean paCreationSuccessful = pad.createNewPaymentMethod(newPA);
-					if(paCreationSuccessful){
-						output.setResp("OK");
-					}else{
-						//payment account creation error
-						output.setResp("PAY_ACC_ERROR");
-					}
 				}else{
-					//cc didn't verify
+					userDb.deleteUserById(uid);
 					output.setResp("BAD_CC");
 				}
+				boolean paCreationSuccessful = pad.createNewPaymentMethod(newPA);
+				if(paCreationSuccessful){
+					output.setResp("OK");
+				}else{
+					//payment account creation error
+					userDb.deleteUserById(uid);
+					output.setResp("PAY_ACC_ERROR");
+				}
 			}else{
-				//response is null
-				output.setResp("MERCHANT_ERROR");
+				//cc didn't verify
+				userDb.deleteUserById(uid);
+				output.setResp("BAD_CC");
 			}
+
 		}else{
-			//result is null
+			//result is false
 			output.setResp("SERVER_ERROR");
 		}
 		return output;
 	}
 
-	
+
 	@POST
 	@Path("/update")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -159,7 +165,7 @@ public class RegisterResource {
 		editedUser.setPassword(in.getPassword());
 		editedUser.setPhoneNumber(in.getPhone());
 		editedUser.setUserID(in.getUid());
-		
+
 		boolean result = true;
 		try{
 			result = userDb.updateUser(editedUser);
