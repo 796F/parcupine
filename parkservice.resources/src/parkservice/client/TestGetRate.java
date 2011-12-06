@@ -29,7 +29,7 @@ public class TestGetRate {
 		
 		//login info
 		AuthRequest in = new AuthRequest();
-		in.setEmail("xia@umd.edu");
+		in.setEmail("tcampbel@american.edu");
 		in.setPassword("a");
 		//AU OR cid=11, main_lot, 1412
 		QrcodeRequest g = new QrcodeRequest();
@@ -40,6 +40,15 @@ public class TestGetRate {
 		String output = service.path("getrate").path("qrcode").type(MediaType.APPLICATION_JSON).post(String.class, g);
 		System.out.println(output);
 		
+		GpsRequest gg = new GpsRequest();
+		gg.setUserInfo(in);
+		gg.setLat(0);
+		gg.setLon(0);
+		gg.setSpot("1412");
+		gg.setUid(66);
+		String output2 = service.path("getrate").path("gps").type(MediaType.APPLICATION_JSON).post(String.class, gg);
+		System.out.println(output2);
+		//lat/lon try 0, 0
 	}
 
 	private static URI getBaseURI() {

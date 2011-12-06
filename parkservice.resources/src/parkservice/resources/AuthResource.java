@@ -40,8 +40,8 @@ public class AuthResource {
 		try{
 			user = userDb.getUserByEmail(info.getEmail());
 		}catch(RuntimeException e){
-			x.setUid(-1);
-			x.setParkstate(-1);
+			x.setUid(-100000);
+			x.setParkstate(-100000);
 			return x;
 		}
 		if(user==null){
@@ -72,8 +72,8 @@ public class AuthResource {
 			x.setUid(user.getUserID());
 			return x;
 		}else{
-			x.setParkstate(-1);
-			x.setUid(-1);
+			x.setParkstate(-202);
+			x.setUid(202);
 			return x;
 		}
 

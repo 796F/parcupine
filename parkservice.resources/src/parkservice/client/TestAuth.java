@@ -21,8 +21,8 @@ public class TestAuth {
 		WebResource service = client.resource(getBaseURI());
 		
 		AuthRequest in = new AuthRequest();
-		in.setEmail("user@parqme.com");
-		in.setPassword("password");
+		in.setEmail("tcampbel@american.edu");
+		in.setPassword("a");
 		
 		String outstring = service.path("auth").type(MediaType.APPLICATION_JSON).post(String.class, in);
 		System.out.println(outstring);
@@ -32,7 +32,7 @@ public class TestAuth {
 
 	private static URI getBaseURI() {
 		return UriBuilder.fromUri(
-				"http://75.101.132.219:8080/parkservice.resources").build();
+				"http://localhost:8080/parkservice.resources").build();
 	}
 
 }

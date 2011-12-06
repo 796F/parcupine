@@ -126,6 +126,7 @@ public class GetRateResource {
 	public RateResponse unwrapGps(JAXBElement<GpsRequest> gpsrequest){
 		GpsRequest input = gpsrequest.getValue();	
 		AuthRequest userInfo = input.getUserInfo();
+		RateResponse test = new RateResponse();
 		int uid=-1;
 		if((uid=innerAuthenticate(userInfo))>0){
 			double x = input.getLat();
@@ -135,17 +136,22 @@ public class GetRateResource {
 			List<Geolocation> spots = gdao.findCloseByParkingLocation(x-0.0004, x+0.0004, y-0.0004, y+0.0004);
 			
 			for(Geolocation g: spots){
-				if(g.getLocationIdentifier().equals(input.getSpot())){
 					ParkingRateDao p = new ParkingRateDao();
+
+					//											this is main_lot	   input.getspot is 1412
 					ParkingRate pr = p.getParkingRateByName(g.getLocationIdentifier(), input.getSpot());
+					
 					return new RateResponse(g.getLatitude(), g.getLongitude(),
 							pr.getLocationName(), pr.getSpaceId(),
 							pr.getMinParkMins(), pr.getMaxParkMins(), pr.getParkingRateCents(), pr.getTimeIncrementsMins(),null);
-				}
+
 			}
-			return null;
+			test.setLocation("NO_SPOTS");
+			return test;
+			
 		}else{
-			return null;
+			test.setLocation("BAD_AUTH");
+			return test;
 		}
 	}
 
