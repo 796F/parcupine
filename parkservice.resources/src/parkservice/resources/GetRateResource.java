@@ -96,6 +96,7 @@ public class GetRateResource {
 	public RateResponse unwrapQrcode(JAXBElement<QrcodeRequest> info){
 		QrcodeRequest input = info.getValue();
 		AuthRequest userInfo = input.getUserInfo();
+		RateResponse test = new RateResponse();
 		int uid;
 		if((uid=innerAuthenticate(userInfo))>0){
 			ClientDao x = new ClientDao();
@@ -114,8 +115,8 @@ public class GetRateResource {
 					pr.getMinParkMins(), pr.getMaxParkMins(), pr.getParkingRateCents(), pr.getTimeIncrementsMins(),null);
 
 		}else{
-
-			return null;
+			test.setLocation("BAD_AUTH");
+			return test;
 		}		
 	}
 
