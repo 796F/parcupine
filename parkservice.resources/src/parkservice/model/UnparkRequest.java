@@ -10,9 +10,25 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class UnparkRequest {
 	int uid;
+
+	int spotid;
+	int parkingInstanceId;
+	
 	AuthRequest userinfo;
 	Date end;
 	
+	public int getSpotid() {
+		return spotid;
+	}
+	public void setSpotid(int spotid) {
+		this.spotid = spotid;
+	}
+	public int getParkingInstanceId() {
+		return parkingInstanceId;
+	}
+	public void setParkingInstanceId(int parkingInstanceId) {
+		this.parkingInstanceId = parkingInstanceId;
+	}
 	public int getUid() {
 		return uid;
 	}

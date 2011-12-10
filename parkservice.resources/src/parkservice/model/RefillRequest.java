@@ -12,10 +12,23 @@ public class RefillRequest {
 	Date end;
 	int amount;
 	int paymentType;
-	
+	int spotid;
+	int parkingInstanceId;
 	AuthRequest userinfo;
 	
 	
+	public int getParkingInstanceId() {
+		return parkingInstanceId;
+	}
+	public void setParkingInstanceId(int parkingInstanceId) {
+		this.parkingInstanceId = parkingInstanceId;
+	}
+	public int getSpotid() {
+		return spotid;
+	}
+	public void setSpotid(int spotid) {
+		this.spotid = spotid;
+	}
 	public RefillRequest(AuthRequest userinfo){
 		super();
 		this.userinfo = userinfo;
