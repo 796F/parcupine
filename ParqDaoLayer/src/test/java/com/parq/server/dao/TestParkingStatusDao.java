@@ -137,7 +137,6 @@ public class TestParkingStatusDao extends TestCase {
 		assertEquals(refilledParkingInst.getPaymentInfo().getPaymentDateTime().getTime() / 1000, 
 				piRefil.getPaymentInfo().getPaymentDateTime().getTime() / 1000);
 		assertEquals(refilledParkingInst.getPaymentInfo().getPaymentType(), piRefil.getPaymentInfo().getPaymentType());
-		
 	}
 	
 	public void testGetUserParkingStatus() {
@@ -164,7 +163,6 @@ public class TestParkingStatusDao extends TestCase {
 		// user object cleanup
 		 boolean deleteSuccessful = userDao.deleteUserById(user.getUserID());
 		 assertTrue(deleteSuccessful);
-		
 	}
 
 	public void testCacheRunTime() {
