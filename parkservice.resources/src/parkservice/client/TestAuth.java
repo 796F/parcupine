@@ -21,8 +21,8 @@ public class TestAuth {
 		WebResource service = client.resource(getBaseURI());
 		
 		AuthRequest in = new AuthRequest();
-		in.setEmail("TESTINGONE@test.com");
-		in.setPassword("TESTING");
+		in.setEmail("xia.umd@gmail.com");
+		in.setPassword("a");
 		
 		String outstring = service.path("auth").type(MediaType.APPLICATION_JSON).post(String.class, in);
 		System.out.println(outstring);

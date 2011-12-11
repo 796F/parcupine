@@ -1,5 +1,6 @@
 package parkservice.resources;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import javax.ws.rs.core.MediaType;
 import javax.xml.bind.JAXBElement;
 
 import AuthNet.Rebill.CreateCustomerProfileTransactionResponseType;
+import AuthNet.Rebill.MessagesTypeMessage;
 import AuthNet.Rebill.OrderExType;
 import AuthNet.Rebill.ProfileTransAuthCaptureType;
 import AuthNet.Rebill.ProfileTransactionType;
@@ -93,7 +95,17 @@ public class ParkResource {
 				auth_capture.setCustomerPaymentProfileId(paymentProfileId);
 				auth_capture.setAmount(amount);
 				OrderExType order = new OrderExType();
-				order.setInvoiceNumber("Test Parking");
+				
+				Date x = new Date();
+				String dateString = (x.getMonth()+1>9 ? ""+(x.getMonth()+1): "0"+(x.getMonth()+1));
+				dateString+=(x.getDate()>9 ? ""+x.getDate(): "0"+x.getDate());
+				dateString+=x.getYear()+1900;
+				dateString+=(x.getHours()>9 ? ""+x.getHours(): "0"+x.getHours());
+				dateString+=(x.getMinutes()>9 ? ""+x.getMinutes(): "0"+x.getMinutes());
+				
+				//for us, invoice set to uid:MMddyyyyhhmm
+				order.setInvoiceNumber(uid+":"+dateString);
+				
 				auth_capture.setOrder(order);
 				ProfileTransactionType trans = new ProfileTransactionType();
 				trans.setProfileTransAuthCapture(auth_capture);
@@ -101,11 +113,11 @@ public class ParkResource {
 				CreateCustomerProfileTransactionResponseType response = soap.createCustomerProfileTransaction(SoapAPIUtilities.getMerchantAuthentication(), trans, null);
 				if(response.getResultCode().value().equalsIgnoreCase("Ok")){
 					//if charge completes, store parking instance into db
-
+					
+					
 					//mark user as parkedx
 					ParkingStatusDao psd = new ParkingStatusDao();
 					ParkingInstance newPark = new ParkingInstance();
-
 					newPark.setPaidParking(true);
 					newPark.setParkingBeganTime(start);
 					newPark.setParkingEndTime(end);
@@ -116,14 +128,14 @@ public class ParkResource {
 					p.setAmountPaidCents(pay_amount);
 					p.setPaymentDateTime(start);
 					p.setPaymentType(PaymentType.CreditCard);
+					p.setPaymentRefNumber(Arrays.asList(response.getDirectResponse().split(",")).get(6));
 					newPark.setPaymentInfo(p);
 					
-					boolean result = true; //psd.addPaymentForParking(newPark);
-					
+					boolean result = psd.addPaymentForParking(newPark);
 					//then set output to ok
 					if(result){
-						int parkid = 0;
-						output.setParkingInstanceId(parkid);
+						output.setParkingInstanceId(psd.getUserParkingStatus(uid).getParkingInstId());
+						//output.setResp(p.getPaymentRefNumber());
 						output.setResp("OK");
 					}else{
 						output.setResp("DAO_ERROR");
@@ -150,10 +162,10 @@ public class ParkResource {
 		RefillRequest in = info.getValue();
 		int uid = -1;
 		int pay_amount = in.getAmount();
-		Date newEndTime = in.getEnd();
+		Date newEndTime = in.getNewEndTime();
+		Date oldEndTime = in.getOldEndTime();
 		int payment_type = in.getPaymentType();
 		int spotid = in.getSpotid();
-		int parkingInstanceId = in.getParkingInstanceId();
 		if((uid = innerAuthenticate(in.getUserinfo()))>0){
 			//charge user for refill
 			ServiceSoap soap = SoapAPIUtilities.getServiceSoap();
@@ -177,7 +189,16 @@ public class ParkResource {
 				auth_capture.setCustomerPaymentProfileId(paymentProfileId);
 				auth_capture.setAmount(amount);
 				OrderExType order = new OrderExType();
-				order.setInvoiceNumber("Test Parking");
+				
+				Date x = new Date();
+				String dateString = (x.getMonth()+1>9 ? ""+(x.getMonth()+1): "0"+(x.getMonth()+1));
+				dateString+=(x.getDate()>9 ? ""+x.getDate(): "0"+x.getDate());
+				dateString+=x.getYear()+1900;
+				dateString+=(x.getHours()>9 ? ""+x.getHours(): "0"+x.getHours());
+				dateString+=(x.getMinutes()>9 ? ""+x.getMinutes(): "0"+x.getMinutes());
+				
+				//for us, invoice set to uid:MMddyyyyhhmm
+				order.setInvoiceNumber(uid+":"+dateString);
 				auth_capture.setOrder(order);
 				ProfileTransactionType trans = new ProfileTransactionType();
 				trans.setProfileTransAuthCapture(auth_capture);
@@ -185,11 +206,32 @@ public class ParkResource {
 				CreateCustomerProfileTransactionResponseType response = soap.createCustomerProfileTransaction(SoapAPIUtilities.getMerchantAuthentication(), trans, null);
 				if(response.getResultCode().value().equalsIgnoreCase("Ok")){
 					//update databases
+					
 					ParkingStatusDao psd = new ParkingStatusDao();
-					//space id and parking instance id.  
-					boolean result = psd.updateParkingEndTimeBySpaceId(spotid, parkingInstanceId, newEndTime);
+					ParkingInstance newPark = new ParkingInstance();
+
+					newPark.setPaidParking(true);
+					newPark.setParkingBeganTime(oldEndTime);
+					newPark.setParkingEndTime(newEndTime);
+					newPark.setUserId(uid);
+					newPark.setSpaceId(spotid);
+					
+					Payment p = new Payment();
+					p.setAmountPaidCents(pay_amount);
+					p.setPaymentDateTime(oldEndTime);
+					p.setPaymentType(PaymentType.CreditCard);
+					p.setPaymentRefNumber(Arrays.asList(response.getDirectResponse().split(",")).get(6));
+					newPark.setPaymentInfo(p);
+					
+					boolean result = false; 
+					try{
+						result = psd.addPaymentForParking(newPark);
+					}catch(Exception e){
+						
+					}
 					if(result){
 						output.setResp("OK");
+						output.setParkingInstanceId(psd.getUserParkingStatus(uid).getParkingInstId());
 					}else{
 						output.setResp("WAS_NOT_PARKED");
 					}

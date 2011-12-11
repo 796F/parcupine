@@ -26,20 +26,20 @@ public class TestRegister {
 		WebResource service = client.resource(getBaseURI());
 		
 		RegisterRequest in = new RegisterRequest();
-		in.setEmail("TESTINGONE@test.com");
-		in.setPassword("TESTING");
+		in.setEmail("xia.umd@gmail.com");
+		in.setPassword("a");
 		in.setCscNumber("000");
 		in.setCreditCard("5466160160030126");
 		in.setExpYear(2015);
 		in.setExpMonth(4);
-		in.setHolderName("THISISATEST");
-		in.setZipcode("10101");
+		in.setHolderName("Michael Xia");
+		in.setZipcode("19810");
 
 		String outstring = service.path("register").type(MediaType.APPLICATION_JSON).post(String.class, in);
 		
 	
 		System.out.println(outstring);
-
+		
 	}
 	
 	private static URI getBaseURI() {
