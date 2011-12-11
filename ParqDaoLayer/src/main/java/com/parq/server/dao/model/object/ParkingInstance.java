@@ -17,6 +17,7 @@ public class ParkingInstance implements Serializable {
 	private Date parkingBeganTime;
 	private Date parkingEndTime;
 	private boolean isPaidParking;
+	private String parkingRefNumber;
 
 	/**
 	 * @return the paymentInfo
@@ -120,5 +121,19 @@ public class ParkingInstance implements Serializable {
 	 */
 	public int getSpaceId() {
 		return spaceId;
+	}
+
+	/**
+	 * @return the parkingRefNumber
+	 */
+	public String getParkingRefNumber() {
+		return parkingRefNumber;
+	}
+
+	/**
+	 * @param parkingRefNumber the parkingRefNumber to set
+	 */
+	public void setParkingRefNumber(String parkingRefNumber) {
+		this.parkingRefNumber = parkingRefNumber;
 	}
 }

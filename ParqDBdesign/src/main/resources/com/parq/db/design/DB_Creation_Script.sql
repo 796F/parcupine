@@ -133,6 +133,7 @@ CREATE TABLE parkinginstance
 (parkinginst_id INT NOT NULL AUTO_INCREMENT,
  user_id INT NOT NULL,
  space_id INT NOT NULL,
+ parkingrefnumber TEXT(64) NOT NULL,
  park_began_time DATETIME NOT NULL,
  park_end_time DATETIME NOT NULL,
  is_paid_parking BOOLEAN NOT NULL,

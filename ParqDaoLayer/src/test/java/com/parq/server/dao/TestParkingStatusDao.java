@@ -17,6 +17,7 @@ public class TestParkingStatusDao extends TestCase {
 	private ParkingStatusDao statusDao;
 	private UserDao userDao;
 	private ParkingInstance pi;
+	private ParkingInstance piRefil;
 	private User user;
 	private List<ParkingLocation> buildingList;
 
@@ -50,6 +51,20 @@ public class TestParkingStatusDao extends TestCase {
 		paymentInfo.setPaymentRefNumber("Test_Payment_Ref_Num_1");
 		paymentInfo.setPaymentType(PaymentType.CreditCard);
 		pi.setPaymentInfo(paymentInfo);
+		
+		piRefil = new ParkingInstance();
+		piRefil.setPaidParking(true);
+		piRefil.setParkingBeganTime(new Date(System.currentTimeMillis()));
+		piRefil.setParkingEndTime(new Date(System.currentTimeMillis() + 7200000));
+		piRefil.setSpaceId(buildingList.get(0).getSpaces().get(0).getSpaceId());
+		piRefil.setUserId(user.getUserID());
+		
+		Payment paymentInfo2 = new Payment();
+		paymentInfo2.setAmountPaidCents(1250);
+		paymentInfo2.setPaymentDateTime(new Date(System.currentTimeMillis()));
+		paymentInfo2.setPaymentRefNumber("Test_Payment_Ref_Num_1");
+		paymentInfo2.setPaymentType(PaymentType.CreditCard);
+		piRefil.setPaymentInfo(paymentInfo2);
 	}
 	
 	
@@ -69,8 +84,8 @@ public class TestParkingStatusDao extends TestCase {
 		statusDao.getParkingStatusBySpaceIds(new int[]{1,2,3});
 	}
 	
-	public void testAddPaymentForParking() {
-		assertTrue(statusDao.addPaymentForParking(pi));
+	public void testAddNewParkingAndPayment() {
+		assertTrue(statusDao.addNewParkingAndPayment(pi));
 		
 		List<ParkingInstance> result = statusDao.getParkingStatusBySpaceIds(new int[]{buildingList.get(0).getSpaces().get(0).getSpaceId()});
 		assertNotNull(result);
@@ -92,8 +107,41 @@ public class TestParkingStatusDao extends TestCase {
 		assertEquals(resultInstance.getPaymentInfo().getAmountPaidCents(), pi.getPaymentInfo().getAmountPaidCents());
 	}
 	
+	public void testRefillParkingForParkingSpace() {
+		assertTrue(statusDao.addNewParkingAndPayment(pi));
+		
+		// add the new parking instance
+		List<ParkingInstance> resultInsts = statusDao.getParkingStatusBySpaceIds(new int[]{buildingList.get(0).getSpaces().get(0).getSpaceId()});
+		ParkingInstance initialParkingInst = resultInsts.get(0);
+		
+		// refill the parking
+		assertTrue(statusDao.refillParkingForParkingSpace(piRefil.getSpaceId(), piRefil.getParkingEndTime(), piRefil.getPaymentInfo()));
+
+		// get the newly refilled parking info
+		List<ParkingInstance> resultInsts2 = statusDao.getParkingStatusBySpaceIds(new int[]{buildingList.get(0).getSpaces().get(0).getSpaceId()});
+		assertFalse(resultInsts2.isEmpty());
+		ParkingInstance refilledParkingInst = resultInsts2.get(0);
+		
+		
+		assertEquals(refilledParkingInst.getSpaceId(), initialParkingInst.getSpaceId());
+		assertEquals(refilledParkingInst.getUserId(), initialParkingInst.getUserId());
+		// time comparison is truncated to the nearest minute
+		assertEquals(refilledParkingInst.getParkingBeganTime().getTime() / 60000, System.currentTimeMillis() / 60000);
+		// time comparison is truncated to the nearest seconds
+		assertEquals(refilledParkingInst.getParkingEndTime().getTime() / 1000, piRefil.getParkingEndTime().getTime() / 1000);
+		assertEquals(refilledParkingInst.getParkingRefNumber(), initialParkingInst.getParkingRefNumber());
+		assertEquals(refilledParkingInst.getPaymentInfo().getAmountPaidCents(), piRefil.getPaymentInfo().getAmountPaidCents());
+		assertFalse(refilledParkingInst.getPaymentInfo().getParkingInstId() == initialParkingInst.getPaymentInfo().getParkingInstId());
+		assertEquals(refilledParkingInst.getPaymentInfo().getPaymentRefNumber(), piRefil.getPaymentInfo().getPaymentRefNumber());
+		// time comparison is truncated to the nearest seconds
+		assertEquals(refilledParkingInst.getPaymentInfo().getPaymentDateTime().getTime() / 1000, 
+				piRefil.getPaymentInfo().getPaymentDateTime().getTime() / 1000);
+		assertEquals(refilledParkingInst.getPaymentInfo().getPaymentType(), piRefil.getPaymentInfo().getPaymentType());
+		
+	}
+	
 	public void testGetUserParkingStatus() {
-		assertTrue(statusDao.addPaymentForParking(pi));
+		assertTrue(statusDao.addNewParkingAndPayment(pi));
 		
 		ParkingInstance userParkingStatus = statusDao.getUserParkingStatus(user.getUserID());
 		assertNotNull(userParkingStatus);
@@ -120,7 +168,7 @@ public class TestParkingStatusDao extends TestCase {
 	}
 
 	public void testCacheRunTime() {
-		assertTrue(statusDao.addPaymentForParking(pi));
+		assertTrue(statusDao.addNewParkingAndPayment(pi));
 		
 		ParkingInstance gups = statusDao.getUserParkingStatus(user.getUserID());
 		
@@ -152,7 +200,7 @@ public class TestParkingStatusDao extends TestCase {
 	}
 	
 	public void testCacheUpdate() {
-		assertTrue(statusDao.addPaymentForParking(pi));
+		assertTrue(statusDao.addNewParkingAndPayment(pi));
 		
 		ParkingInstance oldGUPS = statusDao.getUserParkingStatus(user.getUserID());
 		
@@ -187,7 +235,7 @@ public class TestParkingStatusDao extends TestCase {
 		newPaymentInfo.setPaymentType(PaymentType.CreditCard);
 		newPi.setPaymentInfo(newPaymentInfo);
 		
-		assertTrue(statusDao.addPaymentForParking(newPi));
+		assertTrue(statusDao.addNewParkingAndPayment(newPi));
 		
 		ParkingInstance newGUPS = statusDao.getUserParkingStatus(user.getUserID());
 		ParkingInstance newGPSBSI = statusDao.getParkingStatusBySpaceIds(new int[]{oldGUPS.getSpaceId()}).get(0);
@@ -220,15 +268,15 @@ public class TestParkingStatusDao extends TestCase {
 		assertTrue(deleteSuccessful);
 	}
 	
-	public void testUpdateParkingEndTimeBySpaceId() {
-		assertTrue(statusDao.addPaymentForParking(pi));
+	public void testUnparkBySpaceIdAndParkingInstId() {
+		assertTrue(statusDao.addNewParkingAndPayment(pi));
 
 		// update the parking endtime to current time minus 60 sec
 		ParkingInstance oldPiStatus = statusDao.getUserParkingStatus(user
 				.getUserID());
 		long curTime = System.currentTimeMillis() - (60 * 1000);
 
-		statusDao.updateParkingEndTimeBySpaceId(oldPiStatus.getSpaceId(),
+		statusDao.unparkBySpaceIdAndParkingInstId(oldPiStatus.getSpaceId(),
 				oldPiStatus.getParkingInstId(), new Date(curTime));
 		
 		ParkingInstance newPiStatus = statusDao.getUserParkingStatus(user

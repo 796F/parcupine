@@ -29,7 +29,7 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 		"SELECT pi.parkinginst_id, pi.user_id, pi.space_id, pi.park_began_time, " +
 		"       pi.park_end_time, pi.is_paid_parking, " +
 		"       p.payment_id, p.payment_type, p.payment_ref_num, p.payment_datetime, " +
-		"       p.amount_paid_cents " +
+		"       p.amount_paid_cents, pi.parkingrefnumber " +
 		" FROM parkinginstance as pi, payment as p " +
 		" WHERE p.parkinginst_id = pi.parkinginst_id " +
 		" AND pi.parkinginst_id IN (SELECT MAX(parkinginst_id) FROM parkinginstance WHERE space_id IN( ";
@@ -39,7 +39,7 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 		"SELECT pi.parkinginst_id, pi.user_id, pi.space_id, pi.park_began_time, " +
 		"       pi.park_end_time, pi.is_paid_parking, " +
 		"       p.payment_id, p.payment_type, p.payment_ref_num, p.payment_datetime, " +
-		"       p.amount_paid_cents " +
+		"       p.amount_paid_cents, pi.parkingrefnumber " +
 		" FROM parkinginstance as pi, payment as p " +
 		" WHERE p.parkinginst_id = pi.parkinginst_id " +
 		" AND pi.user_id = ? " +
@@ -47,14 +47,14 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 		" LIMIT 1";
 	
 	private static final String sqlInsertParkingInstance = 
-		"INSERT INTO parkinginstance (user_id, space_id, park_began_time, park_end_time, is_paid_parking) " + 
-		" VALUES (?, ?, ?, ?, ?)";
+		"INSERT INTO parkinginstance (user_id, space_id, park_began_time, park_end_time, is_paid_parking, parkingrefnumber) " + 
+		" VALUES (?, ?, ?, ?, ?, ?)";
 	private static final String sqlInsertPayment = 
 		"INSERT INTO payment (parkinginst_id, payment_type, payment_ref_num, payment_datetime, amount_paid_cents) " +
 		" VALUES ((SELECT MAX(parkinginst_id) FROM parkinginstance WHERE space_id = ?), ?, ?, ?, ?)";
 	
 	private static final String sqlUpdateParkingEndTime =
-		"UPDATE parkinginstance SET park_end_time = ? WHERE parkinginst_id = ? AND space_id = ? ";
+		"UPDATE parkinginstance SET park_end_time = ? WHERE parkinginst_id = ? "; // AND space_id = ? ";
 	
 	private static final String getParkingStatusBySpaceIdsCacheKey = "spaceId:";
 	private static final String getUserParkingStatusCacheKey = "userId:";
@@ -213,6 +213,7 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 			parkingInst.setSpaceId(rs.getInt("space_id"));
 			parkingInst.setParkingBeganTime(rs.getTimestamp("park_began_time"));
 			parkingInst.setParkingEndTime(rs.getTimestamp("park_end_time"));
+			parkingInst.setParkingRefNumber(rs.getString("parkingrefnumber"));
 			
 			Payment paymentInfo = new Payment();
 			paymentInfo.setPaymentId(rs.getInt("payment_id"));
@@ -241,13 +242,16 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 	 * @param parkingInst
 	 * @return
 	 */
-	public boolean addPaymentForParking(ParkingInstance parkingInst) {
+	public boolean addNewParkingAndPayment(ParkingInstance parkingInst) {
 		
 		int parkingSpaceId = parkingInst.getSpaceId();
 		if (parkingSpaceId < 1) {
 			throw new IllegalStateException("Parking Space Id is invalid: " + parkingSpaceId);
 		}
 		revokeSpaceCacheById(parkingSpaceId);
+		
+		// generate a unique parking reference number
+		String parkingRefNum = parkingInst.getUserId() + ":" + parkingInst.getSpaceId() + ":" + (System.currentTimeMillis() / 1000);
 		
 		PreparedStatement pstmt = null;
 		Connection con = null;
@@ -260,6 +264,7 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 			pstmt.setTimestamp(3, new Timestamp(parkingInst.getParkingBeganTime().getTime()));
 			pstmt.setTimestamp(4, new Timestamp(parkingInst.getParkingEndTime().getTime()));
 			pstmt.setBoolean(5, parkingInst.isPaidParking());
+			pstmt.setString(6, parkingRefNum);
 			if (pstmt.executeUpdate() == 1)
 			{
 				pstmt = con.prepareStatement(sqlInsertPayment);
@@ -283,7 +288,58 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 		return parkingInstanceCreated;
 	}
 	
-	public boolean updateParkingEndTimeBySpaceId(int spaceId, int parkingInstanceId, Date endTime) {
+	public boolean refillParkingForParkingSpace(int spaceId, Date newParkingEndTime, Payment payment) {
+		
+		if (spaceId < 1 || newParkingEndTime == null) {
+			throw new IllegalStateException(
+					"Parking refill requst is invalid. Space: " + spaceId
+							+ " ParkingEndTime: " + newParkingEndTime);
+		}
+		
+		// get the current parkingInstance information for this parking space
+		List<ParkingInstance> curParkInstList = getParkingStatusBySpaceIds(new int[]{spaceId});
+		if (curParkInstList == null || curParkInstList.isEmpty()) {
+			throw new IllegalStateException("Invalid refill require for parking space: " + spaceId);
+		}
+		ParkingInstance curParkingInst = curParkInstList.get(0);
+		revokeSpaceCacheById(spaceId);
+		
+		PreparedStatement pstmt = null;
+		Connection con = null;
+		boolean refillComplete = false;
+		try {
+			con = getConnection();
+			pstmt = con.prepareStatement(sqlInsertParkingInstance);
+			pstmt.setInt(1, curParkingInst.getUserId());
+			pstmt.setInt(2, curParkingInst.getSpaceId());
+			pstmt.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
+			pstmt.setTimestamp(4, new Timestamp(newParkingEndTime.getTime()));
+			pstmt.setBoolean(5, curParkingInst.isPaidParking());
+			pstmt.setString(6, curParkingInst.getParkingRefNumber());
+			if (pstmt.executeUpdate() == 1)
+			{
+				pstmt = con.prepareStatement(sqlInsertPayment);
+				pstmt.setInt(1, curParkingInst.getSpaceId());
+				pstmt.setString(2, payment.getPaymentType().toString());
+				pstmt.setString(3, payment.getPaymentRefNumber());
+				pstmt.setTimestamp(4, new Timestamp(payment.getPaymentDateTime().getTime()));
+				pstmt.setInt(5, payment.getAmountPaidCents());
+				
+				refillComplete = pstmt.executeUpdate() == 1;
+			}
+			
+		} catch (SQLException sqle) {
+			System.out.println("SQL statement is invalid: " + pstmt);
+			sqle.printStackTrace();
+			throw new RuntimeException(sqle);
+		} finally {
+			closeConnection(con);
+		}
+		
+		return refillComplete;
+	}
+	
+	public boolean unparkBySpaceIdAndParkingInstId(int spaceId, int parkingInstanceId, Date endTime) {
 		
 		if (spaceId < 1 || parkingInstanceId < 1) {
 			throw new IllegalStateException(
@@ -301,7 +357,7 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 			pstmt = con.prepareStatement(sqlUpdateParkingEndTime);
 			pstmt.setTimestamp(1, new Timestamp(endTime.getTime()));
 			pstmt.setInt(2, parkingInstanceId);
-			pstmt.setInt(3, spaceId);
+			// pstmt.setInt(3, spaceId);
 			if (pstmt.executeUpdate() == 1) {
 				parkingEndTimeUpdated = true;
 			}
