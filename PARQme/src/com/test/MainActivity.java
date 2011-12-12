@@ -532,24 +532,28 @@ public class MainActivity extends ActivityGroup {
 
 	}
 	private int park(){
-		//grab qr code content from saved info.  
-		SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
-		String contents = check.getString("code", "");
+//		//grab qr code content from saved info.  
+//		SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
+//		String contents = check.getString("code", "");
+//
+//		String email = check.getString("email", "bademail");
+//		//calculate when parking ends
+//		globalEndTime = new Date();
+//		String starttime = Global.sdf.format(globalEndTime);
+//		String parkDate = Global.sdfDate.format(globalEndTime);		
+//		globalEndTime.setSeconds(globalEndTime.getSeconds()+remainSeconds);
+//		String endtime = Global.sdf.format(globalEndTime);
 
-		String email = check.getString("email", "bademail");
-		//calculate when parking ends
-		globalEndTime = new Date();
-		String starttime = Global.sdf.format(globalEndTime);
-		String parkDate = Global.sdfDate.format(globalEndTime);		
-		globalEndTime.setSeconds(globalEndTime.getSeconds()+remainSeconds);
-		String endtime = Global.sdf.format(globalEndTime);
+		final long now = System.currentTimeMillis();
+		final long end = now+remainSeconds*1000;
+		final SharedPreferences prefs = getSharedPreferences(SAVED_INFO, 0);
 
-		if(ServerCalls.Park(contents, email, endtime)==1){
+		if(ServerCalls.park(mySpot.getSpot(), now, end, 0, 0, prefs)){
 			//Toast.makeText(MainActivity.this, ""+ServerCalls.addHistory(parkDate, starttime, endtime, contents, email, parkCost), Toast.LENGTH_SHORT).show();
-			SharedPreferences.Editor edit = check.edit();
-			edit.putString("TIMER", endtime);
+			SharedPreferences.Editor edit = prefs.edit();
+			edit.putString("TIMER", String.valueOf(end));
 			edit.commit();
-			ServerCalls.addHistory(parkDate, starttime, endtime, contents, email, parkCost);
+//			ServerCalls.addHistory(parkDate, starttime, endtime, contents, email, parkCost);
 			//return a happy response
 			return 1;
 		}else{
