@@ -120,7 +120,7 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 	}
 
 	/**
-	 * Retrieve the parking rate object by rate id. If the Id is invalid, a <code>NULL</code> value is returned
+	 * Retrieve the parking rate object by rate id. If the Id is invalid, a <code>NULL</code> value is returned.
 	 * @param rateId
 	 * @return
 	 */
