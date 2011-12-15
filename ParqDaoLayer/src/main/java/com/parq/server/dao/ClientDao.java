@@ -83,7 +83,7 @@ public class ClientDao extends AbstractParqDaoParent {
 		return client;
 	}
 
-	public Client getClientById(int id) {
+	public Client getClientById(long id) {
 
 		// the cache key for this method call;
 		String cacheKey = clientIdCache + id;
@@ -100,7 +100,7 @@ public class ClientDao extends AbstractParqDaoParent {
 		try {
 			con = getConnection();
 			pstmt = con.prepareStatement(sqlGetClientByClientId);
-			pstmt.setInt(1, id);
+			pstmt.setLong(1, id);
 			ResultSet rs = pstmt.executeQuery();
 
 			client = createClientObject(rs);
@@ -120,7 +120,7 @@ public class ClientDao extends AbstractParqDaoParent {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<ParkingLocation> getParkingLocationsAndSpacesByClientId(int clientId) {
+	public List<ParkingLocation> getParkingLocationsAndSpacesByClientId(long clientId) {
 
 		// the cache key for this method call;
 		String cacheKey = getParkingLocationByClientIdCache + clientId;
@@ -137,7 +137,7 @@ public class ClientDao extends AbstractParqDaoParent {
 		try {
 			con = getConnection();
 			pstmt = con.prepareStatement(sqlGetAllSpacesByClientId);
-			pstmt.setInt(1, clientId);
+			pstmt.setLong(1, clientId);
 			ResultSet rs = pstmt.executeQuery();
 
 			buildings = createLocationsObject(rs);
@@ -165,7 +165,7 @@ public class ClientDao extends AbstractParqDaoParent {
 		ParkingLocation curLocation = new ParkingLocation();
 
 		while (rs.next()) {
-			int buildingId = rs.getInt("location_id");
+			long buildingId = rs.getInt("location_id");
 
 			// create new building whenever new row encountered.
 			if (buildingId != curLocation.getLocationId()) {

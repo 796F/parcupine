@@ -9,15 +9,30 @@ public class ParkingRate implements Serializable {
 	 */
 	private static final long serialVersionUID = 2521737369389319843L;
 	
+	private long rateId;
 	private RateType rateType;
-	private int locationId;
+	private long locationId;
 	private String parkingLocationName;
-	private int spaceId;
+	private long spaceId;
 	private String spaceName;
 	private int parkingRateCents = -1;
 	private int timeIncrementsMins = -1;
 	private int maxParkMins = -1;
 	private int minParkMins = -1;
+
+	/**
+	 * @param rateId the rateId to set
+	 */
+	public void setRateId(long rateId) {
+		this.rateId = rateId;
+	}
+
+	/**
+	 * @return the rateId
+	 */
+	public long getRateId() {
+		return rateId;
+	}
 
 	/**
 	 * @return the timeIncrementsMins
@@ -72,7 +87,7 @@ public class ParkingRate implements Serializable {
 	/**
 	 * if the rate is only defined client, then Location id is -1
 	 */
-	public int getLocationId() {
+	public long getLocationId() {
 		return locationId;
 	}
 
@@ -80,7 +95,7 @@ public class ParkingRate implements Serializable {
 	 * @param LocationId
 	 *            the LocationId to set
 	 */
-	public void setLocationId(int locationId) {
+	public void setLocationId(long locationId) {
 		this.locationId = locationId;
 	}
 
@@ -102,7 +117,7 @@ public class ParkingRate implements Serializable {
 	/**
 	 * if the rate is only defined by client or by parkingLocation, then space id is -1
 	 */
-	public int getSpaceId() {
+	public long getSpaceId() {
 		return spaceId;
 	}
 
@@ -110,7 +125,7 @@ public class ParkingRate implements Serializable {
 	 * @param spaceId
 	 *            the spaceId to set
 	 */
-	public void setSpaceId(int spaceId) {
+	public void setSpaceId(long spaceId) {
 		this.spaceId = spaceId;
 	}
 

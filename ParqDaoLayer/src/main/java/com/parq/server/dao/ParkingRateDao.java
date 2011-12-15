@@ -20,9 +20,10 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 	private static Cache myCache;
 	
 	private static final String parkingRateByNamePrefix = "getParkingRateByName:";
+	private static final String parkingRateByRateIdPrefix = "getParkingRateById:";
 
 	private static final String sqlGetSpaceParkingRate = 
-		"SELECT r.location_id, r.space_id, r.parking_rate_cents, r.priority, r.time_increment_mins, r.max_park_mins, r.min_park_mins " +
+		"SELECT r.rate_id, r.location_id, r.space_id, r.parking_rate_cents, r.priority, r.time_increment_mins, r.max_park_mins, r.min_park_mins, b.location_identifier, s.space_identifier " +
 			" FROM parkinglocation AS b, parkingspace AS s, parkingrate AS r " +
 			" WHERE b.location_id = s.location_id " +
 			" AND r.location_id = b.location_id " +
@@ -34,12 +35,17 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 			" ORDER BY r.priority DESC"; 
 	
 	private static final String sqlGetParkingLocationParkingRate = 
-		"SELECT r.location_id, r.space_id, r.parking_rate_cents, r.priority, r.time_increment_mins, r.max_park_mins, r.min_park_mins " +
+		"SELECT r.rate_id, r.location_id, r.space_id, r.parking_rate_cents, r.priority, r.time_increment_mins, r.max_park_mins, r.min_park_mins, b.location_identifier " +
 			" FROM parkinglocation AS b, parkingrate AS r " +
 			" WHERE r.location_id = b.location_id " +
 			" AND b.location_identifier = ? " +
 			" AND b.is_deleted IS NOT TRUE " +
 			" ORDER BY r.priority DESC"; 
+	
+	private static final String sqlGetParkingRateByParkingRateId =
+		"SELECT r.rate_id, r.location_id, r.space_id, r.parking_rate_cents, r.priority, r.time_increment_mins, r.max_park_mins, r.min_park_mins " +
+		" FROM parkingrate AS r " +
+		" WHERE r.rate_id = ?"; 
 	
 	public ParkingRateDao() {
 		super();
@@ -97,7 +103,7 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 			// System.out.println(pstmt);
 			
 			ResultSet rs = pstmt.executeQuery();
-			rate = createParkingRate(locationIdentifier, spaceIdentifier, rs);
+			rate = createParkingRate(rs, true);
 
 		} catch (SQLException sqle) {
 			System.out.println("SQL statement is invalid: " + pstmt);
@@ -113,37 +119,83 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 		return rate;
 	}
 
-	private ParkingRate createParkingRate(String parkingLocationName, 
-			String spaceName, ResultSet rs) throws SQLException {
+	/**
+	 * Retrieve the parking rate object by rate id
+	 * @param rateId
+	 * @return
+	 */
+	public ParkingRate getParkingRateByRateId(long rateId) {
+
+		// the cache key for this method call;
+		String cacheKey = parkingRateByRateIdPrefix + rateId;
+		
+		ParkingRate rate = null;
+		if (myCache.get(cacheKey) != null) {
+			rate = (ParkingRate) myCache.get(cacheKey).getValue();
+			return rate;
+		}
+		
+		// query the DB for the user object
+		PreparedStatement pstmt = null;
+		Connection con = null;
+		try {
+			con = getConnection();
+			pstmt = con.prepareStatement(sqlGetParkingRateByParkingRateId);
+			pstmt.setLong(1, rateId);
+
+			// System.out.println(pstmt);
+			
+			ResultSet rs = pstmt.executeQuery();
+			rate = createParkingRate(rs, false);
+
+		} catch (SQLException sqle) {
+			System.out.println("SQL statement is invalid: " + pstmt);
+			sqle.printStackTrace();
+			throw new RuntimeException(sqle);
+		} finally {
+			closeConnection(con);
+		}
+
+		// put result into cache
+		myCache.put(new Element(cacheKey, rate));
+		
+		return rate;
+	}
+	
+	private ParkingRate createParkingRate(ResultSet rs, boolean setLocationAndSpaceName) throws SQLException {
 		
 		if (rs == null || !rs.isBeforeFirst()) {
 			return null;
 		}
 		rs.first();
 
-		int parkingLocationId = rs.getInt("location_id");
-		int spaceId = rs.getInt("space_id");
+		long rateId = rs.getLong("rate_id");
+		long parkingLocationId = rs.getLong("location_id");
+		long spaceId = rs.getLong("space_id");
 		int rate = rs.getInt("parking_rate_cents");
 		int timeIncrements = rs.getInt("time_increment_mins");
 		int maxParkTime = rs.getInt("max_park_mins");
 		int minParkTime = rs.getInt("min_park_mins");
 		
 		ParkingRate parkingRate = new ParkingRate();
+		parkingRate.setRateId(rateId);
 		parkingRate.setRateType(RateType.Client);
 		parkingRate.setParkingRateCents(rate);
 		parkingRate.setTimeIncrementsMins(timeIncrements);
 		parkingRate.setMaxParkMins(maxParkTime);
 		parkingRate.setMinParkMins(minParkTime);
 		
-		if (parkingLocationId > 0) {
+		if (parkingLocationId > 0 && setLocationAndSpaceName) {
+			String locationName = rs.getString("location_identifier");
 			parkingRate.setRateType(RateType.ParkingLocation);
 			parkingRate.setLocationId(parkingLocationId);
-			parkingRate.setLocationName(parkingLocationName);
+			parkingRate.setLocationName(locationName);
 		}
-		if (spaceId > 0) {
+		if (spaceId > 0 && setLocationAndSpaceName) {
+			String parkingSpaceName = rs.getString("space_identifier");
 			parkingRate.setRateType(RateType.Space);
 			parkingRate.setSpaceId(spaceId);
-			parkingRate.setSpaceName(spaceName);
+			parkingRate.setSpaceName(parkingSpaceName);
 		} 
 		
 		return parkingRate;

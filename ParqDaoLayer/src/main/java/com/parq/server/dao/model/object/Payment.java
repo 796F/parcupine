@@ -8,8 +8,8 @@ public class Payment implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 7518785991839030335L;
-	private int paymentId;
-	private int parkingInstId;
+	private long paymentId;
+	private long parkingInstId;
 	private PaymentType paymentType;
 	private String paymentRefNumber;
 	private Date paymentDateTime;
@@ -22,7 +22,7 @@ public class Payment implements Serializable {
 	/**
 	 * @return the paymentId
 	 */
-	public int getPaymentId() {
+	public long getPaymentId() {
 		return paymentId;
 	}
 
@@ -30,14 +30,14 @@ public class Payment implements Serializable {
 	 * @param paymentId
 	 *            the paymentId to set
 	 */
-	public void setPaymentId(int paymentId) {
+	public void setPaymentId(long paymentId) {
 		this.paymentId = paymentId;
 	}
 
 	/**
 	 * @return the parkingInstId
 	 */
-	public int getParkingInstId() {
+	public long getParkingInstId() {
 		return parkingInstId;
 	}
 
@@ -45,7 +45,7 @@ public class Payment implements Serializable {
 	 * @param parkingInstId
 	 *            the parkingInstId to set
 	 */
-	public void setParkingInstId(int parkingInstId) {
+	public void setParkingInstId(long parkingInstId) {
 		this.parkingInstId = parkingInstId;
 	}
 

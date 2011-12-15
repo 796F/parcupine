@@ -11,9 +11,9 @@ public class ParkingInstance implements Serializable {
 	 */
 	private static final long serialVersionUID = 7398916394181422252L;
 	private Payment paymentInfo;
-	private int ParkingInstId = -1;
-	private int userId = -1;
-	private int spaceId = -1;
+	private long ParkingInstId = -1;
+	private long userId = -1;
+	private long spaceId = -1;
 	private Date parkingBeganTime;
 	private Date parkingEndTime;
 	private boolean isPaidParking;
@@ -37,7 +37,7 @@ public class ParkingInstance implements Serializable {
 	/**
 	 * @return the parkingInstId
 	 */
-	public int getParkingInstId() {
+	public long getParkingInstId() {
 		return ParkingInstId;
 	}
 
@@ -45,14 +45,14 @@ public class ParkingInstance implements Serializable {
 	 * @param parkingInstId
 	 *            the parkingInstId to set
 	 */
-	public void setParkingInstId(int parkingInstId) {
+	public void setParkingInstId(long parkingInstId) {
 		ParkingInstId = parkingInstId;
 	}
 
 	/**
 	 * @return the userId
 	 */
-	public int getUserId() {
+	public long getUserId() {
 		return userId;
 	}
 
@@ -60,7 +60,7 @@ public class ParkingInstance implements Serializable {
 	 * @param userId
 	 *            the userId to set
 	 */
-	public void setUserId(int userId) {
+	public void setUserId(long userId) {
 		this.userId = userId;
 	}
 
@@ -112,14 +112,14 @@ public class ParkingInstance implements Serializable {
 	/**
 	 * @param spaceId the spaceId to set
 	 */
-	public void setSpaceId(int spaceId) {
+	public void setSpaceId(long spaceId) {
 		this.spaceId = spaceId;
 	}
 
 	/**
 	 * @return the spaceId
 	 */
-	public int getSpaceId() {
+	public long getSpaceId() {
 		return spaceId;
 	}
 

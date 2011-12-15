@@ -7,16 +7,16 @@ public class Geolocation implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = -5865831027266829443L;
-	private int GeolocationId = -1;
+	private long GeolocationId = -1;
 	private double Latitude = -10000.00;
 	private double Longitude = -10000.00;
-	private int locationId = -1;
+	private long locationId = -1;
 	private String locationIdentifier;
 
 	/**
 	 * @return the geolocationId
 	 */
-	public int getGeolocationId() {
+	public long getGeolocationId() {
 		return GeolocationId;
 	}
 
@@ -24,7 +24,7 @@ public class Geolocation implements Serializable{
 	 * @param geolocationId
 	 *            the geolocationId to set
 	 */
-	public void setGeolocationId(int geolocationId) {
+	public void setGeolocationId(long geolocationId) {
 		GeolocationId = geolocationId;
 	}
 
@@ -61,7 +61,7 @@ public class Geolocation implements Serializable{
 	/**
 	 * @return the locationId
 	 */
-	public int getLocationId() {
+	public long getLocationId() {
 		return locationId;
 	}
 
@@ -69,7 +69,7 @@ public class Geolocation implements Serializable{
 	 * @param locationId
 	 *            the locationId to set
 	 */
-	public void setLocationId(int locationId) {
+	public void setLocationId(long locationId) {
 		this.locationId = locationId;
 	}
 

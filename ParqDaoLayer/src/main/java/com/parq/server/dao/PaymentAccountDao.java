@@ -78,7 +78,7 @@ public class PaymentAccountDao extends AbstractParqDaoParent {
 		try {
 			con = getConnection();
 			pstmt = con.prepareStatement(sqlCreatePaymentAccount);
-			pstmt.setInt(1, request.getUserId());
+			pstmt.setLong(1, request.getUserId());
 			pstmt.setString(2, request.getCustomerId());
 			pstmt.setString(3, request.getPaymentMethodId());
 			pstmt.setString(4, request.getCcStub());
@@ -97,7 +97,7 @@ public class PaymentAccountDao extends AbstractParqDaoParent {
 		return newPaymentAccountCreated;
 	}
 	
-	private boolean clearDefaultPayment(int userId) {
+	private boolean clearDefaultPayment(long userId) {
 	
 		if (userId <= 0) {
 			throw new IllegalStateException("Invalid ClearDefaultPayment request for userId:" + userId);
@@ -110,7 +110,7 @@ public class PaymentAccountDao extends AbstractParqDaoParent {
 		try {
 			con = getConnection();
 			pstmt = con.prepareStatement(sqlClearDefaultPaymentMethodByUserId);
-			pstmt.setInt(1, userId);
+			pstmt.setLong(1, userId);
 			updateSuccessful = pstmt.executeUpdate() >= 0;
 
 		} catch (SQLException sqle) {
@@ -124,13 +124,13 @@ public class PaymentAccountDao extends AbstractParqDaoParent {
 		return updateSuccessful;
 	}
 
-	public boolean deletePaymentMethod(int accountId) {
+	public boolean deletePaymentMethod(long accountId) {
 
 		if (accountId <= 0) {
 			throw new IllegalStateException("Invalid PaymentAccount delete request");
 		}
 		// clear out the cache entry for user that is going to be updated
-		int userId = getUserForPaymentAccountByAccountId(accountId);
+		long userId = getUserForPaymentAccountByAccountId(accountId);
 		revokeCache(myCache, paymentMethodsCache, userId + "");
 		
 		PreparedStatement pstmt = null;
@@ -140,7 +140,7 @@ public class PaymentAccountDao extends AbstractParqDaoParent {
 		try {
 			con = getConnection();
 			pstmt = con.prepareStatement(sqlDeletePaymentAccountById);
-			pstmt.setInt(1, accountId);
+			pstmt.setLong(1, accountId);
 			deleteSuccessful = pstmt.executeUpdate() > 0;
 
 		} catch (SQLException sqle) {
@@ -154,9 +154,9 @@ public class PaymentAccountDao extends AbstractParqDaoParent {
 		return deleteSuccessful;
 	}
 
-	private int getUserForPaymentAccountByAccountId(int accountId) {
+	private long getUserForPaymentAccountByAccountId(long accountId) {
 		
-		int userId = -1;
+		long userId = -1;
 		
 		// query the DB for the user object
 		PreparedStatement pstmt = null;
@@ -164,7 +164,7 @@ public class PaymentAccountDao extends AbstractParqDaoParent {
 		try {
 			con = getConnection();
 			pstmt = con.prepareStatement(sqlGetUserIdByAccountId);
-			pstmt.setInt(1, accountId);
+			pstmt.setLong(1, accountId);
 			ResultSet rs = pstmt.executeQuery();
 			
 			if (rs.isBeforeFirst() && rs.next()) {
@@ -183,7 +183,7 @@ public class PaymentAccountDao extends AbstractParqDaoParent {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<PaymentAccount> getAllPaymentMethodForUser(int userId) {
+	public List<PaymentAccount> getAllPaymentMethodForUser(long userId) {
 		if (userId <= 0) {
 			throw new IllegalStateException("Invalide UserId: " + userId);
 		}
@@ -203,7 +203,7 @@ public class PaymentAccountDao extends AbstractParqDaoParent {
 		try {
 			con = getConnection();
 			pstmt = con.prepareStatement(sqlGetAccountByUserId);
-			pstmt.setInt(1, userId);
+			pstmt.setLong(1, userId);
 			ResultSet rs = pstmt.executeQuery();
 			
 			paymentAccounts = createPaymentAccountObject(rs);
@@ -231,8 +231,8 @@ public class PaymentAccountDao extends AbstractParqDaoParent {
 		
 		while (rs.next()) {
 			PaymentAccount pa = new PaymentAccount();
-			int accountId = rs.getInt("account_id");
-			int userId = rs.getInt("user_id");
+			long accountId = rs.getLong("account_id");
+			long userId = rs.getLong("user_id");
 			String customerId = rs.getString("customer_id");
 			String paymentMethodId = rs.getString("payment_method_id");
 			String ccStub = rs.getString("cc_stub");

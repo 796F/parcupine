@@ -81,13 +81,13 @@ public class TestParkingStatusDao extends TestCase {
 
 
 	public void testGetParkingStatusBySpaceIds() {
-		statusDao.getParkingStatusBySpaceIds(new int[]{1,2,3});
+		statusDao.getParkingStatusBySpaceIds(new long[]{1,2,3});
 	}
 	
 	public void testAddNewParkingAndPayment() {
 		assertTrue(statusDao.addNewParkingAndPayment(pi));
 		
-		List<ParkingInstance> result = statusDao.getParkingStatusBySpaceIds(new int[]{buildingList.get(0).getSpaces().get(0).getSpaceId()});
+		List<ParkingInstance> result = statusDao.getParkingStatusBySpaceIds(new long[]{buildingList.get(0).getSpaces().get(0).getSpaceId()});
 		assertNotNull(result);
 		assertFalse(result.isEmpty());
 		ParkingInstance resultInstance = result.get(0);
@@ -111,14 +111,14 @@ public class TestParkingStatusDao extends TestCase {
 		assertTrue(statusDao.addNewParkingAndPayment(pi));
 		
 		// add the new parking instance
-		List<ParkingInstance> resultInsts = statusDao.getParkingStatusBySpaceIds(new int[]{buildingList.get(0).getSpaces().get(0).getSpaceId()});
+		List<ParkingInstance> resultInsts = statusDao.getParkingStatusBySpaceIds(new long[]{buildingList.get(0).getSpaces().get(0).getSpaceId()});
 		ParkingInstance initialParkingInst = resultInsts.get(0);
 		
 		// refill the parking
 		assertTrue(statusDao.refillParkingForParkingSpace(piRefil.getSpaceId(), piRefil.getParkingEndTime(), piRefil.getPaymentInfo()));
 
 		// get the newly refilled parking info
-		List<ParkingInstance> resultInsts2 = statusDao.getParkingStatusBySpaceIds(new int[]{buildingList.get(0).getSpaces().get(0).getSpaceId()});
+		List<ParkingInstance> resultInsts2 = statusDao.getParkingStatusBySpaceIds(new long[]{buildingList.get(0).getSpaces().get(0).getSpaceId()});
 		assertFalse(resultInsts2.isEmpty());
 		ParkingInstance refilledParkingInst = resultInsts2.get(0);
 		
@@ -178,9 +178,9 @@ public class TestParkingStatusDao extends TestCase {
 			assertSame(gups, ups);
 		}
 		
-		ParkingInstance gpsbsi = statusDao.getParkingStatusBySpaceIds(new int[]{gups.getSpaceId()}).get(0);
+		ParkingInstance gpsbsi = statusDao.getParkingStatusBySpaceIds(new long[]{gups.getSpaceId()}).get(0);
 		for (int i = 0; i < 1000; i++) {
-			ParkingInstance ps = statusDao.getParkingStatusBySpaceIds(new int[]{gups.getSpaceId()}).get(0);
+			ParkingInstance ps = statusDao.getParkingStatusBySpaceIds(new long[]{gups.getSpaceId()}).get(0);
 			assertNotNull(ps);
 			assertEquals(user.getUserID(), ps.getUserId());
 			assertSame(gpsbsi, ps);
@@ -210,9 +210,9 @@ public class TestParkingStatusDao extends TestCase {
 			assertSame(oldGUPS, ups);
 		}
 		
-		ParkingInstance oldGPSBSI = statusDao.getParkingStatusBySpaceIds(new int[]{oldGUPS.getSpaceId()}).get(0);
+		ParkingInstance oldGPSBSI = statusDao.getParkingStatusBySpaceIds(new long[]{oldGUPS.getSpaceId()}).get(0);
 		for (int i = 0; i < 10; i++) {
-			ParkingInstance ps = statusDao.getParkingStatusBySpaceIds(new int[]{oldGUPS.getSpaceId()}).get(0);
+			ParkingInstance ps = statusDao.getParkingStatusBySpaceIds(new long[]{oldGUPS.getSpaceId()}).get(0);
 			assertNotNull(ps);
 			assertEquals(user.getUserID(), ps.getUserId());
 			assertSame(oldGPSBSI, ps);
@@ -236,7 +236,7 @@ public class TestParkingStatusDao extends TestCase {
 		assertTrue(statusDao.addNewParkingAndPayment(newPi));
 		
 		ParkingInstance newGUPS = statusDao.getUserParkingStatus(user.getUserID());
-		ParkingInstance newGPSBSI = statusDao.getParkingStatusBySpaceIds(new int[]{oldGUPS.getSpaceId()}).get(0);
+		ParkingInstance newGPSBSI = statusDao.getParkingStatusBySpaceIds(new long[]{oldGUPS.getSpaceId()}).get(0);
 		
 		assertNotSame(oldGUPS, newGUPS);
 		assertNotSame(oldGPSBSI, newGPSBSI);
@@ -255,7 +255,7 @@ public class TestParkingStatusDao extends TestCase {
 		
 		// test cache
 		for (int i = 0; i < 10; i++) {
-			ParkingInstance ps = statusDao.getParkingStatusBySpaceIds(new int[]{oldGUPS.getSpaceId()}).get(0);
+			ParkingInstance ps = statusDao.getParkingStatusBySpaceIds(new long[]{oldGUPS.getSpaceId()}).get(0);
 			assertNotNull(ps);
 			assertEquals(user.getUserID(), ps.getUserId());
 			assertSame(newGPSBSI, ps);

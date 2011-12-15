@@ -10,7 +10,7 @@ public class Admin implements Serializable {
 	 * generated serial id
 	 */
 	private static final long serialVersionUID = -4671173403978454253L;
-	private int adminId = -1;
+	private long adminId = -1;
 	private String userName;
 	private String password;
 	private String email;
@@ -24,7 +24,7 @@ public class Admin implements Serializable {
 	/**
 	 * @return the adminId
 	 */
-	public int getAdminId() {
+	public long getAdminId() {
 		return adminId;
 	}
 
@@ -32,7 +32,7 @@ public class Admin implements Serializable {
 	 * @param adminId
 	 *            the adminId to set
 	 */
-	public void setAdminId(int adminId) {
+	public void setAdminId(long adminId) {
 		this.adminId = adminId;
 	}
 

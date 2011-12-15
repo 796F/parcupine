@@ -7,15 +7,15 @@ public class ClientRelationShip implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -40320537616098840L;
-	private int clientId = -1;
-	private int roleId = -1;
-	private int adminId = -1;
-	private int relationShipId = -1;
+	private long clientId = -1;
+	private long roleId = -1;
+	private long adminId = -1;
+	private long relationShipId = -1;
 
 	/**
 	 * @return the clientId
 	 */
-	public int getClientId() {
+	public long getClientId() {
 		return clientId;
 	}
 
@@ -23,14 +23,14 @@ public class ClientRelationShip implements Serializable {
 	 * @param clientId
 	 *            the clientId to set
 	 */
-	public void setClientId(int clientId) {
+	public void setClientId(long clientId) {
 		this.clientId = clientId;
 	}
 
 	/**
 	 * @return the roleId
 	 */
-	public int getRoleId() {
+	public long getRoleId() {
 		return roleId;
 	}
 
@@ -38,14 +38,14 @@ public class ClientRelationShip implements Serializable {
 	 * @param roleId
 	 *            the roleId to set
 	 */
-	public void setRoleId(int roleId) {
+	public void setRoleId(long roleId) {
 		this.roleId = roleId;
 	}
 
 	/**
 	 * @return the adminId
 	 */
-	public int getAdminId() {
+	public long getAdminId() {
 		return adminId;
 	}
 
@@ -53,14 +53,14 @@ public class ClientRelationShip implements Serializable {
 	 * @param adminId
 	 *            the adminId to set
 	 */
-	public void setAdminId(int adminId) {
+	public void setAdminId(long adminId) {
 		this.adminId = adminId;
 	}
 
 	/**
 	 * @return the relationShipId
 	 */
-	public int getRelationShipId() {
+	public long getRelationShipId() {
 		return relationShipId;
 	}
 
@@ -68,7 +68,7 @@ public class ClientRelationShip implements Serializable {
 	 * @param relationShipId
 	 *            the relationShipId to set
 	 */
-	public void setRelationShipId(int relationShipId) {
+	public void setRelationShipId(long relationShipId) {
 		this.relationShipId = relationShipId;
 	}
 }

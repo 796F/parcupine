@@ -78,7 +78,7 @@ public class UserDao extends AbstractParqDaoParent {
 	 *         is no such user exist or the user has been deleted
 	 *         <code>NULL</code>
 	 */
-	public User getUserById(int id) {
+	public User getUserById(long id) {
 		// the cache key for this method call;
 		String cacheKey = idCache + id;
 		
@@ -94,7 +94,7 @@ public class UserDao extends AbstractParqDaoParent {
 		try {
 			con = getConnection();
 			pstmt = con.prepareStatement(sqlGetUserById);
-			pstmt.setInt(1, id);
+			pstmt.setLong(1, id);
 			ResultSet rs = pstmt.executeQuery();
 
 			user = createUserObject(rs);
@@ -168,7 +168,7 @@ public class UserDao extends AbstractParqDaoParent {
 	 * @return <code>True</code> if delete is successful, <code>false</code>
 	 *         other wise.
 	 */
-	public synchronized boolean deleteUserById(int id) {
+	public synchronized boolean deleteUserById(long id) {
 
 		if (id <= 0) {
 			throw new IllegalStateException("Invalid user delete request");
@@ -188,7 +188,7 @@ public class UserDao extends AbstractParqDaoParent {
 				con = getConnection();
 				pstmt = con.prepareStatement(sqlDeleteUserById);
 				pstmt.setString(1, delUser.getEmail() + " deleted_On:" + System.currentTimeMillis());
-				pstmt.setInt(2, id);
+				pstmt.setLong(2, id);
 				deleteSuccessful = pstmt.executeUpdate() > 0;
 	
 			} catch (SQLException sqle) {
@@ -238,7 +238,7 @@ public class UserDao extends AbstractParqDaoParent {
 			pstmt.setString(1, user.getPassword());
 			pstmt.setString(2, user.getEmail());
 			pstmt.setString(3, user.getPhoneNumber());
-			pstmt.setInt(4, user.getUserID());
+			pstmt.setLong(4, user.getUserID());
 			updateSuccessful = pstmt.executeUpdate() > 0;
 
 		} catch (SQLException sqle) {
@@ -304,7 +304,7 @@ public class UserDao extends AbstractParqDaoParent {
 	 * Revoke all the cache instance of this User by id and email address.
 	 * @param userID
 	 */
-	private synchronized void revokeUserCacheById(int userID) {
+	private synchronized void revokeUserCacheById(long userID) {
 		if (userID < 0) {
 			return;
 		}

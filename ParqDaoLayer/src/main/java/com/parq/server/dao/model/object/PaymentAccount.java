@@ -9,8 +9,8 @@ public class PaymentAccount implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -3629363474639731019L;
-	int accountId = -1;
-	int userId = -1;
+	long accountId = -1;
+	long userId = -1;
 	String customerId;
 	String paymentMethodId;
 	String ccStub;
@@ -19,7 +19,7 @@ public class PaymentAccount implements Serializable {
 	/**
 	 * @return the accountId
 	 */
-	public int getAccountId() {
+	public long getAccountId() {
 		return accountId;
 	}
 
@@ -27,14 +27,14 @@ public class PaymentAccount implements Serializable {
 	 * @param accountId
 	 *            the accountId to set
 	 */
-	public void setAccountId(int accountId) {
+	public void setAccountId(long accountId) {
 		this.accountId = accountId;
 	}
 
 	/**
 	 * @return the userId
 	 */
-	public int getUserId() {
+	public long getUserId() {
 		return userId;
 	}
 
@@ -42,7 +42,7 @@ public class PaymentAccount implements Serializable {
 	 * @param userId
 	 *            the userId to set
 	 */
-	public void setUserId(int userId) {
+	public void setUserId(long userId) {
 		this.userId = userId;
 	}
 

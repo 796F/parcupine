@@ -88,7 +88,7 @@ public class TestClientDao extends TestCase {
 	public void testCache() {
 
 		String name = SupportScriptForDaoTesting.clientNameMain;
-		int id = clientDao.getClientByName(name).getId();
+		long id = clientDao.getClientByName(name).getId();
 
 		List<Object> tempHolder = new ArrayList<Object>();
 

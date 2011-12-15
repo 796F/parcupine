@@ -7,7 +7,7 @@ public class Client implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = -6448691730521532161L;
-	private int id = -1;
+	private long id = -1;
 	private String name;
 	private String address;
 	private String clientDescription;
@@ -16,13 +16,13 @@ public class Client implements Serializable{
 	/**
 	 * @return the id
 	 */
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 	/**

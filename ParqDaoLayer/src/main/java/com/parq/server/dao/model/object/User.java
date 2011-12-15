@@ -8,7 +8,7 @@ public class User implements Serializable {
 	 */
 	private static final long serialVersionUID = -4819770817368453273L;
 	
-	private int userID;
+	private long userID;
 	private String password;
 	private String email;
 	private String phoneNumber;
@@ -16,7 +16,7 @@ public class User implements Serializable {
 	/**
 	 * @return the userID
 	 */
-	public int getUserID() {
+	public long getUserID() {
 		return userID;
 	}
 
@@ -24,7 +24,7 @@ public class User implements Serializable {
 	 * @param userID
 	 *            the userID to set
 	 */
-	public void setUserID(int userID) {
+	public void setUserID(long userID) {
 		this.userID = userID;
 	}
 

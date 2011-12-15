@@ -51,6 +51,23 @@ public class TestParkingRateDao extends TestCase {
 		assertTrue(spaceRateObj.getParkingRateCents() == SupportScriptForDaoTesting.spaceRate);
 		assertTrue(buildingRateObj.getParkingRateCents() == SupportScriptForDaoTesting.parkingLocationRate);
 	}
+	
+	public void testGetParkingRateByRateId() {
+		SupportScriptForDaoTesting.insertFakeData();
+
+		ParkingRate pRate = parkingRateDao.getParkingRateByName(
+				SupportScriptForDaoTesting.parkingLocationNameMain,
+				SupportScriptForDaoTesting.spaceNameMain);
+		assertNotNull(pRate);
+		
+		
+		ParkingRate pRate2 = parkingRateDao.getParkingRateByRateId(pRate.getRateId());
+		assertNotNull(pRate2);
+		assertEquals(pRate2.getRateType(), ParkingRate.RateType.Client);
+		assertEquals(pRate2.getParkingRateCents(),
+				SupportScriptForDaoTesting.spaceRate);
+		assertTrue(pRate2.getTimeIncrementsMins() > 1);
+	}
 
 	public void testCaching() {
 		SupportScriptForDaoTesting.insertFakeData();
@@ -69,5 +86,14 @@ public class TestParkingRateDao extends TestCase {
 		assertSame(pRate, pRate1);
 		assertSame(pRate, pRate2);
 		assertSame(pRate1, pRate2);
+		
+		ParkingRate pRateById = parkingRateDao.getParkingRateByRateId(pRate.getRateId());
+		ParkingRate pRateById1 = parkingRateDao.getParkingRateByRateId(pRate.getRateId());
+		ParkingRate pRateById2 = parkingRateDao.getParkingRateByRateId(pRate.getRateId());
+
+		assertNotNull(pRateById);
+		assertSame(pRateById, pRateById1);
+		assertSame(pRateById, pRateById2);
+		assertSame(pRateById1, pRateById2);
 	}
 }

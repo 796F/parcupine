@@ -99,7 +99,7 @@ public class GeolocationDao extends AbstractParqDaoParent {
 		return geoLocations;
 	}
 	
-	public Geolocation getLocationById(int locationId)
+	public Geolocation getLocationById(long locationId)
 	{
 		String cacheKey = locationIdCache + locationId;
 		Geolocation result = null;
@@ -114,7 +114,7 @@ public class GeolocationDao extends AbstractParqDaoParent {
 		try {
 			con = getConnection();
 			pstmt = con.prepareStatement(sqlGetParkingLocationById);
-			pstmt.setInt(1, locationId);
+			pstmt.setLong(1, locationId);
 			ResultSet rs = pstmt.executeQuery();
 			
 			if (rs != null && rs.isBeforeFirst()) {

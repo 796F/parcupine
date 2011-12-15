@@ -69,7 +69,7 @@ public class AdminDao extends AbstractParqDaoParent {
 		return admin;
 	}
 
-	public Admin getAdminById(int adminId) {
+	public Admin getAdminById(long adminId) {
 		// the cache key for this method call;
 		String cacheKey = idCache + adminId;
 		
@@ -85,7 +85,7 @@ public class AdminDao extends AbstractParqDaoParent {
 		try {
 			con = getConnection();
 			pstmt = con.prepareStatement(sqlGetAdminById);
-			pstmt.setInt(1, adminId);
+			pstmt.setLong(1, adminId);
 			ResultSet rs = pstmt.executeQuery();
 
 			admin = createUserObject(rs);
