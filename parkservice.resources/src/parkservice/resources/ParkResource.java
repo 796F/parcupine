@@ -19,10 +19,12 @@ import AuthNet.Rebill.ProfileTransAuthCaptureType;
 import AuthNet.Rebill.ProfileTransactionType;
 import AuthNet.Rebill.ServiceSoap;
 
+import com.parq.server.dao.ParkingRateDao;
 import com.parq.server.dao.ParkingStatusDao;
 import com.parq.server.dao.PaymentAccountDao;
 import com.parq.server.dao.UserDao;
 import com.parq.server.dao.model.object.ParkingInstance;
+import com.parq.server.dao.model.object.ParkingRate;
 import com.parq.server.dao.model.object.Payment;
 import com.parq.server.dao.model.object.Payment.PaymentType;
 import com.parq.server.dao.model.object.PaymentAccount;
@@ -63,11 +65,18 @@ public class ParkResource {
 	public ParkResponse parkUser(JAXBElement<ParkRequest> info){
 		ParkResponse output = new ParkResponse();
 		ParkRequest in = info.getValue();
-		int pay_amount = in.getAmount();
-		Date start = in.getStart();
-		Date end = in.getEnd();
-		int payment_type = in.getPaymentType();
+		String lot = in.getLot();
+		String spot = in.getSpot();
+		int iterations = in.getIterations();
+		ParkingRateDao prd = new ParkingRateDao();
+		ParkingRate pr = prd.getParkingRateByName(spot, lot);
+		pr.getParkingRateCents();
 		int spot_id = in.getSpotid();
+		int pay_amount = iterations*pr.getParkingRateCents();
+		Date start = new Date();
+		Date end = new Date();
+		end.setMinutes(end.getMinutes() + iterations*pr.getTimeIncrementsMins());
+		int payment_type = in.getPaymentType();
 		int uid = in.getUid();
 		
 		AuthRequest userInfo = in.getUserinfo();
@@ -131,7 +140,7 @@ public class ParkResource {
 					p.setPaymentRefNumber(Arrays.asList(response.getDirectResponse().split(",")).get(6));
 					newPark.setPaymentInfo(p);
 					
-					boolean result = psd.addPaymentForParking(newPark);
+					boolean result = psd.addNewParkingAndPayment(newPark);
 					//then set output to ok
 					if(result){
 						output.setParkingInstanceId(psd.getUserParkingStatus(uid).getParkingInstId());
@@ -161,12 +170,21 @@ public class ParkResource {
 		RefillResponse  output = new RefillResponse ();
 		RefillRequest in = info.getValue();
 		int uid = -1;
-		int pay_amount = in.getAmount();
-		Date newEndTime = in.getNewEndTime();
-		Date oldEndTime = in.getOldEndTime();
+		ParkingRateDao prd = new ParkingRateDao();
+		ParkingRate pr = prd.getParkingRateByName(in.getLot(), in.getSpot());
+		int iterations = in.getIterations();
+		int pay_amount = pr.getParkingRateCents()*iterations;
 		int payment_type = in.getPaymentType();
 		int spotid = in.getSpotid();
 		if((uid = innerAuthenticate(in.getUserinfo()))>0){
+			
+			ParkingStatusDao psd = new ParkingStatusDao();
+			ParkingInstance pi = psd.getUserParkingStatus(uid);
+
+			Date oldEndTime = pi.getParkingEndTime();
+			Date newEndTime= new Date();
+			newEndTime.setMinutes(iterations*pr.getTimeIncrementsMins());
+			
 			//charge user for refill
 			ServiceSoap soap = SoapAPIUtilities.getServiceSoap();
 			//get user payment information.  
@@ -207,9 +225,7 @@ public class ParkResource {
 				if(response.getResultCode().value().equalsIgnoreCase("Ok")){
 					//update databases
 					
-					ParkingStatusDao psd = new ParkingStatusDao();
 					ParkingInstance newPark = new ParkingInstance();
-
 					newPark.setPaidParking(true);
 					newPark.setParkingBeganTime(oldEndTime);
 					newPark.setParkingEndTime(newEndTime);
@@ -225,7 +241,8 @@ public class ParkResource {
 					
 					boolean result = false; 
 					try{
-						result = psd.addPaymentForParking(newPark);
+						
+						result = psd.refillParkingForParkingSpace(spotid, newEndTime, p);
 					}catch(Exception e){
 						
 					}
@@ -264,7 +281,7 @@ public class ParkResource {
 		int parkingInstanceId = in.getParkingInstanceId();
 		if(uid==innerAuthenticate(in.getUserinfo())){
 			ParkingStatusDao psd = new ParkingStatusDao();
-			boolean result = psd.updateParkingEndTimeBySpaceId(spotid, parkingInstanceId, endTime);
+			boolean result = psd.unparkBySpaceIdAndParkingInstId(spotid, parkingInstanceId, endTime);
 			if(result){
 				output.setResp("OK");
 			}else{

@@ -21,24 +21,15 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
 public class TestRegister {
 
 	public static void main(String[] args) {
-		ClientConfig config = new DefaultClientConfig();
-		Client client = Client.create(config);
-		WebResource service = client.resource(getBaseURI());
+		int j = 5;
+		int k =9;
+		double a=4;
+		double b=6;
+		double d;
+		d = (k/j)*b/a+j++;
 		
-		RegisterRequest in = new RegisterRequest();
-		in.setEmail("xia.umd@gmail.com");
-		in.setPassword("a");
-		in.setCscNumber("000");
-		in.setCreditCard("5466160160030126");
-		in.setExpYear(2015);
-		in.setExpMonth(4);
-		in.setHolderName("Michael Xia");
-		in.setZipcode("19810");
-
-		String outstring = service.path("register").type(MediaType.APPLICATION_JSON).post(String.class, in);
-		
-	
-		System.out.println(outstring);
+		int outstring = (9/5)*6/4+j++;
+		System.out.println(d);
 		
 	}
 	

@@ -105,6 +105,7 @@ public class GetRateResource {
 			ParkingRateDao p = new ParkingRateDao();
 			//getbyname should use p.getParkingRateByName(x86gg0, a808);
 			ParkingRate pr =p.getParkingRateByName(input.getLot(), input.getSpot());
+			
 			GeolocationDao gdao = new GeolocationDao();
 			Geolocation loc = gdao.getLocationById(pr.getLocationId());
 			

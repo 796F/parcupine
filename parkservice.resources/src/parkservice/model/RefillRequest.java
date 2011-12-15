@@ -9,24 +9,31 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
 public class RefillRequest {
-	Date oldEndTime;
-	Date newEndTime;
-	int amount;
+	String lot;
+	String spot;
+	int iterations;
 	int paymentType;
 	int spotid;
 	AuthRequest userinfo;
 	
-	public Date getOldEndTime() {
-		return oldEndTime;
+	
+	public String getLot() {
+		return lot;
 	}
-	public void setOldEndTime(Date oldEndTime) {
-		this.oldEndTime = oldEndTime;
+	public void setLot(String lot) {
+		this.lot = lot;
 	}
-	public Date getNewEndTime() {
-		return newEndTime;
+	public String getSpot() {
+		return spot;
 	}
-	public void setNewEndTime(Date newEndTime) {
-		this.newEndTime = newEndTime;
+	public void setSpot(String spot) {
+		this.spot = spot;
+	}
+	public int getIterations() {
+		return iterations;
+	}
+	public void setIterations(int iterations) {
+		this.iterations = iterations;
 	}
 	public int getSpotid() {
 		return spotid;
@@ -40,19 +47,6 @@ public class RefillRequest {
 	}
 	
 
-	/**
-	 * @return the amount
-	 */
-	public int getAmount() {
-		return amount;
-	}
-
-	/**
-	 * @param amount the amount to set
-	 */
-	public void setAmount(int amount) {
-		this.amount = amount;
-	}
 
 	/**
 	 * @return the paymentType

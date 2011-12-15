@@ -10,13 +10,31 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class ParkRequest {
 	int uid;
 	int spotid;
-	Date start;
-	Date end;
+	int iterations;
 	int paymentType;
-	int amount;
+	String lot;
+	String spot;
 	AuthRequest userinfo;
 	
 	
+	public int getIterations() {
+		return iterations;
+	}
+	public void setIterations(int iterations) {
+		this.iterations = iterations;
+	}
+	public String getLot() {
+		return lot;
+	}
+	public void setLot(String lot) {
+		this.lot = lot;
+	}
+	public String getSpot() {
+		return spot;
+	}
+	public void setSpot(String spot) {
+		this.spot = spot;
+	}
 	public int getUid() {
 		return uid;
 	}
@@ -35,30 +53,8 @@ public class ParkRequest {
 	public void setSpotid(int spotid) {
 		this.spotid = spotid;
 	}
-	/**
-	 * @return the start
-	 */
-	public Date getStart() {
-		return start;
-	}
-	/**
-	 * @param start the start to set
-	 */
-	public void setStart(Date start) {
-		this.start = start;
-	}
-	/**
-	 * @return the end
-	 */
-	public Date getEnd() {
-		return end;
-	}
-	/**
-	 * @param end the end to set
-	 */
-	public void setEnd(Date end) {
-		this.end = end;
-	}
+	
+	
 	/**
 	 * @return the paymentType
 	 */
@@ -71,18 +67,7 @@ public class ParkRequest {
 	public void setPaymentType(int paymentType) {
 		this.paymentType = paymentType;
 	}
-	/**
-	 * @return the amount
-	 */
-	public int getAmount() {
-		return amount;
-	}
-	/**
-	 * @param amount the amount to set
-	 */
-	public void setAmount(int amount) {
-		this.amount = amount;
-	}
+	
 	/**
 	 * @return the userinfo
 	 */
