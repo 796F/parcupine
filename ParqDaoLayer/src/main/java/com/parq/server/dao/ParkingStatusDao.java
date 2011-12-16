@@ -212,15 +212,15 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 
 		while (rs.next()) {
 			ParkingInstance parkingInst = new ParkingInstance();
-			parkingInst.setParkingInstId(rs.getInt("parkinginst_id"));
-			parkingInst.setUserId(rs.getInt("user_id"));
-			parkingInst.setSpaceId(rs.getInt("space_id"));
+			parkingInst.setParkingInstId(rs.getLong("parkinginst_id"));
+			parkingInst.setUserId(rs.getLong("user_id"));
+			parkingInst.setSpaceId(rs.getLong("space_id"));
 			parkingInst.setParkingBeganTime(rs.getTimestamp("park_began_time"));
 			parkingInst.setParkingEndTime(rs.getTimestamp("park_end_time"));
 			parkingInst.setParkingRefNumber(rs.getString("parkingrefnumber"));
 			
 			Payment paymentInfo = new Payment();
-			paymentInfo.setPaymentId(rs.getInt("payment_id"));
+			paymentInfo.setPaymentId(rs.getLong("payment_id"));
 			paymentInfo.setParkingInstId(parkingInst.getParkingInstId());
 			paymentInfo.setPaymentType(Payment.PaymentType.valueOf(rs.getString("payment_type")));
 			paymentInfo.setPaymentRefNumber(rs.getString("payment_ref_num"));
@@ -405,8 +405,9 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 		String cacheKey = createCacheKey(getParkingStatusBySpaceIdsCacheKey, spaceId);
 		ParkingInstance parkInst = null;
 		
-		if (myCache.get(cacheKey) != null) {
-			parkInst = (ParkingInstance) myCache.get(cacheKey).getValue();
+		Element cacheEntry = myCache.get(cacheKey); 
+		if (cacheEntry  != null) {
+			parkInst = (ParkingInstance) cacheEntry.getValue();
 		}
 		return parkInst;
 	}
@@ -415,8 +416,9 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 		String cacheKey = createCacheKey(getUserParkingStatusCacheKey, userId);
 
 		ParkingInstance userParkingStatus = null;
-		if (myCache.get(cacheKey) != null) {
-			userParkingStatus = (ParkingInstance) myCache.get(cacheKey).getValue();
+		Element cacheEntry = myCache.get(cacheKey); 
+		if (cacheEntry  != null) {
+			userParkingStatus = (ParkingInstance) cacheEntry.getValue();
 		}
 		return userParkingStatus;
 	}
@@ -425,8 +427,9 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 		String cacheKey = createCacheKey(getSpaceIdByUserId, spaceId);
 		
 		long userId = -1;
-		if (myCache.get(cacheKey) != null && myCache.get(cacheKey).getValue() != null) {
-			userId = (Long) myCache.get(cacheKey).getValue();
+		Element cacheEntry = myCache.get(cacheKey); 
+		if (cacheEntry != null && cacheEntry.getValue() != null) {
+			userId = (Long) cacheEntry.getValue();
 		}
 		return userId;
 	}

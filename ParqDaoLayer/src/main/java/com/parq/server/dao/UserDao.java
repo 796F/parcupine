@@ -61,7 +61,7 @@ public class UserDao extends AbstractParqDaoParent {
 		}
 		User user = new User();
 		rs.first();
-		user.setUserID(rs.getInt("user_id"));
+		user.setUserID(rs.getLong("user_id"));
 		user.setPassword(rs.getString("password"));
 		user.setEmail(rs.getString("email"));
 		user.setPhoneNumber(rs.getString("phone_number"));
@@ -84,8 +84,9 @@ public class UserDao extends AbstractParqDaoParent {
 		String cacheKey = idCache + id;
 		
 		User user = null;
-		if (myCache.get(cacheKey) != null) {
-			user = (User) myCache.get(cacheKey).getValue();
+		Element cacheEntry = myCache.get(cacheKey);
+		if (cacheEntry  != null) {
+			user = (User) cacheEntry.getValue();
 			return user;
 		}
 
@@ -131,8 +132,9 @@ public class UserDao extends AbstractParqDaoParent {
 		String cacheKey = emailCache + emailAddress;
 
 		User user = null;
-		if (myCache.get(cacheKey) != null) {
-			user = (User) myCache.get(cacheKey).getValue();
+		Element cacheEntry = myCache.get(cacheKey);
+		if (cacheEntry  != null) {
+			user = (User) cacheEntry.getValue();
 			return user;
 		}
 

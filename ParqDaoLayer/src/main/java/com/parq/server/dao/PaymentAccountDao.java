@@ -169,7 +169,7 @@ public class PaymentAccountDao extends AbstractParqDaoParent {
 			ResultSet rs = pstmt.executeQuery();
 			
 			if (rs.isBeforeFirst() && rs.next()) {
-				userId = rs.getInt("user_id");
+				userId = rs.getLong("user_id");
 			}
 
 		} catch (SQLException sqle) {
@@ -193,8 +193,9 @@ public class PaymentAccountDao extends AbstractParqDaoParent {
 		String cacheKey = paymentMethodsCache + userId;
 
 		List<PaymentAccount> paymentAccounts = null;
-		if (myCache.get(cacheKey) != null) {
-			paymentAccounts = (List<PaymentAccount>) myCache.get(cacheKey).getValue();
+		Element cacheEntry = myCache.get(cacheKey);
+		if (cacheEntry  != null) {
+			paymentAccounts = (List<PaymentAccount>) cacheEntry.getValue();
 			return paymentAccounts;
 		}
 

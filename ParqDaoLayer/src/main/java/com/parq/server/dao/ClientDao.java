@@ -57,8 +57,9 @@ public class ClientDao extends AbstractParqDaoParent {
 		String cacheKey = clientNameCache + name;
 
 		Client client = null;
-		if (myCache.get(cacheKey) != null) {
-			client = (Client) myCache.get(cacheKey).getValue();
+		Element cacheEntry = myCache.get(cacheKey); 
+		if (cacheEntry  != null) {
+			client = (Client) cacheEntry.getValue();
 			return client;
 		}
 
@@ -93,8 +94,9 @@ public class ClientDao extends AbstractParqDaoParent {
 		String cacheKey = clientIdCache + id;
 
 		Client client = null;
-		if (myCache.get(cacheKey) != null) {
-			client = (Client) myCache.get(cacheKey).getValue();
+		Element cacheEntry = myCache.get(cacheKey); 
+		if (cacheEntry  != null) {
+			client = (Client) cacheEntry.getValue();
 			return client;
 		}
 
@@ -130,8 +132,9 @@ public class ClientDao extends AbstractParqDaoParent {
 		String cacheKey = getParkingLocationByClientIdCache + clientId;
 
 		List<ParkingLocation> buildings = null;
-		if (myCache.get(cacheKey) != null) {
-			buildings = (List<ParkingLocation>) myCache.get(cacheKey).getValue();
+		Element cacheEntry = myCache.get(cacheKey); 
+		if (cacheEntry  != null) {
+			buildings = (List<ParkingLocation>) cacheEntry.getValue();
 			return buildings;
 		}
 
@@ -165,31 +168,31 @@ public class ClientDao extends AbstractParqDaoParent {
 		if (rs == null || !rs.isBeforeFirst()) {
 			return null;
 		}
-		List<ParkingLocation> buildings = new ArrayList<ParkingLocation>();
+		List<ParkingLocation> locations = new ArrayList<ParkingLocation>();
 		ParkingLocation curLocation = new ParkingLocation();
 
 		while (rs.next()) {
-			long buildingId = rs.getInt("location_id");
+			long buildingId = rs.getLong("location_id");
 
 			// create new building whenever new row encountered.
 			if (buildingId != curLocation.getLocationId()) {
 				curLocation = new ParkingLocation();
 				curLocation.setLocationId(buildingId);
 				curLocation.setLocationIdentifier(rs.getString("location_identifier"));
-				curLocation.setClientId(rs.getInt("client_id"));
-				buildings.add(curLocation);
+				curLocation.setClientId(rs.getLong("client_id"));
+				locations.add(curLocation);
 			}
 
 			ParkingSpace curSpace = new ParkingSpace();
 			curSpace.setLocationId(buildingId);
-			curSpace.setSpaceId(rs.getInt("space_id"));
+			curSpace.setSpaceId(rs.getLong("space_id"));
 			curSpace.setParkingLevel(rs.getString("parking_level"));
 			curSpace.setSpaceIdentifier(rs.getString("space_identifier"));
 
 			curLocation.getSpaces().add(curSpace);
 		}
 		// sort the list, so all the building are group together.
-		Collections.sort(buildings, new Comparator<ParkingLocation>() {
+		Collections.sort(locations, new Comparator<ParkingLocation>() {
 			@Override
 			public int compare(ParkingLocation b1, ParkingLocation b2) {
 				if (b1.getLocationIdentifier() == null && b2.getLocationIdentifier() == null) {
@@ -203,7 +206,7 @@ public class ClientDao extends AbstractParqDaoParent {
 				}
 			}
 		});
-		return buildings;
+		return locations;
 	}
 
 	private Client createClientObject(ResultSet rs) throws SQLException {
@@ -212,7 +215,7 @@ public class ClientDao extends AbstractParqDaoParent {
 		}
 		Client client = new Client();
 		rs.first();
-		client.setId(rs.getInt("client_id"));
+		client.setId(rs.getLong("client_id"));
 		client.setName(rs.getString("name"));
 		client.setAddress(rs.getString("address"));
 		client.setClientDescription(rs.getString("client_desc"));

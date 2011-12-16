@@ -24,32 +24,45 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 	private static Cache myCache;
 	
 	private static final String parkingRateByNamePrefix = "getParkingRateByName:";
-	private static final String parkingRateByRateIdPrefix = "getParkingRateById:";
+	// private static final String parkingRateByRateIdPrefix = "getParkingRateByRateId:";
+	private static final String parkingRateBySpaceIdPrefix = "getParkingRateBySpaceId:";
 
 	private static final String sqlGetSpaceParkingRate = 
-		"SELECT r.rate_id, r.location_id, r.space_id, r.parking_rate_cents, r.priority, r.time_increment_mins, r.max_park_mins, r.min_park_mins, b.location_identifier, s.space_identifier " +
-			" FROM parkinglocation AS b, parkingspace AS s, parkingrate AS r " +
-			" WHERE b.location_id = s.location_id " +
-			" AND r.location_id = b.location_id " +
-			" AND r.space_id IN(NULL, s.space_id) " +
-			" AND b.location_identifier = ? " +
+		"SELECT r.rate_id, r.location_id, r.space_id, r.parking_rate_cents, r.priority, r.time_increment_mins, r.max_park_mins, r.min_park_mins, l.location_identifier, s.space_identifier " +
+			" FROM parkinglocation AS l, parkingspace AS s, parkingrate AS r " +
+			" WHERE l.location_id = s.location_id " +
+			" AND r.location_id = l.location_id " +
+			" AND (r.space_id = s.space_id OR r.space_id IS NULL)" +
+			" AND l.location_identifier = ? " +
 			" AND s.space_identifier = ? " +
-			" AND b.is_deleted IS NOT TRUE " +
+			" AND l.is_deleted IS NOT TRUE " +
 			" AND s.is_deleted IS NOT TRUE " +
 			" ORDER BY r.priority DESC"; 
 	
 	private static final String sqlGetParkingLocationParkingRate = 
-		"SELECT r.rate_id, r.location_id, r.space_id, r.parking_rate_cents, r.priority, r.time_increment_mins, r.max_park_mins, r.min_park_mins, b.location_identifier " +
-			" FROM parkinglocation AS b, parkingrate AS r " +
-			" WHERE r.location_id = b.location_id " +
-			" AND b.location_identifier = ? " +
-			" AND b.is_deleted IS NOT TRUE " +
+		"SELECT r.rate_id, r.location_id, r.space_id, r.parking_rate_cents, r.priority, r.time_increment_mins, r.max_park_mins, r.min_park_mins, l.location_identifier " +
+			" FROM parkinglocation AS l, parkingrate AS r " +
+			" WHERE r.location_id = l.location_id " +
+			" AND l.location_identifier = ? " +
+			" AND r.space_id IS NULL " +
+			" AND l.is_deleted IS NOT TRUE " +
 			" ORDER BY r.priority DESC"; 
 	
 	private static final String sqlGetParkingRateByParkingRateId =
 		"SELECT r.rate_id, r.location_id, r.space_id, r.parking_rate_cents, r.priority, r.time_increment_mins, r.max_park_mins, r.min_park_mins " +
 		" FROM parkingrate AS r " +
 		" WHERE r.rate_id = ?"; 
+	
+	private static final String sqlGetParkingRateByParkingSpaceId =
+		"SELECT r.rate_id, r.location_id, r.space_id, r.parking_rate_cents, r.priority, r.time_increment_mins, r.max_park_mins, r.min_park_mins, l.location_identifier, s.space_identifier " +
+		" FROM parkinglocation AS l, parkingspace AS s, parkingrate AS r " +
+		" WHERE l.location_id = s.location_id " +
+		" AND r.location_id = l.location_id " +
+		" AND (r.space_id = s.space_id OR r.space_id IS NULL)" +
+		" AND s.space_id = ? " +
+		" AND l.is_deleted IS NOT TRUE " +
+		" AND s.is_deleted IS NOT TRUE " +
+		" ORDER BY r.priority DESC"; 
 	
 	public ParkingRateDao() {
 		super();
@@ -78,8 +91,9 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 		String cacheKey = parkingRateByNamePrefix + locationIdentifier + ":" + spaceIdentifier;
 		
 		ParkingRate rate = null;
-		if (myCache.get(cacheKey) != null) {
-			rate = (ParkingRate) myCache.get(cacheKey).getValue();
+		Element cacheEntry = myCache.get(cacheKey);
+		if (cacheEntry  != null) {
+			rate = (ParkingRate) cacheEntry.getValue();
 			return rate;
 		}
 		
@@ -130,15 +144,7 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 	 */
 	public ParkingRate getParkingRateByRateId(long rateId) {
 
-		// the cache key for this method call;
-		String cacheKey = parkingRateByRateIdPrefix + rateId;
-		
-		ParkingRate rate = null;
-		if (myCache.get(cacheKey) != null) {
-			rate = (ParkingRate) myCache.get(cacheKey).getValue();
-			return rate;
-		}
-		
+		ParkingRate rate = null;		
 		// query the DB for the user object
 		PreparedStatement pstmt = null;
 		Connection con = null;
@@ -151,6 +157,49 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 			
 			ResultSet rs = pstmt.executeQuery();
 			rate = createParkingRate(rs, false);
+
+		} catch (SQLException sqle) {
+			System.out.println("SQL statement is invalid: " + pstmt);
+			sqle.printStackTrace();
+			throw new RuntimeException(sqle);
+		} finally {
+			closeConnection(con);
+		}
+		return rate;
+	}
+	
+	/**
+	 * Get the parking rate by the parking space Id. If the parking spaceId is
+	 * invalid, null will be return for the ParkingRate
+	 * 
+	 * @param spaceId
+	 *            must be a valid parking space Id
+	 * @return
+	 */
+	public ParkingRate getParkingRateBySpaceId(long spaceId) {
+		
+		// the cache key for this method call;
+		String cacheKey = parkingRateBySpaceIdPrefix + spaceId;
+		
+		ParkingRate rate = null;
+		Element cacheEntry = myCache.get(cacheKey);
+		if (cacheEntry  != null) {
+			rate = (ParkingRate) cacheEntry.getValue();
+			return rate;
+		}
+		
+		// query the DB for the user object
+		PreparedStatement pstmt = null;
+		Connection con = null;
+		try {
+			con = getConnection();
+			pstmt = con.prepareStatement(sqlGetParkingRateByParkingSpaceId);
+			pstmt.setLong(1, spaceId);
+
+			// System.out.println(pstmt);
+			
+			ResultSet rs = pstmt.executeQuery();
+			rate = createParkingRate(rs, true);
 
 		} catch (SQLException sqle) {
 			System.out.println("SQL statement is invalid: " + pstmt);
@@ -183,7 +232,7 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 		
 		ParkingRate parkingRate = new ParkingRate();
 		parkingRate.setRateId(rateId);
-		parkingRate.setRateType(RateType.Client);
+		parkingRate.setRateType(RateType.CLIENT);
 		parkingRate.setParkingRateCents(rate);
 		parkingRate.setTimeIncrementsMins(timeIncrements);
 		parkingRate.setMaxParkMins(maxParkTime);
@@ -191,13 +240,13 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 		
 		if (parkingLocationId > 0 && setLocationAndSpaceName) {
 			String locationName = rs.getString("location_identifier");
-			parkingRate.setRateType(RateType.ParkingLocation);
+			parkingRate.setRateType(RateType.LOCATION);
 			parkingRate.setLocationId(parkingLocationId);
 			parkingRate.setLocationName(locationName);
 		}
 		if (spaceId > 0 && setLocationAndSpaceName) {
 			String parkingSpaceName = rs.getString("space_identifier");
-			parkingRate.setRateType(RateType.Space);
+			parkingRate.setRateType(RateType.SPACE);
 			parkingRate.setSpaceId(spaceId);
 			parkingRate.setSpaceName(parkingSpaceName);
 		} 

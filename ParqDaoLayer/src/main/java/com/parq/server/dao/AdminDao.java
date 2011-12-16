@@ -58,17 +58,17 @@ public class AdminDao extends AbstractParqDaoParent {
 		}
 		Admin admin = new Admin();
 		rs.first();
-		admin.setAdminId(rs.getInt("admin_id"));
+		admin.setAdminId(rs.getLong("admin_id"));
 		admin.setUserName(rs.getString("username"));
 		admin.setPassword(rs.getString("password"));
 		admin.setEmail(rs.getString("email"));
 		
 		ClientRelationShip relationship = new ClientRelationShip();
 		admin.getClientRelationships().add(relationship);
-		relationship.setAdminId(rs.getInt("admin_id"));
-		relationship.setClientId(rs.getInt("client_id"));
-		relationship.setRelationShipId(rs.getInt("ac_rel_id"));
-		relationship.setRoleId(rs.getInt("adminrole_id"));
+		relationship.setAdminId(rs.getLong("admin_id"));
+		relationship.setClientId(rs.getLong("client_id"));
+		relationship.setRelationShipId(rs.getLong("ac_rel_id"));
+		relationship.setRoleId(rs.getLong("adminrole_id"));
 		
 		return admin;
 	}
@@ -78,8 +78,9 @@ public class AdminDao extends AbstractParqDaoParent {
 		String cacheKey = idCache + adminId;
 		
 		Admin admin = null;
-		if (myCache.get(cacheKey) != null) {
-			admin = (Admin) myCache.get(cacheKey).getValue();
+		Element cacheEntry = myCache.get(cacheKey); 
+		if (cacheEntry  != null) {
+			admin = (Admin) cacheEntry.getValue();
 			return admin;
 		}
 
@@ -113,8 +114,9 @@ public class AdminDao extends AbstractParqDaoParent {
 		String cacheKey = userNameCache + adminUserName;
 
 		Admin admin = null;
-		if (myCache.get(cacheKey) != null) {
-			admin = (Admin) myCache.get(cacheKey).getValue();
+		Element cacheEntry = myCache.get(cacheKey); 
+		if (cacheEntry  != null) {
+			admin = (Admin) cacheEntry.getValue();
 			return admin;
 		}
 
@@ -148,8 +150,9 @@ public class AdminDao extends AbstractParqDaoParent {
 		String cacheKey = emailCache + emailAddress;
 
 		Admin admin = null;
-		if (myCache.get(cacheKey) != null) {
-			admin = (Admin) myCache.get(cacheKey).getValue();
+		Element cacheEntry = myCache.get(cacheKey); 
+		if (cacheEntry  != null) {
+			admin = (Admin) cacheEntry.getValue();
 			return admin;
 		}
 

@@ -42,10 +42,10 @@ public final class SupportScriptForDaoTesting {
 			testDao.insertParkingSpace(fakeParkingLocation2, "Test_Fake_7", "2");
 
 			// insert location based parking rate
-			testDao.setParkingLocationRate(parkingLocationRate, -20, parkingLocationNameMain, 5);
+			testDao.setParkingLocationRate(parkingLocationRate, -100, parkingLocationNameMain, 5);
 
 			// insert parking space based parking rate
-			testDao.setParkingSpaceRate(spaceRate, -100, parkingLocationNameMain, spaceNameMain, 5);
+			testDao.setParkingSpaceRate(spaceRate, -20, parkingLocationNameMain, spaceNameMain, 5);
 			
 			fakeDataInserted = true;
 		}

@@ -163,7 +163,7 @@ public class ParkingRate implements Serializable {
 	}
 
 	public enum RateType {
-		Client, ParkingLocation, Space;
+		CLIENT, LOCATION, SPACE;
 	}
 
 	/**

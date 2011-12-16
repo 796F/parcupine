@@ -1,6 +1,7 @@
 package com.parq.server.dao;
 
 import com.parq.server.dao.model.object.ParkingRate;
+import com.parq.server.dao.model.object.ParkingSpace;
 import com.parq.server.dao.support.SupportScriptForDaoTesting;
 
 import junit.framework.TestCase;
@@ -29,7 +30,7 @@ public class TestParkingRateDao extends TestCase {
 				SupportScriptForDaoTesting.parkingLocationNameMain);
 		assertEquals(pRate.getSpaceName(),
 				SupportScriptForDaoTesting.spaceNameMain);
-		assertEquals(pRate.getRateType(), ParkingRate.RateType.Space);
+		assertEquals(pRate.getRateType(), ParkingRate.RateType.SPACE);
 		assertEquals(pRate.getParkingRateCents(),
 				SupportScriptForDaoTesting.spaceRate);
 		assertTrue(pRate.getTimeIncrementsMins() > 1);
@@ -67,10 +68,41 @@ public class TestParkingRateDao extends TestCase {
 		
 		ParkingRate pRate2 = parkingRateDao.getParkingRateByRateId(pRate.getRateId());
 		assertNotNull(pRate2);
-		assertEquals(pRate2.getRateType(), ParkingRate.RateType.Client);
+		assertEquals(pRate2.getRateType(), ParkingRate.RateType.CLIENT);
 		assertEquals(pRate2.getParkingRateCents(),
 				SupportScriptForDaoTesting.spaceRate);
 		assertTrue(pRate2.getTimeIncrementsMins() > 1);
+	}
+	
+	public void testGetParkingRateBySpaceId() {
+		SupportScriptForDaoTesting.insertFakeData();
+
+		
+		ParkingRate spaceRateObj = parkingRateDao.getParkingRateByName(
+				SupportScriptForDaoTesting.parkingLocationNameMain,
+				SupportScriptForDaoTesting.spaceNameMain);
+		ParkingRate buildingRateObj = parkingRateDao.getParkingRateByName(
+				SupportScriptForDaoTesting.parkingLocationNameMain, null);
+		
+		// test get the parking rate by parking space id for rate specific to a parking space
+		ParkingRate pRate = parkingRateDao.getParkingRateBySpaceId(spaceRateObj.getSpaceId());
+		assertNotNull(pRate);
+		assertEquals(pRate.getRateType(), ParkingRate.RateType.SPACE);
+		assertEquals(pRate.getParkingRateCents(),
+				SupportScriptForDaoTesting.spaceRate);
+		assertEquals(pRate.getTimeIncrementsMins(), spaceRateObj.getTimeIncrementsMins());
+		assertEquals(pRate.getRateId(), spaceRateObj.getRateId());
+
+		// test get the parking rate by parking space id for rate specific to a location
+		ParkingSpaceDao spaceDao = new ParkingSpaceDao();
+		ParkingSpace nonRatedSpace = spaceDao.getParkingSpaceBySpaceIdentifier(SupportScriptForDaoTesting.spaceNameMain2);
+		ParkingRate pRate2 = parkingRateDao.getParkingRateBySpaceId(nonRatedSpace.getSpaceId());
+		assertNotNull(pRate2);
+		assertEquals(pRate2.getRateType(), ParkingRate.RateType.LOCATION);
+		assertEquals(pRate2.getParkingRateCents(),
+				SupportScriptForDaoTesting.parkingLocationRate);
+		assertEquals(pRate2.getTimeIncrementsMins(), buildingRateObj.getTimeIncrementsMins());
+		assertEquals(pRate2.getRateId(), buildingRateObj.getRateId());		
 	}
 
 	public void testCaching() {
@@ -90,14 +122,5 @@ public class TestParkingRateDao extends TestCase {
 		assertSame(pRate, pRate1);
 		assertSame(pRate, pRate2);
 		assertSame(pRate1, pRate2);
-		
-		ParkingRate pRateById = parkingRateDao.getParkingRateByRateId(pRate.getRateId());
-		ParkingRate pRateById1 = parkingRateDao.getParkingRateByRateId(pRate.getRateId());
-		ParkingRate pRateById2 = parkingRateDao.getParkingRateByRateId(pRate.getRateId());
-
-		assertNotNull(pRateById);
-		assertSame(pRateById, pRateById1);
-		assertSame(pRateById, pRateById2);
-		assertSame(pRateById1, pRateById2);
 	}
 }

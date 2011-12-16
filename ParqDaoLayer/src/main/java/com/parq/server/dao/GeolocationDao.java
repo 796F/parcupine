@@ -70,8 +70,9 @@ public class GeolocationDao extends AbstractParqDaoParent {
 		String cacheKey = cacheKeyBuilder.toString();
 		
 		List<Geolocation> geoLocations = null;
-		if (myCache.get(cacheKey) != null) {
-			geoLocations = (List<Geolocation>) myCache.get(cacheKey).getValue();
+		Element cacheEntry = myCache.get(cacheKey); 
+		if (cacheEntry  != null) {
+			geoLocations = (List<Geolocation>) cacheEntry.getValue();
 			return geoLocations;
 		}
 
@@ -107,8 +108,9 @@ public class GeolocationDao extends AbstractParqDaoParent {
 	{
 		String cacheKey = locationIdCache + locationId;
 		Geolocation result = null;
-		if (myCache.get(cacheKey) != null) {
-			result = (Geolocation) myCache.get(cacheKey).getValue();
+		Element cacheEntry = myCache.get(cacheKey); 
+		if (cacheEntry  != null) {
+			result = (Geolocation) cacheEntry.getValue();
 			return result;
 		}
 		
@@ -158,8 +160,8 @@ public class GeolocationDao extends AbstractParqDaoParent {
 		}
 		
 		Geolocation geoLocation = new Geolocation();
-		geoLocation.setGeolocationId(rs.getInt("geolocation_id"));
-		geoLocation.setLocationId(rs.getInt("location_id"));
+		geoLocation.setGeolocationId(rs.getLong("geolocation_id"));
+		geoLocation.setLocationId(rs.getLong("location_id"));
 		geoLocation.setLocationIdentifier(rs.getString("location_identifier"));
 		geoLocation.setLatitude(rs.getDouble("latitude"));
 		geoLocation.setLongitude(rs.getDouble("longitude"));
