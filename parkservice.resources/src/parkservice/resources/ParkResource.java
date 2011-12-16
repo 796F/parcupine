@@ -56,112 +56,131 @@ public class ParkResource {
 			return user.getUserID();
 		}
 	}
-	
+
+	private CreateCustomerProfileTransactionResponseType chargeUser(int pay_amount, int profileId, int paymentProfileId, int uid){
+		java.math.BigDecimal amount = java.math.BigDecimal.valueOf(Double.parseDouble(""+(pay_amount/100)+"."+(pay_amount%100)));
+
+		//try to charge their payment profile the pay_amount
+		ProfileTransAuthCaptureType auth_capture = new ProfileTransAuthCaptureType();
+		auth_capture.setCustomerProfileId(profileId);
+		auth_capture.setCustomerPaymentProfileId(paymentProfileId);
+		auth_capture.setAmount(amount);
+		OrderExType order = new OrderExType();
+
+		Date x = new Date();
+		String dateString = (x.getMonth()+1>9 ? ""+(x.getMonth()+1): "0"+(x.getMonth()+1));
+		dateString+=(x.getDate()>9 ? ""+x.getDate(): "0"+x.getDate());
+		dateString+=x.getYear()+1900;
+		dateString+=(x.getHours()>9 ? ""+x.getHours(): "0"+x.getHours());
+		dateString+=(x.getMinutes()>9 ? ""+x.getMinutes(): "0"+x.getMinutes());
+
+		//for us, invoice set to uid:MMddyyyyhhmm
+		order.setInvoiceNumber(uid+":"+dateString);
+
+		auth_capture.setOrder(order);
+		ProfileTransactionType trans = new ProfileTransactionType();
+		trans.setProfileTransAuthCapture(auth_capture);
+
+		ServiceSoap soap = SoapAPIUtilities.getServiceSoap();
+		return soap.createCustomerProfileTransaction(SoapAPIUtilities.getMerchantAuthentication(), trans, null);
+	}
+
 	//Refill, Park, Unpark
 	@POST
 	@Path("/park")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public ParkResponse parkUser(JAXBElement<ParkRequest> info){
+		//check if user is currently parked.  
 		ParkResponse output = new ParkResponse();
 		ParkRequest in = info.getValue();
+
+		int payment_type = in.getPaymentType();
+		int uid = in.getUid();
 		String lot = in.getLot();
 		String spot = in.getSpot();
 		int iterations = in.getIterations();
-		ParkingRateDao prd = new ParkingRateDao();
-		ParkingRate pr = prd.getParkingRateByName(spot, lot);
-		pr.getParkingRateCents();
-		int spot_id = in.getSpotid();
-		int pay_amount = iterations*pr.getParkingRateCents();
-		Date start = new Date();
-		Date end = new Date();
-		end.setMinutes(end.getMinutes() + iterations*pr.getTimeIncrementsMins());
-		int payment_type = in.getPaymentType();
-		int uid = in.getUid();
-		
+
 		AuthRequest userInfo = in.getUserinfo();
-
-		//if auth goes through
+		//does user supplied info authenticate?
 		if(uid == innerAuthenticate(userInfo)){
-			ServiceSoap soap = SoapAPIUtilities.getServiceSoap();
-			//get user payment information.  
-			PaymentAccountDao pad = new PaymentAccountDao();
-			List<PaymentAccount> pad_list = pad.getAllPaymentMethodForUser(uid);
-			int profileId = -1;
-			int paymentProfileId = -1;
-			if(pad_list.size()>0){
-				PaymentAccount pa = pad_list.get(0);
-				profileId = Integer.parseInt(pa.getCustomerId()); //this is profileId
-				paymentProfileId = Integer.parseInt(pa.getPaymentMethodId()); //this is paymentProfileId
-			}
-			
-			if(paymentProfileId>0){
-				java.math.BigDecimal amount = java.math.BigDecimal.valueOf(Double.parseDouble(""+(pay_amount/100)+"."+(pay_amount%100)));
+			ParkingStatusDao psd = new ParkingStatusDao();
+			ParkingInstance ps = psd.getUserParkingStatus(uid);
+			//was user previously parked?
+			if((new Date()).compareTo(ps.getParkingEndTime())>0){
+				//nowtime is after previous end time.  user was not parked.  
+				ParkingRateDao prd = new ParkingRateDao();
+				ParkingRate pr = prd.getParkingRateByName(spot, lot);
+				int spot_id = in.getSpotid();
+				int pay_amount = iterations*pr.getParkingRateCents();
+				Date start = new Date(); //start os now
+				Date end = new Date(); //end is iterations of increment + old time.  
+				end.setMinutes(end.getMinutes() + iterations*pr.getTimeIncrementsMins());
 
-				//try to charge their payment profile the pay_amount
-				ProfileTransAuthCaptureType auth_capture = new ProfileTransAuthCaptureType();
-				auth_capture.setCustomerProfileId(profileId);
-				auth_capture.setCustomerPaymentProfileId(paymentProfileId);
-				auth_capture.setAmount(amount);
-				OrderExType order = new OrderExType();
-				
-				Date x = new Date();
-				String dateString = (x.getMonth()+1>9 ? ""+(x.getMonth()+1): "0"+(x.getMonth()+1));
-				dateString+=(x.getDate()>9 ? ""+x.getDate(): "0"+x.getDate());
-				dateString+=x.getYear()+1900;
-				dateString+=(x.getHours()>9 ? ""+x.getHours(): "0"+x.getHours());
-				dateString+=(x.getMinutes()>9 ? ""+x.getMinutes(): "0"+x.getMinutes());
-				
-				//for us, invoice set to uid:MMddyyyyhhmm
-				order.setInvoiceNumber(uid+":"+dateString);
-				
-				auth_capture.setOrder(order);
-				ProfileTransactionType trans = new ProfileTransactionType();
-				trans.setProfileTransAuthCapture(auth_capture);
-				
-				CreateCustomerProfileTransactionResponseType response = soap.createCustomerProfileTransaction(SoapAPIUtilities.getMerchantAuthentication(), trans, null);
-				if(response.getResultCode().value().equalsIgnoreCase("Ok")){
-					//if charge completes, store parking instance into db
-					
-					
-					//mark user as parkedx
-					ParkingStatusDao psd = new ParkingStatusDao();
-					ParkingInstance newPark = new ParkingInstance();
-					newPark.setPaidParking(true);
-					newPark.setParkingBeganTime(start);
-					newPark.setParkingEndTime(end);
-					newPark.setUserId(uid);
-					newPark.setSpaceId(spot_id);
+				PaymentAccountDao pad = new PaymentAccountDao();
+				List<PaymentAccount> pad_list = pad.getAllPaymentMethodForUser(uid);
+				int profileId = -1;
+				int paymentProfileId = -1;
+				if(pad_list.size()>0){
+					PaymentAccount pa = pad_list.get(0);
+					profileId = Integer.parseInt(pa.getCustomerId()); //this is profileId
+					paymentProfileId = Integer.parseInt(pa.getPaymentMethodId()); //this is paymentProfileId
+				}
 
-					Payment p = new Payment();
-					p.setAmountPaidCents(pay_amount);
-					p.setPaymentDateTime(start);
-					p.setPaymentType(PaymentType.CreditCard);
-					p.setPaymentRefNumber(Arrays.asList(response.getDirectResponse().split(",")).get(6));
-					newPark.setPaymentInfo(p);
-					
-					boolean result = psd.addNewParkingAndPayment(newPark);
-					//then set output to ok
-					if(result){
-						output.setParkingInstanceId(psd.getUserParkingStatus(uid).getParkingInstId());
-						//output.setResp(p.getPaymentRefNumber());
-						output.setResp("OK");
+				if(paymentProfileId>0){
+					CreateCustomerProfileTransactionResponseType response = chargeUser(pay_amount, profileId, paymentProfileId, uid);
+					if(response.getResultCode().value().equalsIgnoreCase("Ok")){
+						//if charge completes, store parking instance into db
+						//mark user as parked
+						ParkingInstance newPark = new ParkingInstance();
+						newPark.setPaidParking(true);
+						newPark.setParkingBeganTime(start);
+						newPark.setParkingEndTime(end);
+						newPark.setUserId(uid);
+						newPark.setSpaceId(spot_id);
+
+						Payment p = new Payment();
+						p.setAmountPaidCents(pay_amount);
+						p.setPaymentDateTime(start);
+						p.setPaymentType(PaymentType.CreditCard);
+						p.setPaymentRefNumber(Arrays.asList(response.getDirectResponse().split(",")).get(6));
+						newPark.setPaymentInfo(p);
+
+						boolean result = false;
+						try{
+							result = psd.addNewParkingAndPayment(newPark);
+						}catch(Exception e){
+
+						}
+						//then set output to ok
+						if(result){
+							output.setParkingInstanceId(psd.getUserParkingStatus(uid).getParkingInstId());
+							output.setResp("OK");
+						}else{
+							output.setResp("DAO_ERROR");
+						}
 					}else{
-						output.setResp("DAO_ERROR");
+						output.setResp("BAD_PAY");
 					}
 				}else{
-					output.setResp("BAD_PAY");
+					output.setResp("NO_PAYMENT_PROFILE");
 				}
+				//send back info for app to display new session.  
+
+
 			}else{
-				output.setResp("NO_PAYMENT_PROFILE");
+				//nowtime is before previous end time.  user currently parked.  
+				//THIS SHOULD NEVER HAPPEN.  ONLY occurs if two users log into separate apps, then one parks, the other still logged in.  
+				//alert user that they're currently parked somewhere else.  
+				output.setResp("USER_PARKED");
 			}
-			
+
 		}else{
 			output.setResp("BAD_AUTH");
 		}
 		return output;
 	}
-	
+
 	@POST
 	@Path("/refill")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -169,82 +188,58 @@ public class ParkResource {
 	public RefillResponse refillTime(JAXBElement<RefillRequest> info){
 		RefillResponse  output = new RefillResponse ();
 		RefillRequest in = info.getValue();
-		int uid = -1;
+		int uid = in.getUid();
 		ParkingRateDao prd = new ParkingRateDao();
 		ParkingRate pr = prd.getParkingRateByName(in.getLot(), in.getSpot());
 		int iterations = in.getIterations();
 		int pay_amount = pr.getParkingRateCents()*iterations;
 		int payment_type = in.getPaymentType();
 		int spotid = in.getSpotid();
-		if((uid = innerAuthenticate(in.getUserinfo()))>0){
-			
+		if(uid == innerAuthenticate(in.getUserinfo())){
+
 			ParkingStatusDao psd = new ParkingStatusDao();
 			ParkingInstance pi = psd.getUserParkingStatus(uid);
 
 			Date oldEndTime = pi.getParkingEndTime();
 			Date newEndTime= new Date();
-			newEndTime.setMinutes(iterations*pr.getTimeIncrementsMins());
-			
-			//charge user for refill
-			ServiceSoap soap = SoapAPIUtilities.getServiceSoap();
+			newEndTime.setMinutes(oldEndTime.getMinutes()+iterations*pr.getTimeIncrementsMins());
+
 			//get user payment information.  
 			PaymentAccountDao pad = new PaymentAccountDao();
 			List<PaymentAccount> pad_list = pad.getAllPaymentMethodForUser(uid);
 			int profileId = -1;
 			int paymentProfileId = -1;
-			
+
 			if(pad_list.size()>0){
 				PaymentAccount pa = pad_list.get(0);
 				profileId = Integer.parseInt(pa.getCustomerId()); //this is profileId
 				paymentProfileId = Integer.parseInt(pa.getPaymentMethodId()); //this is paymentProfileId
 			}
 			if(paymentProfileId>0){
-				java.math.BigDecimal amount = java.math.BigDecimal.valueOf(Double.parseDouble(""+(pay_amount/100)+"."+(pay_amount%100)));
-
-				//try to charge their payment profile the pay_amount
-				ProfileTransAuthCaptureType auth_capture = new ProfileTransAuthCaptureType();
-				auth_capture.setCustomerProfileId(profileId);
-				auth_capture.setCustomerPaymentProfileId(paymentProfileId);
-				auth_capture.setAmount(amount);
-				OrderExType order = new OrderExType();
-				
-				Date x = new Date();
-				String dateString = (x.getMonth()+1>9 ? ""+(x.getMonth()+1): "0"+(x.getMonth()+1));
-				dateString+=(x.getDate()>9 ? ""+x.getDate(): "0"+x.getDate());
-				dateString+=x.getYear()+1900;
-				dateString+=(x.getHours()>9 ? ""+x.getHours(): "0"+x.getHours());
-				dateString+=(x.getMinutes()>9 ? ""+x.getMinutes(): "0"+x.getMinutes());
-				
-				//for us, invoice set to uid:MMddyyyyhhmm
-				order.setInvoiceNumber(uid+":"+dateString);
-				auth_capture.setOrder(order);
-				ProfileTransactionType trans = new ProfileTransactionType();
-				trans.setProfileTransAuthCapture(auth_capture);
-				
-				CreateCustomerProfileTransactionResponseType response = soap.createCustomerProfileTransaction(SoapAPIUtilities.getMerchantAuthentication(), trans, null);
+				//charge user for refill
+				CreateCustomerProfileTransactionResponseType response = chargeUser(pay_amount, profileId, paymentProfileId, uid);
 				if(response.getResultCode().value().equalsIgnoreCase("Ok")){
 					//update databases
-					
+
 					ParkingInstance newPark = new ParkingInstance();
 					newPark.setPaidParking(true);
 					newPark.setParkingBeganTime(oldEndTime);
 					newPark.setParkingEndTime(newEndTime);
 					newPark.setUserId(uid);
 					newPark.setSpaceId(spotid);
-					
+
 					Payment p = new Payment();
 					p.setAmountPaidCents(pay_amount);
 					p.setPaymentDateTime(oldEndTime);
 					p.setPaymentType(PaymentType.CreditCard);
 					p.setPaymentRefNumber(Arrays.asList(response.getDirectResponse().split(",")).get(6));
 					newPark.setPaymentInfo(p);
-					
+
 					boolean result = false; 
 					try{
-						
 						result = psd.refillParkingForParkingSpace(spotid, newEndTime, p);
 					}catch(Exception e){
-						
+
 					}
 					if(result){
 						output.setResp("OK");
@@ -252,22 +247,22 @@ public class ParkResource {
 					}else{
 						output.setResp("WAS_NOT_PARKED");
 					}
-				
+
 				}else{
 					output.setResp("BAD_PAY");
 				}
 			}else{
 				output.setResp("NO_PAY_PROFILE");
 			}
-			
+
 		}else{
 			output.setResp("BAD_AUTH");
 		}
-		
-		
+
+
 		return output;
 	}
-	
+
 	@POST
 	@Path("/unpark")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -281,19 +276,24 @@ public class ParkResource {
 		int parkingInstanceId = in.getParkingInstanceId();
 		if(uid==innerAuthenticate(in.getUserinfo())){
 			ParkingStatusDao psd = new ParkingStatusDao();
-			boolean result = psd.unparkBySpaceIdAndParkingInstId(spotid, parkingInstanceId, endTime);
+			boolean result = false;
+			try{
+				 result = psd.unparkBySpaceIdAndParkingInstId(spotid, parkingInstanceId, endTime);
+			}catch(Exception e){
+				
+			}
 			if(result){
 				output.setResp("OK");
 			}else{
 				output.setResp("DAO_ERROR");
 			}
-			
+
 		}else{
 			output.setResp("BAD_AUTH");
 		}
 		return output;
 	}
-	
+
 	@GET
 	@Path("/hello")
 	@Produces(MediaType.TEXT_PLAIN)
