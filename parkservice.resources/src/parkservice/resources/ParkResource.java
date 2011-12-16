@@ -42,7 +42,7 @@ import parkservice.model.UnparkResponse;
 
 @Path("/park")
 public class ParkResource {
-	private int innerAuthenticate(AuthRequest in){
+	private long innerAuthenticate(AuthRequest in){
 		UserDao userDb = new UserDao();
 		User user = null;
 		try{
@@ -271,9 +271,9 @@ public class ParkResource {
 		UnparkResponse  output = new UnparkResponse ();
 		UnparkRequest in = info.getValue();
 		Date endTime = in.getEnd();
-		int uid = in.getUid();
-		int spotid = in.getSpotid();
-		int parkingInstanceId = in.getParkingInstanceId();
+		long uid = in.getUid();
+		long spotid = in.getSpotid();
+		long parkingInstanceId = in.getParkingInstanceId();
 		if(uid==innerAuthenticate(in.getUserinfo())){
 			ParkingStatusDao psd = new ParkingStatusDao();
 			boolean result = false;

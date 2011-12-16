@@ -18,8 +18,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.JAXBElement;
 
+import com.parq.server.dao.ParkingRateDao;
 import com.parq.server.dao.ParkingStatusDao;
 import com.parq.server.dao.UserDao;
+import com.parq.server.dao.model.object.ParkingInstance;
+import com.parq.server.dao.model.object.ParkingRate;
 import com.parq.server.dao.model.object.User;
 
 import parkservice.model.AuthRequest;
@@ -40,40 +43,52 @@ public class AuthResource {
 		try{
 			user = userDb.getUserByEmail(info.getEmail());
 		}catch(RuntimeException e){
-			x.setUid(-100000);
-			x.setParkstate(-100000);
-			return x;
 		}
 		if(user==null){
 			x.setUid(-1);
-			x.setParkstate(-1);
 			return x;
 		}else if(user.getPassword().equals(info.getPassword())){
-			ParkingStatusDao gg = new ParkingStatusDao();
-
+			long uid = user.getUserID();
+			x.setUid(uid);
+			ParkingStatusDao psd = new ParkingStatusDao();
 			//if the password for the email matches, return user info.  
-
 			Date endTime = null;
+			ParkingInstance pi = null;
 			try{
-				endTime = gg.getUserParkingStatus(user.getUserID()).getParkingEndTime();
+				pi = psd.getUserParkingStatus(uid);
+				endTime = psd.getUserParkingStatus(uid).getParkingEndTime();
 			}catch(Exception e){
-				x.setParkstate(0);
 			}
 			if(endTime==null){
-				//no endtime stored
+				//no endtime stored, user wasn't parked.  
 				x.setParkstate(0);
+				return x;
 			}else if(endTime.compareTo(new Date())<0){
 				//if end time is before now
 				x.setParkstate(0);
+				return x;
 			}else{
-				//if end time is after now
+				//if end time is after now, gather needed information and then return. 
+				
+				ParkingRateDao prd = new ParkingRateDao();
+				
+				long rate_id = 0; //pi.getRateId();
+				ParkingRate pr = prd.getParkingRateByRateId(rate_id);
+
+				x.setRateId(rate_id);
+				x.setEndTime(endTime);
+				
+				x.setDefaultRate(pr.getParkingRateCents());
+				x.setInstanceId(pi.getParkingInstId());
+				x.setMaxTime(pr.getMaxParkMins());
+				x.setMinIncrement(pr.getTimeIncrementsMins());
+				x.setMinTime(pr.getMinParkMins());
+				x.setSpotId(pi.getSpaceId());
 				x.setParkstate(1);
 			}
-			x.setUid(user.getUserID());
 			return x;
 		}else{
-			x.setParkstate(-202);
-			x.setUid(202);
+			x.setParkstate(-2);
 			return x;
 		}
 

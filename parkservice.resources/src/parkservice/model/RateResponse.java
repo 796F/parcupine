@@ -9,7 +9,7 @@ public class RateResponse {
 	double lat;
 	double lon;
 	String location;
-	int spot;
+	long spot;
 	
 	/*these are the defaults*/
 	int minTime;			//must park 1 hour
@@ -24,7 +24,7 @@ public class RateResponse {
 	public RateResponse(){
 		
 	}
-	public RateResponse(double lat, double lon, String location, int spot,
+	public RateResponse(double lat, double lon, String location, long spot,
 			int minTime, int maxTime, int defaultRate, int minIncrement,
 			ArrayList<SpecialRate> specials) {
 		super();
@@ -53,20 +53,26 @@ public class RateResponse {
 		this.location = location;
 	}
 
-	/**
-	 * @return the spot
-	 */
-	public int getSpot() {
+
+
+	public double getLat() {
+		return lat;
+	}
+	public void setLat(double lat) {
+		this.lat = lat;
+	}
+	public double getLon() {
+		return lon;
+	}
+	public void setLon(double lon) {
+		this.lon = lon;
+	}
+	public long getSpot() {
 		return spot;
 	}
-
-	/**
-	 * @param spot the spot to set
-	 */
-	public void setSpot(int spot) {
+	public void setSpot(long spot) {
 		this.spot = spot;
 	}
-
 	/**
 	 * @return the minTime
 	 */

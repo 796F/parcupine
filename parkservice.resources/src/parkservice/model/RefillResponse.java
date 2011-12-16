@@ -2,13 +2,15 @@ package parkservice.model;
 
 public class RefillResponse {
 	String resp;
-	int parkingInstanceId;
+	long parkingInstanceId;
 	
-	public int getParkingInstanceId() {
+	
+
+	public long getParkingInstanceId() {
 		return parkingInstanceId;
 	}
 
-	public void setParkingInstanceId(int parkingInstanceId) {
+	public void setParkingInstanceId(long parkingInstanceId) {
 		this.parkingInstanceId = parkingInstanceId;
 	}
 

@@ -37,7 +37,7 @@ import com.parq.server.dao.model.object.User;
 @Path("/register")
 public class RegisterResource {
 
-	private CustomerProfileType createUserProfile(int uid, String email, String desc){
+	private CustomerProfileType createUserProfile(long uid, String email, String desc){
 		CustomerProfileType xx = new CustomerProfileType();
 		xx.setDescription(desc);
 		xx.setEmail(email);
@@ -104,7 +104,7 @@ public class RegisterResource {
 			output.setResp("DAO_ERROR");
 		}
 		String email = info.getEmail();
-		int uid = userDb.getUserByEmail(email).getUserID();
+		long uid = userDb.getUserByEmail(email).getUserID();
 		String description = "UID:" + uid +" Email:" +email;
 		CustomerProfileType newCustomer = createUserProfile(uid, info.getEmail(), description);
 

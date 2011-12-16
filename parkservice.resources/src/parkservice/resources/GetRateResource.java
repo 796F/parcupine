@@ -67,7 +67,7 @@ public class GetRateResource {
 	/**
 	 * returns User_ID, or -1 if bad
 	 * */
-	private int innerAuthenticate(AuthRequest in){
+	private long innerAuthenticate(AuthRequest in){
 		UserDao userDb = new UserDao();
 		User user = null;
 		try{
@@ -97,7 +97,7 @@ public class GetRateResource {
 		QrcodeRequest input = info.getValue();
 		AuthRequest userInfo = input.getUserInfo();
 		RateResponse test = new RateResponse();
-		int uid;
+		long uid=-1;
 		if((uid=innerAuthenticate(userInfo))>0){
 			ClientDao x = new ClientDao();
 			//http://www.parqme.com/x86gg0/a80
@@ -110,7 +110,6 @@ public class GetRateResource {
 			Geolocation loc = gdao.getLocationById(pr.getLocationId());
 			
 			return new RateResponse(
-					
 					loc.getLatitude(), loc.getLongitude(),
 					pr.getLocationName(), pr.getSpaceId(),
 					pr.getMinParkMins(), pr.getMaxParkMins(), pr.getParkingRateCents(), pr.getTimeIncrementsMins(),null);
@@ -129,7 +128,7 @@ public class GetRateResource {
 		GpsRequest input = gpsrequest.getValue();	
 		AuthRequest userInfo = input.getUserInfo();
 		RateResponse test = new RateResponse();
-		int uid=-1;
+		long uid=-1;
 		if((uid=innerAuthenticate(userInfo))>0){
 			double x = input.getLat();
 			double y = input.getLon();
