@@ -14,9 +14,16 @@ public class RefillRequest {
 	int iterations;
 	int paymentType;
 	int spotid;
+	int uid;
 	AuthRequest userinfo;
 	
 	
+	public int getUid() {
+		return uid;
+	}
+	public void setUid(int uid) {
+		this.uid = uid;
+	}
 	public String getLot() {
 		return lot;
 	}

@@ -8,7 +8,9 @@ public class AuthResponse {
 	//information about user that will be displayed. 
 	long uid;
 	int parkstate; //0 not parked, 1 parked
-	
+	long endTime;
+	int instanceId;
+	int spotid;
 	
 	public long getUid() {
 		return uid;
