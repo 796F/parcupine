@@ -10,6 +10,10 @@ import java.util.Properties;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 
+/**
+ * @author GZ
+ *
+ */
 public abstract class AbstractParqDaoParent {
 
 	private Connection con;

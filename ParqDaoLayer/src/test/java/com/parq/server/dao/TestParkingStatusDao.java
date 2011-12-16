@@ -12,6 +12,10 @@ import com.parq.server.dao.model.object.User;
 import com.parq.server.dao.model.object.Payment.PaymentType;
 import com.parq.server.dao.support.SupportScriptForDaoTesting;
 
+/**
+ * @author GZ
+ *
+ */
 public class TestParkingStatusDao extends TestCase {
 
 	private ParkingStatusDao statusDao;

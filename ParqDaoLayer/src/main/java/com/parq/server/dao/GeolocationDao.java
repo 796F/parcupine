@@ -13,6 +13,10 @@ import net.sf.ehcache.Element;
 
 import com.parq.server.dao.model.object.Geolocation;
 
+/**
+ * @author GZ
+ *
+ */
 public class GeolocationDao extends AbstractParqDaoParent {
 
 	/**

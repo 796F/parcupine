@@ -2,6 +2,10 @@ package com.parq.server.dao.admin.testing;
 
 import junit.framework.TestCase;
 
+/**
+ * @author GZ
+ *
+ */
 public class ParqAdminManualDataCreation extends TestCase {
 
 	private static final String clientName = "ParqTestClient";

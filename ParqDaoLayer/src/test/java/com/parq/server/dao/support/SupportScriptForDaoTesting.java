@@ -1,6 +1,10 @@
 package com.parq.server.dao.support;
 
 
+/**
+ * @author GZ
+ *
+ */
 public final class SupportScriptForDaoTesting {
 
 	private static boolean fakeDataInserted = false;

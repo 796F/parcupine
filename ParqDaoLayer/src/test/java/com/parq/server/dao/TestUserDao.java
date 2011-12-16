@@ -4,6 +4,10 @@ import com.parq.server.dao.model.object.User;
 
 import junit.framework.TestCase;
 
+/**
+ * @author GZ
+ *
+ */
 public class TestUserDao extends TestCase {
 
 	private UserDao userDao;

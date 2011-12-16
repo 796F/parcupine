@@ -1,5 +1,9 @@
 package com.parq.server.dao.support;
 
+/**
+ * @author GZ
+ *
+ */
 public class ParqMockObjectCreationDao extends DaoForTestingPurposes {
 	
 	private static final String sqlInsertClientMain = 

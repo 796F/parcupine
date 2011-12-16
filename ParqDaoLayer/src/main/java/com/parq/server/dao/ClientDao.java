@@ -16,6 +16,10 @@ import com.parq.server.dao.model.object.ParkingLocation;
 import com.parq.server.dao.model.object.Client;
 import com.parq.server.dao.model.object.ParkingSpace;
 
+/**
+ * @author GZ
+ *
+ */
 public class ClientDao extends AbstractParqDaoParent {
 
 	/**

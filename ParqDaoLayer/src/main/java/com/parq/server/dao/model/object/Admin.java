@@ -4,6 +4,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author GZ
+ *
+ */
 public class Admin implements Serializable {
 	
 	/**

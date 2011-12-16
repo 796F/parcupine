@@ -3,6 +3,10 @@ package com.parq.server.dao.model.object;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * @author GZ
+ *
+ */
 public class Payment implements Serializable {
 	/**
 	 * 

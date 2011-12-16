@@ -2,6 +2,10 @@ package com.parq.server.dao;
 
 import junit.framework.TestCase;
 
+/**
+ * @author GZ
+ *
+ */
 public class TestAbstractParqDaoParent extends TestCase {
 
 	MockDao testDao;

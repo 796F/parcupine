@@ -11,6 +11,10 @@ import net.sf.ehcache.Element;
 import com.parq.server.dao.model.object.ParkingRate;
 import com.parq.server.dao.model.object.ParkingRate.RateType;
 
+/**
+ * @author GZ
+ *
+ */
 public class ParkingRateDao extends AbstractParqDaoParent {
 
 	/**

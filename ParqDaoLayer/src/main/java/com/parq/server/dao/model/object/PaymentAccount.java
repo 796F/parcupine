@@ -2,6 +2,10 @@ package com.parq.server.dao.model.object;
 
 import java.io.Serializable;
 
+/**
+ * @author GZ
+ *
+ */
 public class PaymentAccount implements Serializable {
 	
 	

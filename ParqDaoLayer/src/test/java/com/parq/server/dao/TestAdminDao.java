@@ -5,6 +5,10 @@ import com.parq.server.dao.support.DaoForTestingPurposes;
 
 import junit.framework.TestCase;
 
+/**
+ * @author GZ
+ *
+ */
 public class TestAdminDao extends TestCase {
 
 	private AdminDao adminDao;

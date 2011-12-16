@@ -17,6 +17,10 @@ import com.mysql.jdbc.Statement;
 import com.parq.server.dao.model.object.ParkingInstance;
 import com.parq.server.dao.model.object.Payment;
 
+/**
+ * @author GZ
+ *
+ */
 public class ParkingStatusDao extends AbstractParqDaoParent{
 	
 	/**

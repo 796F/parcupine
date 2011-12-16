@@ -5,6 +5,10 @@ import com.parq.server.dao.support.SupportScriptForDaoTesting;
 
 import junit.framework.TestCase;
 
+/**
+ * @author GZ
+ *
+ */
 public class TestParkingRateDao extends TestCase {
 
 	private ParkingRateDao parkingRateDao;

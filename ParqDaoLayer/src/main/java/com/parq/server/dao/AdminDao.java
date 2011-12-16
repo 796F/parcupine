@@ -11,6 +11,10 @@ import com.parq.server.dao.model.object.ClientRelationShip;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 
+/**
+ * @author GZ
+ *
+ */
 public class AdminDao extends AbstractParqDaoParent {
 
 	/**

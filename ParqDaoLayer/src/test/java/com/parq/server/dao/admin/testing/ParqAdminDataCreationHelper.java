@@ -6,6 +6,10 @@ import java.sql.SQLException;
 
 import com.parq.server.dao.support.ParqMockObjectCreationDao;
 
+/**
+ * @author GZ
+ *
+ */
 final class ParqAdminDataCreationHelper extends ParqMockObjectCreationDao {
 
 	protected static final String CLIENT_ADDRESS = "ParqTestAddress";

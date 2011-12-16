@@ -10,6 +10,10 @@ import com.parq.server.dao.support.SupportScriptForDaoTesting;
 
 import junit.framework.TestCase;
 
+/**
+ * @author GZ
+ *
+ */
 public class TestClientDao extends TestCase {
 
 	private ClientDao clientDao;
