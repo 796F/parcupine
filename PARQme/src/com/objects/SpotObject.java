@@ -1,7 +1,7 @@
 package com.objects;
 
 
-public class ParkObject {
+public class SpotObject {
 	private double lat;
 	private double lon;
 	private String location;
@@ -11,11 +11,11 @@ public class ParkObject {
 	private int defaultRate;
 	private int minIncrement;
 	
-	public ParkObject(){
+	public SpotObject(){
 		
 	}
 	
-	public ParkObject(double lat, double lon, String location, int spot, int minTime, int maxTime, int defaultRate, int minIncrement) {
+	public SpotObject(double lat, double lon, String location, int spot, int minTime, int maxTime, int defaultRate, int minIncrement) {
 		this.lat=lat;
 		this.lon=lon;
 		this.location=location;

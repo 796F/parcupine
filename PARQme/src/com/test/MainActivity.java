@@ -36,7 +36,8 @@ import android.widget.ViewFlipper;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.objects.Global;
-import com.objects.ParkObject;
+import com.objects.ParkInstanceObject;
+import com.objects.SpotObject;
 import com.objects.SavedInfo;
 import com.objects.ServerCalls;
 import com.objects.ThrowDialog;
@@ -136,7 +137,7 @@ public class MainActivity extends ActivityGroup {
 	private int parkCost =0;
 
 	/*various Objects used declared here*/
-	private static ParkObject mySpot;
+	private static SpotObject mySpot;
 	private CountDownTimer timer;
 	public static ViewFlipper vf;
 	private AlertDialog alert;
@@ -544,14 +545,14 @@ public class MainActivity extends ActivityGroup {
 //		globalEndTime.setSeconds(globalEndTime.getSeconds()+remainSeconds);
 //		String endtime = Global.sdf.format(globalEndTime);
 
-		final long now = System.currentTimeMillis();
-		final long end = now+remainSeconds*1000;
 		final SharedPreferences prefs = getSharedPreferences(SAVED_INFO, 0);
 
-		if(ServerCalls.park(mySpot.getSpot(), now, end, 0, 0, prefs)){
+		final ParkInstanceObject parkInstance = ServerCalls.park(mySpot.getSpot(), remainSeconds, prefs);
+		if(parkInstance != null){
 			//Toast.makeText(MainActivity.this, ""+ServerCalls.addHistory(parkDate, starttime, endtime, contents, email, parkCost), Toast.LENGTH_SHORT).show();
 			SharedPreferences.Editor edit = prefs.edit();
-			edit.putString("TIMER", String.valueOf(end));
+			edit.putString("PARKID", String.valueOf(parkInstance.getParkInstanceId()));
+			edit.putString("TIMER", String.valueOf(parkInstance.getEndTime()));
 			edit.commit();
 //			ServerCalls.addHistory(parkDate, starttime, endtime, contents, email, parkCost);
 			//return a happy response

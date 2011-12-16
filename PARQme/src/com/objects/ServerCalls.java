@@ -134,7 +134,7 @@ public class ServerCalls {
 		}
 		return -1;
 	}
-	public static ParkObject getSpotInfo(String qrcode, SharedPreferences prefs){
+	public static SpotObject getSpotInfo(String qrcode, SharedPreferences prefs){
 		final String[] tokens = qrcode.split("/");
 		if (tokens.length != 2) {
 			return null;
@@ -160,7 +160,7 @@ public class ServerCalls {
 			if (conn.getResponseCode() == 200) {
 				final JsonParser jp = JSON_FACTORY.createJsonParser(conn
 						.getInputStream());
-				final ParkObject rate = Parsers.parseRate(jp);
+				final SpotObject rate = Parsers.parseRate(jp);
 				jp.close();
 				return rate;
 			}
@@ -170,7 +170,7 @@ public class ServerCalls {
 		return null;
 		
 	}
-	public static boolean park(long spotid, long start, long end, int paymentType, int amount, SharedPreferences prefs){
+	public static ParkInstanceObject park(long spotid, long duration, SharedPreferences prefs){
 		try {
 			final HttpURLConnection conn =
 					(HttpURLConnection)
@@ -183,14 +183,9 @@ public class ServerCalls {
 			jg.writeStartObject();
 			jg.writeFieldName("spotid");
 			jg.writeNumber(spotid);
-			jg.writeFieldName("start");
-			jg.writeNumber(start);
-			jg.writeFieldName("end");
-			jg.writeNumber(end);
+			jg.writeFieldName("duration");
 			jg.writeFieldName("paymentType");
-			jg.writeNumber(paymentType);
-			jg.writeFieldName("amount");
-			jg.writeNumber(amount);
+			jg.writeNumber(0);
 			writeUserDetails(jg, prefs);
 			jg.writeEndObject();
 			jg.flush();
@@ -198,14 +193,14 @@ public class ServerCalls {
 			if (conn.getResponseCode() == 200) {
 				final JsonParser jp = JSON_FACTORY.createJsonParser(conn
 						.getInputStream());
-				final boolean response = Parsers.parseResponseCode(jp);
+				final ParkInstanceObject response = Parsers.parseParkInstance(jp);
 				jp.close();
 				return response;
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return false;
+		return null;
 	}
 	public static int addHistory(String date, String starttime, String endtime, String location, String email, int cost){
 		try {
