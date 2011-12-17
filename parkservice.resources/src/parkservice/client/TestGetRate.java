@@ -29,12 +29,12 @@ public class TestGetRate {
 		
 		//login info
 		AuthRequest in = new AuthRequest();
-		in.setEmail("tcampbel@american.edu");
+		in.setEmail("xia.umd@gmail.com");
 		in.setPassword("a");
 		//AU OR cid=11, main_lot, 1412
 		QrcodeRequest g = new QrcodeRequest();
 		g.setUserInfo(in);
-		g.setUid(11); //not used by getrate yet.  
+		g.setUid(30); //not used by getrate yet.  
 		g.setLot("main_lot");
 		g.setSpot("1412");
 		String output = service.path("getrate").path("qrcode").type(MediaType.APPLICATION_JSON).post(String.class, g);
@@ -45,7 +45,7 @@ public class TestGetRate {
 		gg.setLat(0);
 		gg.setLon(0);
 		gg.setSpot("1412");
-		gg.setUid(66);
+		gg.setUid(30);
 		String output2 = service.path("getrate").path("gps").type(MediaType.APPLICATION_JSON).post(String.class, gg);
 		System.out.println(output2);
 		//lat/lon try 0, 0
@@ -53,6 +53,6 @@ public class TestGetRate {
 
 	private static URI getBaseURI() {
 		return UriBuilder.fromUri(
-				"http://75.101.132.219:8080/parkservice.resources").build();
+				"http://localhost:8080/parkservice.resources").build();
 	}
 }

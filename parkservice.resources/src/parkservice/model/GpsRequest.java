@@ -6,16 +6,23 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
 public class GpsRequest {
-	int uid;
+	long uid;
 	double lat;  //I think these come in as floats from Map API.  
 	double lon;
 	String spot; 
 	AuthRequest userInfo;
 	
-	public int getUid() {
+	
+	/**
+	 * @return the uid
+	 */
+	public long getUid() {
 		return uid;
 	}
-	public void setUid(int uid) {
+	/**
+	 * @param uid the uid to set
+	 */
+	public void setUid(long uid) {
 		this.uid = uid;
 	}
 	public double getLat() {
