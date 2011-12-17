@@ -58,16 +58,21 @@ public class LoginActivity extends Activity {
 				String pass = passwordForm.getText().toString();
 				UserObject user = ServerCalls.getUser(email, pass);
 				if(user!=null){
-					SharedPreferences.Editor editor = check.edit();
-					editor.putBoolean("parkState", user.getParkState());
-					editor.putString("email", email);
-					editor.putLong("uid", user.getUid());
-					editor.putString("password", pass);
-					editor.commit();
-					startActivity(new Intent(LoginActivity.this, TabsActivity.class));
-					finish();
-				}else{
-					ThrowDialog.show(LoginActivity.this, ThrowDialog.COULD_NOT_AUTH);
+					if (user.getUid() != -1) {
+						SharedPreferences.Editor editor = check.edit();
+						editor.putBoolean("parkState", user.getParkState());
+						editor.putString("email", email);
+						editor.putLong("uid", user.getUid());
+						editor.putString("password", pass);
+						editor.commit();
+						startActivity(new Intent(LoginActivity.this,
+								TabsActivity.class));
+						finish();
+					} else {
+						ThrowDialog.show(LoginActivity.this, ThrowDialog.COULD_NOT_AUTH);
+					}
+				} else {
+					ThrowDialog.show(LoginActivity.this, ThrowDialog.NO_NET);
 				}
 				
 			}

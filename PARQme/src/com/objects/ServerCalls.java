@@ -8,8 +8,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.Date;
 
 import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonParser;
 
@@ -72,7 +74,7 @@ public class ServerCalls {
 			conn.setDoOutput(true);
 			final JsonGenerator jg = JSON_FACTORY.createJsonGenerator(conn.getOutputStream());
 			jg.writeStartObject();
-			jg.writeFieldName("CreditCard");
+			jg.writeFieldName("creditCard");
 			jg.writeString(ccNumber);
 			jg.writeFieldName("holderName");
 			jg.writeString(name);
@@ -132,14 +134,11 @@ public class ServerCalls {
 		}
 		return -1;
 	}
-	public static ParkObject getSpotInfo(String qrcode, SharedPreferences prefs){
+	public static SpotObject getSpotInfo(String qrcode, SharedPreferences prefs){
 		final String[] tokens = qrcode.split("/");
 		if (tokens.length != 2) {
 			return null;
 		}
-		final long uid = prefs.getLong("uid", -1);
-		final String email = prefs.getString("email", "");
-		final String password = prefs.getString("password", "");
 		try {
 			final HttpURLConnection conn =
 					(HttpURLConnection)
@@ -150,28 +149,20 @@ public class ServerCalls {
 			conn.setDoOutput(true);
 			final JsonGenerator jg = JSON_FACTORY.createJsonGenerator(conn.getOutputStream());
 			jg.writeStartObject();
-			jg.writeFieldName("uid");
-			jg.writeNumber(uid);
 			jg.writeFieldName("lot");
 			jg.writeString(tokens[0]);
 			jg.writeFieldName("spot");
 			jg.writeString(tokens[1]);
-			jg.writeFieldName("userInfo");
-			jg.writeStartObject();
-			jg.writeFieldName("email");
-			jg.writeString(email);
-			jg.writeFieldName("password");
-			jg.writeString(password);
-			jg.writeEndObject();
+			writeUserDetails(jg, prefs);
 			jg.writeEndObject();
 			jg.flush();
 			jg.close();
 			if (conn.getResponseCode() == 200) {
 				final JsonParser jp = JSON_FACTORY.createJsonParser(conn
 						.getInputStream());
-				final UserObject user = Parsers.parseUser(jp);
+				final SpotObject rate = Parsers.parseRate(jp);
 				jp.close();
-				return null;
+				return rate;
 			}
 		} catch (IOException e){
 			e.printStackTrace();
@@ -179,32 +170,37 @@ public class ServerCalls {
 		return null;
 		
 	}
-	public static int Park(String qrcode, String email, String endtime){
+	public static ParkInstanceObject park(long spotid, long duration, SharedPreferences prefs){
 		try {
-			String data = URLEncoder.encode("code", "UTF-8") + "=" + URLEncoder.encode(qrcode, "UTF-8");
-			data+= "&"+URLEncoder.encode("email", "UTF-8") + "=" + URLEncoder.encode(email, "UTF-8");
-			data+= "&"+URLEncoder.encode("endtime", "UTF-8") + "=" + URLEncoder.encode(endtime, "UTF-8");
-			// Send data
-			URL url = new URL("http://parqme.com/park.php");
-			URLConnection conn = url.openConnection();
-			
+			final HttpURLConnection conn =
+					(HttpURLConnection)
+						new URL(SERVER_HOSTNAME + "/parkservice.resources/park")
+						.openConnection();
+			conn.setRequestProperty("Accept", "application/json");
+			conn.setRequestProperty("Content-Type", "application/json");
 			conn.setDoOutput(true);
-			OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-			wr.write(data);
-			wr.flush();
-			//write data
-			int bytesRead = 1;
-			byte[] buffer = new byte[1];
-			//prepare buffers
-			BufferedInputStream bufferedInput = new BufferedInputStream(conn.getInputStream());
-			bufferedInput.read(buffer);
-			//read into buffer
-			String x =(new String(buffer, 0,bytesRead));
-			return Integer.parseInt(x);
-		}catch (Exception e){
+			final JsonGenerator jg = JSON_FACTORY.createJsonGenerator(conn.getOutputStream());
+			jg.writeStartObject();
+			jg.writeFieldName("spotid");
+			jg.writeNumber(spotid);
+			jg.writeFieldName("duration");
+			jg.writeFieldName("paymentType");
+			jg.writeNumber(0);
+			writeUserDetails(jg, prefs);
+			jg.writeEndObject();
+			jg.flush();
+			jg.close();
+			if (conn.getResponseCode() == 200) {
+				final JsonParser jp = JSON_FACTORY.createJsonParser(conn
+						.getInputStream());
+				final ParkInstanceObject response = Parsers.parseParkInstance(jp);
+				jp.close();
+				return response;
+			}
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return 0;
+		return null;
 	}
 	public static int addHistory(String date, String starttime, String endtime, String location, String email, int cost){
 		try {
@@ -264,5 +260,19 @@ public class ServerCalls {
 			e.printStackTrace();
 		}
 		return "blah";
+	}
+	private static void writeUserDetails(JsonGenerator jg, SharedPreferences prefs) throws JsonGenerationException, IOException {
+		final long uid = prefs.getLong("uid", -1);
+		final String email = prefs.getString("email", "");
+		final String password = prefs.getString("password", "");
+		jg.writeFieldName("uid");
+		jg.writeNumber(uid);
+		jg.writeFieldName("userInfo");
+		jg.writeStartObject();
+		jg.writeFieldName("email");
+		jg.writeString(email);
+		jg.writeFieldName("password");
+		jg.writeString(password);
+		jg.writeEndObject();
 	}
 }
