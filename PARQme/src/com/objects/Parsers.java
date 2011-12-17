@@ -58,6 +58,7 @@ public class Parsers {
 					return RESP_CODE_OK.equals(jp.getText());
 				}
 			}
+			t = jp.nextToken();
 		}
 		return false;
 	}
@@ -103,6 +104,7 @@ public class Parsers {
 					}
 				}
 			}
+			t = jp.nextToken();
 		}
 		return new SpotObject(lat, lon, location, spot, minTime, maxTime,
 				defaultRate, minIncrement);
@@ -123,6 +125,7 @@ public class Parsers {
 					endTime = jp.getLongValue();
 				}
 			}
+			t = jp.nextToken();
 		}
 		return new ParkInstanceObject(parkInstanceId, endTime);
 	}
