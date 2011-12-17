@@ -30,9 +30,7 @@ public class TestPark {
 		
 		ParkRequest pr = new ParkRequest();
 		pr.setIterations(2);
-		pr.setLot("main_lot");
 		pr.setPaymentType(0);
-		pr.setSpot("1412");
 		pr.setSpotid(101);
 		pr.setUid(30);
 		pr.setUserinfo(in);

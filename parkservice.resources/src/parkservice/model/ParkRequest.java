@@ -11,8 +11,6 @@ public class ParkRequest {
 	long spotid;
 	int iterations;
 	int paymentType;
-	String lot;
-	String spot;
 	AuthRequest userinfo;
 	/**
 	 * @return the uid
@@ -62,30 +60,7 @@ public class ParkRequest {
 	public void setPaymentType(int paymentType) {
 		this.paymentType = paymentType;
 	}
-	/**
-	 * @return the lot
-	 */
-	public String getLot() {
-		return lot;
-	}
-	/**
-	 * @param lot the lot to set
-	 */
-	public void setLot(String lot) {
-		this.lot = lot;
-	}
-	/**
-	 * @return the spot
-	 */
-	public String getSpot() {
-		return spot;
-	}
-	/**
-	 * @param spot the spot to set
-	 */
-	public void setSpot(String spot) {
-		this.spot = spot;
-	}
+	
 	/**
 	 * @return the userinfo
 	 */

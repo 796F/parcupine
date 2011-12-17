@@ -12,7 +12,7 @@ public class AuthResponse {
 	int parkstate; //0 not parked, 1 parked
 	
 	//THE FOLLOWING ARE FOR TIME DISPLAY
-	Date endTime; //how much to set timer
+	long endTime; //how much to set timer
 	int minTime;			//must park 1 hour
 	int maxTime;			//max park 3 hours
 	int defaultRate; 		//rate is x/increment
@@ -37,10 +37,11 @@ public class AuthResponse {
 	}
 	
 	
-	public Date getEndTime() {
+
+	public long getEndTime() {
 		return endTime;
 	}
-	public void setEndTime(Date endTime) {
+	public void setEndTime(long endTime) {
 		this.endTime = endTime;
 	}
 	public int getMinTime() {

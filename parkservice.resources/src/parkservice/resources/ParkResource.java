@@ -86,7 +86,6 @@ public class ParkResource {
 	}
 
 
-	//Refill, Park, Unpark
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -97,8 +96,7 @@ public class ParkResource {
 
 		int payment_type = in.getPaymentType();
 		long uid = in.getUid();
-		String lot = in.getLot();
-		String spot = in.getSpot();
+		long spot_id = in.getSpotid();
 		int iterations = in.getIterations();
 
 		AuthRequest userInfo = in.getUserinfo();
@@ -108,6 +106,7 @@ public class ParkResource {
 			ParkingStatusDao psd = new ParkingStatusDao();
 			ParkingInstance ps = null;
 			try{
+
 				ps = psd.getUserParkingStatus(uid);
 			}catch (Exception e){
 
@@ -119,16 +118,17 @@ public class ParkResource {
 				ParkingRateDao prd = new ParkingRateDao();
 				ParkingRate pr = null; 
 				try{
-					pr = prd.getParkingRateByName(lot, spot);
+					pr = prd.getParkingRateBySpaceId(spot_id);
 				}catch(Exception e){
 
 				}
 				if(pr!=null){
-					long spot_id = in.getSpotid();
 					int pay_amount = iterations*pr.getParkingRateCents();
-					Date start = new Date(); //start os now
+					Date start = new Date(); //start off now
 					Date end = new Date(); //end is iterations of increment + old time.  
-					end.setMinutes(end.getMinutes() + iterations*pr.getTimeIncrementsMins());
+					long msec = iterations*1000*pr.getTimeIncrementsMins()*60;
+					end.setTime(start.getTime()+msec);
+					//end.setMinutes(end.getMinutes() + iterations*pr.getTimeIncrementsMins());
 
 					PaymentAccountDao pad = new PaymentAccountDao();
 					List<PaymentAccount> pad_list = pad.getAllPaymentMethodForUser(uid);
@@ -141,7 +141,6 @@ public class ParkResource {
 					}
 
 					if(paymentProfileId>0){
-						output.setResp("charge da bitch");
 						CreateCustomerProfileTransactionResponseType response = chargeUser(pay_amount, profileId, paymentProfileId, uid);
 						if(response.getResultCode().value().equalsIgnoreCase("Ok")){
 							//if charge completes, store parking instance into db
@@ -168,7 +167,9 @@ public class ParkResource {
 							}
 							//then set output to ok
 							if(result){
-								output.setParkingInstanceId(psd.getUserParkingStatus(uid).getParkingInstId());
+								ParkingInstance finalInstance = psd.getUserParkingStatus(uid);
+								output.setParkingReferenceNumber(finalInstance.getParkingRefNumber());
+								output.setInstanceId(finalInstance.getParkingInstId());
 								output.setResp("OK");
 							}else{
 								output.setResp("DAO_ERROR");
@@ -204,25 +205,28 @@ public class ParkResource {
 	public RefillResponse refillTime(JAXBElement<RefillRequest> info){
 		RefillResponse  output = new RefillResponse ();
 		RefillRequest in = info.getValue();
-		int uid = in.getUid();
-		ParkingRateDao prd = new ParkingRateDao();
-		ParkingRate pr = null;
-		try{
-			pr =prd.getParkingRateByName(in.getLot(), in.getSpot());
-		}catch(Exception e){}
-		if(pr==null){
-			int iterations = in.getIterations();
-			int pay_amount = pr.getParkingRateCents()*iterations;
-			int payment_type = in.getPaymentType();
-			int spotid = in.getSpotid();
-			if(uid == innerAuthenticate(in.getUserinfo())){
-
-				ParkingStatusDao psd = new ParkingStatusDao();
-				ParkingInstance pi = psd.getUserParkingStatus(uid);
+		long uid = in.getUid();
+		int payment_type = in.getPaymentType();
+		if(uid == innerAuthenticate(in.getUserinfo())){
+			
+			String parkingReference = in.getParkingReferenceNumber();
+			ParkingStatusDao psd = new ParkingStatusDao();
+			ParkingInstance pi = psd.getUserParkingStatus(uid);
+			if(pi.getParkingRefNumber().equals(parkingReference)){
+				long spotid = in.getSpotid();
+				ParkingRateDao prd = new ParkingRateDao();
+				ParkingRate pr = null;
+				try{
+					pr = prd.getParkingRateBySpaceId(spotid);
+				}catch(Exception e){}
+				int iterations = in.getIterations();
+				int pay_amount = pr.getParkingRateCents()*iterations;
 
 				Date oldEndTime = pi.getParkingEndTime();
 				Date newEndTime= new Date();
-				newEndTime.setMinutes(oldEndTime.getMinutes()+iterations*pr.getTimeIncrementsMins());
+				long msec = iterations*1000*pr.getTimeIncrementsMins()*60;
+				newEndTime.setTime(oldEndTime.getTime()+msec);
+				//newEndTime.setMinutes(oldEndTime.getMinutes()+iterations*pr.getTimeIncrementsMins());
 
 				//get user payment information.  
 				PaymentAccountDao pad = new PaymentAccountDao();
@@ -262,8 +266,9 @@ public class ParkResource {
 
 						}
 						if(result){
+							ParkingInstance finalInstance = psd.getUserParkingStatus(uid);
+							output.setInstanceId(finalInstance.getParkingInstId());
 							output.setResp("OK");
-							output.setParkingInstanceId(psd.getUserParkingStatus(uid).getParkingInstId());
 						}else{
 							output.setResp("WAS_NOT_PARKED");
 						}
@@ -276,12 +281,12 @@ public class ParkResource {
 				}
 
 			}else{
-				output.setResp("BAD_AUTH");
+				output.setResp("BAD_INST_REF");
 			}
-
 		}else{
-			output.setResp("parking rate doesn't exist, check lot and spot");
+			output.setResp("BAD_AUTH");
 		}
+
 		return output;
 	}
 
@@ -292,7 +297,8 @@ public class ParkResource {
 	public UnparkResponse unparkUser(JAXBElement<UnparkRequest> info){
 		UnparkResponse  output = new UnparkResponse ();
 		UnparkRequest in = info.getValue();
-		Date endTime = in.getEnd();
+		Date endTime = new Date();
+		endTime.setTime(in.getEndTime());
 		long uid = in.getUid();
 		long spotid = in.getSpotid();
 		long parkingInstanceId = in.getParkingInstanceId();

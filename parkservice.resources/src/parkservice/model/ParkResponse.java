@@ -4,9 +4,18 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class ParkResponse {
-	long parkingInstanceId;
+	long instanceId;
+	String parkingReferenceNumber;
 	String resp;
 	
+	public long getInstanceId() {
+		return instanceId;
+	}
+
+	public void setInstanceId(long instanceId) {
+		this.instanceId = instanceId;
+	}
+
 	public String getResp() {
 		return resp;
 	}
@@ -15,12 +24,12 @@ public class ParkResponse {
 		this.resp = resp;
 	}
 
-	public long getParkingInstanceId() {
-		return parkingInstanceId;
+	public String getParkingReferenceNumber() {
+		return parkingReferenceNumber;
 	}
 
-	public void setParkingInstanceId(long parkingInstanceId) {
-		this.parkingInstanceId = parkingInstanceId;
+	public void setParkingReferenceNumber(String parkingReferenceNumber) {
+		this.parkingReferenceNumber = parkingReferenceNumber;
 	}
 
 	

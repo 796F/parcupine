@@ -74,7 +74,7 @@ public class AuthResource {
 				ParkingRate pr = prd.getParkingRateBySpaceId(pi.getSpaceId());
 				long rate_id =pr.getRateId();
 				x.setRateId(rate_id);
-				x.setEndTime(endTime);
+				x.setEndTime(endTime.getTime());
 				x.setDefaultRate(pr.getParkingRateCents());
 				x.setInstanceId(pi.getParkingInstId());
 				x.setMaxTime(pr.getMaxParkMins());
