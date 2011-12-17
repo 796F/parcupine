@@ -30,7 +30,6 @@ public class LoginActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.login);
 		
-		final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 		rememberBox = (CheckBox) findViewById(R.id.rememberbox);
 		rememberBox.setOnCheckedChangeListener(new OnCheckedChangeListener(){
 			@Override
@@ -43,7 +42,7 @@ public class LoginActivity extends Activity {
 		emailForm=(EditText) findViewById(R.id.emailForm);
 		passwordForm = (EditText) findViewById(R.id.passwordForm);
 
-		if(check.getBoolean("loginState", false)){
+		if(SavedInfo.isLoggedIn(this)){
 			Intent x = new Intent(this, TabsActivity.class);
 			x.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 			startActivity(x);
@@ -59,12 +58,7 @@ public class LoginActivity extends Activity {
 				UserObject user = ServerCalls.getUser(email, pass);
 				if(user!=null){
 					if (user.getUid() != -1) {
-						SharedPreferences.Editor editor = check.edit();
-						editor.putBoolean("parkState", user.getParkState());
-						editor.putString("email", email);
-						editor.putLong("uid", user.getUid());
-						editor.putString("password", pass);
-						editor.commit();
+						SavedInfo.logIn(LoginActivity.this, user.getParkState(), email, user.getUid(), pass);
 						startActivity(new Intent(LoginActivity.this,
 								TabsActivity.class));
 						finish();

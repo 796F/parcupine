@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.objects.SavedInfo;
 import com.objects.ServerCalls;
 import com.objects.ThrowDialog;
 import com.objects.UserObject;
@@ -79,14 +80,17 @@ public class RegisterActivity extends Activity {
 					if (ServerCalls.registerNewUser(email, password, name, ccNumber, cscNumber, expMonth, expYear, street, zip)) {
 						UserObject user = ServerCalls.getUser(email, password);
 						if(user!=null){
-							SharedPreferences.Editor editor = getSharedPreferences(LoginActivity.SAVED_INFO,0).edit();
-							editor.putBoolean("loginState", true);
-							editor.putString("email", email);
-							editor.commit();
-							startActivity(new Intent(RegisterActivity.this, TabsActivity.class));
-							finish();
+							if (user.getUid() != -1) {
+								SavedInfo.logIn(RegisterActivity.this, false,
+										email, user.getUid(), password);
+								startActivity(new Intent(RegisterActivity.this,
+										TabsActivity.class));
+								finish();
+							} else {
+								ThrowDialog.show(RegisterActivity.this, ThrowDialog.COULD_NOT_AUTH);
+							}
 						}else{
-							ThrowDialog.show(RegisterActivity.this, ThrowDialog.COULD_NOT_AUTH);
+							ThrowDialog.show(RegisterActivity.this, ThrowDialog.NO_NET);
 						}
 					} else {
 						Toast.makeText(RegisterActivity.this, "An error occurred during registration", Toast.LENGTH_SHORT).show();
