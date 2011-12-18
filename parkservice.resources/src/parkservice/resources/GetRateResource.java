@@ -73,12 +73,11 @@ public class GetRateResource {
 		try{
 			user = userDb.getUserByEmail(in.getEmail());
 		}catch(RuntimeException e){
-			return -1;
 		}
-		if(user==null){
-			return -1;
-		}else{
+		if(user!=null&&user.getPassword().equals(in.getPassword())){
 			return user.getUserID();
+		}else{
+			return -1;
 		}
 	}
 
@@ -97,8 +96,8 @@ public class GetRateResource {
 		QrcodeRequest input = info.getValue();
 		AuthRequest userInfo = input.getUserInfo();
 		RateResponse test = new RateResponse();
-		long uid=-1;
-		if((uid=innerAuthenticate(userInfo))>0){
+		long uid=input.getUid();
+		if(uid==innerAuthenticate(userInfo)){
 			ClientDao x = new ClientDao();
 			//http://www.parqme.com/x86gg0/a80
 
@@ -115,7 +114,7 @@ public class GetRateResource {
 					pr.getMinParkMins(), pr.getMaxParkMins(), pr.getParkingRateCents(), pr.getTimeIncrementsMins(),null);
 
 		}else{
-			test.setLocation("BAD_AUTH");
+			test.setLocation("BAD_AUTH" + uid);
 			return test;
 		}		
 	}
@@ -128,8 +127,8 @@ public class GetRateResource {
 		GpsRequest input = gpsrequest.getValue();	
 		AuthRequest userInfo = input.getUserInfo();
 		RateResponse test = new RateResponse();
-		long uid=-1;
-		if((uid=innerAuthenticate(userInfo))>0){
+		long uid=input.getUid();
+		if(uid==innerAuthenticate(userInfo)){
 			double x = input.getLat();
 			double y = input.getLon();
 
@@ -151,11 +150,20 @@ public class GetRateResource {
 			return test;
 			
 		}else{
-			test.setLocation("BAD_AUTH");
+			test.setLocation("BAD_AUTH" + uid);
 			return test;
 		}
 	}
-
+	
+	
+	@POST
+	@Path("/test")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public QrcodeRequest test(JAXBElement<QrcodeRequest> info){
+		return info.getValue();
+	}
+	
 	@GET
 	@Path("/hello")
 	@Produces(MediaType.TEXT_PLAIN)

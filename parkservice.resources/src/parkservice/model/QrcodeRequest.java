@@ -6,15 +6,20 @@ import javax.xml.bind.annotation.XmlAccessType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
 public class QrcodeRequest {
-	int uid;
+	long uid;
 	String lot;
 	String spot;
 	AuthRequest userInfo;
-	
-	public int getUid() {
+	/**
+	 * @return the uid
+	 */
+	public long getUid() {
 		return uid;
 	}
-	public void setUid(int uid) {
+	/**
+	 * @param uid the uid to set
+	 */
+	public void setUid(long uid) {
 		this.uid = uid;
 	}
 	/**
@@ -53,5 +58,6 @@ public class QrcodeRequest {
 	public void setUserInfo(AuthRequest userInfo) {
 		this.userInfo = userInfo;
 	}
+	
 	
 }

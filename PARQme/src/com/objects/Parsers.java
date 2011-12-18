@@ -24,6 +24,9 @@ public class Parsers {
 	private static final String PARAM_DEFAULT_RATE = "defaultRate";
 	private static final String PARAM_MIN_INCREMENT = "minIncrement";
 
+	private static final String PARAM_PARKING_INSTANCE_ID = "parkingInstanceId";
+	private static final String PARAM_END_TIME = "endTime";
+
 	// {"fname":"xia@umd.edu","lname":"Mikey","phone":"1337"}
 	public static UserObject parseUser(JsonParser jp) throws IOException {
 		long uid = -1;
@@ -55,11 +58,12 @@ public class Parsers {
 					return RESP_CODE_OK.equals(jp.getText());
 				}
 			}
+			t = jp.nextToken();
 		}
 		return false;
 	}
 
-	public static ParkObject parseRate(JsonParser jp) throws IOException {
+	public static SpotObject parseRate(JsonParser jp) throws IOException {
 		double lat = 0;
 		double lon = 0;
 		String location = "";
@@ -100,8 +104,29 @@ public class Parsers {
 					}
 				}
 			}
+			t = jp.nextToken();
 		}
-		return new ParkObject(lat, lon, location, spot, minTime, maxTime,
+		return new SpotObject(lat, lon, location, spot, minTime, maxTime,
 				defaultRate, minIncrement);
+	}
+
+	public static ParkInstanceObject parseParkInstance(JsonParser jp) throws IOException {
+		long parkInstanceId = 0;
+		long endTime = 0;
+
+		JsonToken t = jp.nextToken();
+		String curr;
+		while (t != null && t != JsonToken.END_OBJECT) {
+			curr = jp.getCurrentName();
+			if (t == JsonToken.VALUE_NUMBER_INT) {
+				if (PARAM_PARKING_INSTANCE_ID.equals(curr)) {
+					parkInstanceId = jp.getLongValue();
+				} else if (PARAM_END_TIME.equals(curr)) {
+					endTime = jp.getLongValue();
+				}
+			}
+			t = jp.nextToken();
+		}
+		return new ParkInstanceObject(parkInstanceId, endTime);
 	}
 }

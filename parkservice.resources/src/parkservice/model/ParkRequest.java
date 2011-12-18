@@ -1,5 +1,4 @@
 package parkservice.model;
-import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -8,53 +7,47 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
 public class ParkRequest {
-	int uid;
-	int spotid;
+	long uid;
+	long spotid;
 	int iterations;
 	int paymentType;
-	String lot;
-	String spot;
 	AuthRequest userinfo;
-	
-	
-	public int getIterations() {
-		return iterations;
-	}
-	public void setIterations(int iterations) {
-		this.iterations = iterations;
-	}
-	public String getLot() {
-		return lot;
-	}
-	public void setLot(String lot) {
-		this.lot = lot;
-	}
-	public String getSpot() {
-		return spot;
-	}
-	public void setSpot(String spot) {
-		this.spot = spot;
-	}
-	public int getUid() {
+	/**
+	 * @return the uid
+	 */
+	public long getUid() {
 		return uid;
 	}
-	public void setUid(int uid) {
+	/**
+	 * @param uid the uid to set
+	 */
+	public void setUid(long uid) {
 		this.uid = uid;
 	}
 	/**
 	 * @return the spotid
 	 */
-	public int getSpotid() {
+	public long getSpotid() {
 		return spotid;
 	}
 	/**
 	 * @param spotid the spotid to set
 	 */
-	public void setSpotid(int spotid) {
+	public void setSpotid(long spotid) {
 		this.spotid = spotid;
 	}
-	
-	
+	/**
+	 * @return the iterations
+	 */
+	public int getIterations() {
+		return iterations;
+	}
+	/**
+	 * @param iterations the iterations to set
+	 */
+	public void setIterations(int iterations) {
+		this.iterations = iterations;
+	}
 	/**
 	 * @return the paymentType
 	 */
@@ -80,5 +73,6 @@ public class ParkRequest {
 	public void setUserinfo(AuthRequest userinfo) {
 		this.userinfo = userinfo;
 	}
+	
 	
 }

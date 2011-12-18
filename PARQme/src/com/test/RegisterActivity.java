@@ -2,7 +2,6 @@ package com.test;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -12,6 +11,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.objects.SavedInfo;
 import com.objects.ServerCalls;
 import com.objects.ThrowDialog;
 import com.objects.UserObject;
@@ -23,7 +23,6 @@ public class RegisterActivity extends Activity {
 	EditText nameBox;
 	EditText ccBox;
 	EditText cscBox;
-	EditText streetBox;
 	EditText zipBox;
 	Spinner expMonthSpinner;
 	Spinner expYearSpinner;
@@ -39,7 +38,6 @@ public class RegisterActivity extends Activity {
 		nameBox = (EditText)findViewById(R.id.nameBox);
 		ccBox = (EditText)findViewById(R.id.ccBox);
 		cscBox = (EditText)findViewById(R.id.cscBox);
-		streetBox = (EditText)findViewById(R.id.streetBox);
 		zipBox = (EditText)findViewById(R.id.zipBox);
 
 		expMonthSpinner = (Spinner) findViewById(R.id.expmonth_spinner);
@@ -74,48 +72,43 @@ public class RegisterActivity extends Activity {
 					final String cscNumber = cscBox.getText().toString();
 					final int expMonth = expMonthSpinner.getSelectedItemPosition() + 1;
 					final int expYear = Integer.valueOf(expYearSpinner.getSelectedItem().toString());
-					final String street = streetBox.getText().toString();
 					final String zip = zipBox.getText().toString();
-					if (ServerCalls.registerNewUser(email, password, name, ccNumber, cscNumber, expMonth, expYear, street, zip)) {
+					if (ServerCalls.registerNewUser(email, password, name, ccNumber, cscNumber, expMonth, expYear, zip)) {
 						UserObject user = ServerCalls.getUser(email, password);
 						if(user!=null){
-							SharedPreferences.Editor editor = getSharedPreferences(LoginActivity.SAVED_INFO,0).edit();
-							editor.putBoolean("loginState", true);
-							editor.putString("email", email);
-							editor.commit();
-							startActivity(new Intent(RegisterActivity.this, TabsActivity.class));
-							finish();
+							if (user.getUid() != -1) {
+								SavedInfo.logIn(RegisterActivity.this, false,
+										email, user.getUid(), password);
+								startActivity(new Intent(RegisterActivity.this,
+										TabsActivity.class));
+								finish();
+							} else {
+								ThrowDialog.show(RegisterActivity.this, ThrowDialog.COULD_NOT_AUTH);
+							}
 						}else{
-							ThrowDialog.show(RegisterActivity.this, ThrowDialog.COULD_NOT_AUTH);
+							ThrowDialog.show(RegisterActivity.this, ThrowDialog.NO_NET);
 						}
 					} else {
 						Toast.makeText(RegisterActivity.this, "An error occurred during registration", Toast.LENGTH_SHORT).show();
 					}
+				} else {
+					Toast.makeText(RegisterActivity.this, "Input not valid", Toast.LENGTH_SHORT).show();
 				}
 			}
 		});
     }
 
 	private boolean validates() {
-		boolean valid = true;
-		/*
 		final String[] email = emailBox.getText().toString().split("@");
-		valid &= email.length == 2;
-		valid &= email[0].length() > 0;
-		final String[] host = email[1].split(".");
-		valid &= host.length == 2;
-		valid &= host[0].length() > 0;
-		valid &= host[1].length() > 1;
-		final CharSequence password = passwordBox.getText();
-		valid &= password.length() > 5;
-		valid &= password.equals(confirmBox.getText());
-		valid &= nameBox.getText().length() > 0;
-		final CharSequence ccNum = ccBox.getText();
-		valid &= ccNum.length() == 16;
-		valid &= cscBox.getText().length() == 3;
-		valid &= streetBox.getText().length() > 0;
-		valid &= zipBox.getText().length() == 5;
-		 */
-		return valid;
+		if (email.length == 2 && email[0].length() > 0) {
+			final String[] host = email[1].split("\\.");
+			final CharSequence password = passwordBox.getText();
+			final CharSequence ccNum = ccBox.getText();
+			return host.length == 2 && host[0].length() > 0 && host[1].length() > 1
+					&& password.length() > 5 && password.toString().equals(confirmBox.getText().toString())
+					&& nameBox.getText().length() > 0 && ccNum.length() == 16
+					&& cscBox.getText().length() == 3 && zipBox.getText().length() == 5;
+		}
+		return false;
 	}
 }

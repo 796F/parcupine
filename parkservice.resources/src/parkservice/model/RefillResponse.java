@@ -1,17 +1,18 @@
 package parkservice.model;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
 public class RefillResponse {
 	String resp;
-	long parkingInstanceId;
+	long instanceId;
 	
-	
-
-	public long getParkingInstanceId() {
-		return parkingInstanceId;
+	public long getInstanceId() {
+		return instanceId;
 	}
 
-	public void setParkingInstanceId(long parkingInstanceId) {
-		this.parkingInstanceId = parkingInstanceId;
+	public void setInstanceId(long instanceId) {
+		this.instanceId = instanceId;
 	}
 
 	public String getResp() {

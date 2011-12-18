@@ -15,7 +15,7 @@ public class UnparkRequest {
 	long parkingInstanceId;
 	
 	AuthRequest userinfo;
-	Date end;
+	long endTime;
 	public long getUid() {
 		return uid;
 	}
@@ -40,13 +40,12 @@ public class UnparkRequest {
 	public void setUserinfo(AuthRequest userinfo) {
 		this.userinfo = userinfo;
 	}
-	public Date getEnd() {
-		return end;
+	public long getEndTime() {
+		return endTime;
 	}
-	public void setEnd(Date end) {
-		this.end = end;
+	public void setEndTime(long endTime) {
+		this.endTime = endTime;
 	}
-	
 	
 	
 	

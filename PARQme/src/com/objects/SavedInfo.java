@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 public class SavedInfo{
 	/* Constantly making the same check and editor and changing info clutters code, dififcult to see logic.  */
 	/* parkState
-	 * loginState
 	 * String email
 	 * String endTime
 	 * String code
@@ -63,7 +62,7 @@ public class SavedInfo{
 	//if logged in returns true, else false
 	public static boolean isLoggedIn(Context activity){
 		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO,0);
-		return check.getBoolean("loginState", false);
+		return check.getLong("uid", -1) != -1;
 		//SharedPreferences.Editor editor = check.edit();
 	}
 	//set's email to a string
@@ -125,17 +124,22 @@ public class SavedInfo{
 		}
 		editor.commit();
 	}
-	//toggles loginState
-	public static void toggleLogin(Context activity){
+	public static void logIn(Context activity, boolean parkState, String email, long uid, String password){
 		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
 		SharedPreferences.Editor editor = check.edit();
-		if(check.getBoolean("loginState", false)){
-			//if parked, set as not parked
-			editor.putBoolean("loginState", false);
-		}else{
-			//if not parked, set as parked.
-			editor.putBoolean("loginState", true);
-		}
+		editor.putBoolean("parkState", parkState);
+		editor.putString("email", email);
+		editor.putLong("uid", uid);
+		editor.putString("password", password);
+		editor.commit();
+	}
+	public static void logOut(Context activity){
+		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
+		SharedPreferences.Editor editor = check.edit();
+		editor.putBoolean("parkState", false);
+		editor.putString("email", "");
+		editor.putLong("uid", -1);
+		editor.putString("password", "");
 		editor.commit();
 	}
 	public static void toggleVibrate(Context activity){

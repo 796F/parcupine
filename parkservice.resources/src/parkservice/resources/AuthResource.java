@@ -71,13 +71,10 @@ public class AuthResource {
 				//if end time is after now, gather needed information and then return. 
 				
 				ParkingRateDao prd = new ParkingRateDao();
-				
-				long rate_id = 0; //pi.getRateId();
-				ParkingRate pr = prd.getParkingRateByRateId(rate_id);
-
+				ParkingRate pr = prd.getParkingRateBySpaceId(pi.getSpaceId());
+				long rate_id =pr.getRateId();
 				x.setRateId(rate_id);
-				x.setEndTime(endTime);
-				
+				x.setEndTime(endTime.getTime());
 				x.setDefaultRate(pr.getParkingRateCents());
 				x.setInstanceId(pi.getParkingInstId());
 				x.setMaxTime(pr.getMaxParkMins());

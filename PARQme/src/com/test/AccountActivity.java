@@ -124,7 +124,7 @@ public class AccountActivity extends Activity {
 				//if not currently parked.
 				if(!check.getBoolean("parkState", false)){
 					TabsActivity.topright.setText("Not Logged In");
-					SavedInfo.toggleLogin(AccountActivity.this);
+					SavedInfo.logOut(AccountActivity.this);
 					startActivity(new Intent(AccountActivity.this, LoginActivity.class));
 					finish();
 				}else{
