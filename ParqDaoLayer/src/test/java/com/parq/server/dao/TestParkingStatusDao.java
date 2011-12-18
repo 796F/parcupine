@@ -278,8 +278,8 @@ public class TestParkingStatusDao extends TestCase {
 				.getUserID());
 		long curTime = System.currentTimeMillis() - (60 * 1000);
 
-		statusDao.unparkBySpaceIdAndParkingInstId(oldPiStatus.getSpaceId(),
-				oldPiStatus.getParkingInstId(), new Date(curTime));
+		statusDao.unparkBySpaceIdAndParkingRefNum(oldPiStatus.getSpaceId(),
+				oldPiStatus.getParkingRefNumber(), new Date(curTime));
 		
 		ParkingInstance newPiStatus = statusDao.getUserParkingStatus(user
 				.getUserID());

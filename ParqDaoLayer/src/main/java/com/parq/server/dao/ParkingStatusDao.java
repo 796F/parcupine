@@ -58,7 +58,10 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 		" VALUES ((SELECT MAX(parkinginst_id) FROM parkinginstance WHERE space_id = ?), ?, ?, ?, ?)";
 	
 	private static final String sqlUpdateParkingEndTime =
-		"UPDATE parkinginstance SET park_end_time = ? WHERE parkinginst_id = ? "; // AND space_id = ? ";
+		"UPDATE parkinginstance SET park_end_time = ? " +
+		" WHERE parkingrefnumber = ? " +
+		" ORDER BY parkinginst_id DESC " +
+		" LIMIT 1 ";
 	
 	private static final String getParkingStatusBySpaceIdsCacheKey = "spaceId:";
 	private static final String getUserParkingStatusCacheKey = "userId:";
@@ -218,6 +221,7 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 			parkingInst.setParkingBeganTime(rs.getTimestamp("park_began_time"));
 			parkingInst.setParkingEndTime(rs.getTimestamp("park_end_time"));
 			parkingInst.setParkingRefNumber(rs.getString("parkingrefnumber"));
+			parkingInst.setPaidParking(rs.getBoolean("is_paid_parking"));
 			
 			Payment paymentInfo = new Payment();
 			paymentInfo.setPaymentId(rs.getLong("payment_id"));
@@ -343,13 +347,13 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 		return refillComplete;
 	}
 	
-	public boolean unparkBySpaceIdAndParkingInstId(long spaceId, long parkingInstanceId, Date endTime) {
+	public boolean unparkBySpaceIdAndParkingRefNum(long spaceId, String parkingRefNum, Date endTime) {
 		
-		if (spaceId < 1 || parkingInstanceId < 1) {
+		if (spaceId < 1 || parkingRefNum == null || parkingRefNum.isEmpty()) {
 			throw new IllegalStateException(
 					"updateParkingEndTimeBySpaceId(...) method parmeters is invalid, spaceId: "
-							+ spaceId + ", parkingInstanceId: "
-							+ parkingInstanceId);
+							+ spaceId + ", parkingRefNum: "
+							+ parkingRefNum);
 		}
 		revokeSpaceCacheById(spaceId);
 		
@@ -360,7 +364,7 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 			con = getConnection();
 			pstmt = con.prepareStatement(sqlUpdateParkingEndTime);
 			pstmt.setTimestamp(1, new Timestamp(endTime.getTime()));
-			pstmt.setLong(2, parkingInstanceId);
+			pstmt.setString(2, parkingRefNum);
 			// pstmt.setInt(3, spaceId);
 			if (pstmt.executeUpdate() == 1) {
 				parkingEndTimeUpdated = true;
