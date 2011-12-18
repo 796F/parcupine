@@ -62,8 +62,7 @@ public class ServerCalls {
 	}
 
 	public static boolean registerNewUser(String email, String password, String name,
-			String ccNumber, String cscNumber, int expMonth, int expYear,
-			String street, String zip) {
+			String ccNumber, String cscNumber, int expMonth, int expYear, String zip) {
 		try {	
 			final HttpURLConnection conn =
 					(HttpURLConnection)
@@ -88,8 +87,6 @@ public class ServerCalls {
 			jg.writeString(email);
 			jg.writeFieldName("password");
 			jg.writeString(password);
-			jg.writeFieldName("street");
-			jg.writeString(street);
 			jg.writeFieldName("zipcode");
 			jg.writeString(zip);
 			jg.writeEndObject();
