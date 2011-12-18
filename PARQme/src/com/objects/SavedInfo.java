@@ -62,7 +62,7 @@ public class SavedInfo{
 	//if logged in returns true, else false
 	public static boolean isLoggedIn(Context activity){
 		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO,0);
-		return check.getLong("uid", -1) == -1;
+		return check.getLong("uid", -1) != -1;
 		//SharedPreferences.Editor editor = check.edit();
 	}
 	//set's email to a string
