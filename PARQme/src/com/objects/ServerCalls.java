@@ -176,11 +176,15 @@ public class ServerCalls {
 			conn.setRequestProperty("Accept", "application/json");
 			conn.setRequestProperty("Content-Type", "application/json");
 			conn.setDoOutput(true);
+			final SpotObject spot = SavedInfo.getInstance().currentSpot;
 			final JsonGenerator jg = JSON_FACTORY.createJsonGenerator(conn.getOutputStream());
 			jg.writeStartObject();
 			jg.writeFieldName("spotid");
 			jg.writeNumber(spotid);
-			jg.writeFieldName("duration");
+			jg.writeFieldName("durationMinutes");
+			jg.writeNumber(duration);
+			jg.writeFieldName("chargeAmount");
+			jg.writeNumber(duration / spot.getMinIncrement() * spot.getDefaultRate());
 			jg.writeFieldName("paymentType");
 			jg.writeNumber(0);
 			writeUserDetails(jg, prefs);
