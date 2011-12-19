@@ -1,20 +1,14 @@
 package com.parq.server.dao;
 
 import com.parq.server.dao.model.object.User;
-
-import junit.framework.TestCase;
+import com.parq.server.dao.support.ParqUnitTestParent;
 
 /**
  * @author GZ
  *
  */
-public class TestUserDao extends TestCase {
+public class TestUserDao extends ParqUnitTestParent {
 
-	private UserDao userDao;
-
-	private static final String password = "Password123";
-	private static final String eMail = "TestUser12@testCorp.com";
-	private static final String phoneNumber = "123-555-4567";
 
 	@Override
 	protected void setUp() throws Exception {
@@ -23,41 +17,41 @@ public class TestUserDao extends TestCase {
 
 	public void testCreateUser() {
 		User newUser = new User();
-		newUser.setPassword(password);
-		newUser.setEmail(eMail);
-		newUser.setPhoneNumber(phoneNumber);
+		newUser.setPassword(testUserPW);
+		newUser.setEmail(testUserEmail);
+		newUser.setPhoneNumber(testUserPhone);
 
 		boolean userCreationSuccessful = userDao.createNewUser(newUser);
 		assertTrue(userCreationSuccessful);
 	}
 
 	public void testGetUserById() {
-		User userTemp = userDao.getUserByEmail(eMail);
+		User userTemp = userDao.getUserByEmail(testUserEmail);
 		User user = userDao.getUserById(userTemp.getUserID());
 
 		assertNotNull(user);
-		assertEquals(user.getPassword(), password);
-		assertEquals(user.getEmail(), eMail);
-		assertEquals(user.getPhoneNumber(), phoneNumber);
+		assertEquals(user.getPassword(), testUserPW);
+		assertEquals(user.getEmail(), testUserEmail);
+		assertEquals(user.getPhoneNumber(), testUserPhone);
 		assertTrue(user.getUserID() > 0);
 	}
 	
 	public void testGetUserByEmail() {
-		User user = userDao.getUserByEmail(eMail);
+		User user = userDao.getUserByEmail(testUserEmail);
 
 		assertNotNull(user);
-		assertEquals(user.getPassword(), password);
-		assertEquals(user.getEmail(), eMail);
-		assertEquals(user.getPhoneNumber(), phoneNumber);
+		assertEquals(user.getPassword(), testUserPW);
+		assertEquals(user.getEmail(), testUserEmail);
+		assertEquals(user.getPhoneNumber(), testUserPhone);
 		assertTrue(user.getUserID() > 0);
 	}
 
 	public void testCaching() {
 		
-		User user = userDao.getUserByEmail(eMail);
-		User user1 = userDao.getUserByEmail(eMail);
-		User user2 = userDao.getUserByEmail(eMail);
-		User user3 = userDao.getUserByEmail(eMail);
+		User user = userDao.getUserByEmail(testUserEmail);
+		User user1 = userDao.getUserByEmail(testUserEmail);
+		User user2 = userDao.getUserByEmail(testUserEmail);
+		User user3 = userDao.getUserByEmail(testUserEmail);
 		assertSame(user, user1);
 		assertSame(user, user2);
 		assertSame(user, user3);
@@ -81,18 +75,16 @@ public class TestUserDao extends TestCase {
 		assertSame(userId, userId3);
 	
 		
-		User userEmail = userDao.getUserByEmail(eMail);
-		User userEmail1 = userDao.getUserByEmail(eMail);
-		User userEmail2 = userDao.getUserByEmail(eMail);
-		User userEmail3 = userDao.getUserByEmail(eMail);
+		User userEmail = userDao.getUserByEmail(testUserEmail);
+		User userEmail1 = userDao.getUserByEmail(testUserEmail);
+		User userEmail2 = userDao.getUserByEmail(testUserEmail);
+		User userEmail3 = userDao.getUserByEmail(testUserEmail);
 		assertSame(userEmail, userEmail1);
 		assertSame(userEmail, userEmail2);
 		assertSame(userEmail, userEmail3);
 	}
-
-	public void testDeleteUser() {
-		User user = userDao.getUserByEmail(eMail);
-		boolean deleteSuccessful = userDao.deleteUserById(user.getUserID());
-		assertTrue(deleteSuccessful);
+	
+	public void testUserCleanUp() {
+		deleteUserTestData();
 	}
 }

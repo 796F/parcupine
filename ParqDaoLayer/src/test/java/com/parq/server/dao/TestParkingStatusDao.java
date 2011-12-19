@@ -3,72 +3,21 @@ package com.parq.server.dao;
 import java.util.Date;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import com.parq.server.dao.model.object.ParkingInstance;
-import com.parq.server.dao.model.object.ParkingLocation;
 import com.parq.server.dao.model.object.Payment;
-import com.parq.server.dao.model.object.User;
 import com.parq.server.dao.model.object.Payment.PaymentType;
-import com.parq.server.dao.support.SupportScriptForDaoTesting;
+import com.parq.server.dao.support.ParqUnitTestParent;
 
 /**
  * @author GZ
  *
  */
-public class TestParkingStatusDao extends TestCase {
+public class TestParkingStatusDao extends ParqUnitTestParent {
 
-	private ParkingStatusDao statusDao;
-	private UserDao userDao;
-	private ParkingInstance pi;
-	private ParkingInstance piRefil;
-	private User user;
-	private List<ParkingLocation> buildingList;
 
 	@Override
 	protected void setUp() throws Exception {
-		SupportScriptForDaoTesting.insertFakeData();
-		
-		statusDao = new ParkingStatusDao();
-		User newUser = new User();
-		newUser.setPassword("password");
-		newUser.setEmail("eMail");
-		userDao = new UserDao();
-		boolean userCreationSuccessful = userDao.createNewUser(newUser);
-		assertTrue(userCreationSuccessful);
-		user = userDao.getUserByEmail("eMail");
-		
-		ClientDao clientDao = new ClientDao();
-		buildingList = clientDao.getParkingLocationsAndSpacesByClientId(
-				clientDao.getClientByName(SupportScriptForDaoTesting.clientNameMain).getId());
-		
-		pi = new ParkingInstance();
-		pi.setPaidParking(true);
-		pi.setParkingBeganTime(new Date(System.currentTimeMillis()));
-		pi.setParkingEndTime(new Date(System.currentTimeMillis() + 3600000));
-		pi.setSpaceId(buildingList.get(0).getSpaces().get(0).getSpaceId());
-		pi.setUserId(user.getUserID());
-		
-		Payment paymentInfo = new Payment();
-		paymentInfo.setAmountPaidCents(1005);
-		paymentInfo.setPaymentDateTime(new Date(System.currentTimeMillis()));
-		paymentInfo.setPaymentRefNumber("Test_Payment_Ref_Num_1");
-		paymentInfo.setPaymentType(PaymentType.CreditCard);
-		pi.setPaymentInfo(paymentInfo);
-		
-		piRefil = new ParkingInstance();
-		piRefil.setPaidParking(true);
-		piRefil.setParkingBeganTime(new Date(System.currentTimeMillis()));
-		piRefil.setParkingEndTime(new Date(System.currentTimeMillis() + 7200000));
-		piRefil.setSpaceId(buildingList.get(0).getSpaces().get(0).getSpaceId());
-		piRefil.setUserId(user.getUserID());
-		
-		Payment paymentInfo2 = new Payment();
-		paymentInfo2.setAmountPaidCents(1250);
-		paymentInfo2.setPaymentDateTime(new Date(System.currentTimeMillis()));
-		paymentInfo2.setPaymentRefNumber("Test_Payment_Ref_Num_1");
-		paymentInfo2.setPaymentType(PaymentType.CreditCard);
-		piRefil.setPaymentInfo(paymentInfo2);
+		setupParkingPaymentData();
 	}
 	
 	
@@ -79,7 +28,7 @@ public class TestParkingStatusDao extends TestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		// user object cleanup
-		userDao.deleteUserById(user.getUserID());
+		deleteUserTestData();
 	}
 
 
@@ -146,9 +95,9 @@ public class TestParkingStatusDao extends TestCase {
 	public void testGetUserParkingStatus() {
 		assertTrue(statusDao.addNewParkingAndPayment(pi));
 		
-		ParkingInstance userParkingStatus = statusDao.getUserParkingStatus(user.getUserID());
+		ParkingInstance userParkingStatus = statusDao.getUserParkingStatus(testUser.getUserID());
 		assertNotNull(userParkingStatus);
-		assertEquals(user.getUserID(), userParkingStatus.getUserId());
+		assertEquals(testUser.getUserID(), userParkingStatus.getUserId());
 		assertEquals(userParkingStatus.getSpaceId(), pi.getSpaceId());
 		assertEquals(userParkingStatus.getUserId(), pi.getUserId());
 		// time comparison is truncated to the nearest seconds
@@ -165,20 +114,20 @@ public class TestParkingStatusDao extends TestCase {
 		assertEquals(userParkingStatus.getPaymentInfo().getAmountPaidCents(), pi.getPaymentInfo().getAmountPaidCents());
 		
 		// user object cleanup
-		 boolean deleteSuccessful = userDao.deleteUserById(user.getUserID());
+		 boolean deleteSuccessful = userDao.deleteUserById(testUser.getUserID());
 		 assertTrue(deleteSuccessful);
 	}
 
 	public void testCacheRunTime() {
 		assertTrue(statusDao.addNewParkingAndPayment(pi));
 		
-		ParkingInstance gups = statusDao.getUserParkingStatus(user.getUserID());
+		ParkingInstance gups = statusDao.getUserParkingStatus(testUser.getUserID());
 		
 		long curSysTimeBeforeCacheCall = System.currentTimeMillis();
 		for (int i = 0; i < 1000; i++) {
-			ParkingInstance ups = statusDao.getUserParkingStatus(user.getUserID());
+			ParkingInstance ups = statusDao.getUserParkingStatus(testUser.getUserID());
 			assertNotNull(ups);
-			assertEquals(user.getUserID(), ups.getUserId());
+			assertEquals(testUser.getUserID(), ups.getUserId());
 			assertSame(gups, ups);
 		}
 		
@@ -186,7 +135,7 @@ public class TestParkingStatusDao extends TestCase {
 		for (int i = 0; i < 1000; i++) {
 			ParkingInstance ps = statusDao.getParkingStatusBySpaceIds(new long[]{gups.getSpaceId()}).get(0);
 			assertNotNull(ps);
-			assertEquals(user.getUserID(), ps.getUserId());
+			assertEquals(testUser.getUserID(), ps.getUserId());
 			assertSame(gpsbsi, ps);
 		}
 		
@@ -197,20 +146,20 @@ public class TestParkingStatusDao extends TestCase {
 		//	+ (curSysTimeAfterCacheCall - curSysTimeBeforeCacheCall));
 		
 		// user object cleanup
-		boolean deleteSuccessful = userDao.deleteUserById(user.getUserID());
+		boolean deleteSuccessful = userDao.deleteUserById(testUser.getUserID());
 		assertTrue(deleteSuccessful);
 	}
 	
 	public void testCacheUpdate() {
 		assertTrue(statusDao.addNewParkingAndPayment(pi));
 		
-		ParkingInstance oldGUPS = statusDao.getUserParkingStatus(user.getUserID());
+		ParkingInstance oldGUPS = statusDao.getUserParkingStatus(testUser.getUserID());
 		
 		// make multiple cache hits to ensure current result are cached.
 		for (int i = 0; i < 10; i++) {
-			ParkingInstance ups = statusDao.getUserParkingStatus(user.getUserID());
+			ParkingInstance ups = statusDao.getUserParkingStatus(testUser.getUserID());
 			assertNotNull(ups);
-			assertEquals(user.getUserID(), ups.getUserId());
+			assertEquals(testUser.getUserID(), ups.getUserId());
 			assertSame(oldGUPS, ups);
 		}
 		
@@ -218,7 +167,7 @@ public class TestParkingStatusDao extends TestCase {
 		for (int i = 0; i < 10; i++) {
 			ParkingInstance ps = statusDao.getParkingStatusBySpaceIds(new long[]{oldGUPS.getSpaceId()}).get(0);
 			assertNotNull(ps);
-			assertEquals(user.getUserID(), ps.getUserId());
+			assertEquals(testUser.getUserID(), ps.getUserId());
 			assertSame(oldGPSBSI, ps);
 		}
 		
@@ -228,7 +177,7 @@ public class TestParkingStatusDao extends TestCase {
 		newPi.setParkingBeganTime(new Date(System.currentTimeMillis() + 5000));
 		newPi.setParkingEndTime(new Date(System.currentTimeMillis() + 3600000));
 		newPi.setSpaceId(buildingList.get(0).getSpaces().get(0).getSpaceId());
-		newPi.setUserId(user.getUserID());
+		newPi.setUserId(testUser.getUserID());
 		
 		Payment newPaymentInfo = new Payment();
 		newPaymentInfo.setAmountPaidCents(550);
@@ -239,7 +188,7 @@ public class TestParkingStatusDao extends TestCase {
 		
 		assertTrue(statusDao.addNewParkingAndPayment(newPi));
 		
-		ParkingInstance newGUPS = statusDao.getUserParkingStatus(user.getUserID());
+		ParkingInstance newGUPS = statusDao.getUserParkingStatus(testUser.getUserID());
 		ParkingInstance newGPSBSI = statusDao.getParkingStatusBySpaceIds(new long[]{oldGUPS.getSpaceId()}).get(0);
 		
 		assertNotSame(oldGUPS, newGUPS);
@@ -251,9 +200,9 @@ public class TestParkingStatusDao extends TestCase {
 		
 		// test cache
 		for (int i = 0; i < 10; i++) {
-			ParkingInstance ups = statusDao.getUserParkingStatus(user.getUserID());
+			ParkingInstance ups = statusDao.getUserParkingStatus(testUser.getUserID());
 			assertNotNull(ups);
-			assertEquals(user.getUserID(), ups.getUserId());
+			assertEquals(testUser.getUserID(), ups.getUserId());
 			assertSame(newGUPS, ups);
 		}
 		
@@ -261,12 +210,12 @@ public class TestParkingStatusDao extends TestCase {
 		for (int i = 0; i < 10; i++) {
 			ParkingInstance ps = statusDao.getParkingStatusBySpaceIds(new long[]{oldGUPS.getSpaceId()}).get(0);
 			assertNotNull(ps);
-			assertEquals(user.getUserID(), ps.getUserId());
+			assertEquals(testUser.getUserID(), ps.getUserId());
 			assertSame(newGPSBSI, ps);
 		}
 		
 		// user object cleanup
-		boolean deleteSuccessful = userDao.deleteUserById(user.getUserID());
+		boolean deleteSuccessful = userDao.deleteUserById(testUser.getUserID());
 		assertTrue(deleteSuccessful);
 	}
 	
@@ -274,20 +223,20 @@ public class TestParkingStatusDao extends TestCase {
 		assertTrue(statusDao.addNewParkingAndPayment(pi));
 
 		// update the parking endtime to current time minus 60 sec
-		ParkingInstance oldPiStatus = statusDao.getUserParkingStatus(user
+		ParkingInstance oldPiStatus = statusDao.getUserParkingStatus(testUser
 				.getUserID());
 		long curTime = System.currentTimeMillis() - (60 * 1000);
 
 		statusDao.unparkBySpaceIdAndParkingRefNum(oldPiStatus.getSpaceId(),
 				oldPiStatus.getParkingRefNumber(), new Date(curTime));
 		
-		ParkingInstance newPiStatus = statusDao.getUserParkingStatus(user
+		ParkingInstance newPiStatus = statusDao.getUserParkingStatus(testUser
 				.getUserID());
 		// timestamp stored in the DB is only accurate to the second interval.
 		assertEquals(newPiStatus.getParkingEndTime().getTime() / 1000,  curTime / 1000);
 		
 		// user object cleanup
-		 boolean deleteSuccessful = userDao.deleteUserById(user.getUserID());
+		 boolean deleteSuccessful = userDao.deleteUserById(testUser.getUserID());
 		 assertTrue(deleteSuccessful);
 	}
 	

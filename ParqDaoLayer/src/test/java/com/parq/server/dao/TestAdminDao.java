@@ -1,24 +1,16 @@
 package com.parq.server.dao;
 
 import com.parq.server.dao.model.object.Admin;
-import com.parq.server.dao.support.DaoForTestingPurposes;
-
-import junit.framework.TestCase;
+import com.parq.server.dao.support.ParqUnitTestParent;
 
 /**
  * @author GZ
  *
  */
-public class TestAdminDao extends TestCase {
+public class TestAdminDao extends ParqUnitTestParent {
 
 	private AdminDao adminDao;
 
-	private static final String adminName = "Test_Admin_1";
-	private static final String password = "Password123";
-	private static final String eMail = "TestAdmin12@testCorp.com";
-	private static final String roleName = "TestRole";
-	private static final String clientName = "TestClientName";
-	
 	private static boolean testDataCreated = false;
 
 	@Override
@@ -31,34 +23,7 @@ public class TestAdminDao extends TestCase {
 	private void createTestData() {
 		if (!testDataCreated){
 			testDataCreated = true;
-			
-			DaoForTestingPurposes testDao = new DaoForTestingPurposes();
-			
-			testDao.executeSqlStatement("DELETE FROM adminclientrelationship WHERE client_id = (SELECT client_id FROM client WHERE name='" + clientName + "')");
-			testDao.executeSqlStatement("DELETE FROM adminrole WHERE role_name = '" + roleName + "'");
-			testDao.executeSqlStatement("DELETE FROM admin WHERE username = '" + adminName + "'");
-			testDao.executeSqlStatement("DELETE FROM client WHERE name='" + clientName + "'");
-			
-			String sqlInsertAdmin = "INSERT INTO admin (username, password, email) " +
-			"VALUES ('" + adminName + "', '" + password +"', '" + eMail + "')";
-			
-			String sqlInsertRole =  "INSERT INTO adminrole (role_name) " +
-			"VALUES ('" + roleName + "')";
-			
-			String sqlInsertClient = "INSERT INTO client (name) VALUES ('" + clientName + "')";
-			
-			String sqlInsertAdminClientRelationship = 
-				"INSERT INTO adminclientrelationship (admin_id, client_id, adminrole_id) " +
-				"VALUES (" +
-				"(SELECT admin_id FROM admin WHERE username = '" + adminName  + "'), " +
-				"(SELECT client_id FROM client WHERE name = '" + clientName + "'), " +
-				"(SELECT adminrole_id FROM adminrole WHERE role_name = '" + roleName + "'))";
-			
-			testDao.executeSqlStatement(sqlInsertAdmin);
-			testDao.executeSqlStatement(sqlInsertRole);
-			testDao.executeSqlStatement(sqlInsertClient);
-			testDao.executeSqlStatement(sqlInsertAdminClientRelationship);
-			
+			createAdminUserTestData();
 		}
 	}
 

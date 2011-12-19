@@ -3,18 +3,17 @@ package com.parq.server.dao;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.parq.server.dao.model.object.ParkingLocation;
 import com.parq.server.dao.model.object.Client;
+import com.parq.server.dao.model.object.ParkingLocation;
 import com.parq.server.dao.model.object.ParkingSpace;
+import com.parq.server.dao.support.ParqUnitTestParent;
 import com.parq.server.dao.support.SupportScriptForDaoTesting;
-
-import junit.framework.TestCase;
 
 /**
  * @author GZ
  *
  */
-public class TestClientDao extends TestCase {
+public class TestClientDao extends ParqUnitTestParent {
 
 	private ClientDao clientDao;
 

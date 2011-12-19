@@ -18,6 +18,7 @@ public class Payment implements Serializable {
 	private String paymentRefNumber;
 	private Date paymentDateTime;
 	private int amountPaid = -1;
+	private long accountId;
 
 	public enum PaymentType {
 		CreditCard, PrePaid;
@@ -111,5 +112,19 @@ public class Payment implements Serializable {
 	 */
 	public void setAmountPaidCents(int amountPaid) {
 		this.amountPaid = amountPaid;
+	}
+
+	/**
+	 * @param accountId the accountId to set
+	 */
+	public void setAccountId(long accountId) {
+		this.accountId = accountId;
+	}
+
+	/**
+	 * @return the accountId
+	 */
+	public long getAccountId() {
+		return accountId;
 	}
 }

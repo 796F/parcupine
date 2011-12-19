@@ -3,15 +3,14 @@ package com.parq.server.dao;
 import java.util.List;
 
 import com.parq.server.dao.model.object.Geolocation;
+import com.parq.server.dao.support.ParqUnitTestParent;
 import com.parq.server.dao.support.SupportScriptForDaoTesting;
-
-import junit.framework.TestCase;
 
 /**
  * @author GZ
  *
  */
-public class TestGeolocationDao extends TestCase {
+public class TestGeolocationDao extends ParqUnitTestParent {
 
 	private GeolocationDao geolocationDao;
 

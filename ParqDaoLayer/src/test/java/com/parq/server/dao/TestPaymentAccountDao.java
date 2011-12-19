@@ -3,46 +3,21 @@ package com.parq.server.dao;
 import java.util.List;
 
 import com.parq.server.dao.model.object.PaymentAccount;
-import com.parq.server.dao.model.object.User;
+import com.parq.server.dao.support.ParqUnitTestParent;
 import com.parq.server.dao.support.SupportScriptForDaoTesting;
-
-import junit.framework.TestCase;
 
 /**
  * @author GZ
  *
  */
-public class TestPaymentAccountDao extends TestCase {
-
-	private PaymentAccountDao payAccDao;
-	private UserDao userDao;
-	private static User testUser;
-	
-	private static final String testCCStub = "1234";
-	private static final String testCustomerId = "CUS_345";
-	private static final String testPaymentMethodId = "PAY_456169";
-	
-	private static final String testUserEmail = "TestUser@PaymentAccount.test";
-	private static final String testUserPW = "TestPassword";
-	private static final String testUserPhone = "123-555-7890";
-	
-	
+public class TestPaymentAccountDao extends ParqUnitTestParent {
 
 	@Override
 	protected void setUp() throws Exception {
 		payAccDao = new PaymentAccountDao();
-		userDao = new UserDao();
-		
+
 		if (testUser == null) {
-			// Create the test user to test the app with.
-			User newUser = new User();
-			newUser.setPassword(testUserPW);
-			newUser.setEmail(testUserEmail);
-			newUser.setPhoneNumber(testUserPhone);
-			boolean userCreationSuccessful = userDao.createNewUser(newUser);
-			assertTrue(userCreationSuccessful);
-			
-			testUser = userDao.getUserByEmail(testUserEmail);
+			createUserTestData();
 		}
 	}
 	
@@ -54,9 +29,7 @@ public class TestPaymentAccountDao extends TestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		if (testUser != null) {
-			boolean deleteUserSuccessful = userDao.deleteUserById(testUser.getUserID());
-			assertTrue(deleteUserSuccessful);
-			testUser = null;
+			deleteUserTestData();
 		}
 	}
 
@@ -242,6 +215,5 @@ public class TestPaymentAccountDao extends TestCase {
 			assertEquals(testUser.getUserID(), pa1.getUserId());
 			assertTrue(pa1.getAccountId() > 0);
 		}
-		
 	}
 }

@@ -1,11 +1,10 @@
 package com.parq.server.dao;
 
 import com.parq.server.dao.model.object.ParkingSpace;
+import com.parq.server.dao.support.ParqUnitTestParent;
 import com.parq.server.dao.support.SupportScriptForDaoTesting;
 
-import junit.framework.TestCase;
-
-public class TestParkingSpaceDao extends TestCase {
+public class TestParkingSpaceDao extends ParqUnitTestParent {
 
 	private ParkingSpaceDao parkingSpaceDao;
 

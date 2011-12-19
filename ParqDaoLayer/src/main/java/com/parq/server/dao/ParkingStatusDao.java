@@ -54,8 +54,8 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 		"INSERT INTO parkinginstance (user_id, space_id, park_began_time, park_end_time, is_paid_parking, parkingrefnumber) " + 
 		" VALUES (?, ?, ?, ?, ?, ?)";
 	private static final String sqlInsertPayment = 
-		"INSERT INTO payment (parkinginst_id, payment_type, payment_ref_num, payment_datetime, amount_paid_cents) " +
-		" VALUES ((SELECT MAX(parkinginst_id) FROM parkinginstance WHERE space_id = ?), ?, ?, ?, ?)";
+		"INSERT INTO payment (parkinginst_id, payment_type, payment_ref_num, payment_datetime, amount_paid_cents, account_id) " +
+		" VALUES ((SELECT MAX(parkinginst_id) FROM parkinginstance WHERE space_id = ?), ?, ?, ?, ?, ?)";
 	
 	private static final String sqlUpdateParkingEndTime =
 		"UPDATE parkinginstance SET park_end_time = ? " +
@@ -281,6 +281,11 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 				pstmt.setString(3, parkingInst.getPaymentInfo().getPaymentRefNumber());
 				pstmt.setTimestamp(4, new Timestamp(parkingInst.getPaymentInfo().getPaymentDateTime().getTime()));
 				pstmt.setInt(5, parkingInst.getPaymentInfo().getAmountPaidCents());
+				if (parkingInst.getPaymentInfo().getAccountId() > 0) {
+					pstmt.setLong(6, parkingInst.getPaymentInfo().getAccountId());
+				} else {
+					pstmt.setNull(6, java.sql.Types.BIGINT);
+				}
 				
 				parkingInstanceCreated = pstmt.executeUpdate() == 1;
 			}
@@ -332,6 +337,11 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 				pstmt.setString(3, payment.getPaymentRefNumber());
 				pstmt.setTimestamp(4, new Timestamp(payment.getPaymentDateTime().getTime()));
 				pstmt.setInt(5, payment.getAmountPaidCents());
+				if (payment.getAccountId() > 0) {
+					pstmt.setLong(6, payment.getAccountId());
+				} else {
+					pstmt.setNull(6, java.sql.Types.BIGINT);
+				}
 				
 				refillComplete = pstmt.executeUpdate() == 1;
 			}
