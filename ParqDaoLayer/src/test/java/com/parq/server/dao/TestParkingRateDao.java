@@ -1,15 +1,16 @@
 package com.parq.server.dao;
 
+import junit.framework.TestCase;
+
 import com.parq.server.dao.model.object.ParkingRate;
 import com.parq.server.dao.model.object.ParkingSpace;
-import com.parq.server.dao.support.ParqUnitTestParent;
 import com.parq.server.dao.support.SupportScriptForDaoTesting;
 
 /**
  * @author GZ
  *
  */
-public class TestParkingRateDao extends ParqUnitTestParent {
+public class TestParkingRateDao extends TestCase {
 
 	private ParkingRateDao parkingRateDao;
 
@@ -19,7 +20,7 @@ public class TestParkingRateDao extends ParqUnitTestParent {
 	}
 
 	public void testGetParkingRateByName() {
-		SupportScriptForDaoTesting.insertFakeData();
+		SupportScriptForDaoTesting.insertMainTestDataSet();
 
 		ParkingRate pRate = parkingRateDao.getParkingRateByName(
 				SupportScriptForDaoTesting.parkingLocationNameMain,
@@ -36,7 +37,7 @@ public class TestParkingRateDao extends ParqUnitTestParent {
 	}
 
 	public void testDifferentRates() {
-		SupportScriptForDaoTesting.insertFakeData();
+		SupportScriptForDaoTesting.insertMainTestDataSet();
 
 		ParkingRate spaceRateObj = parkingRateDao.getParkingRateByName(
 				SupportScriptForDaoTesting.parkingLocationNameMain,
@@ -57,7 +58,7 @@ public class TestParkingRateDao extends ParqUnitTestParent {
 	}
 	
 	public void testGetParkingRateByRateId() {
-		SupportScriptForDaoTesting.insertFakeData();
+		SupportScriptForDaoTesting.insertMainTestDataSet();
 
 		ParkingRate pRate = parkingRateDao.getParkingRateByName(
 				SupportScriptForDaoTesting.parkingLocationNameMain,
@@ -74,7 +75,7 @@ public class TestParkingRateDao extends ParqUnitTestParent {
 	}
 	
 	public void testGetParkingRateBySpaceId() {
-		SupportScriptForDaoTesting.insertFakeData();
+		SupportScriptForDaoTesting.insertMainTestDataSet();
 
 		
 		ParkingRate spaceRateObj = parkingRateDao.getParkingRateByName(
@@ -105,7 +106,7 @@ public class TestParkingRateDao extends ParqUnitTestParent {
 	}
 
 	public void testCaching() {
-		SupportScriptForDaoTesting.insertFakeData();
+		SupportScriptForDaoTesting.insertMainTestDataSet();
 
 		ParkingRate pRate = parkingRateDao.getParkingRateByName(
 				SupportScriptForDaoTesting.parkingLocationNameMain,

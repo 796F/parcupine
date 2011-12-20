@@ -1,13 +1,13 @@
 package com.parq.server.dao;
 
-import com.parq.server.dao.support.ParqUnitTestParent;
+import junit.framework.TestCase;
 
 
 /**
  * @author GZ
  *
  */
-public class TestAbstractParqDaoParent extends ParqUnitTestParent {
+public class TestAbstractParqDaoParent extends TestCase {
 
 	MockDao testDao;
 

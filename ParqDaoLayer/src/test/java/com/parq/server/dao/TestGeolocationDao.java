@@ -2,15 +2,16 @@ package com.parq.server.dao;
 
 import java.util.List;
 
+import junit.framework.TestCase;
+
 import com.parq.server.dao.model.object.Geolocation;
-import com.parq.server.dao.support.ParqUnitTestParent;
 import com.parq.server.dao.support.SupportScriptForDaoTesting;
 
 /**
  * @author GZ
  *
  */
-public class TestGeolocationDao extends ParqUnitTestParent {
+public class TestGeolocationDao extends TestCase {
 
 	private GeolocationDao geolocationDao;
 
@@ -20,7 +21,7 @@ public class TestGeolocationDao extends ParqUnitTestParent {
 	}
 
 	public void testGetCloseByParkingLocation() {
-		SupportScriptForDaoTesting.insertFakeData();
+		SupportScriptForDaoTesting.insertMainTestDataSet();
 
 		List<Geolocation> locationList = geolocationDao.findCloseByParkingLocation(-1, 1, -1, 1);
 		assertNotNull(locationList);

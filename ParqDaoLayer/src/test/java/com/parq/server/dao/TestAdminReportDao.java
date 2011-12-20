@@ -2,15 +2,16 @@ package com.parq.server.dao;
 
 import java.util.Date;
 
+import junit.framework.TestCase;
+
 import com.parq.server.dao.model.object.ParkingLocationUsageReport;
 import com.parq.server.dao.model.object.UserPaymentReport;
 import com.parq.server.dao.model.object.ParkingLocationUsageReport.ParkingLocationUsageEntry;
 import com.parq.server.dao.model.object.Payment.PaymentType;
 import com.parq.server.dao.model.object.UserPaymentReport.UserPaymentEntry;
-import com.parq.server.dao.support.ParqUnitTestParent;
 import com.parq.server.dao.support.SupportScriptForDaoTesting;
 
-public class TestAdminReportDao extends ParqUnitTestParent {
+public class TestAdminReportDao extends TestCase {
 
 	private AdminReportDao adminReportDao;
 	private Date reportStartDate;
@@ -18,7 +19,6 @@ public class TestAdminReportDao extends ParqUnitTestParent {
 
 	@Override
 	protected void setUp() throws Exception {
-		deleteUserTestData();
 		adminReportDao = new AdminReportDao();
 		
 		if (reportStartDate == null || reportEndDate == null) {
@@ -28,23 +28,13 @@ public class TestAdminReportDao extends ParqUnitTestParent {
 					+ (72 * 60 * 60 * 1000)); // set the report end date to the
 												// 24 hour in the future
 		}
-		createUserTestData();
-		createUserPaymentAccount();
-		setupParkingPaymentData();
+		SupportScriptForDaoTesting.insertMainTestDataSet();
+		SupportScriptForDaoTesting.createUserTestData();
+		SupportScriptForDaoTesting.createUserPaymentAccount();
+		SupportScriptForDaoTesting.setupParkingPaymentData();
 	}
-	
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#tearDown()
-	 */
-	@Override
-	protected void tearDown() throws Exception {
-		deleteUserTestData();
-	}
-
-
 
 	public void testGetParkingLocationUsageReport(){
-		SupportScriptForDaoTesting.insertFakeData();
 		
 		// park the user 100 time using 2 minute increments
 		long fiveMinuteIncrement = 5 * 60 * 1000;
@@ -54,18 +44,21 @@ public class TestAdminReportDao extends ParqUnitTestParent {
 		int testSize = 100;
 		
 		for (int i = 0; i < testSize; i++) {	
-			pi.setParkingBeganTime(
+			SupportScriptForDaoTesting.testParkingInstance.setParkingBeganTime(
 					new Date(curTime + (i * fiveMinuteIncrement) + 2000));
-			pi.setParkingEndTime(
+			SupportScriptForDaoTesting.testParkingInstance.setParkingEndTime(
 					new Date(curTime + (i * fiveMinuteIncrement) + 62000));
-			pi.getPaymentInfo().setPaymentDateTime(
+			SupportScriptForDaoTesting.testParkingInstance.getPaymentInfo().setPaymentDateTime(
 					new Date(curTime + (i * fiveMinuteIncrement)));
-			pi.getPaymentInfo().setPaymentRefNumber("Payment_Ref_Num: " + i);
-			pi.getPaymentInfo().setAccountId(testPaymentAccount.getAccountId());
-			parkingStatusDao.addNewParkingAndPayment(pi);
+			SupportScriptForDaoTesting.testParkingInstance.getPaymentInfo()
+				.setPaymentRefNumber("Payment_Ref_Num: " + i);
+			SupportScriptForDaoTesting.testParkingInstance.getPaymentInfo()
+				.setAccountId(SupportScriptForDaoTesting.testPaymentAccount.getAccountId());
+			parkingStatusDao.addNewParkingAndPayment(SupportScriptForDaoTesting.testParkingInstance);
 		}
 		
-		long locationId = parkingLocationList.get(0).getLocationId();
+		long locationId = SupportScriptForDaoTesting.testParkingLocationList
+			.get(0).getLocationId();
 		ParkingLocationUsageReport report = adminReportDao
 			.getParkingLocationUsageReport(locationId, reportStartDate, reportEndDate);
 		assertNotNull(report);
@@ -76,7 +69,8 @@ public class TestAdminReportDao extends ParqUnitTestParent {
 			ParkingLocationUsageEntry usageEntry = report.getUsageReportEntries().get(i);
 			assertNotNull(usageEntry);
 			assertEquals(locationId, usageEntry.getLocationId());
-			assertEquals(parkingLocationList.get(0).getLocationIdentifier(), usageEntry.getLocationIdentifier());
+			assertEquals(SupportScriptForDaoTesting.testParkingLocationList
+					.get(0).getLocationIdentifier(), usageEntry.getLocationIdentifier());
 			assertNotNull(usageEntry.getLocationName());
 			assertFalse(usageEntry.getLocationName().isEmpty());
 			assertTrue(usageEntry.getParkingBeganTime().compareTo(reportStartDate) > 0);
@@ -86,12 +80,12 @@ public class TestAdminReportDao extends ParqUnitTestParent {
 			assertFalse(usageEntry.getParkingRefNumber().isEmpty());
 			assertTrue(usageEntry.getParkingInstId() > 0);
 			assertTrue(usageEntry.getSpaceId() > 0);
-			assertTrue(usageEntry.getUserId() == testUser.getUserID());
+			assertTrue(usageEntry.getUserId() == SupportScriptForDaoTesting.testUser.getUserID());
 		}
 	}
 	
 	public void testGetUserPaymentReport() {
-		SupportScriptForDaoTesting.insertFakeData();
+
 		
 		// park the user 100 time using 2 minute increments
 		long fiveMinuteIncrement = 5 * 60 * 1000;
@@ -101,19 +95,22 @@ public class TestAdminReportDao extends ParqUnitTestParent {
 		int testSize = 100;
 		
 		for (int i = 0; i < testSize; i++) {	
-			pi.setParkingBeganTime(
+			SupportScriptForDaoTesting.testParkingInstance.setParkingBeganTime(
 					new Date(curTime + (i * fiveMinuteIncrement) + 2000));
-			pi.setParkingEndTime(
+			SupportScriptForDaoTesting.testParkingInstance.setParkingEndTime(
 					new Date(curTime + (i * fiveMinuteIncrement) + 62000));
-			pi.getPaymentInfo().setPaymentDateTime(
+			SupportScriptForDaoTesting.testParkingInstance.getPaymentInfo().setPaymentDateTime(
 					new Date(curTime + (i * fiveMinuteIncrement)));
-			pi.getPaymentInfo().setPaymentRefNumber("Payment_Ref_Num: " + i);
-			pi.getPaymentInfo().setAccountId(testPaymentAccount.getAccountId());
-			parkingStatusDao.addNewParkingAndPayment(pi);
+			SupportScriptForDaoTesting.testParkingInstance.getPaymentInfo()
+				.setPaymentRefNumber("Payment_Ref_Num: " + i);
+			SupportScriptForDaoTesting.testParkingInstance.getPaymentInfo()
+				.setAccountId(SupportScriptForDaoTesting.testPaymentAccount.getAccountId());
+			parkingStatusDao.addNewParkingAndPayment(SupportScriptForDaoTesting.testParkingInstance);
 		}
 		
 		UserPaymentReport report = adminReportDao
-			.getUserPaymentReport(testUser.getUserID(), reportStartDate, reportEndDate);
+			.getUserPaymentReport(SupportScriptForDaoTesting.testUser
+					.getUserID(), reportStartDate, reportEndDate);
 		assertNotNull(report);
 		assertFalse(report.getPaymentEntries().isEmpty());
 		assertEquals(testSize, report.getPaymentEntries().size());
@@ -121,7 +118,8 @@ public class TestAdminReportDao extends ParqUnitTestParent {
 		for (int i = 0; i < testSize; i++) {	
 			UserPaymentEntry paymentEntry = report.getPaymentEntries().get(i);
 			assertNotNull(paymentEntry);
-			assertEquals(pi.getPaymentInfo().getAmountPaidCents(), paymentEntry.getAmountPaidCents());
+			assertEquals(SupportScriptForDaoTesting.testParkingInstance
+					.getPaymentInfo().getAmountPaidCents(), paymentEntry.getAmountPaidCents());
 			assertTrue(paymentEntry.getPaymentRefNumber() != null);
 			assertFalse(paymentEntry.getPaymentRefNumber().isEmpty());			
 			assertTrue(paymentEntry.getPaymentDateTime().compareTo(reportStartDate) > 0);

@@ -2,43 +2,32 @@ package com.parq.server.dao;
 
 import java.util.List;
 
+import junit.framework.TestCase;
+
 import com.parq.server.dao.model.object.PaymentAccount;
-import com.parq.server.dao.support.ParqUnitTestParent;
 import com.parq.server.dao.support.SupportScriptForDaoTesting;
 
 /**
  * @author GZ
  *
  */
-public class TestPaymentAccountDao extends ParqUnitTestParent {
+public class TestPaymentAccountDao extends TestCase {
 
+	private PaymentAccountDao payAccDao;
+	
 	@Override
 	protected void setUp() throws Exception {
 		payAccDao = new PaymentAccountDao();
 
-		if (testUser == null) {
-			createUserTestData();
-		}
-	}
-	
-	
+		SupportScriptForDaoTesting.createUserTestData();
 
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#tearDown()
-	 */
-	@Override
-	protected void tearDown() throws Exception {
-		if (testUser != null) {
-			deleteUserTestData();
-		}
 	}
-
 
 	/**
 	 * Test basic Dao initialization 
 	 */
 	public void testDaoInit() {
-		SupportScriptForDaoTesting.insertFakeData();
+		SupportScriptForDaoTesting.insertMainTestDataSet();
 		payAccDao.getAllPaymentMethodForUser(1);
 	}
 
@@ -46,29 +35,29 @@ public class TestPaymentAccountDao extends ParqUnitTestParent {
 	 * Test a simple createNewPaymentMethod call.
 	 */
 	public void testCreateNewPaymentMethod(){
-		SupportScriptForDaoTesting.insertFakeData();
+		SupportScriptForDaoTesting.insertMainTestDataSet();
 		
 		PaymentAccount newPA = new PaymentAccount();
-		newPA.setCcStub(testCCStub);
-		newPA.setCustomerId(testCustomerId);
+		newPA.setCcStub(SupportScriptForDaoTesting.testCCStub);
+		newPA.setCustomerId(SupportScriptForDaoTesting.testCustomerId);
 		newPA.setDefaultPaymentMethod(true);
-		newPA.setPaymentMethodId(testPaymentMethodId);
-		newPA.setUserId(testUser.getUserID());
+		newPA.setPaymentMethodId(SupportScriptForDaoTesting.testPaymentMethodId);
+		newPA.setUserId(SupportScriptForDaoTesting.testUser.getUserID());
 		
 		boolean paCreationSuccessful = payAccDao.createNewPaymentMethod(newPA);
 		assertTrue(paCreationSuccessful);
 		
-		List<PaymentAccount> userNewPaList = payAccDao.getAllPaymentMethodForUser(testUser.getUserID()); 
+		List<PaymentAccount> userNewPaList = payAccDao.getAllPaymentMethodForUser(SupportScriptForDaoTesting.testUser.getUserID()); 
 		assertNotNull(userNewPaList);
 		assertTrue(userNewPaList.size() == 1);
 		
 		// test to make sure the new PaymentAccount object is created correctly
 		PaymentAccount userNewPa = userNewPaList.get(0);
-		assertEquals(testCCStub, userNewPa.getCcStub());
-		assertEquals(testCustomerId, userNewPa.getCustomerId());
+		assertEquals(SupportScriptForDaoTesting.testCCStub, userNewPa.getCcStub());
+		assertEquals(SupportScriptForDaoTesting.testCustomerId, userNewPa.getCustomerId());
 		assertEquals(true, userNewPa.isDefaultPaymentMethod());
-		assertEquals(testPaymentMethodId, userNewPa.getPaymentMethodId());
-		assertEquals(testUser.getUserID(), userNewPa.getUserId());
+		assertEquals(SupportScriptForDaoTesting.testPaymentMethodId, userNewPa.getPaymentMethodId());
+		assertEquals(SupportScriptForDaoTesting.testUser.getUserID(), userNewPa.getUserId());
 		assertTrue(userNewPa.getAccountId() > 0);
 		
 	}
@@ -78,24 +67,24 @@ public class TestPaymentAccountDao extends ParqUnitTestParent {
 	 * payment methods default status will be set to false 
 	 */
 	public void testOnlyOneDefaultPaymentMethod(){
-		SupportScriptForDaoTesting.insertFakeData();
+		SupportScriptForDaoTesting.insertMainTestDataSet();
 		
 		int numOfPaymentToTest = 10;
 		
 		// create 10 dummy PA all with default payment set to true
 		for (int i = 0; i < numOfPaymentToTest; i++) {
 			PaymentAccount newPA = new PaymentAccount();
-			newPA.setCcStub(testCCStub);
-			newPA.setCustomerId(testCustomerId);
+			newPA.setCcStub(SupportScriptForDaoTesting.testCCStub);
+			newPA.setCustomerId(SupportScriptForDaoTesting.testCustomerId);
 			newPA.setDefaultPaymentMethod(true);
-			newPA.setPaymentMethodId(testPaymentMethodId);
-			newPA.setUserId(testUser.getUserID());
+			newPA.setPaymentMethodId(SupportScriptForDaoTesting.testPaymentMethodId);
+			newPA.setUserId(SupportScriptForDaoTesting.testUser.getUserID());
 			
 			boolean paCreationSuccessful = payAccDao.createNewPaymentMethod(newPA);
 			assertTrue(paCreationSuccessful);
 		}
 		
-		List<PaymentAccount> userNewPaList = payAccDao.getAllPaymentMethodForUser(testUser.getUserID()); 
+		List<PaymentAccount> userNewPaList = payAccDao.getAllPaymentMethodForUser(SupportScriptForDaoTesting.testUser.getUserID()); 
 		assertNotNull(userNewPaList);
 		assertEquals(numOfPaymentToTest, userNewPaList.size());
 		
@@ -114,23 +103,23 @@ public class TestPaymentAccountDao extends ParqUnitTestParent {
 	 * Test the getAllPaymentMethodForUser method of the PaymentAccountDao
 	 */
 	public void testGetAllPaymentMethodForUser() {
-		SupportScriptForDaoTesting.insertFakeData();
+		SupportScriptForDaoTesting.insertMainTestDataSet();
 		
 		int numOfPaymentToTest = 4;
 		// create 4 dummy PA
 		for (int i = 0; i < numOfPaymentToTest; i++) {
 			PaymentAccount newPA = new PaymentAccount();
-			newPA.setCcStub(testCCStub);
-			newPA.setCustomerId(testCustomerId);
+			newPA.setCcStub(SupportScriptForDaoTesting.testCCStub);
+			newPA.setCustomerId(SupportScriptForDaoTesting.testCustomerId);
 			newPA.setDefaultPaymentMethod(true);
-			newPA.setPaymentMethodId(testPaymentMethodId);
-			newPA.setUserId(testUser.getUserID());
+			newPA.setPaymentMethodId(SupportScriptForDaoTesting.testPaymentMethodId);
+			newPA.setUserId(SupportScriptForDaoTesting.testUser.getUserID());
 			
 			boolean paCreationSuccessful = payAccDao.createNewPaymentMethod(newPA);
 			assertTrue(paCreationSuccessful);
 		}
 		
-		List<PaymentAccount> userNewPaList = payAccDao.getAllPaymentMethodForUser(testUser.getUserID()); 
+		List<PaymentAccount> userNewPaList = payAccDao.getAllPaymentMethodForUser(SupportScriptForDaoTesting.testUser.getUserID()); 
 		assertNotNull(userNewPaList);
 		assertEquals(numOfPaymentToTest, userNewPaList.size());
 	}
@@ -138,23 +127,23 @@ public class TestPaymentAccountDao extends ParqUnitTestParent {
 	public void testDeletePaymentMethod(){
 		// System.out.println("TestPaymentAccountDao Delete UnitTest");
 		
-		SupportScriptForDaoTesting.insertFakeData();
+		SupportScriptForDaoTesting.insertMainTestDataSet();
 		
 		int numOfPaymentToTest = 6;
 		// create 6 dummy PA
 		for (int i = 0; i < numOfPaymentToTest; i++) {
 			PaymentAccount newPA = new PaymentAccount();
-			newPA.setCcStub(testCCStub);
-			newPA.setCustomerId(testCustomerId);
+			newPA.setCcStub(SupportScriptForDaoTesting.testCCStub);
+			newPA.setCustomerId(SupportScriptForDaoTesting.testCustomerId);
 			newPA.setDefaultPaymentMethod(true);
-			newPA.setPaymentMethodId(testPaymentMethodId);
-			newPA.setUserId(testUser.getUserID());
+			newPA.setPaymentMethodId(SupportScriptForDaoTesting.testPaymentMethodId);
+			newPA.setUserId(SupportScriptForDaoTesting.testUser.getUserID());
 			
 			boolean paCreationSuccessful = payAccDao.createNewPaymentMethod(newPA);
 			assertTrue(paCreationSuccessful);
 		}
 		
-		List<PaymentAccount> userNewPaList = payAccDao.getAllPaymentMethodForUser(testUser.getUserID()); 
+		List<PaymentAccount> userNewPaList = payAccDao.getAllPaymentMethodForUser(SupportScriptForDaoTesting.testUser.getUserID()); 
 		assertNotNull(userNewPaList);
 		assertEquals(numOfPaymentToTest, userNewPaList.size());
 		
@@ -164,7 +153,7 @@ public class TestPaymentAccountDao extends ParqUnitTestParent {
 		}
 		
 		// test that after the delete no payment account remain for this user
-		List<PaymentAccount> paListAfterDelete = payAccDao.getAllPaymentMethodForUser(testUser.getUserID());
+		List<PaymentAccount> paListAfterDelete = payAccDao.getAllPaymentMethodForUser(SupportScriptForDaoTesting.testUser.getUserID());
 		assertNotNull(paListAfterDelete);
 		assertEquals(0, paListAfterDelete.size());
 	}
@@ -178,11 +167,11 @@ public class TestPaymentAccountDao extends ParqUnitTestParent {
 		// create 4 dummy PA
 		for (int i = 0; i < numOfPaymentToTest; i++) {
 			PaymentAccount newPA = new PaymentAccount();
-			newPA.setCcStub(testCCStub);
-			newPA.setCustomerId(testCustomerId);
+			newPA.setCcStub(SupportScriptForDaoTesting.testCCStub);
+			newPA.setCustomerId(SupportScriptForDaoTesting.testCustomerId);
 			newPA.setDefaultPaymentMethod(true);
-			newPA.setPaymentMethodId(testPaymentMethodId);
-			newPA.setUserId(testUser.getUserID());
+			newPA.setPaymentMethodId(SupportScriptForDaoTesting.testPaymentMethodId);
+			newPA.setUserId(SupportScriptForDaoTesting.testUser.getUserID());
 			
 			boolean paCreationSuccessful = payAccDao.createNewPaymentMethod(newPA);
 			assertTrue(paCreationSuccessful);
@@ -190,7 +179,7 @@ public class TestPaymentAccountDao extends ParqUnitTestParent {
 		
 		long curSysTimeBeforeCacheCall = System.currentTimeMillis();
 		for (int i = 0; i < 1000; i++) {
-			List<PaymentAccount> userNewPaList = payAccDao.getAllPaymentMethodForUser(testUser.getUserID()); 
+			List<PaymentAccount> userNewPaList = payAccDao.getAllPaymentMethodForUser(SupportScriptForDaoTesting.testUser.getUserID()); 
 			assertNotNull(userNewPaList);
 			assertEquals(numOfPaymentToTest, userNewPaList.size());
 		}
@@ -200,19 +189,19 @@ public class TestPaymentAccountDao extends ParqUnitTestParent {
 		assertTrue(curSysTimeAfterCacheCall - curSysTimeBeforeCacheCall < 1000);
 		
 		// test the cache result is accurate
-		List<PaymentAccount> paList1 = payAccDao.getAllPaymentMethodForUser(testUser.getUserID());
-		List<PaymentAccount> paList2 = payAccDao.getAllPaymentMethodForUser(testUser.getUserID());
+		List<PaymentAccount> paList1 = payAccDao.getAllPaymentMethodForUser(SupportScriptForDaoTesting.testUser.getUserID());
+		List<PaymentAccount> paList2 = payAccDao.getAllPaymentMethodForUser(SupportScriptForDaoTesting.testUser.getUserID());
 		
 		for (int i = 0; i < paList1.size(); i++) {
 			PaymentAccount pa1 = paList1.get(i);
 			PaymentAccount pa2 = paList2.get(i);
 			
 			assertSame(pa1, pa2);
-			assertEquals(testCCStub, pa1.getCcStub());
-			assertEquals(testCustomerId, pa1.getCustomerId());
+			assertEquals(SupportScriptForDaoTesting.testCCStub, pa1.getCcStub());
+			assertEquals(SupportScriptForDaoTesting.testCustomerId, pa1.getCustomerId());
 			assertEquals(pa2.isDefaultPaymentMethod(), pa1.isDefaultPaymentMethod());
-			assertEquals(testPaymentMethodId, pa1.getPaymentMethodId());
-			assertEquals(testUser.getUserID(), pa1.getUserId());
+			assertEquals(SupportScriptForDaoTesting.testPaymentMethodId, pa1.getPaymentMethodId());
+			assertEquals(SupportScriptForDaoTesting.testUser.getUserID(), pa1.getUserId());
 			assertTrue(pa1.getAccountId() > 0);
 		}
 	}

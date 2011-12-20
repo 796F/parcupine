@@ -1,13 +1,15 @@
 package com.parq.server.dao;
 
+import junit.framework.TestCase;
+
 import com.parq.server.dao.model.object.Admin;
-import com.parq.server.dao.support.ParqUnitTestParent;
+import com.parq.server.dao.support.SupportScriptForDaoTesting;
 
 /**
  * @author GZ
  *
  */
-public class TestAdminDao extends ParqUnitTestParent {
+public class TestAdminDao extends TestCase {
 
 	private AdminDao adminDao;
 
@@ -23,17 +25,17 @@ public class TestAdminDao extends ParqUnitTestParent {
 	private void createTestData() {
 		if (!testDataCreated){
 			testDataCreated = true;
-			createAdminUserTestData();
+			SupportScriptForDaoTesting.createAdminUserTestData();
 		}
 	}
 
 	public void testGetAdminByAdminName() {
-		Admin admin = adminDao.getAdminByUserName(adminName);
+		Admin admin = adminDao.getAdminByUserName(SupportScriptForDaoTesting.adminName);
 
 		assertNotNull(admin);
-		assertEquals(admin.getUserName(), adminName);
-		assertEquals(admin.getPassword(), password);
-		assertEquals(admin.getEmail(), eMail);
+		assertEquals(admin.getUserName(), SupportScriptForDaoTesting.adminName);
+		assertEquals(admin.getPassword(), SupportScriptForDaoTesting.adminPassword);
+		assertEquals(admin.getEmail(), SupportScriptForDaoTesting.adminEMail);
 		assertTrue(admin.getAdminId() > 0);
 		assertFalse(admin.getClientRelationships().isEmpty());
 		assertTrue(admin.getClientRelationships().get(0).getAdminId() == admin.getAdminId());
@@ -43,13 +45,13 @@ public class TestAdminDao extends ParqUnitTestParent {
 	}
 	
 	public void testGetAdminById() {
-		Admin adminTemp = adminDao.getAdminByUserName(adminName);
+		Admin adminTemp = adminDao.getAdminByUserName(SupportScriptForDaoTesting.adminName);
 		Admin admin = adminDao.getAdminById(adminTemp.getAdminId());
 
 		assertNotNull(admin);
-		assertEquals(admin.getUserName(), adminName);
-		assertEquals(admin.getPassword(), password);
-		assertEquals(admin.getEmail(), eMail);
+		assertEquals(admin.getUserName(), SupportScriptForDaoTesting.adminName);
+		assertEquals(admin.getPassword(), SupportScriptForDaoTesting.adminPassword);
+		assertEquals(admin.getEmail(), SupportScriptForDaoTesting.adminEMail);
 		assertTrue(admin.getAdminId() > 0);
 		assertFalse(admin.getClientRelationships().isEmpty());
 		assertTrue(admin.getClientRelationships().get(0).getAdminId() == admin.getAdminId());
@@ -59,12 +61,12 @@ public class TestAdminDao extends ParqUnitTestParent {
 	}
 	
 	public void testGetAdminByEmail() {
-		Admin admin = adminDao.getAdminByEmail(eMail);
+		Admin admin = adminDao.getAdminByEmail(SupportScriptForDaoTesting.adminEMail);
 
 		assertNotNull(admin);
-		assertEquals(admin.getUserName(), adminName);
-		assertEquals(admin.getPassword(), password);
-		assertEquals(admin.getEmail(), eMail);
+		assertEquals(admin.getUserName(), SupportScriptForDaoTesting.adminName);
+		assertEquals(admin.getPassword(), SupportScriptForDaoTesting.adminPassword);
+		assertEquals(admin.getEmail(), SupportScriptForDaoTesting.adminEMail);
 		assertTrue(admin.getAdminId() > 0);
 		assertFalse(admin.getClientRelationships().isEmpty());
 		assertTrue(admin.getClientRelationships().get(0).getAdminId() == admin.getAdminId());
@@ -77,10 +79,10 @@ public class TestAdminDao extends ParqUnitTestParent {
 		
 		for (int i = 0; i < 1000; i++)
 		{
-			Admin admin = adminDao.getAdminByUserName(adminName);
-			Admin admin1 = adminDao.getAdminByUserName(adminName);
-			Admin admin2 = adminDao.getAdminByUserName(adminName);
-			Admin admin3 = adminDao.getAdminByUserName(adminName);
+			Admin admin = adminDao.getAdminByUserName(SupportScriptForDaoTesting.adminName);
+			Admin admin1 = adminDao.getAdminByUserName(SupportScriptForDaoTesting.adminName);
+			Admin admin2 = adminDao.getAdminByUserName(SupportScriptForDaoTesting.adminName);
+			Admin admin3 = adminDao.getAdminByUserName(SupportScriptForDaoTesting.adminName);
 			assertNotNull(admin);
 			assertSame(admin, admin1);
 			assertSame(admin, admin2);
@@ -96,10 +98,10 @@ public class TestAdminDao extends ParqUnitTestParent {
 			assertSame(adminId, adminId3);
 		
 			
-			Admin adminEmail = adminDao.getAdminByEmail(eMail);
-			Admin adminEmail1 = adminDao.getAdminByEmail(eMail);
-			Admin adminEmail2 = adminDao.getAdminByEmail(eMail);
-			Admin adminEmail3 = adminDao.getAdminByEmail(eMail);
+			Admin adminEmail = adminDao.getAdminByEmail(SupportScriptForDaoTesting.adminEMail);
+			Admin adminEmail1 = adminDao.getAdminByEmail(SupportScriptForDaoTesting.adminEMail);
+			Admin adminEmail2 = adminDao.getAdminByEmail(SupportScriptForDaoTesting.adminEMail);
+			Admin adminEmail3 = adminDao.getAdminByEmail(SupportScriptForDaoTesting.adminEMail);
 			assertNotNull(adminEmail);
 			assertSame(adminEmail, adminEmail1);
 			assertSame(adminEmail, adminEmail2);
