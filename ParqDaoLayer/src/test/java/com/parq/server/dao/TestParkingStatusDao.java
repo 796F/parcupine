@@ -40,7 +40,7 @@ public class TestParkingStatusDao extends ParqUnitTestParent {
 	public void testAddNewParkingAndPayment() {
 		assertTrue(statusDao.addNewParkingAndPayment(pi));
 		
-		List<ParkingInstance> result = statusDao.getParkingStatusBySpaceIds(new long[]{buildingList.get(0).getSpaces().get(0).getSpaceId()});
+		List<ParkingInstance> result = statusDao.getParkingStatusBySpaceIds(new long[]{parkingLocationList.get(0).getSpaces().get(0).getSpaceId()});
 		assertNotNull(result);
 		assertFalse(result.isEmpty());
 		ParkingInstance resultInstance = result.get(0);
@@ -64,14 +64,14 @@ public class TestParkingStatusDao extends ParqUnitTestParent {
 		assertTrue(statusDao.addNewParkingAndPayment(pi));
 		
 		// add the new parking instance
-		List<ParkingInstance> resultInsts = statusDao.getParkingStatusBySpaceIds(new long[]{buildingList.get(0).getSpaces().get(0).getSpaceId()});
+		List<ParkingInstance> resultInsts = statusDao.getParkingStatusBySpaceIds(new long[]{parkingLocationList.get(0).getSpaces().get(0).getSpaceId()});
 		ParkingInstance initialParkingInst = resultInsts.get(0);
 		
 		// refill the parking
 		assertTrue(statusDao.refillParkingForParkingSpace(piRefil.getSpaceId(), piRefil.getParkingEndTime(), piRefil.getPaymentInfo()));
 
 		// get the newly refilled parking info
-		List<ParkingInstance> resultInsts2 = statusDao.getParkingStatusBySpaceIds(new long[]{buildingList.get(0).getSpaces().get(0).getSpaceId()});
+		List<ParkingInstance> resultInsts2 = statusDao.getParkingStatusBySpaceIds(new long[]{parkingLocationList.get(0).getSpaces().get(0).getSpaceId()});
 		assertFalse(resultInsts2.isEmpty());
 		ParkingInstance refilledParkingInst = resultInsts2.get(0);
 		
@@ -176,7 +176,7 @@ public class TestParkingStatusDao extends ParqUnitTestParent {
 		newPi.setPaidParking(true);
 		newPi.setParkingBeganTime(new Date(System.currentTimeMillis() + 5000));
 		newPi.setParkingEndTime(new Date(System.currentTimeMillis() + 3600000));
-		newPi.setSpaceId(buildingList.get(0).getSpaces().get(0).getSpaceId());
+		newPi.setSpaceId(parkingLocationList.get(0).getSpaces().get(0).getSpaceId());
 		newPi.setUserId(testUser.getUserID());
 		
 		Payment newPaymentInfo = new Payment();

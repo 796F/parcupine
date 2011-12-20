@@ -38,7 +38,7 @@ public class ParqUnitTestParent extends TestCase {
 	protected ParkingStatusDao statusDao;
 	protected ParkingInstance pi;
 	protected ParkingInstance piRefil;
-	protected List<ParkingLocation> buildingList;
+	protected List<ParkingLocation> parkingLocationList;
 	
 	protected PaymentAccountDao payAccDao;
 	protected PaymentAccount testPaymentAccount;
@@ -117,14 +117,14 @@ public class ParqUnitTestParent extends TestCase {
 		}
 		
 		ClientDao clientDao = new ClientDao();
-		buildingList = clientDao.getParkingLocationsAndSpacesByClientId(
+		parkingLocationList = clientDao.getParkingLocationsAndSpacesByClientId(
 				clientDao.getClientByName(SupportScriptForDaoTesting.clientNameMain).getId());
 		
 		pi = new ParkingInstance();
 		pi.setPaidParking(true);
 		pi.setParkingBeganTime(new Date(System.currentTimeMillis()));
 		pi.setParkingEndTime(new Date(System.currentTimeMillis() + 3600000));
-		pi.setSpaceId(buildingList.get(0).getSpaces().get(0).getSpaceId());
+		pi.setSpaceId(parkingLocationList.get(0).getSpaces().get(0).getSpaceId());
 		pi.setUserId(testUser.getUserID());
 		
 		Payment paymentInfo = new Payment();
@@ -138,7 +138,7 @@ public class ParqUnitTestParent extends TestCase {
 		piRefil.setPaidParking(true);
 		piRefil.setParkingBeganTime(new Date(System.currentTimeMillis()));
 		piRefil.setParkingEndTime(new Date(System.currentTimeMillis() + 7200000));
-		piRefil.setSpaceId(buildingList.get(0).getSpaces().get(0).getSpaceId());
+		piRefil.setSpaceId(parkingLocationList.get(0).getSpaces().get(0).getSpaceId());
 		piRefil.setUserId(testUser.getUserID());
 		
 		Payment paymentInfo2 = new Payment();

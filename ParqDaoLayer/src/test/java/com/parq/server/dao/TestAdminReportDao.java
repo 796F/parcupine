@@ -2,7 +2,9 @@ package com.parq.server.dao;
 
 import java.util.Date;
 
+import com.parq.server.dao.model.object.ParkingLocationUsageReport;
 import com.parq.server.dao.model.object.UserPaymentReport;
+import com.parq.server.dao.model.object.ParkingLocationUsageReport.ParkingLocationUsageEntry;
 import com.parq.server.dao.model.object.Payment.PaymentType;
 import com.parq.server.dao.model.object.UserPaymentReport.UserPaymentEntry;
 import com.parq.server.dao.support.ParqUnitTestParent;
@@ -44,7 +46,48 @@ public class TestAdminReportDao extends ParqUnitTestParent {
 	public void testGetParkingLocationUsageReport(){
 		SupportScriptForDaoTesting.insertFakeData();
 		
+		// park the user 100 time using 2 minute increments
+		long fiveMinuteIncrement = 5 * 60 * 1000;
+		ParkingStatusDao parkingStatusDao = new ParkingStatusDao();
+		long curTime = System.currentTimeMillis();
 		
+		int testSize = 100;
+		
+		for (int i = 0; i < testSize; i++) {	
+			pi.setParkingBeganTime(
+					new Date(curTime + (i * fiveMinuteIncrement) + 2000));
+			pi.setParkingEndTime(
+					new Date(curTime + (i * fiveMinuteIncrement) + 62000));
+			pi.getPaymentInfo().setPaymentDateTime(
+					new Date(curTime + (i * fiveMinuteIncrement)));
+			pi.getPaymentInfo().setPaymentRefNumber("Payment_Ref_Num: " + i);
+			pi.getPaymentInfo().setAccountId(testPaymentAccount.getAccountId());
+			parkingStatusDao.addNewParkingAndPayment(pi);
+		}
+		
+		long locationId = parkingLocationList.get(0).getLocationId();
+		ParkingLocationUsageReport report = adminReportDao
+			.getParkingLocationUsageReport(locationId, reportStartDate, reportEndDate);
+		assertNotNull(report);
+		assertFalse(report.getUsageReportEntries().isEmpty());
+		assertEquals(testSize, report.getUsageReportEntries().size());
+		
+		for (int i = 0; i < testSize; i++) {
+			ParkingLocationUsageEntry usageEntry = report.getUsageReportEntries().get(i);
+			assertNotNull(usageEntry);
+			assertEquals(locationId, usageEntry.getLocationId());
+			assertEquals(parkingLocationList.get(0).getLocationIdentifier(), usageEntry.getLocationIdentifier());
+			assertNotNull(usageEntry.getLocationName());
+			assertFalse(usageEntry.getLocationName().isEmpty());
+			assertTrue(usageEntry.getParkingBeganTime().compareTo(reportStartDate) > 0);
+			assertTrue(usageEntry.getParkingEndTime().compareTo(reportEndDate) < 0);
+			assertTrue(usageEntry.getParkingEndTime().compareTo(usageEntry.getParkingBeganTime()) > 0);
+			assertNotNull(usageEntry.getParkingRefNumber());
+			assertFalse(usageEntry.getParkingRefNumber().isEmpty());
+			assertTrue(usageEntry.getParkingInstId() > 0);
+			assertTrue(usageEntry.getSpaceId() > 0);
+			assertTrue(usageEntry.getUserId() == testUser.getUserID());
+		}
 	}
 	
 	public void testGetUserPaymentReport() {

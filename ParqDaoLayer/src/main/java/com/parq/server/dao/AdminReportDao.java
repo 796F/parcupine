@@ -27,8 +27,8 @@ public class AdminReportDao extends AbstractParqDaoParent {
 		" WHERE pi.space_id = s.space_id " +
 		" AND s.location_id = l.location_id " +
 		" AND l.location_id = ? " +
-		" AND pi.began_time > ? " +
-		" AND pi.began_time < ? " +
+		" AND pi.park_began_time > ? " +
+		" AND pi.park_began_time < ? " +
 		" ORDER BY pi.park_began_time";
 	
 	private static final String sqlGetUserPaymentInfo = 
@@ -79,7 +79,7 @@ public class AdminReportDao extends AbstractParqDaoParent {
 			pstmt.setTimestamp(2, new Timestamp(reportStartDate.getTime()));
 			pstmt.setTimestamp(3, new Timestamp(reportEndDate.getTime()));
 
-			System.out.println(pstmt);
+			// System.out.println(pstmt);
 			ResultSet rs = pstmt.executeQuery();
 
 			report = createParkingLocationUsageReport(rs);
@@ -152,7 +152,7 @@ public class AdminReportDao extends AbstractParqDaoParent {
 			pstmt.setTimestamp(2, new Timestamp(reportStartDate.getTime()));
 			pstmt.setTimestamp(3, new Timestamp(reportEndDate.getTime()));
 			
-			System.out.println(pstmt);
+			// System.out.println(pstmt);
 			ResultSet rs = pstmt.executeQuery();
 			report = createUserPaymentReport(rs);
 
