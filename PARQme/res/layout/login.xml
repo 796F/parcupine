@@ -9,8 +9,7 @@
 	<EditText android:id="@+id/emailForm" android:text="tcampbel@american.edu"
 		android:inputType="textEmailAddress" android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:minWidth="50dp"
-		android:layout_marginLeft="15dp"
-		android:layout_marginRight="15dp"/>
+		android:layout_marginLeft="15dp" android:layout_marginRight="15dp"/>
 	<TextView android:id="@+id/password_label"
 		android:layout_width="wrap_content" android:layout_height="wrap_content"
 		android:textColor="#fff" android:layout_marginLeft="15dp"
@@ -23,9 +22,11 @@
 		android:layout_height="wrap_content" android:text="Remember me"
 		android:layout_marginLeft="15dp" android:layout_marginTop="15dp"/>
 	<Button android:id="@+id/loginButton" android:layout_width="wrap_content"
-		android:text="Login" android:layout_height="wrap_content" android:minWidth="100dp"
-		android:layout_gravity="right" android:layout_marginTop="15dp"/>
+		android:text="Log In" android:layout_height="wrap_content" android:minWidth="100dp"
+		android:layout_gravity="right" android:layout_marginTop="15dp"
+		android:layout_marginRight="15dp"/>
 	<Button android:id="@+id/registerbutton" android:layout_width="wrap_content"
 		android:text="Sign up" android:layout_height="wrap_content" android:minWidth="100dp"
-		android:layout_gravity="right" android:layout_marginTop="15dp"/>
+		android:layout_gravity="right" android:layout_marginTop="15dp"
+		android:layout_marginRight="15dp"/>
 </LinearLayout>
