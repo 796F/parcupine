@@ -1,8 +1,5 @@
 package com.test;
 
-import com.objects.SavedInfo;
-import com.objects.ThrowDialog;
-
 import android.app.TabActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
