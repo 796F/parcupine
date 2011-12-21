@@ -32,7 +32,7 @@ public class ServerCalls {
 			//open connection
 			final HttpURLConnection conn =
 					(HttpURLConnection)
-						new URL(SERVER_HOSTNAME + "/parkservice.resources/auth")
+						new URL(SERVER_HOSTNAME + "/parkservice.auth")
 						.openConnection();
 			conn.setRequestProperty("Accept", "application/json");
 			conn.setRequestProperty("Content-Type", "application/json");
@@ -139,7 +139,7 @@ public class ServerCalls {
 		try {
 			final HttpURLConnection conn =
 					(HttpURLConnection)
-						new URL(SERVER_HOSTNAME + "/parkservice.resources/qrcode")
+						new URL(SERVER_HOSTNAME + "/parkservice.qrcode")
 						.openConnection();
 			conn.setRequestProperty("Accept", "application/json");
 			conn.setRequestProperty("Content-Type", "application/json");
