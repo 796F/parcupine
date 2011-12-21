@@ -24,7 +24,7 @@ public class Parsers {
 	private static final String PARAM_DEFAULT_RATE = "defaultRate";
 	private static final String PARAM_MIN_INCREMENT = "minIncrement";
 
-	private static final String PARAM_PARKING_INSTANCE_ID = "parkingInstanceId";
+	private static final String PARAM_PARK_REFERENCE = "parkingReferenceNumber";
 	private static final String PARAM_END_TIME = "endTime";
 
 	// {"fname":"xia@umd.edu","lname":"Mikey","phone":"1337"}
@@ -111,7 +111,7 @@ public class Parsers {
 	}
 
 	public static ParkInstanceObject parseParkInstance(JsonParser jp) throws IOException {
-		long parkInstanceId = 0;
+		long parkReference = 0;
 		long endTime = 0;
 
 		JsonToken t = jp.nextToken();
@@ -119,14 +119,14 @@ public class Parsers {
 		while (t != null && t != JsonToken.END_OBJECT) {
 			curr = jp.getCurrentName();
 			if (t == JsonToken.VALUE_NUMBER_INT) {
-				if (PARAM_PARKING_INSTANCE_ID.equals(curr)) {
-					parkInstanceId = jp.getLongValue();
+				if (PARAM_PARK_REFERENCE.equals(curr)) {
+					parkReference = jp.getLongValue();
 				} else if (PARAM_END_TIME.equals(curr)) {
 					endTime = jp.getLongValue();
 				}
 			}
 			t = jp.nextToken();
 		}
-		return new ParkInstanceObject(parkInstanceId, endTime);
+		return new ParkInstanceObject(parkReference, endTime);
 	}
 }

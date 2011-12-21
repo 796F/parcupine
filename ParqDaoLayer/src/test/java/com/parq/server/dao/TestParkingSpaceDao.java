@@ -1,10 +1,11 @@
 package com.parq.server.dao;
 
+import junit.framework.TestCase;
+
 import com.parq.server.dao.model.object.ParkingSpace;
-import com.parq.server.dao.support.ParqUnitTestParent;
 import com.parq.server.dao.support.SupportScriptForDaoTesting;
 
-public class TestParkingSpaceDao extends ParqUnitTestParent {
+public class TestParkingSpaceDao extends TestCase {
 
 	private ParkingSpaceDao parkingSpaceDao;
 
@@ -14,7 +15,7 @@ public class TestParkingSpaceDao extends ParqUnitTestParent {
 	}
 	
 	public void testGetParkingSpaceBySpaceIdentifier() {
-		SupportScriptForDaoTesting.insertFakeData();
+		SupportScriptForDaoTesting.insertMainTestDataSet();
 		
 		ParkingSpace pSpace = parkingSpaceDao
 				.getParkingSpaceBySpaceIdentifier(SupportScriptForDaoTesting.spaceNameMain);
@@ -26,7 +27,7 @@ public class TestParkingSpaceDao extends ParqUnitTestParent {
 	}
 	
 	public void testGetParkingSpaceBySpaceId(){
-		SupportScriptForDaoTesting.insertFakeData();
+		SupportScriptForDaoTesting.insertMainTestDataSet();
 		
 		ParkingSpace pTemp = parkingSpaceDao
 			.getParkingSpaceBySpaceIdentifier(SupportScriptForDaoTesting.spaceNameMain);

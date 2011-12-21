@@ -3,17 +3,18 @@ package com.parq.server.dao;
 import java.util.ArrayList;
 import java.util.List;
 
+import junit.framework.TestCase;
+
 import com.parq.server.dao.model.object.Client;
 import com.parq.server.dao.model.object.ParkingLocation;
 import com.parq.server.dao.model.object.ParkingSpace;
-import com.parq.server.dao.support.ParqUnitTestParent;
 import com.parq.server.dao.support.SupportScriptForDaoTesting;
 
 /**
  * @author GZ
  *
  */
-public class TestClientDao extends ParqUnitTestParent {
+public class TestClientDao extends TestCase {
 
 	private ClientDao clientDao;
 
@@ -23,7 +24,7 @@ public class TestClientDao extends ParqUnitTestParent {
 	}
 
 	public void testGetClientByName() {
-		SupportScriptForDaoTesting.insertFakeData();
+		SupportScriptForDaoTesting.insertMainTestDataSet();
 		Client client1 = clientDao
 				.getClientByName(SupportScriptForDaoTesting.clientNameMain);
 		assertNotNull(client1);
@@ -36,7 +37,7 @@ public class TestClientDao extends ParqUnitTestParent {
 	}
 
 	public void testGetClientById() {
-		SupportScriptForDaoTesting.insertFakeData();
+		SupportScriptForDaoTesting.insertMainTestDataSet();
 		Client tempClient = clientDao
 				.getClientByName(SupportScriptForDaoTesting.clientNameMain);
 		assertNotNull(tempClient);
@@ -57,7 +58,7 @@ public class TestClientDao extends ParqUnitTestParent {
 	}
 
 	public void testGetBuildingsAndSpacesByClientId() {
-		SupportScriptForDaoTesting.insertFakeData();
+		SupportScriptForDaoTesting.insertMainTestDataSet();
 		Client tempClient = clientDao
 				.getClientByName(SupportScriptForDaoTesting.clientNameMain);
 		assertNotNull(tempClient);

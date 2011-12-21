@@ -1,5 +1,18 @@
 package com.parq.server.dao.support;
 
+import java.util.Date;
+import java.util.List;
+
+import com.parq.server.dao.ClientDao;
+import com.parq.server.dao.PaymentAccountDao;
+import com.parq.server.dao.UserDao;
+import com.parq.server.dao.model.object.ParkingInstance;
+import com.parq.server.dao.model.object.ParkingLocation;
+import com.parq.server.dao.model.object.Payment;
+import com.parq.server.dao.model.object.PaymentAccount;
+import com.parq.server.dao.model.object.User;
+import com.parq.server.dao.model.object.Payment.PaymentType;
+
 
 /**
  * @author GZ
@@ -7,11 +20,31 @@ package com.parq.server.dao.support;
  */
 public final class SupportScriptForDaoTesting {
 
-	private static boolean fakeDataInserted = false;
+	public static final String adminName = "Test_Admin_1";
+	public static final String adminPassword = "Password123";
+	public static final String adminEMail = "TestAdmin12@testCorp.com";
+	public static final String adminRoleName = "TestRole";
+	public static final String adminClientName = "TestClientName";
+	
+	public static final String testCCStub = "1234";
+	public static final String testCustomerId = "CUS_345";
+	public static final String testPaymentMethodId = "PAY_456169";
+	
+	public static final String userEmail = "TestUser@PaymentAccount.test";
+	public static final String userPassWord = "TestPassword";
+	public static final String userPhoneNum = "123-555-7890";
+	
+	public static User testUser;
+	public static ParkingInstance testParkingInstance;
+	public static ParkingInstance testParkingInstanceRefil;
+	public static List<ParkingLocation> testParkingLocationList;
+	public static PaymentAccount testPaymentAccount;
+	
+	private static boolean mainDataSetInserted = false;
 
-	public static void insertFakeData() {
-		if (!fakeDataInserted){
-			deleteFakeData();
+	public static void insertMainTestDataSet() {
+		if (!mainDataSetInserted){
+			deleteMainTestDataSet();
 			ParqMockObjectCreationDao testDao = new ParqMockObjectCreationDao();
 
 			// create 3 new test clients
@@ -47,16 +80,122 @@ public final class SupportScriptForDaoTesting {
 			// insert parking space based parking rate
 			testDao.setParkingSpaceRate(spaceRate, -20, parkingLocationNameMain, spaceNameMain, 5);
 			
-			fakeDataInserted = true;
+			mainDataSetInserted = true;
 		}
 	}
 	
-	protected static void deleteFakeData() {
+	protected static void deleteMainTestDataSet() {
 		DaoForTestingPurposes testDao = new DaoForTestingPurposes();
 		for (String deleteScript : SupportScriptForDaoTesting.sqlDeleteStmtList) {
 			testDao.executeSqlStatement(deleteScript);
 		}
-		fakeDataInserted = false;
+		mainDataSetInserted = false;
+	}
+	
+	public static void createAdminUserTestData() {
+		DaoForTestingPurposes testDao = new DaoForTestingPurposes();
+		
+		testDao.executeSqlStatement("DELETE FROM adminclientrelationship WHERE client_id = (SELECT client_id FROM client WHERE name='" + adminClientName + "')");
+		testDao.executeSqlStatement("DELETE FROM adminrole WHERE role_name = '" + adminRoleName + "'");
+		testDao.executeSqlStatement("DELETE FROM admin WHERE username = '" + adminName + "'");
+		testDao.executeSqlStatement("DELETE FROM client WHERE name='" + adminClientName + "'");
+		
+		String sqlInsertAdmin = "INSERT INTO admin (username, password, email) " +
+			"VALUES ('" + adminName + "', '" + adminPassword +"', '" + adminEMail + "')";
+		String sqlInsertRole =  "INSERT INTO adminrole (role_name) " +
+			"VALUES ('" + adminRoleName + "')";
+		String sqlInsertClient = "INSERT INTO client (name) VALUES ('" + adminClientName + "')";
+		String sqlInsertAdminClientRelationship = 
+			"INSERT INTO adminclientrelationship (admin_id, client_id, adminrole_id) " +
+			"VALUES (" +
+			"(SELECT admin_id FROM admin WHERE username = '" + adminName  + "'), " +
+			"(SELECT client_id FROM client WHERE name = '" + adminClientName + "'), " +
+			"(SELECT adminrole_id FROM adminrole WHERE role_name = '" + adminRoleName + "'))";
+		
+		testDao.executeSqlStatement(sqlInsertAdmin);
+		testDao.executeSqlStatement(sqlInsertRole);
+		testDao.executeSqlStatement(sqlInsertClient);
+		testDao.executeSqlStatement(sqlInsertAdminClientRelationship);
+	}
+	
+	public static void createUserTestData() {
+		deleteUserTestData();
+		UserDao userDao = new UserDao();
+		
+		// Create the test user to test the app with.
+		User newUser = new User();
+		newUser.setPassword(userPassWord);
+		newUser.setEmail(userEmail);
+		newUser.setPhoneNumber(userPhoneNum);
+		// boolean userCreationSuccessful = 
+		userDao.createNewUser(newUser);
+		
+		testUser = userDao.getUserByEmail(userEmail);
+	}
+	
+	protected static void deleteUserTestData() {
+		UserDao userDao = new UserDao();
+		testUser = userDao.getUserByEmail(userEmail);
+		
+		if (testUser != null) {
+			// boolean deleteUserSuccessful = 
+			userDao.deleteUserById(testUser.getUserID());
+			testUser = null;
+		}
+	}
+	
+	public static void createUserPaymentAccount() {
+		testPaymentAccount = new PaymentAccount();
+		testPaymentAccount.setCcStub(testCCStub);
+		testPaymentAccount.setCustomerId(testCustomerId);
+		testPaymentAccount.setDefaultPaymentMethod(true);
+		testPaymentAccount.setPaymentMethodId(testPaymentMethodId);
+		testPaymentAccount.setUserId(testUser.getUserID());
+		
+		PaymentAccountDao payAccDao = new PaymentAccountDao();
+		// boolean paCreationSuccessful = 
+		payAccDao.createNewPaymentMethod(testPaymentAccount);
+		testPaymentAccount = payAccDao.getAllPaymentMethodForUser(testUser.getUserID()).get(0);
+	}
+	
+	public static void setupParkingPaymentData(){
+		insertMainTestDataSet();
+		
+		if (testUser == null) {
+			createUserTestData();
+		}
+		
+		ClientDao clientDao = new ClientDao();
+		testParkingLocationList = clientDao.getParkingLocationsAndSpacesByClientId(
+				clientDao.getClientByName(SupportScriptForDaoTesting.clientNameMain).getId());
+		
+		testParkingInstance = new ParkingInstance();
+		testParkingInstance.setPaidParking(true);
+		testParkingInstance.setParkingBeganTime(new Date(System.currentTimeMillis()));
+		testParkingInstance.setParkingEndTime(new Date(System.currentTimeMillis() + 3600000));
+		testParkingInstance.setSpaceId(testParkingLocationList.get(0).getSpaces().get(0).getSpaceId());
+		testParkingInstance.setUserId(testUser.getUserID());
+		
+		Payment paymentInfo = new Payment();
+		paymentInfo.setAmountPaidCents(1005);
+		paymentInfo.setPaymentDateTime(new Date(System.currentTimeMillis()));
+		paymentInfo.setPaymentRefNumber("Test_Payment_Ref_Num_1");
+		paymentInfo.setPaymentType(PaymentType.CreditCard);
+		testParkingInstance.setPaymentInfo(paymentInfo);
+		
+		testParkingInstanceRefil = new ParkingInstance();
+		testParkingInstanceRefil.setPaidParking(true);
+		testParkingInstanceRefil.setParkingBeganTime(new Date(System.currentTimeMillis()));
+		testParkingInstanceRefil.setParkingEndTime(new Date(System.currentTimeMillis() + 7200000));
+		testParkingInstanceRefil.setSpaceId(testParkingLocationList.get(0).getSpaces().get(0).getSpaceId());
+		testParkingInstanceRefil.setUserId(testUser.getUserID());
+		
+		Payment paymentInfo2 = new Payment();
+		paymentInfo2.setAmountPaidCents(1250);
+		paymentInfo2.setPaymentDateTime(new Date(System.currentTimeMillis()));
+		paymentInfo2.setPaymentRefNumber("Test_Payment_Ref_Num_1");
+		paymentInfo2.setPaymentType(PaymentType.CreditCard);
+		testParkingInstanceRefil.setPaymentInfo(paymentInfo2);
 	}
 	
 	
