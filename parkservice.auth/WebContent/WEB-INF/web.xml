@@ -2,7 +2,7 @@
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
   <display-name>parkservice.auth</display-name>
   <servlet>
-    <servlet-name>ParkAuth</servlet-name>
+    <servlet-name>AUTHORIZATION SERVICE</servlet-name>
     <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
     <init-param>
       <param-name>com.sun.jersey.config.property.packages</param-name>
@@ -11,7 +11,7 @@
     <load-on-startup>1</load-on-startup>
   </servlet>
   <servlet-mapping>
-    <servlet-name>ParkAuth</servlet-name>
+    <servlet-name>AUTHORIZATION SERVICE</servlet-name>
     <url-pattern>/*</url-pattern>
   </servlet-mapping>
 </web-app>
