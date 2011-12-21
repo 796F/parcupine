@@ -1,23 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical" android:layout_width="match_parent"
-	android:layout_height="match_parent" android:background="@drawable/backgroundlayer">
-	<TextView android:id="@+id/email_label" android:text="Email"
-		android:layout_width="wrap_content" android:layout_height="wrap_content"
-		android:textColor="#fff" android:layout_marginTop="15dp"
-		android:layout_marginLeft="15dp"/>
-	<EditText android:id="@+id/emailForm" android:text="tcampbel@american.edu"
-		android:inputType="textEmailAddress" android:layout_width="fill_parent"
-		android:layout_height="wrap_content" android:minWidth="50dp"
-		android:layout_marginLeft="15dp" android:layout_marginRight="15dp"/>
-	<TextView android:id="@+id/password_label"
-		android:layout_width="wrap_content" android:layout_height="wrap_content"
-		android:textColor="#fff" android:layout_marginLeft="15dp"
-		android:layout_marginTop="15dp"/>
-	<EditText android:id="@+id/passwordForm" android:inputType="textPassword"
-		android:layout_width="fill_parent" android:layout_height="wrap_content"
-		android:minWidth="50dp" android:layout_marginLeft="15dp"
-		android:layout_marginRight="15dp"/>
+		android:orientation="vertical"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:background="@drawable/backgroundlayer">
+	<TextView
+		android:id="@+id/email_label"
+		android:text="Email"
+		style="@style/FormLabel"/>
+	<EditText
+		android:id="@+id/emailForm"
+		android:text="tcampbel@american.edu"
+		android:inputType="textEmailAddress"
+		style="@style/FormField"/>
+	<TextView
+		android:id="@+id/password_label"
+		android:text="Password"
+		style="@style/FormLabel"/>
+	<EditText
+		android:id="@+id/passwordForm"
+		android:inputType="textPassword"
+		style="@style/FormField"/>
 	<CheckBox android:id="@+id/rememberbox" android:layout_width="wrap_content"
 		android:layout_height="wrap_content" android:text="Remember me"
 		android:layout_marginLeft="15dp" android:layout_marginTop="15dp"/>
