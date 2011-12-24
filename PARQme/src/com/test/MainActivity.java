@@ -7,7 +7,9 @@
 
 package com.test;
 
+import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -144,7 +146,6 @@ public class MainActivity extends ActivityGroup {
 	private static MediaPlayer mediaPlayer;
 	private NumberPicker parkTimePicker;
 	private Date globalEndTime;
-	private RadioButton servPing;
 	/*final variables*/
 	public static final String SAVED_INFO = "ParqMeInfo";
 
@@ -169,7 +170,6 @@ public class MainActivity extends ActivityGroup {
 		vf = (ViewFlipper) findViewById(R.id.flipper);
 		parkTimePicker = (NumberPicker) findViewById(R.id.parktimepicker);
 		mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.alarm);
-		servPing = (RadioButton) findViewById(R.id.pingdot);
 		final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 
 		/*	ON CREATE
@@ -214,35 +214,22 @@ public class MainActivity extends ActivityGroup {
 		new Thread(new Runnable() {
 		    public void run() {
 		    	String host = "http://www.parqme.com";
-				try {
-					URL url = new URL(host);
-					HttpURLConnection urlc = (HttpURLConnection) url.openConnection();
-					urlc.setConnectTimeout(1000 * 60); // mTimeout is in seconds
-					urlc.connect();
-					
-					if (urlc.getResponseCode() == 200) {
-						servPing.post(new Runnable(){
-							@Override
-							public void run() {
-								servPing.setChecked(true);
-								servPing.setText("Server Ready :D");
-							}
-						});
-					}else{
-						throw new Exception("LAAAA");
-					}
-				} catch (Exception e1) {
-					servPing.post(new Runnable(){
-
-						@Override
-						public void run() {
-							servPing.setChecked(false);
-							servPing.setText("No Service :(");
+					try {
+						URL url = new URL(host);
+						HttpURLConnection urlc = (HttpURLConnection) url.openConnection();
+						urlc.setConnectTimeout(1000 * 60); // mTimeout is in seconds
+						urlc.connect();
+						
+						if (urlc.getResponseCode() != 200) {
+							throw new Exception("LAAAA");
 						}
-						
-						
-					});
-				} 
+					} catch (MalformedURLException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 		    	
 		    }
 		  }).start();
