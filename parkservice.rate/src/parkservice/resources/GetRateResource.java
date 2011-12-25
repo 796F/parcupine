@@ -76,7 +76,7 @@ public class GetRateResource {
 				rate.setDefaultRate(pr.getParkingRateCents());
 				rate.setMinIncrement(pr.getTimeIncrementsMins());
 				output.setResp("OK");
-				output.setRate(rate);
+				output.setRateObject(rate);
 				return output;
 			}else{
 				output.setResp("ONE WAS NULL");
@@ -128,7 +128,7 @@ public class GetRateResource {
 							rate.setMaxTime(pr.getMaxParkMins());
 							rate.setDefaultRate(pr.getParkingRateCents());
 							rate.setMinIncrement(pr.getTimeIncrementsMins());
-							output.setRate(rate);
+							output.setRateObject(rate);
 							return output;
 						}else{
 							output.setResp("SPACE_NULL");

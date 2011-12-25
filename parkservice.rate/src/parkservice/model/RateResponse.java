@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class RateResponse {
 	String resp;
-	RateObject rate;
+	RateObject rateObject;
 	
 	public String getResp() {
 		return resp;
@@ -17,12 +17,13 @@ public class RateResponse {
 	public void setResp(String resp) {
 		this.resp = resp;
 	}
-	public RateObject getRate() {
-		return rate;
+	public RateObject getRateObject() {
+		return rateObject;
 	}
-	public void setRate(RateObject rate) {
-		this.rate = rate;
+	public void setRateObject(RateObject rateObject) {
+		this.rateObject = rateObject;
 	}
+	
 	
 	
 }

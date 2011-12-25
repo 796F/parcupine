@@ -12,7 +12,7 @@ public class AuthResponse {
 	//information about user that will be displayed. 
 	long uid;
 	int parkstate; //0 not parked, 1 parked
-	parkSync sync;
+	ParkSync sync;
 	/**
 	 * @return the uid
 	 */
@@ -40,13 +40,13 @@ public class AuthResponse {
 	/**
 	 * @return the sync
 	 */
-	public parkSync getSync() {
+	public ParkSync getSync() {
 		return sync;
 	}
 	/**
 	 * @param sync the sync to set
 	 */
-	public void setSync(parkSync sync) {
+	public void setSync(ParkSync sync) {
 		this.sync = sync;
 	}
 

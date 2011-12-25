@@ -14,14 +14,14 @@ import com.sun.jersey.api.json.JSONConfiguration;
 import com.sun.jersey.api.json.JSONJAXBContext;
 
 import parkservice.model.AuthResponse;
-import parkservice.model.parkSync;
+import parkservice.model.ParkSync;
 
 
 @Provider
 public class JAXBContextResolver implements ContextResolver<JAXBContext>{
 
 			private final JAXBContext context;
-			private final Class[] cTypes = {AuthResponse.class,parkSync.class};
+			private final Class[] cTypes = {AuthResponse.class,ParkSync.class};
 			private final Set<Class> types;
 			
 			public JAXBContextResolver() throws JAXBException {

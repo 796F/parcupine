@@ -16,16 +16,18 @@ import javax.xml.bind.JAXBElement;
 
 import com.parq.server.dao.GeolocationDao;
 import com.parq.server.dao.ParkingRateDao;
+import com.parq.server.dao.ParkingSpaceDao;
 import com.parq.server.dao.ParkingStatusDao;
 import com.parq.server.dao.UserDao;
 import com.parq.server.dao.model.object.Geolocation;
 import com.parq.server.dao.model.object.ParkingInstance;
 import com.parq.server.dao.model.object.ParkingRate;
+import com.parq.server.dao.model.object.ParkingSpace;
 import com.parq.server.dao.model.object.User;
 
 import parkservice.model.AuthRequest;
 import parkservice.model.AuthResponse;
-import parkservice.model.parkSync;
+import parkservice.model.ParkSync;
 
 @Path("/")
 public class AuthResource{
@@ -77,7 +79,10 @@ public class AuthResource{
 					ParkingRate pr = prd.getParkingRateBySpaceId(pi.getSpaceId());
 					GeolocationDao gld = new GeolocationDao();
 					Geolocation location = gld.getLocationById(pr.getLocationId());
-					parkSync sync = new parkSync();
+					ParkingSpaceDao psdao = new ParkingSpaceDao();
+					ParkingSpace pspace = psdao.getParkingSpaceBySpaceId(pi.getSpaceId());
+					ParkSync sync = new ParkSync();
+					sync.setDescription(pspace.getSpaceName());
 					sync.setLat(location.getLatitude());
 					sync.setLon(location.getLongitude());
 					sync.setEndTime(endTime.getTime());

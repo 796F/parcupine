@@ -1,6 +1,6 @@
 package parkservice.model;
 
-public class parkSync {
+public class ParkSync {
 
 	//THE FOLLOWING ARE FOR TIME DISPLAY
 	long endTime; //how much to set timer
@@ -14,8 +14,16 @@ public class parkSync {
 	double lat;
 	double lon;
 	long spotId;
+	String description;
 	
 	
+	
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
 	public double getLat() {
 		return lat;
 	}
