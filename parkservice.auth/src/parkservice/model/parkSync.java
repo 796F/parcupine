@@ -11,9 +11,23 @@ public class parkSync {
 	
 	//THE FOLLOWING ARE FOR REFILLING/UNPARKING
 	String parkingReferenceNumber; 
-	long rateId;
+	double lat;
+	double lon;
 	long spotId;
 	
+	
+	public double getLat() {
+		return lat;
+	}
+	public void setLat(double lat) {
+		this.lat = lat;
+	}
+	public double getLon() {
+		return lon;
+	}
+	public void setLon(double lon) {
+		this.lon = lon;
+	}
 	/**
 	 * @return the parkingReferenceNumber
 	 */
@@ -85,19 +99,6 @@ public class parkSync {
 	 */
 	public void setMinIncrement(int minIncrement) {
 		this.minIncrement = minIncrement;
-	}
-	
-	/**
-	 * @return the rateId
-	 */
-	public long getRateId() {
-		return rateId;
-	}
-	/**
-	 * @param rateId the rateId to set
-	 */
-	public void setRateId(long rateId) {
-		this.rateId = rateId;
 	}
 	/**
 	 * @return the spotId

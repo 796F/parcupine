@@ -14,9 +14,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.ContextResolver;
 import javax.xml.bind.JAXBElement;
 
+import com.parq.server.dao.GeolocationDao;
 import com.parq.server.dao.ParkingRateDao;
 import com.parq.server.dao.ParkingStatusDao;
 import com.parq.server.dao.UserDao;
+import com.parq.server.dao.model.object.Geolocation;
 import com.parq.server.dao.model.object.ParkingInstance;
 import com.parq.server.dao.model.object.ParkingRate;
 import com.parq.server.dao.model.object.User;
@@ -71,19 +73,26 @@ public class AuthResource{
 				//if end time is after now, gather needed information and then return. 
 				
 				ParkingRateDao prd = new ParkingRateDao();
-				ParkingRate pr = prd.getParkingRateBySpaceId(pi.getSpaceId());
-				long rate_id =pr.getRateId();
-				parkSync sync = new parkSync();
-				sync.setRateId(rate_id);
-				sync.setEndTime(endTime.getTime());
-				sync.setDefaultRate(pr.getParkingRateCents());
-				sync.setParkingReferenceNumber(pi.getParkingRefNumber());
-				sync.setMaxTime(pr.getMaxParkMins());
-				sync.setMinIncrement(pr.getTimeIncrementsMins());
-				sync.setMinTime(pr.getMinParkMins());
-				sync.setSpotId(pi.getSpaceId());
-				x.setSync(sync);
-				x.setParkstate(1);
+				try{
+					ParkingRate pr = prd.getParkingRateBySpaceId(pi.getSpaceId());
+					GeolocationDao gld = new GeolocationDao();
+					Geolocation location = gld.getLocationById(pr.getLocationId());
+					parkSync sync = new parkSync();
+					sync.setLat(location.getLatitude());
+					sync.setLon(location.getLongitude());
+					sync.setEndTime(endTime.getTime());
+					sync.setDefaultRate(pr.getParkingRateCents());
+					sync.setParkingReferenceNumber(pi.getParkingRefNumber());
+					sync.setMaxTime(pr.getMaxParkMins());
+					sync.setMinIncrement(pr.getTimeIncrementsMins());
+					sync.setMinTime(pr.getMinParkMins());
+					sync.setSpotId(pi.getSpaceId());
+					x.setSync(sync);
+					x.setParkstate(1);
+				}catch(Exception e){
+					
+				}
+				
 			}
 			return x;
 		}else{
