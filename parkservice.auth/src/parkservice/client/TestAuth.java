@@ -22,7 +22,7 @@ public class TestAuth {
 		
 		AuthRequest in = new AuthRequest();
 		in.setEmail("miguel@parqme.com");
-		in.setPassword("a");
+		in.setPassword("gg");
 		
 		String outstring = service.path("").type(MediaType.APPLICATION_JSON).post(String.class, in);
 		System.out.println(outstring);
@@ -32,7 +32,7 @@ public class TestAuth {
 
 	private static URI getBaseURI() {
 		return UriBuilder.fromUri(
-				"http://localhost:8080/parkservice.auth").build();
+				"http://75.101.132.219:8080/parkservice.auth").build();
 	}
 
 }

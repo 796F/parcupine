@@ -87,7 +87,7 @@ public class AuthResource{
 			}
 			return x;
 		}else{
-			x.setParkstate(-2);
+			x.setUid(-1);
 			return x;
 		}
 
@@ -96,6 +96,6 @@ public class AuthResource{
 	@GET
 	@Produces(MediaType.TEXT_PLAIN)
 	public String sayPlainTextHello() {
-		return "nonsense?  THIS... IS ... AUTH SERVICEEEE!!!";
+		return "Hi.  I am a bouncer.";
 	}
 }
