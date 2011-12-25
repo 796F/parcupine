@@ -21,6 +21,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -30,7 +33,6 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -39,9 +41,9 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.objects.Global;
 import com.objects.ParkInstanceObject;
-import com.objects.SpotObject;
 import com.objects.SavedInfo;
 import com.objects.ServerCalls;
+import com.objects.SpotObject;
 import com.objects.ThrowDialog;
 import com.quietlycoding.android.picker.NumberPicker;
 import com.quietlycoding.android.picker.NumberPickerButton;
@@ -107,7 +109,7 @@ import com.quietlycoding.android.picker.NumberPickerDialog;
  *    partners
  * */
 
-public class MainActivity extends ActivityGroup {
+public class MainActivity extends ActivityGroup implements LocationListener {
 
 	/*Textual Display objects declared here*/
 	private TextView priceDisplay;
@@ -149,11 +151,14 @@ public class MainActivity extends ActivityGroup {
 	/*final variables*/
 	public static final String SAVED_INFO = "ParqMeInfo";
 
+	private LocationManager locationManager;
+	private Location lastLocation;
+	private static final float LOCATION_ACCURACY = 20f;
+	private boolean goodLocation = false;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		
 
 		//check for internet on create, do it a lot later too.
 		//use flipper view
@@ -221,13 +226,11 @@ public class MainActivity extends ActivityGroup {
 						urlc.connect();
 						
 						if (urlc.getResponseCode() != 200) {
-							throw new Exception("LAAAA");
+							throw new RuntimeException("LAAAA");
 						}
 					} catch (MalformedURLException e) {
 						e.printStackTrace();
 					} catch (IOException e) {
-						e.printStackTrace();
-					} catch (Exception e) {
 						e.printStackTrace();
 					}
 		    	
@@ -243,7 +246,17 @@ public class MainActivity extends ActivityGroup {
 				// contents contains string "parqme.com/p/c36/p123456" or w/e...
 				SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 
-				mySpot = ServerCalls.getSpotInfo(contents,check);
+				final double lat;
+				final double lon;
+				if (!goodLocation) {
+					// TODO: Show a loading dialog and don't do the rest of this stuff yet
+					lat = 0f;
+					lon = 0f;
+				} else {
+					lat = lastLocation.getLatitude();
+					lon = lastLocation.getLongitude();
+				}
+				mySpot = ServerCalls.getRateGps(contents, lat, lon, check);
 				// if we get the object successfully
 				if (mySpot != null) {
 					vf.showNext();
@@ -275,7 +288,7 @@ public class MainActivity extends ActivityGroup {
 		spotNum.addTextChangedListener(new TextWatcher() {
 			@Override
 			public void afterTextChanged(Editable s) {
-				submitButton.setEnabled(s.length() == 1);
+				submitButton.setEnabled(s.length() > 0);
 			}
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count,
@@ -466,6 +479,26 @@ public class MainActivity extends ActivityGroup {
 			}
 		});
 
+		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		startGettingLocation();
+	}
+
+	private static boolean isLocationProviderAvailable(LocationManager locationManager, String provider) {
+		return locationManager.getProvider(provider) != null && locationManager.isProviderEnabled(provider);
+	}
+
+	private void startGettingLocation() {
+		if (isLocationProviderAvailable(locationManager, LocationManager.GPS_PROVIDER)) {
+			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+		} else if (isLocationProviderAvailable(locationManager, LocationManager.NETWORK_PROVIDER)) {
+			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+		} else {
+			ThrowDialog.show(this, ThrowDialog.NO_LOCATION);
+		}
+	}
+
+	private void stopGettingLocation() {
+		locationManager.removeUpdates(this);
 	}
 
 	private AlertDialog makeRefillDialog(){
@@ -614,7 +647,7 @@ public class MainActivity extends ActivityGroup {
 			if (contents != null) {
 				//contents contains string "parqme.com/p/c36/p123456" or w/e...
 				SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
-				mySpot = ServerCalls.getSpotInfo(contents, check);
+				mySpot = ServerCalls.getRateQr(contents, check);
 				//if we get the object successfully
 				if(mySpot!=null){
 					vf.showNext();
@@ -647,7 +680,7 @@ public class MainActivity extends ActivityGroup {
 				contents = "3";
 				SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 				//contents contains string "parqme.com/p/c36/p123456" or w/e...
-				mySpot = ServerCalls.getSpotInfo(contents, check);
+				mySpot = ServerCalls.getRateQr(contents, check);
 				//if we get the object successfully
 				if(mySpot!=null){
 					vf.showNext();
@@ -773,5 +806,28 @@ public class MainActivity extends ActivityGroup {
 	}
 	private void updateDisplay() {	
 		priceDisplay.setText(moneyConverter(getCostInCents(parkMinutes)));
+	}
+
+	@Override
+	public void onLocationChanged(Location location) {
+		if (location != null && (lastLocation == null || location.getAccuracy() < lastLocation.getAccuracy())) {
+			lastLocation = location;
+			if (location.getAccuracy() <= LOCATION_ACCURACY) {
+				stopGettingLocation();
+				goodLocation = true;
+			}
+		}
+	}
+
+	@Override
+	public void onProviderDisabled(String provider) {
+	}
+
+	@Override
+	public void onProviderEnabled(String provider) {
+	}
+
+	@Override
+	public void onStatusChanged(String provider, int status, Bundle extras) {
 	}
 }

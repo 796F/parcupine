@@ -131,7 +131,42 @@ public class ServerCalls {
 		}
 		return -1;
 	}
-	public static SpotObject getSpotInfo(String qrcode, SharedPreferences prefs){
+
+	public static SpotObject getRateGps(String spotNum, double lat, double lon, SharedPreferences prefs) {
+		try {
+			final HttpURLConnection conn =
+					(HttpURLConnection)
+						new URL(SERVER_HOSTNAME + "/parkservice.rate/gps")
+						.openConnection();
+			conn.setRequestProperty("Accept", "application/json");
+			conn.setRequestProperty("Content-Type", "application/json");
+			conn.setDoOutput(true);
+			final JsonGenerator jg = JSON_FACTORY.createJsonGenerator(conn.getOutputStream());
+			jg.writeStartObject();
+			jg.writeFieldName("lat");
+			jg.writeNumber(lat);
+			jg.writeFieldName("lon");
+			jg.writeNumber(lon);
+			jg.writeFieldName("spot");
+			jg.writeString(spotNum);
+			writeUserDetails(jg, prefs);
+			jg.writeEndObject();
+			jg.flush();
+			jg.close();
+			if (conn.getResponseCode() == 200) {
+				final JsonParser jp = JSON_FACTORY.createJsonParser(conn
+						.getInputStream());
+				final SpotObject rate = Parsers.parseRate(jp);
+				jp.close();
+				return rate;
+			}
+		} catch (IOException e){
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static SpotObject getRateQr(String qrcode, SharedPreferences prefs){
 		final String[] tokens = qrcode.split("/");
 		if (tokens.length != 2) {
 			return null;
@@ -139,7 +174,7 @@ public class ServerCalls {
 		try {
 			final HttpURLConnection conn =
 					(HttpURLConnection)
-						new URL(SERVER_HOSTNAME + "/parkservice.qrcode")
+						new URL(SERVER_HOSTNAME + "/parkservice.rate/qrcode")
 						.openConnection();
 			conn.setRequestProperty("Accept", "application/json");
 			conn.setRequestProperty("Content-Type", "application/json");
@@ -165,8 +200,8 @@ public class ServerCalls {
 			e.printStackTrace();
 		}
 		return null;
-		
 	}
+
 	public static ParkInstanceObject park(long spotid, long duration, SharedPreferences prefs){
 		try {
 			final HttpURLConnection conn =
