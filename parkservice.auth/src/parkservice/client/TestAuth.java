@@ -21,13 +21,14 @@ public class TestAuth {
 		WebResource service = client.resource(getBaseURI());
 		
 		AuthRequest in = new AuthRequest();
-		in.setEmail("xia@umd.edu");
+		in.setEmail("miguel@parqme.com");
 		in.setPassword("a");
 		
-		String outstring = service.path("auth").type(MediaType.APPLICATION_JSON).post(String.class, in);
-		
+		String outstring = service.path("").type(MediaType.APPLICATION_JSON).post(String.class, in);
 		System.out.println(outstring);
+		
 	}
+		
 
 	private static URI getBaseURI() {
 		return UriBuilder.fromUri(

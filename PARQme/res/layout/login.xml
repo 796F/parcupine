@@ -1,41 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical" android:layout_width="match_parent"
-	android:layout_height="match_parent">
-	<ImageView android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:src="@drawable/parqme"
-		android:gravity="center_horizontal"
-		android:layout_marginTop="48dp"/>
-	<TableLayout android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:layout_marginTop="36dp"
-		android:layout_marginLeft="6dp" android:layout_marginRight="6dp"
-		android:layout_gravity="center_horizontal" android:stretchColumns="1">
-		<TableRow>
-			<TextView android:id="@+id/email_label" android:text="Email:"
-				android:layout_width="wrap_content" android:layout_height="wrap_content"
-				android:layout_marginRight="8dp"/>
-			<EditText android:id="@+id/emailForm" android:text="tcampbel@american.edu"
-				android:inputType="textEmailAddress" android:layout_width="wrap_content"
-				android:layout_height="wrap_content" android:minWidth="50dp"/>
-		</TableRow>
-		<TableRow>
-			<TextView android:id="@+id/password_label" android:text="Password:"
-				android:layout_width="wrap_content" android:layout_height="wrap_content"
-				android:layout_marginRight="8dp"/>
-			<EditText android:id="@+id/passwordForm" android:inputType="textPassword"
-				android:layout_width="wrap_content" android:layout_height="wrap_content"
-				android:minWidth="50dp"/>
-		</TableRow>
-	</TableLayout>
+		android:orientation="vertical"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:background="@drawable/backgroundlayer">
+	<TextView
+		android:id="@+id/email_label"
+		android:text="Email"
+		style="@style/FormLabel"/>
+	<EditText
+		android:id="@+id/emailForm"
+		android:text="miguel@parqme.com"
+		android:inputType="textEmailAddress"
+		style="@style/FormField"/>
+	<TextView
+		android:id="@+id/password_label"
+		android:text="Password"
+		style="@style/FormLabel"/>
+	<EditText
+		android:id="@+id/passwordForm"
+		android:inputType="textPassword"
+		style="@style/FormField"/>
 	<CheckBox android:id="@+id/rememberbox" android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:text="Remember Me"
-		android:layout_gravity="center_horizontal"/>
-	<Button android:id="@+id/loginButton" android:layout_width="match_parent"
-		android:background="@drawable/login" android:layout_height="wrap_content"
-		android:layout_alignParentLeft="true"/>
-	<Button android:id="@+id/registerbutton" android:layout_width="match_parent"
-		android:background="@drawable/register" android:layout_height="wrap_content"
-		android:layout_alignParentBottom="true"
-		android:layout_alignParentLeft="true"/>
+		android:layout_height="wrap_content" android:text="Remember me"
+		android:layout_marginLeft="15dp" android:layout_marginTop="15dp"/>
+	<Button android:id="@+id/loginButton" android:layout_width="wrap_content"
+		android:text="Log In" android:layout_height="wrap_content" android:minWidth="100dp"
+		android:layout_gravity="right" android:layout_marginTop="15dp"
+		android:layout_marginRight="15dp"/>
+	<Button android:id="@+id/registerbutton" android:layout_width="wrap_content"
+		android:text="Sign up" android:layout_height="wrap_content" android:minWidth="100dp"
+		android:layout_gravity="right" android:layout_marginTop="15dp"
+		android:layout_marginRight="15dp"/>
 </LinearLayout>

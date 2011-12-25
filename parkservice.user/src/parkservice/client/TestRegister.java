@@ -1,0 +1,49 @@
+package parkservice.client;
+
+import java.net.URI;
+
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriBuilder;
+
+import parkservice.model.AuthRequest;
+import parkservice.model.RegisterRequest;
+import parkservice.model.RegisterResponse;
+
+import com.parq.server.dao.PaymentAccountDao;
+import com.parq.server.dao.UserDao;
+import com.parq.server.dao.model.object.PaymentAccount;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.config.ClientConfig;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
+
+
+
+public class TestRegister {
+
+	public static void main(String[] args) {
+		ClientConfig config = new DefaultClientConfig();
+		Client client = Client.create(config);
+		WebResource service = client.resource(getBaseURI());
+		
+		RegisterRequest rq = new RegisterRequest();
+		rq.setCreditCard("4258284516418861");
+		rq.setCscNumber("334");
+		rq.setEmail("streetANDzip@test.com");
+		rq.setExpMonth(7);
+		rq.setExpYear(2014);
+		
+		rq.setHolderName("Michael Xia");
+		rq.setPassword("a");
+		rq.setZipcode("19810");
+
+		String outstring = service.path("register").type(MediaType.APPLICATION_JSON).post(String.class, rq);
+		System.out.println(outstring);
+	}
+
+	private static URI getBaseURI() {
+		return UriBuilder.fromUri(
+				"http://localhost:8080/parkservice.user").build();
+	}
+
+}
