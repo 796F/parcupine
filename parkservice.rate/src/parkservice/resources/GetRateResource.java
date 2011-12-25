@@ -17,9 +17,11 @@ import javax.xml.bind.JAXBElement;
 import com.parq.server.dao.ClientDao;
 import com.parq.server.dao.GeolocationDao;
 import com.parq.server.dao.ParkingRateDao;
+import com.parq.server.dao.ParkingSpaceDao;
 import com.parq.server.dao.UserDao;
 import com.parq.server.dao.model.object.Geolocation;
 import com.parq.server.dao.model.object.ParkingRate;
+import com.parq.server.dao.model.object.ParkingSpace;
 import com.parq.server.dao.model.object.User;
 
 import parkservice.model.AuthRequest;
@@ -53,16 +55,20 @@ public class GetRateResource {
 			}catch (Exception e){}
 
 			GeolocationDao gdao = new GeolocationDao();
+			ParkingSpaceDao psdao = new ParkingSpaceDao();
+			ParkingSpace pspace = null;
 			Geolocation loc = null; 
 			try{
 				loc = gdao.getLocationById(pr.getLocationId());
+				pspace = psdao.getParkingSpaceBySpaceIdentifier(input.getSpot());
 			}catch (Exception e){}
 
 			RateResponse output = new RateResponse();
-			if(loc!=null && pr!=null){
+			if(loc!=null && pspace!=null){
 			output.setLat(loc.getLatitude());
 			output.setLon(loc.getLongitude());
-			output.setLocation(pr.getLocationName());
+			
+			output.setLocation(pspace.getSpaceIdentifier());
 			output.setSpotid(pr.getSpaceId());
 			output.setMinTime(pr.getMinParkMins());
 			output.setMaxTime(pr.getMaxParkMins());
@@ -104,7 +110,8 @@ public class GetRateResource {
 					pr = p.getParkingRateByName(g.getLocationIdentifier(), input.getSpot());
 					output.setLat(g.getLatitude());
 					output.setLon(g.getLongitude());
-					output.setLocation(pr.getLocationName());
+					//pr.getLocation() return main_lot
+					output.setLocation(pr.getSpaceName());
 					output.setSpotid(pr.getSpaceId());
 					output.setMinTime(pr.getMinParkMins());
 					output.setMaxTime(pr.getMaxParkMins());
