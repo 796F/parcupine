@@ -8,7 +8,7 @@
 		<FrameLayout android:id="@android:id/tabcontent"
 			android:layout_height="wrap_content" android:layout_weight="1"
 			android:layout_width="fill_parent" android:padding="5dp">
-			<RelativeLayout android:layout_height="wrap_content"
+<!-- 			<RelativeLayout android:layout_height="wrap_content"
 				android:layout_width="fill_parent" android:id="@+id/testrel">
 				<TextView android:id="@+id/topleft" android:layout_width="wrap_content"
 					android:textAppearance="?android:attr/textAppearanceLarge"
@@ -17,7 +17,7 @@
 					android:layout_alignParentLeft="true"></TextView>
 				<TextView android:id="@+id/topright" android:layout_width="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge" android:layout_height="wrap_content" android:text="Not Logged In" android:layout_alignParentTop="true" android:layout_alignParentRight="true"></TextView>
 
-			</RelativeLayout>
+			</RelativeLayout> -->
 
 		</FrameLayout>
 		<TabWidget android:id="@android:id/tabs"

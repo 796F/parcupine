@@ -18,11 +18,12 @@ public class Parsers {
 	private static final String PARAM_LAT = "lat";
 	private static final String PARAM_LONG = "lon";
 	private static final String PARAM_LOCATION = "location";
-	private static final String PARAM_SPOT = "spot";
+	private static final String PARAM_SPOT = "spotid";
 	private static final String PARAM_MIN_TIME = "minTime";
 	private static final String PARAM_MAX_TIME = "maxTime";
 	private static final String PARAM_DEFAULT_RATE = "defaultRate";
 	private static final String PARAM_MIN_INCREMENT = "minIncrement";
+	private static final String PARAM_DESCRIPTION = "description";
 
 	private static final String PARAM_PARK_REFERENCE = "parkingReferenceNumber";
 	private static final String PARAM_END_TIME = "endTime";
@@ -67,11 +68,12 @@ public class Parsers {
 		double lat = 0;
 		double lon = 0;
 		String location = "";
-		int spot = 0;
+		long spot = 0;
 		int minTime = 1;
 		int maxTime = 3;
 		int defaultRate = 1;
 		int minIncrement = 30;
+		String description = "";
 
 		JsonToken t = jp.nextToken();
 		String curr;
@@ -80,7 +82,7 @@ public class Parsers {
 			switch (t) {
 				case VALUE_NUMBER_INT: {
 					if (PARAM_SPOT.equals(curr)) {
-						spot = jp.getIntValue();
+						spot = jp.getLongValue();
 					} else if (PARAM_MIN_TIME.equals(curr)) {
 						minTime = jp.getIntValue();
 					} else if (PARAM_MAX_TIME.equals(curr)) {
@@ -101,13 +103,15 @@ public class Parsers {
 				case VALUE_STRING: {
 					if (PARAM_LOCATION.equals(curr)) {
 						location = jp.getText();
+					} else if (PARAM_DESCRIPTION.equals(curr)) {
+						description = jp.getText();
 					}
 				}
 			}
 			t = jp.nextToken();
 		}
 		return new SpotObject(lat, lon, location, spot, minTime, maxTime,
-				defaultRate, minIncrement);
+				defaultRate, minIncrement, description);
 	}
 
 	public static ParkInstanceObject parseParkInstance(JsonParser jp) throws IOException {

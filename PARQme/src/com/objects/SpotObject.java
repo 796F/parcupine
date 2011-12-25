@@ -5,17 +5,18 @@ public class SpotObject {
 	private double lat;
 	private double lon;
 	private String location;
-	private int spot;
+	private long spot;
 	private int minTime;
 	private int maxTime;
 	private int defaultRate;
 	private int minIncrement;
+	private String description;
 	
 	public SpotObject(){
 		
 	}
 	
-	public SpotObject(double lat, double lon, String location, int spot, int minTime, int maxTime, int defaultRate, int minIncrement) {
+	public SpotObject(double lat, double lon, String location, long spot, int minTime, int maxTime, int defaultRate, int minIncrement, String description) {
 		this.lat=lat;
 		this.lon=lon;
 		this.location=location;
@@ -24,6 +25,7 @@ public class SpotObject {
 		this.maxTime = maxTime;
 		this.defaultRate = defaultRate;
 		this.minIncrement = minIncrement;
+		this.description = description;
 	}
 
 	/**
@@ -50,7 +52,7 @@ public class SpotObject {
 	/**
 	 * @return the spot
 	 */
-	public int getSpot() {
+	public long getSpot() {
 		return spot;
 	}
 
@@ -80,5 +82,12 @@ public class SpotObject {
 	 */
 	public int getMinIncrement() {
 		return minIncrement;
+	}
+
+	/**
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
 	}
 }

@@ -3,6 +3,9 @@ package com.objects;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
+import android.provider.Settings;
 
 
 public class ThrowDialog {
@@ -19,7 +22,8 @@ public class ThrowDialog {
 	public final static int MAX_TIME=10;
 	public final static int NO_REFILL=11;
 	public final static int NO_NET=12;
-	public static void show(Context c, int dialog){
+	public final static int NO_LOCATION=13;
+	public static void show(final Context c, int dialog){
 		AlertDialog.Builder alert = new AlertDialog.Builder(c);
 		AlertDialog a;
 		switch(dialog){
@@ -168,6 +172,16 @@ public class ThrowDialog {
 			a = alert.create();
 			a.show();
 			break;
+		case NO_LOCATION:
+			alert.setMessage("You need to enable Location Services in Settings to park by spot number");
+			alert.setPositiveButton("Settings", new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					c.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+						.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+				}
+			});
+			alert.setNegativeButton("Cancel", null);
 		}
 	}
 

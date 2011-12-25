@@ -3,30 +3,51 @@
 	android:id="@+id/flipper" android:orientation="vertical"
 	android:layout_width="fill_parent" android:layout_height="fill_parent">
 
-	<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		android:orientation="vertical" android:layout_width="match_parent"
-		android:layout_height="match_parent" android:id="@+id/view1">
-		<EditText android:id="@+id/spot_num" android:layout_height="wrap_content"
-			android:layout_width="wrap_content" android:singleLine="true"
-			android:layout_marginTop="85dp" android:textSize="32sp"
-			android:inputType="number" android:hint="Spot #"
-			android:layout_centerHorizontal="true"/>
-		<ImageView android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_toRightOf="@id/spot_num"
-			android:layout_marginTop="72dp" android:id="@+id/imageView1"/>
-		<Button android:layout_height="wrap_content"
-			android:layout_width="wrap_content" android:id="@+id/submitButton"
-			android:background="@drawable/submit"
-			android:layout_below="@id/spot_num"
-			android:enabled="false"/>
-		<Button android:layout_height="wrap_content"
-			android:layout_width="wrap_content" android:id="@+id/scanButton"
-			android:background="@drawable/scan"
-			android:layout_below="@id/submitButton"
-			android:layout_marginTop="60dp"/>
-		<RadioButton android:layout_height="wrap_content" android:id="@+id/pingdot" android:text="Server Ready" android:layout_width="wrap_content" android:layout_alignBottom="@+id/imageView1" android:layout_centerHorizontal="true"></RadioButton>
-	</RelativeLayout>
+	<ScrollView
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:fillViewport="true">
+		<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			android:orientation="vertical" android:layout_width="match_parent"
+			android:layout_height="match_parent" android:id="@+id/view1">
+			<Button android:layout_height="wrap_content"
+				android:layout_width="wrap_content" android:id="@+id/scanButton"
+				android:text="Scan QR Code"
+				android:layout_marginTop="60dp"
+				android:layout_centerHorizontal="true"/>
+			<View
+				android:id="@+id/hr"
+	            android:layout_width="fill_parent"
+	            android:layout_height="1dp"
+	            android:background="#ff888888"
+	            android:layout_marginLeft="6dp"
+	            android:layout_marginRight="6dp"
+	            android:layout_marginTop="60dp"
+	            android:layout_marginBottom="6dp"
+	            android:layout_below="@id/scanButton" />
+			<TextView
+				android:id="@+id/enter_spot_num"
+				android:text="Enter spot number"
+				android:layout_height="wrap_content"
+				android:layout_width="wrap_content"
+				android:layout_marginLeft="6dp"
+				android:layout_below="@id/hr" />
+			<EditText android:id="@+id/spot_num" android:layout_height="wrap_content"
+				android:layout_width="fill_parent" android:singleLine="true"
+				android:inputType="number" android:hint="Spot #"
+				android:layout_below="@id/enter_spot_num"
+				android:layout_marginLeft="6dp"
+				android:layout_marginRight="6dp"
+				android:layout_centerHorizontal="true"/>
+			<Button android:layout_height="wrap_content"
+				android:layout_width="wrap_content" android:id="@+id/submitButton"
+				android:text="PARQ me!"
+				android:layout_below="@id/spot_num"
+				android:layout_alignParentRight="true"
+				android:layout_marginRight="4dp"
+				android:enabled="false"/>
+		</RelativeLayout>
+	</ScrollView>
 	
 	<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:orientation="vertical" android:layout_width="match_parent"
