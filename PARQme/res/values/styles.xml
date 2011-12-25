@@ -21,4 +21,9 @@
         <item name="android:layout_marginRight">10dp</item>
         <item name="android:textColor">#000</item>
     </style>
+    <style name="ParqButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minWidth">100dp</item>
+    </style>
 </resources>

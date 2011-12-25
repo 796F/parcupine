@@ -24,12 +24,13 @@
 	<CheckBox android:id="@+id/rememberbox" android:layout_width="wrap_content"
 		android:layout_height="wrap_content" android:text="Remember me"
 		android:layout_marginLeft="15dp" android:layout_marginTop="15dp"/>
-	<Button android:id="@+id/loginButton" android:layout_width="wrap_content"
-		android:text="Log In" android:layout_height="wrap_content" android:minWidth="100dp"
+	<Button android:id="@+id/loginButton"
+        style="@style/ParqButton"
+		android:text="Log In" android:minWidth="100dp"
 		android:layout_gravity="right" android:layout_marginTop="15dp"
 		android:layout_marginRight="15dp"/>
-	<Button android:id="@+id/registerbutton" android:layout_width="wrap_content"
-		android:text="Sign up" android:layout_height="wrap_content" android:minWidth="100dp"
+	<Button android:id="@+id/registerbutton"
+		android:text="Sign up" style="@style/ParqButton"
 		android:layout_gravity="right" android:layout_marginTop="15dp"
 		android:layout_marginRight="15dp"/>
 </LinearLayout>

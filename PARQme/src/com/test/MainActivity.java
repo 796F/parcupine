@@ -123,8 +123,6 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	private Button scanButton;
 	private Button unparqButton;
 	private Button refillButton;
-	private Button minTimeButton;
-	private Button maxTimeButton;
 	private Button cancelPark;
 	private Button parkButton;
 	private Button gpsButton;
@@ -168,12 +166,12 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 		alert = makeRefillDialog();
 
 		//hook elements
-		priceDisplay = (TextView) findViewById(R.id.priceDisplay);
+		priceDisplay = (TextView) findViewById(R.id.price_display);
 		userDisplay = (TextView) findViewById(R.id.welcomeuser);
 		locDisplay = (TextView) findViewById(R.id.location);
 		timeDisplay = (TextView) findViewById(R.id.timeleftdisplay);
 		vf = (ViewFlipper) findViewById(R.id.flipper);
-		parkTimePicker = (NumberPicker) findViewById(R.id.parktimepicker);
+//		parkTimePicker = (NumberPicker) findViewById(R.id.parktimepicker);
 		mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.alarm);
 		final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 
@@ -261,9 +259,9 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 				if (mySpot != null) {
 					vf.showNext();
 					// prepare time picker for this spot
-					parkTimePicker.setRange(mySpot.getMinIncrement(),
-							mySpot.getMaxTime());
-					parkTimePicker.setMinInc(mySpot.getMinIncrement());
+//					parkTimePicker.setRange(mySpot.getMinIncrement(),
+//							mySpot.getMaxTime());
+//					parkTimePicker.setMinInc(mySpot.getMinIncrement());
 
 					// initialize all variables to match spot
 					minimalIncrement = mySpot.getMinIncrement();
@@ -422,62 +420,44 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 				}
 			}});
 
-		minTimeButton = (Button) findViewById(R.id.minparktime);
-		minTimeButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				parkTimePicker.setCurrent(minimalIncrement);
-				parkMinutes=minimalIncrement;
-				remainSeconds=minimalIncrement*60;
-				updateDisplay();
-			}});
-		maxTimeButton = (Button) findViewById(R.id.maxparktime);
-		maxTimeButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				parkTimePicker.setCurrent(maxTime);
-				parkMinutes=maxTime;
-				remainSeconds=maxTime*60;
-				updateDisplay();
-			}});
-		cancelPark = (Button) findViewById(R.id.cancelpark);
-		cancelPark.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				mySpot=null;
-				//return to previous view
-				vf.showPrevious();
-			}});
+//		cancelPark = (Button) findViewById(R.id.cancelpark);
+//		cancelPark.setOnClickListener(new View.OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+//				mySpot=null;
+//				//return to previous view
+//				vf.showPrevious();
+//			}});
 
 		/*these buttons appear on the first park, not refills.*/
-		pickerIncButton = parkTimePicker.getIncButton();
-		pickerIncButton.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View arg0) {
-				if(parkMinutes<maxTime){
-					//update the parking minutes and seconds
-					parkMinutes+=minimalIncrement;
-					remainSeconds+=minimalIncrement*60;
-					parkTimePicker.setCurrent(parkMinutes);
-					updateDisplay();
-				}
-			}
-		});
-		pickerDecButton = parkTimePicker.getDecButton();
-		pickerDecButton.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View arg0) {
-				if(parkMinutes>minimalIncrement){
-					//update the parking minutes and seconds
-					parkMinutes-=minimalIncrement;
-					remainSeconds-=minimalIncrement*60;
-					parkTimePicker.setCurrent(parkMinutes);
-					updateDisplay();
-				}
-			}
-		});
+//		pickerIncButton = parkTimePicker.getIncButton();
+//		pickerIncButton.setOnClickListener(new View.OnClickListener() {
+//
+//			@Override
+//			public void onClick(View arg0) {
+//				if(parkMinutes<maxTime){
+//					//update the parking minutes and seconds
+//					parkMinutes+=minimalIncrement;
+//					remainSeconds+=minimalIncrement*60;
+//					parkTimePicker.setCurrent(parkMinutes);
+//					updateDisplay();
+//				}
+//			}
+//		});
+//		pickerDecButton = parkTimePicker.getDecButton();
+//		pickerDecButton.setOnClickListener(new View.OnClickListener() {
+//
+//			@Override
+//			public void onClick(View arg0) {
+//				if(parkMinutes>minimalIncrement){
+//					//update the parking minutes and seconds
+//					parkMinutes-=minimalIncrement;
+//					remainSeconds-=minimalIncrement*60;
+//					parkTimePicker.setCurrent(parkMinutes);
+//					updateDisplay();
+//				}
+//			}
+//		});
 
 		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		startGettingLocation();
@@ -805,7 +785,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 		return (mins/(mySpot.getMinIncrement())) * mySpot.getDefaultRate();
 	}
 	private void updateDisplay() {	
-		priceDisplay.setText(moneyConverter(getCostInCents(parkMinutes)));
+		priceDisplay.setText(moneyConverter(getCostInCents(parkMinutes)) + " per " + mySpot.getMinIncrement() + " minutes");
 	}
 
 	@Override

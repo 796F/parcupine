@@ -13,7 +13,7 @@
 		android:layout_alignParentLeft="true" android:layout_height="match_parent"></Button>
 	<Button android:layout_height="wrap_content"
 		android:layout_width="match_parent" android:id="@+id/parkbutton"
-		android:background="@drawable/parkbutton" android:layout_below="@+id/minparktime"
+		android:text="Park" android:layout_below="@+id/minparktime"
 		android:layout_alignParentLeft="true"></Button>
 	<TextView android:id="@+id/priceDisplay" android:layout_height="wrap_content" android:layout_width="wrap_content" android:textSize="55sp" android:text="$ 0.00" android:layout_alignBottom="@+id/parktimepicker" android:layout_centerHorizontal="true" android:layout_marginBottom="123dp"></TextView>
 	<com.quietlycoding.android.picker.NumberPicker android:id="@+id/parktimepicker" android:layout_height="wrap_content" android:layout_alignParentTop="true" android:layout_centerHorizontal="true" android:layout_marginTop="154dp" android:layout_width="200dp"></com.quietlycoding.android.picker.NumberPicker>
