@@ -28,12 +28,12 @@ public class TestGetRate {
 		
 		//login info
 		AuthRequest in = new AuthRequest();
-		in.setEmail("xia.umd@gmail.com");
+		in.setEmail("miguel@parqme.com");
 		in.setPassword("a");
 		//AU OR cid=11, main_lot, 1412
 		QrcodeRequest g = new QrcodeRequest();
 		g.setUserInfo(in);
-		g.setUid(30); //not used by getrate yet.  
+		g.setUid(31); //not used by getrate yet.  
 		g.setLot("main_lot");
 		g.setSpot("1412");
 		String output = service.path("qrcode").type(MediaType.APPLICATION_JSON).post(String.class, g);
@@ -44,7 +44,7 @@ public class TestGetRate {
 		gg.setLat(0);
 		gg.setLon(0);
 		gg.setSpot("1412");
-		gg.setUid(30);
+		gg.setUid(31);
 		String output2 = service.path("gps").type(MediaType.APPLICATION_JSON).post(String.class, gg);
 		System.out.println(output2);
 		//lat/lon try 0, 0

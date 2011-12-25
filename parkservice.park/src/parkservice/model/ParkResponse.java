@@ -4,9 +4,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class ParkResponse {
+	String resp;
 	long endTime;
 	String parkingReferenceNumber;
-	String resp;
 	
 	
 	

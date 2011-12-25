@@ -27,11 +27,11 @@ public class TestRegister {
 		WebResource service = client.resource(getBaseURI());
 		
 		RegisterRequest rq = new RegisterRequest();
-		rq.setCreditCard("4258284516418861");
-		rq.setCscNumber("334");
-		rq.setEmail("streetANDzip@test.com");
-		rq.setExpMonth(7);
-		rq.setExpYear(2014);
+		rq.setCreditCard("5466160160030126");
+		rq.setCscNumber("000");
+		rq.setEmail("miguel@parqme.com");
+		rq.setExpMonth(4);
+		rq.setExpYear(2015);
 		
 		rq.setHolderName("Michael Xia");
 		rq.setPassword("a");

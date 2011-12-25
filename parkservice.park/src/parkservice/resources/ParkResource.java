@@ -290,6 +290,8 @@ public class ParkResource {
 					}else{
 						output.setResp("NO_PAY_PROFILE");
 					}
+				}else{
+					output.setResp("PR may be null, or 3way check failed");
 				}
 
 			}else{

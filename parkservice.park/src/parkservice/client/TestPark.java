@@ -23,17 +23,18 @@ public class TestPark {
 		ClientConfig config = new DefaultClientConfig();
 		Client client = Client.create(config);
 		WebResource service = client.resource(getBaseURI());
-		
+		//{"resp":"OK","rateObject":{"defaultRate":337,"lat":0.0,"location":"space name 1","lon":0.0,"maxTime":0,"minIncrement":5,"minTime":0,"spotid":61}}
 		AuthRequest in = new AuthRequest();
-		in.setEmail("xia.umd@gmail.com");
+		in.setEmail("miguel@parqme.com");
 		in.setPassword("a");
 		
 		ParkRequest pr = new ParkRequest();
 		pr.setPaymentType(0);
-		pr.setSpotid(101);
-		pr.setUid(30);
+		pr.setSpotid(61);
+		pr.setUid(31);
 		pr.setUserinfo(in);
-		
+		pr.setDurationMinutes(10);
+		pr.setChargeAmount(674);
 		
 		String outstring = service.path("park").type(MediaType.APPLICATION_JSON).post(String.class, pr);
 		System.out.println(outstring);

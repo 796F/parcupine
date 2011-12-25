@@ -21,18 +21,20 @@ public class TestRefill {
 		WebResource service = client.resource(getBaseURI());
 		
 		AuthRequest in = new AuthRequest();
-		in.setEmail("xia.umd@gmail.com");
+		in.setEmail("miguel@parqme.com");
 		in.setPassword("a");
-		
+		//{"endTime":1324848301801,"parkingReferenceNumber":"31:61:1324847703","resp":"OK"}
+
 		RefillRequest pr = new RefillRequest();
-		pr.setChargeAmount(100);
+		pr.setParkingReferenceNumber("31:61:1324847703");
+		pr.setChargeAmount(337);
+		pr.setDurationMinutes(5);
 		pr.setPaymentType(0);
-		pr.setSpotid(101);
-		pr.setUid(30);
+		pr.setSpotid(61);
+		pr.setUid(31);
 		pr.setUserinfo(in);
-		pr.setParkingReferenceNumber("30:101:1324102182"); //information is given back by response object.  
 		
-		String outstring = service.path("park").path("refill").type(MediaType.APPLICATION_JSON).post(String.class, pr);
+		String outstring = service.path("refill").type(MediaType.APPLICATION_JSON).post(String.class, pr);
 		System.out.println(outstring);
 		
 	}
@@ -40,6 +42,6 @@ public class TestRefill {
 
 	private static URI getBaseURI() {
 		return UriBuilder.fromUri(
-				"http://localhost:8080/parkservice.resources").build();
+				"http://localhost:8080/parkservice.park").build();
 	}
 }
