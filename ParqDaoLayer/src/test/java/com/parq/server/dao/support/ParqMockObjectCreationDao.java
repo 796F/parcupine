@@ -19,8 +19,8 @@ public class ParqMockObjectCreationDao extends DaoForTestingPurposes {
 		" ?, ?)" ;
 	
 	private static final String sqlInsertPaqkingSpace = 
-		"INSERT INTO parkingspace (location_id, space_identifier, parking_level) " + 
-		" VALUE ((SELECT location_id FROM parkinglocation WHERE location_identifier = ? ), ?, ?)";
+		"INSERT INTO parkingspace (location_id, space_identifier, parking_level, space_name) " + 
+		" VALUE ((SELECT location_id FROM parkinglocation WHERE location_identifier = ? ), ?, ?, ?)";
 
 	private static final String sqlInsertLocationParkingRate = 
 		"INSERT INTO parkingrate (parking_rate_cents, priority, location_id, time_increment_mins) " +
@@ -52,9 +52,9 @@ public class ParqMockObjectCreationDao extends DaoForTestingPurposes {
 	}
 
 	protected boolean insertParkingSpace(String locationIdentifier,
-			String spaceIdentifier, String parkingLevel) {
+			String spaceIdentifier, String parkingLevel, String spaceName) {
 		return executeSqlStatement(sqlInsertPaqkingSpace, new Object[] {
-				locationIdentifier, spaceIdentifier, parkingLevel });
+				locationIdentifier, spaceIdentifier, parkingLevel, spaceName});
 	}
 
 	protected boolean setParkingLocationRate(int parkingRateInCents,

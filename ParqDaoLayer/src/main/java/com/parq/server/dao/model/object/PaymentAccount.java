@@ -8,7 +8,6 @@ import java.io.Serializable;
  */
 public class PaymentAccount implements Serializable {
 	
-	
 	/**
 	 * 
 	 */
@@ -110,4 +109,33 @@ public class PaymentAccount implements Serializable {
 		this.isDefaultPaymentMethod = isDefaultPaymentMethod;
 	}
 
+	
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (accountId ^ (accountId >>> 32));
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PaymentAccount other = (PaymentAccount) obj;
+		if (accountId != other.accountId)
+			return false;
+		return true;
+	}
 }

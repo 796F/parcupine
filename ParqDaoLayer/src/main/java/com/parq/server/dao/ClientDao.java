@@ -31,7 +31,7 @@ public class ClientDao extends AbstractParqDaoParent {
 	private static final String sqlGetClientByClientName = "SELECT client_id, name, address, client_desc FROM client WHERE name = ? AND is_deleted IS NOT TRUE";
 	private static final String sqlGetClientByClientId = "SELECT client_id, name, address, client_desc FROM client WHERE client_id = ? AND is_deleted IS NOT TRUE";
 	private static final String sqlGetAllSpacesByClientId = 
-		"SELECT b.client_id, b.location_identifier, b.location_id, s.space_id, s.space_identifier, s.parking_level " + 
+		"SELECT b.client_id, b.location_identifier, b.location_id, s.space_id, s.space_identifier, s.parking_level, s.space_name " + 
 		" FROM parkinglocation AS b, parkingspace AS s " +
 		" WHERE b.location_id = s.location_id " +
 		" AND b.client_id = ?" +
@@ -188,6 +188,7 @@ public class ClientDao extends AbstractParqDaoParent {
 			curSpace.setSpaceId(rs.getLong("space_id"));
 			curSpace.setParkingLevel(rs.getString("parking_level"));
 			curSpace.setSpaceIdentifier(rs.getString("space_identifier"));
+			curSpace.setSpaceName(rs.getString("space_name"));
 
 			curLocation.getSpaces().add(curSpace);
 		}

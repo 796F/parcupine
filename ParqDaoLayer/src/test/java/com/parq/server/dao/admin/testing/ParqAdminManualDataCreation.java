@@ -13,6 +13,7 @@ public class ParqAdminManualDataCreation extends TestCase {
 	private static final double latitude = 5.23;
 	private static final double logitude = -8.58;
 	private static final String parkingSpaceIdentifier = "ParqTestSpace_1";
+	private static final String parkingSpaceName = "TempU: space name 1";
 	private static final int parkingRateInCents = 100;
 	private static final int parkingMinutesIncresments = 10;
 
@@ -27,7 +28,7 @@ public class ParqAdminManualDataCreation extends TestCase {
 		helper.setGeoCoordinateForParkingLocation(parkingLocationIdentifier,
 				latitude, logitude);
 		helper.insertParkingSpace(parkingLocationIdentifier,
-				parkingSpaceIdentifier);
+				parkingSpaceIdentifier, parkingSpaceName);
 		helper.setParkingLocationRate(parkingRateInCents,
 				parkingLocationIdentifier, parkingMinutesIncresments);
 		

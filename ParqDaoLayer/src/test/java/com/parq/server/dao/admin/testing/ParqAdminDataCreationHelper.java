@@ -41,9 +41,9 @@ final class ParqAdminDataCreationHelper extends ParqMockObjectCreationDao {
 	}
 
 	public boolean insertParkingSpace(String locationIdentifier,
-			String spaceIdentifier) {
+			String spaceIdentifier, String parkingSpaceName) {
 		return insertParkingSpace(locationIdentifier, spaceIdentifier,
-				PARKING_SPACE_LEVEL);
+				PARKING_SPACE_LEVEL, parkingSpaceName);
 	}
 
 	public boolean setParkingLocationRate(int parkingRateInCents,

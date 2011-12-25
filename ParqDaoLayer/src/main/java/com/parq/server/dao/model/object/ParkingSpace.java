@@ -7,15 +7,18 @@ import java.io.Serializable;
  *
  */
 public class ParkingSpace implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1919122147177571986L;
+
 	
+	/**
+	 * Generated serial ID
+	 */
+	private static final long serialVersionUID = -6365631744656272541L;
 	private long spaceId = -1;
 	private String spaceIdentifier;
 	private String parkingLevel;
 	private long locationId;
+	private String spaceName;
+	
 	/**
 	 * @return the id
 	 */
@@ -63,5 +66,17 @@ public class ParkingSpace implements Serializable {
 	 */
 	public void setLocationId(long locationId) {
 		this.locationId = locationId;
+	}
+	/**
+	 * @return the spaceName
+	 */
+	public String getSpaceName() {
+		return spaceName;
+	}
+	/**
+	 * @param spaceName the spaceName to set
+	 */
+	public void setSpaceName(String spaceName) {
+		this.spaceName = spaceName;
 	}
 }

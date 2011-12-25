@@ -19,6 +19,7 @@ CREATE TABLE paymentaccount
  customer_id TEXT(64), 
  payment_method_id TEXT(64),
  cc_stub TEXT(64),
+ card_type TEXT(64),
  is_default_payment BOOLEAN DEFAULT FALSE,
  is_deleted BOOLEAN DEFAULT FALSE,
  lastupdatedatetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
@@ -154,3 +155,4 @@ CREATE TABLE payment
  PRIMARY KEY (payment_id),
  FOREIGN KEY (parkinginst_id) references parkinginstance(parkinginst_id),
  FOREIGN KEY (account_id) references paymentaccount(account_id));
+ 

@@ -85,6 +85,7 @@ public class TestClientDao extends TestCase {
 				assertFalse(s.getParkingLevel().isEmpty());
 				assertNotNull(s.getSpaceIdentifier());
 				assertFalse(s.getSpaceIdentifier().isEmpty());
+				assertNotNull(s.getSpaceName());
 			}
 		}
 	}

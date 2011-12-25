@@ -24,6 +24,7 @@ public class TestParkingSpaceDao extends TestCase {
 		assertTrue(pSpace.getLocationId() > 0);
 		assertNotNull(pSpace.getSpaceIdentifier());
 		assertNotNull(pSpace.getParkingLevel());
+		assertNotNull(pSpace.getSpaceName());
 	}
 	
 	public void testGetParkingSpaceBySpaceId(){
@@ -38,6 +39,7 @@ public class TestParkingSpaceDao extends TestCase {
 		assertTrue(pSpace.getSpaceId() > 0);
 		assertTrue(pSpace.getLocationId() > 0);
 		assertNotNull(pSpace.getSpaceIdentifier());
-		assertNotNull(pSpace.getParkingLevel());		
+		assertNotNull(pSpace.getParkingLevel());
+		assertNotNull(pSpace.getSpaceName());
 	}
 }

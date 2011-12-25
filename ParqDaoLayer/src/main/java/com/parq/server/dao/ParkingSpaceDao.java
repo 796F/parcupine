@@ -10,12 +10,12 @@ import com.parq.server.dao.model.object.ParkingSpace;
 public class ParkingSpaceDao extends AbstractParqDaoParent {
 
 	private static final String sqlGetParkingSpaceBySpaceId =
-		"SELECT space_id, space_identifier, location_id, parking_level " +
+		"SELECT space_id, space_identifier, location_id, parking_level, space_name " +
 		" FROM parkingspace " +
 		" WHERE space_id = ? "; 
 	
 	private static final String sqlGetParkingSpaceBySpaceIdentifier = 
-		"SELECT space_id, space_identifier, location_id, parking_level " +
+		"SELECT space_id, space_identifier, location_id, parking_level, space_name " +
 		" FROM parkingspace " +
 		" WHERE space_identifier = ? "; 
 	
@@ -81,6 +81,7 @@ public class ParkingSpaceDao extends AbstractParqDaoParent {
 		curSpace.setSpaceId(rs.getLong("space_id"));
 		curSpace.setParkingLevel(rs.getString("parking_level"));
 		curSpace.setSpaceIdentifier(rs.getString("space_identifier"));
+		curSpace.setSpaceName(rs.getString("space_name"));
 		return curSpace;
 	}
 }
