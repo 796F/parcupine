@@ -37,7 +37,7 @@ public class TestGetRate {
 		g.setLot("main_lot");
 		g.setSpot("1412");
 		String output = service.path("qrcode").type(MediaType.APPLICATION_JSON).post(String.class, g);
-	System.out.println(output);
+		System.out.println(output);
 		
 		GpsRequest gg = new GpsRequest();
 		gg.setUserInfo(in);

@@ -33,7 +33,7 @@ import parkservice.model.RateResponse;
 public class GetRateResource {
 	@Context 
 	ContextResolver<JAXBContextResolver> providers;
-	
+
 
 	@POST
 	@Path("/qrcode")
@@ -60,21 +60,21 @@ public class GetRateResource {
 			Geolocation loc = null; 
 			try{
 				loc = gdao.getLocationById(pr.getLocationId());
-				pspace = psdao.getParkingSpaceBySpaceIdentifier(input.getSpot());
+				pspace = psdao.getParkingSpaceBySpaceId(pr.getSpaceId());
 			}catch (Exception e){}
 
 			RateResponse output = new RateResponse();
 			if(loc!=null && pspace!=null){
-			output.setLat(loc.getLatitude());
-			output.setLon(loc.getLongitude());
-			
-			output.setLocation(pspace.getSpaceIdentifier());
-			output.setSpotid(pr.getSpaceId());
-			output.setMinTime(pr.getMinParkMins());
-			output.setMaxTime(pr.getMaxParkMins());
-			output.setDefaultRate(pr.getParkingRateCents());
-			output.setMinIncrement(pr.getTimeIncrementsMins());
-			return output;
+				output.setLat(loc.getLatitude());
+				output.setLon(loc.getLongitude());
+
+				output.setLocation(pspace.getSpaceName());
+				output.setSpotid(pr.getSpaceId());
+				output.setMinTime(pr.getMinParkMins());
+				output.setMaxTime(pr.getMaxParkMins());
+				output.setDefaultRate(pr.getParkingRateCents());
+				output.setMinIncrement(pr.getTimeIncrementsMins());
+				return output;
 			}else{
 				output.setLocation("ONE WAS NULL");
 				return output;
@@ -101,6 +101,7 @@ public class GetRateResource {
 			GeolocationDao gdao = new GeolocationDao();
 			List<Geolocation> spots = gdao.findCloseByParkingLocation(x-0.0004, x+0.0004, y-0.0004, y+0.0004);
 
+
 			for(Geolocation g: spots){
 				RateResponse output = new RateResponse();
 				ParkingRateDao p = new ParkingRateDao();
@@ -108,15 +109,25 @@ public class GetRateResource {
 				//											this is main_lot	   input.getspot is 1412
 				try{
 					pr = p.getParkingRateByName(g.getLocationIdentifier(), input.getSpot());
-					output.setLat(g.getLatitude());
-					output.setLon(g.getLongitude());
-					//pr.getLocation() return main_lot
-					output.setLocation(pr.getSpaceName());
-					output.setSpotid(pr.getSpaceId());
-					output.setMinTime(pr.getMinParkMins());
-					output.setMaxTime(pr.getMaxParkMins());
-					output.setDefaultRate(pr.getParkingRateCents());
-					output.setMinIncrement(pr.getTimeIncrementsMins());
+
+					ParkingSpaceDao psdao = new ParkingSpaceDao();
+					ParkingSpace pspace = null;
+					try{
+						pspace = psdao.getParkingSpaceBySpaceId(pr.getSpaceId());
+					}catch (Exception e){}
+					if(pspace!=null){
+						output.setLat(g.getLatitude());
+						output.setLon(g.getLongitude());
+						//pr.getLocation() return main_lot
+						output.setLocation(pspace.getSpaceName());
+						output.setSpotid(pr.getSpaceId());
+						output.setMinTime(pr.getMinParkMins());
+						output.setMaxTime(pr.getMaxParkMins());
+						output.setDefaultRate(pr.getParkingRateCents());
+						output.setMinIncrement(pr.getTimeIncrementsMins());
+					}else{
+						output.setLocation("SPACE_NULL");
+					}
 				}catch (Exception e){
 					output.setLocation("EXCEPTION GETTING PARKING RATE");
 				}
