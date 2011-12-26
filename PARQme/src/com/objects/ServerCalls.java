@@ -211,7 +211,7 @@ public class ServerCalls {
 			conn.setRequestProperty("Accept", "application/json");
 			conn.setRequestProperty("Content-Type", "application/json");
 			conn.setDoOutput(true);
-			final RateObject spot = SavedInfo.getInstance().currentSpot;
+			final RateObject spot = SavedInfo.getInstance().getSpot();
 			final JsonGenerator jg = JSON_FACTORY.createJsonGenerator(conn.getOutputStream());
 			jg.writeStartObject();
 			jg.writeFieldName("spotid");

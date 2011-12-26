@@ -203,10 +203,34 @@ public class SavedInfo{
 		editor.commit();
 	}
 	private static final SavedInfo INSTANCE = new SavedInfo();
-	public RateObject currentSpot;
-	public ParkInstanceObject currentPark;
+	private RateObject currentSpot;
+	private ParkInstanceObject currentPark;
 	private SavedInfo() { }
 	public static SavedInfo getInstance() {
 		return INSTANCE;
+	}
+	/**
+	 * @return the currentSpot
+	 */
+	public RateObject getSpot() {
+		return currentSpot;
+	}
+	/**
+	 * @param currentSpot the currentSpot to set
+	 */
+	public void setSpot(RateObject currentSpot) {
+		this.currentSpot = currentSpot;
+	}
+	/**
+	 * @return the currentPark
+	 */
+	public ParkInstanceObject getPark() {
+		return currentPark;
+	}
+	/**
+	 * @param currentPark the currentPark to set
+	 */
+	public void setPark(ParkInstanceObject currentPark) {
+		this.currentPark = currentPark;
 	}
 }

@@ -602,8 +602,6 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 		}
 	}
 
-
-
 	private void refillMe(int refillMinutes){
 		//if we haven't gone past the total time we're allowed to park
 		if(totalTimeParked+refillMinutes<=maxTime){
@@ -727,7 +725,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 
 	/* THIS TIMER is only used for in-app visuals.  The actual server updating and such are
 	 * done via user button clicks, and the background service we run.  */
-	public CountDownTimer initiateTimer(Date endTime, final ViewFlipper myvf){
+	private CountDownTimer initiateTimer(Date endTime, final ViewFlipper myvf){
 		//creates the countdown timer
 		Date now = new Date();
 		int countDownSeconds = (int)(endTime.getTime() - now.getTime())/1000;
@@ -771,7 +769,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 		};
 
 	}
-	public static void warnMe(Context activity){
+	static void warnMe(Context activity){
 		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO,0);
 		//if time warning is enabled
 		if(check.getBoolean("warningEnable", false)){
@@ -787,7 +785,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 
 
 	//converts cents to "$ x.xx"
-	public String formatCents(int m) {
+	private String formatCents(int m) {
 		final String dollars = String.valueOf(m / 100);
 		String cents = String.valueOf(m % 100);
 		if (m % 100 < 10) {
@@ -796,7 +794,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 		return '$'+dollars+'.'+cents;
 	}
 	//converts seconds to "H:mm:ss"
-	public static String formatMe(int seconds){
+	private static String formatMe(int seconds){
 		SimpleDateFormat sdf = new SimpleDateFormat("H:mm:ss");
 		try {
 			Date x = sdf.parse("00:00:00");
