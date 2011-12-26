@@ -224,9 +224,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 		final OnFocusChangeListener timeListener = new OnFocusChangeListener() {
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
-				final int time = getParkMins();
-				hours.setText(String.valueOf(time / 60));
-				minutes.setText(String.valueOf(time % 60));
+				updateDisplay(getParkMins());
 			}
 		};
 
@@ -273,7 +271,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 
 					remainSeconds = getParkMins() * 60;
 
-					rate.setText(moneyConverter(mySpot.getDefaultRate()) + " per " + minimalIncrement + " minutes");
+					rate.setText(formatCents(mySpot.getDefaultRate()) + " per " + minimalIncrement + " minutes");
 					lotDesc.setText(mySpot.getDescription());
 					spot.setText("Spot #" + contents);
 					if (mySpot.getMinIncrement() != 0) {
@@ -789,22 +787,13 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 
 
 	//converts cents to "$ x.xx"
-	public String moneyConverter (int cents){
-		int m = cents;
-		if(m/100 > 0){
-			// there's at least 1 dollar
-			int dollars = m/100;
-			cents = m%100;
-			if(cents==0)
-				return "$ " + dollars + ".00";
-			return "$ " + dollars + "." + cents;
+	public String formatCents(int m) {
+		final String dollars = String.valueOf(m / 100);
+		String cents = String.valueOf(m % 100);
+		if (m % 100 < 10) {
+			cents = '0' + cents;
 		}
-		// there's only cents
-		else {
-			if(cents==0)
-				return " $ 0.00";
-			return "$ 0." + cents;
-		}
+		return '$'+dollars+'.'+cents;
 	}
 	//converts seconds to "H:mm:ss"
 	public static String formatMe(int seconds){
@@ -826,7 +815,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	private void updateDisplay(int time) {
 		hours.setText(String.valueOf(time/60));
 		minutes.setText(String.valueOf(time%60));
-		price.setText(moneyConverter(getCostInCents(time)));
+		price.setText(formatCents(getCostInCents(time)));
 	}
 
 	@Override
