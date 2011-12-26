@@ -7,10 +7,6 @@
 
 package com.test;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -32,6 +28,7 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.View.OnFocusChangeListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -42,13 +39,12 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.objects.Global;
 import com.objects.ParkInstanceObject;
+import com.objects.RateObject;
 import com.objects.RateResponse;
 import com.objects.SavedInfo;
 import com.objects.ServerCalls;
-import com.objects.RateObject;
 import com.objects.ThrowDialog;
 import com.quietlycoding.android.picker.NumberPicker;
-import com.quietlycoding.android.picker.NumberPickerButton;
 import com.quietlycoding.android.picker.NumberPickerDialog;
 
 /**
@@ -114,12 +110,14 @@ import com.quietlycoding.android.picker.NumberPickerDialog;
 public class MainActivity extends ActivityGroup implements LocationListener {
 
 	/*Textual Display objects declared here*/
-	private TextView priceDisplay;
+	private TextView rate;
 	private TextView userDisplay;
 	private TextView locDisplay;
 	private TextView timeDisplay;
 	private EditText hours;
 	private EditText minutes;
+	private TextView price;
+	private TextView increment;
 
 	/*Buttons declared here*/
 	private EditText spotNum;
@@ -136,7 +134,6 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	/*ints used by calculations*/
 	private int warnTime = 30; //in seconds
 	private int remainSeconds; //in seconds
-	private int parkMinutes;//in minutes
 	private int minimalIncrement;//in minutes
 	private int maxTime; //in minutes
 	private int totalTimeParked = 0; //in minutes
@@ -158,8 +155,6 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	private Location lastLocation;
 	private static final float LOCATION_ACCURACY = 20f;
 	private boolean goodLocation = false;
-	private Runnable minusTime;
-	private Runnable plusTime;
 	private Runnable test;
 	
 	@Override
@@ -174,12 +169,11 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 		alert = makeRefillDialog();
 
 		//hook elements
-		priceDisplay = (TextView) findViewById(R.id.price_display);
+		rate = (TextView) findViewById(R.id.rate);
 		userDisplay = (TextView) findViewById(R.id.welcomeuser);
 		locDisplay = (TextView) findViewById(R.id.location);
 		timeDisplay = (TextView) findViewById(R.id.timeleftdisplay);
 		vf = (ViewFlipper) findViewById(R.id.flipper);
-
 
 		//		parkTimePicker = (NumberPicker) findViewById(R.id.parktimepicker);
 		mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.alarm);
@@ -220,37 +214,25 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 			vf.showNext();
 		}
 
-
-
-		new Thread(new Runnable() {
-			public void run() {
-				String host = "http://www.parqme.com";
-				try {
-					URL url = new URL(host);
-					HttpURLConnection urlc = (HttpURLConnection) url.openConnection();
-					urlc.setConnectTimeout(1000 * 60); // mTimeout is in seconds
-					urlc.connect();
-
-					if (urlc.getResponseCode() != 200) {
-						throw new RuntimeException("LAAAA");
-					}
-				} catch (MalformedURLException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-
+		final OnFocusChangeListener timeListener = new OnFocusChangeListener() {
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {
+				final int time = getParkMins();
+				hours.setText(String.valueOf(time / 60));
+				minutes.setText(String.valueOf(time % 60));
 			}
-		}).start();
+		};
 
 		hours = (EditText) findViewById(R.id.hours);
 		hours.setInputType(InputType.TYPE_NULL);
-
+		hours.setOnFocusChangeListener(timeListener);
 
 		minutes = (EditText) findViewById(R.id.mins);
 		minutes.setInputType(InputType.TYPE_NULL);
+		minutes.setOnFocusChangeListener(timeListener);
 
-
+		price = (TextView) findViewById(R.id.total_price);
+		increment = (TextView) findViewById(R.id.increment);
 
 		//initialize buttons and set actions
 		submitButton = (Button) findViewById(R.id.submitButton);
@@ -285,15 +267,19 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 					minimalIncrement = mySpot.getMinIncrement();
 					maxTime = mySpot.getMaxTime();
 
-					parkMinutes = minimalIncrement;
-					remainSeconds = parkMinutes * 60;
+					remainSeconds = getParkMins() * 60;
+
+					rate.setText(moneyConverter(mySpot.getDefaultRate()) + " per " + minimalIncrement + " minutes");
+					if (mySpot.getMinIncrement() != 0) {
+						increment.setText(mySpot.getMinIncrement() + " minute increments");
+					}
 					// store some used info
 					SharedPreferences.Editor editor = check.edit();
 					editor.putString("code", contents);
 					editor.putFloat("lat", (float) mySpot.getLat());
 					editor.putFloat("lon", (float) mySpot.getLon());
 					editor.commit();
-					updateDisplay();
+					updateDisplay(minimalIncrement);
 				} else {
 					ThrowDialog.show(MainActivity.this,
 							ThrowDialog.RESULT_ERROR);
@@ -338,8 +324,8 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 				int parkResult = park();
 				//if that response code is good,
 				if (parkResult==1){
-					totalTimeParked+=parkMinutes;
-					parkCost = getCostInCents(parkMinutes);
+					totalTimeParked+=getParkMins();
+					parkCost = getCostInCents(getParkMins());
 					if(totalTimeParked == maxTime){
 						ThrowDialog.show(MainActivity.this, ThrowDialog.MAX_TIME);
 					}
@@ -347,7 +333,6 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 
 					//TODO: DELETE ME FOR TESTING
 					remainSeconds = 60;
-					parkMinutes = 1;
 					//END TESTING CODE
 
 					//create and start countdown display
@@ -392,7 +377,6 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 						int unparkResult= unpark();
 						if(unparkResult==1){
 							//reset ints
-							parkMinutes=0;
 							totalTimeParked=0;
 							remainSeconds=0;
 							minimalIncrement=0;
@@ -444,7 +428,6 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 			public void onClick(View v) {
 				myRateResponse=null;
 				mySpot=null;
-				parkMinutes = 0;
 				remainSeconds = 0;
 				totalTimeParked = 0;
 				//return to previous view
@@ -457,7 +440,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 
 			@Override
 			public void onClick(View arg0) {
-				plusTime.run();
+				plusTime();
 			}
 		});
 		pickerDecButton = (Button) findViewById(R.id.minus);
@@ -465,60 +448,53 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 
 			@Override
 			public void onClick(View arg0) {
-				//				if(parkMinutes>minimalIncrement){
-				//					//update the parking minutes and seconds
-				//					parkMinutes-=minimalIncrement;
-				//					remainSeconds-=minimalIncrement*60;
-				//					parkTimePicker.setCurrent(parkMinutes);
-				//					updateDisplay();
-				//					
-				//				}
-				minusTime.run();
+				minusTime();
 			}
 		});
 
-		plusTime = new Runnable() {
-			public void run() {
-				if(hours.hasFocus()){
-					//if(parkMinutes+60<=maxTime){
-						//update the parking minutes and seconds
-						parkMinutes+=60;
-						remainSeconds+=60*60;
-						updateDisplay();
-					//}
-				}else if(minutes.hasFocus()){
-					//if(parkMinutes+minimalIncrement<=maxTime){
-						//update the parking minutes and seconds
-						parkMinutes+=minimalIncrement;
-						remainSeconds+=minimalIncrement*60;
-						updateDisplay();
-					//}
-				}
-			}
-		};
-		
-		
-		minusTime = new Runnable() {
-			public void run() {
-				if(hours.hasFocus()){
-					//if(parkMinutes+60<=maxTime){
-						//update the parking minutes and seconds
-						parkMinutes-=60;
-						remainSeconds-=60*60;
-						updateDisplay();
-					//}
-				}else if(minutes.hasFocus()){
-					//if(parkMinutes+minimalIncrement<=maxTime){
-						//update the parking minutes and seconds
-						parkMinutes-=minimalIncrement;
-						remainSeconds-=minimalIncrement*60;
-						updateDisplay();
-					//}
-				}
-			}
-		};
 		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		startGettingLocation();
+	}
+
+	private int getParkMins() {
+		int h, m;
+		try {
+			h = Integer.valueOf(hours.getText().toString());
+		} catch (NumberFormatException e) {
+			h = 0;
+		}
+		try {
+			m = Integer.valueOf(minutes.getText().toString());
+		} catch (NumberFormatException e) {
+			m = 0;
+		}
+		int time = h*60+m;
+		time -= time % mySpot.getMinIncrement();
+		return time;
+	}
+
+	private void plusTime() {
+		if(hours.hasFocus()){
+			//update the parking minutes and seconds
+			remainSeconds+=60*60;
+//			updateDisplay(Math.min(maxTime, getParkMins()+60));
+			updateDisplay(getParkMins()+60);
+		} else {
+			remainSeconds+=minimalIncrement*60;
+//			updateDisplay(Math.min(maxTime, getParkMins()+minimalIncrement));
+			updateDisplay(getParkMins()+minimalIncrement);
+		}
+	}
+
+	private void minusTime() {
+		if(hours.hasFocus()){
+			//update the parking minutes and seconds
+			remainSeconds-=60*60;
+			updateDisplay(Math.max(minimalIncrement, getParkMins()-60));
+		} else {
+			remainSeconds-=minimalIncrement*60;
+			updateDisplay(Math.max(minimalIncrement, getParkMins()-minimalIncrement));
+		}
 	}
 
 
@@ -629,11 +605,10 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 		if(totalTimeParked+refillMinutes<=maxTime){
 
 			//update the total time parked and remaining time.
-			parkMinutes+=refillMinutes;
-			parkCost = getCostInCents(parkMinutes);
+			parkCost = getCostInCents(getParkMins());
 			totalTimeParked+=refillMinutes;
 			remainSeconds+=refillMinutes*60;
-			updateDisplay();
+			updateDisplay(getParkMins()+refillMinutes);
 
 			//TODO:  DELETE ME TESTING CODE
 			//remainSeconds+=60;
@@ -700,9 +675,8 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 					maxTime = mySpot.getMaxTime();
 
 					//TODO delete me testing
-					parkMinutes=1;
-					//parkMinutes=minimalIncrement;
-					remainSeconds=parkMinutes*60;
+					updateDisplay(1);
+					remainSeconds=getParkMins()*60;
 
 					//store some used info
 					SharedPreferences.Editor editor = check.edit();
@@ -710,7 +684,6 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 					editor.putFloat("lat", (float) mySpot.getLat());
 					editor.putFloat("lon", (float) mySpot.getLon());
 					editor.commit();
-					updateDisplay();
 				}else{
 					ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
 				}
@@ -732,8 +705,8 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 					minimalIncrement=mySpot.getMinIncrement();
 					maxTime = mySpot.getMaxTime();
 
-					parkMinutes=minimalIncrement;
-					remainSeconds=parkMinutes*60;
+					updateDisplay(minimalIncrement);
+					remainSeconds=minimalIncrement*60;
 
 					//store some used info
 					SharedPreferences.Editor editor = check.edit();
@@ -741,7 +714,6 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 					editor.putFloat("lat", (float) mySpot.getLat());
 					editor.putFloat("lon", (float) mySpot.getLon());
 					editor.commit();
-					updateDisplay();
 				}else{
 					ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
 				}
@@ -845,10 +817,10 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 		//number of minutes parked, divided by the minimum increment (aka unit of time), multiplied by price per unit in cents
 		return (mins/(mySpot.getMinIncrement())) * mySpot.getDefaultRate();
 	}
-	private void updateDisplay() {
-		hours.setText(""+parkMinutes/60);
-		minutes.setText(""+parkMinutes%60);
-//		//priceDisplay.setText(moneyConverter(getCostInCents(parkMinutes)) + " per " + mySpot.getMinIncrement() + " minutes");
+	private void updateDisplay(int time) {
+		hours.setText(String.valueOf(time/60));
+		minutes.setText(String.valueOf(time%60));
+		price.setText(moneyConverter(getCostInCents(time)));
 	}
 
 	@Override
