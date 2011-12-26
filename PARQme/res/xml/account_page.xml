@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="TITLE IS THIS" >
+
+    <PreferenceCategory android:title="Profile" >
+        <EditTextPreference
+            android:dialogMessage="dmsg"
+            android:dialogTitle="dialog title"
+            android:negativeButtonText="Cancel"
+            android:positiveButtonText="Save"
+            android:summary="Student"
+            android:title="Robert Smith" />
+        <EditTextPreference
+            android:dialogMessage="message here"
+            android:dialogTitle="title again"
+            android:negativeButtonText="Cancel"
+            android:positiveButtonText="Save"
+            android:summary="robertsmith@parqme.com"
+            android:title="Email" />
+        <EditTextPreference
+            android:dialogMessage="message here"
+            android:dialogTitle="title again"
+            android:negativeButtonText="Cancel"
+            android:positiveButtonText="Save"
+            android:summary="Boston"
+            android:title="City" />
+        <EditTextPreference
+            android:dialogMessage="message here"
+            android:dialogTitle="title again"
+            android:negativeButtonText="Cancel"
+            android:positiveButtonText="Save"
+            android:summary="**** **** **** **** 1234"
+            android:title="Card" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Settings" >
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="firstCheckboxPref"
+            android:summary="Auto-Add Time"
+            android:title="Auto Refill" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="secondCheckboxPref"
+            android:summary="vibrate when time low"
+            android:title="Enable Vibrate" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="thirdCheckboxPref"
+            android:summary="Enable Alarm"
+            android:title="rings when time low" />
+    </PreferenceCategory>
+
+</PreferenceScreen>
