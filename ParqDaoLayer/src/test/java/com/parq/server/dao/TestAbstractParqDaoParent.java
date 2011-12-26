@@ -1,5 +1,7 @@
 package com.parq.server.dao;
 
+import java.sql.Connection;
+
 import junit.framework.TestCase;
 
 
@@ -25,8 +27,8 @@ public class TestAbstractParqDaoParent extends TestCase {
 
 	public void testConnectAndClose() {
 		testDao.initialize();
-		testDao.getConnection();
-		testDao.closeConnection();
+		Connection con = testDao.getConnection();
+		testDao.closeConnection(con);
 
 		// if connect or close call fails, it will never reach this assert
 		// statement
@@ -37,6 +39,5 @@ public class TestAbstractParqDaoParent extends TestCase {
 class MockDao extends AbstractParqDaoParent {
 
 	public MockDao() {
-		propertyFile = "./ParqDao.properties";
 	}
 }
