@@ -107,7 +107,7 @@ public class ServerCalls {
 		return false;
 	}
 
-	public static int unPark(long spotid, String parkingReferenceNumber, SharedPreferences prefs){
+	public static boolean unPark(long spotid, String parkingReferenceNumber, SharedPreferences prefs){
 		try {
 			final HttpURLConnection conn =
 					(HttpURLConnection)
@@ -132,16 +132,12 @@ public class ServerCalls {
 						.getInputStream());
 				final boolean response = Parsers.parseResponseCode(jp);
 				jp.close();
-				if(response){
-					return 1;
-				}else{
-					return 0;
-				}
+				return response;
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return -1;
+		return false;
 	}
 
 	public static RateResponse getRateGps(String spotNum, double lat, double lon, SharedPreferences prefs) {

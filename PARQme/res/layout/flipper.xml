@@ -4,18 +4,15 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
-
     <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:fillViewport="true" >
-
         <RelativeLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/view1"
             android:layout_width="match_parent"
             android:layout_height="match_parent" >
-
             <Button
                 android:id="@+id/scanButton"
                 style="ParqButton"
@@ -24,7 +21,6 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="60dp"
                 android:text="Scan QR Code" />
-
             <View
                 android:id="@+id/hr"
                 android:layout_width="fill_parent"
@@ -34,8 +30,7 @@
                 android:layout_marginLeft="6dp"
                 android:layout_marginRight="6dp"
                 android:layout_marginTop="60dp"
-                android:background="#ff888888" />
-
+                android:background="#888" />
             <TextView
                 android:id="@+id/enter_spot_num"
                 android:layout_width="wrap_content"
@@ -43,7 +38,6 @@
                 android:layout_below="@id/hr"
                 android:layout_marginLeft="6dp"
                 android:text="Enter spot number" />
-
             <EditText
                 android:id="@+id/spot_num"
                 android:layout_width="fill_parent"
@@ -55,7 +49,6 @@
                 android:hint="Spot #"
                 android:inputType="number"
                 android:singleLine="true" />
-
             <Button
                 android:id="@+id/submitButton"
                 style="ParqButton"
@@ -73,385 +66,178 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:fillViewport="true" >
-
         <RelativeLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="match_parent" >
-
-            <View
-                android:id="@+id/banner_back"
+            <TextView
+                android:id="@+id/lot_description"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/lot_description"
-                android:layout_alignTop="@+id/lot_description"
-                android:background="#ff47585E" />
-
-            <TextView
-                android:id="@id/lot_description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:textColor="#fff"
-                android:textSize="14dp" />
-
+                android:textSize="14dp"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp"
+                android:paddingLeft="4dp"
+                android:background="#ff47585E" />
             <TextView
                 android:id="@+id/spot"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_alignTop="@id/lot_description"
                 android:textColor="#fff"
-                android:textSize="14dp" />
-
+                android:textSize="14dp"
+                android:layout_marginTop="6dp"
+                android:layout_marginRight="4dp" />
             <TextView
                 android:id="@+id/rate_header"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/lot_description"
+                android:layout_marginLeft="6dp"
                 android:text="Rates"
                 android:textSize="22dp" />
-
             <TextView
                 android:id="@+id/rate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/rate_header"
-                android:layout_marginLeft="18dp"
+                android:layout_marginLeft="24dp"
                 android:textSize="18dp" />
-
             <View
                 android:id="@+id/hr1"
                 android:layout_width="fill_parent"
                 android:layout_height="1dp"
                 android:layout_below="@id/rate"
                 android:layout_marginTop="6dp"
-                android:background="#ff888888" />
-
+                android:background="#888" />
             <TextView
-                android:id="@+id/parking_meter"
+                android:id="@+id/time_header"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/hr1"
-                android:layout_marginBottom="3dp"
-                android:text="Parking Meter"
+                android:layout_marginBottom="6dp"
+                android:layout_marginLeft="6dp"
                 android:textColor="#fff"
                 android:textSize="22dp" />
-
             <TextView
                 android:id="@+id/colon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/parking_meter"
+                android:layout_below="@id/time_header"
                 android:layout_centerHorizontal="true"
                 android:text=":"
-                android:textSize="48dp" />
-
+                android:textSize="48dp"
+                android:textColor="#fff" />
             <EditText
                 android:id="@+id/hours"
                 android:layout_width="72dp"
                 android:layout_height="72dp"
-                android:layout_below="@id/parking_meter"
+                android:layout_below="@id/time_header"
                 android:layout_toLeftOf="@id/colon"
-                android:gravity="right"
+                android:gravity="center"
                 android:inputType="number"
                 android:text="0"
                 android:textSize="48dp" />
-
+            <TextView
+                android:id="@+id/hours_remaining"
+                android:layout_width="66dp"
+                android:layout_height="66dp"
+                android:layout_below="@id/time_header"
+                android:layout_toLeftOf="@id/colon"
+                android:gravity="center"
+                android:visibility="gone"
+                android:textSize="48dp"
+                android:textColor="#fff"
+                android:background="@drawable/black_box"
+                android:text="0" />
             <EditText
                 android:id="@+id/mins"
                 android:layout_width="72dp"
                 android:layout_height="72dp"
-                android:layout_below="@id/parking_meter"
-                android:layout_marginRight="6dp"
+                android:layout_below="@id/time_header"
                 android:layout_toRightOf="@id/colon"
-                android:gravity="right"
+                android:gravity="center"
                 android:inputType="number"
                 android:text="0"
                 android:textSize="48dp" />
-
+            <TextView
+                android:id="@+id/mins_remaining"
+                android:layout_width="66dp"
+                android:layout_height="66dp"
+                android:layout_below="@id/time_header"
+                android:layout_toRightOf="@id/colon"
+                android:gravity="center"
+                android:visibility="gone"
+                android:textSize="48dp"
+                android:textColor="#fff"
+                android:background="@drawable/black_box"
+                android:text="0" />
             <Button
                 android:id="@+id/plus"
                 android:layout_width="72dp"
                 android:layout_height="36dp"
+                android:layout_marginLeft="6dp"
                 android:layout_alignTop="@id/mins"
                 android:layout_toRightOf="@id/mins"
                 android:text="+"
                 android:textSize="18dp" />
-
             <Button
                 android:id="@+id/minus"
                 android:layout_width="72dp"
                 android:layout_height="36dp"
+                android:layout_marginLeft="6dp"
                 android:layout_alignBottom="@id/mins"
                 android:layout_toRightOf="@id/mins"
                 android:text="-"
                 android:textSize="18dp" />
-
             <TextView
                 android:id="@+id/increment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/hours"
+                android:layout_below="@id/colon"
+                android:layout_marginLeft="6dp"
+                android:layout_marginTop="16dp"
                 android:textColor="#fff"
                 android:textSize="10dp" />
-
             <View
                 android:id="@+id/hr2"
                 android:layout_width="fill_parent"
                 android:layout_height="1dp"
                 android:layout_below="@id/increment"
                 android:layout_marginTop="6dp"
-                android:background="#ff888888" />
-
+                android:layout_marginBottom="6dp"
+                android:background="#888" />
             <TextView
-                android:id="@+id/total"
+                android:id="@+id/price_header"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/hr2"
-                android:text="Total"
+                android:layout_marginLeft="6dp"
                 android:textColor="#fff"
-                android:textSize="18dp" />
-
+                android:textSize="28dp" />
             <TextView
                 android:id="@+id/total_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_below="@id/hr2"
+                android:layout_marginRight="6dp"
                 android:textColor="#fff"
                 android:textSize="28dp" />
-
             <Button
-                android:id="@+id/parkbutton"
+                android:id="@+id/right_button"
                 style="@style/ParqButton"
                 android:layout_alignParentRight="true"
                 android:layout_below="@id/total_price"
-                android:text="PARQ Me" />
-
+                android:layout_marginTop="12dp"
+                android:layout_marginRight="6dp" />
             <Button
-                android:id="@+id/cancel"
+                android:id="@+id/left_button"
                 style="@style/ParqButton"
-                android:layout_alignParentRight="true"
-                android:layout_below="@id/parkbutton"
-                android:text="Cancel" />
+                android:layout_below="@id/total_price"
+                android:layout_marginTop="12dp"
+                android:layout_marginLeft="6dp" />
         </RelativeLayout>
     </ScrollView>
-<RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-
-        <View
-            android:id="@+id/another_banner_back"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/another_lot_description"
-            android:layout_alignTop="@+id/another_lot_description"
-            android:background="#ff47585E" />
-
-        <TextView
-            android:id="@+id/another_lot_description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="main_lot"
-            android:textColor="#fff"
-            android:textSize="14dp" />
-
-        <TextView
-            android:id="@+id/another_spot"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignTop="@+id/another_lot_description"
-            android:text="Spot#1412"
-            android:textColor="#fff"
-            android:textSize="14dp" />
-
-        <View
-            android:id="@+id/hr2"
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:layout_marginTop="20dp"
-            android:background="#ff888888" />
-
-        <EditText
-            android:id="@+id/remaining_minutes"
-            android:layout_width="72dp"
-            android:layout_height="72dp"
-            android:layout_above="@+id/hr2"
-            android:layout_centerHorizontal="true"
-            android:gravity="right"
-            android:inputType="number"
-            android:text="0"
-            android:textSize="48dp" />
-
-        <TextView
-            android:id="@+id/leftcolon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/remaining_minutes"
-            android:layout_toLeftOf="@+id/remaining_minutes"
-            android:text=":"
-            android:textSize="48dp" />
-
-        <EditText
-            android:id="@+id/remaining_hours"
-            android:layout_width="72dp"
-            android:layout_height="72dp"
-            android:layout_above="@+id/hr2"
-            android:layout_toLeftOf="@+id/leftcolon"
-            android:gravity="right"
-            android:inputType="number"
-            android:text="0"
-            android:textSize="48dp" >
-
-            <requestFocus />
-        </EditText>
-
-        <TextView
-            android:id="@+id/rightcolon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/remaining_minutes"
-            android:layout_toRightOf="@+id/remaining_minutes"
-            android:text=":"
-            android:textSize="48dp" />
-
-        <EditText
-            android:id="@+id/remaining_seconds"
-            android:layout_width="72dp"
-            android:layout_height="72dp"
-            android:layout_alignTop="@+id/rightcolon"
-            android:layout_toRightOf="@+id/rightcolon"
-            android:gravity="right"
-            android:inputType="number"
-            android:text="0"
-            android:textSize="48dp" />
-
-        <TextView
-            android:id="@+id/parking_meter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/remaining_minutes"
-            android:layout_alignParentLeft="true"
-            android:layout_marginBottom="32dp"
-            android:text="Time Remaining"
-            android:textColor="#fff"
-            android:textSize="22dp" />
-
-        <View
-            android:id="@+id/hr1"
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:layout_above="@+id/parking_meter"
-            android:layout_alignParentLeft="true"
-            android:background="#ff888888" />
-
-        <Button
-            android:id="@+id/refillbutton"
-            style="@style/ParqButton"
-            android:layout_below="@+id/hr2"
-            android:layout_marginTop="58dp"
-            android:layout_toRightOf="@+id/remaining_minutes"
-            android:text="Refill" />
-
-        <Button
-            android:id="@+id/unparqbutton"
-            style="@style/ParqButton"
-            android:layout_alignBaseline="@+id/refillbutton"
-            android:layout_alignBottom="@+id/refillbutton"
-            android:layout_alignRight="@+id/leftcolon"
-            android:text="Unpark" />
-
-        <TextView
-            android:id="@+id/textView1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="20dp"
-            android:text="Rates"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/textView1"
-            android:layout_marginLeft="20dp"
-            android:layout_toLeftOf="@+id/spot"
-            android:text="Large Text"
-            android:layout_marginBottom="5dp"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-    </RelativeLayout>
-
-    <!--
-    <RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/view2">
-        <TextView
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:id="@+id/username"
-            android:layout_width="wrap_content"
-            android:text=""
-            android:layout_marginRight="0px"
-            android:layout_alignParentRight="true"></TextView>
-        <TextView
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:id="@+id/PARQbanner"
-            android:layout_width="wrap_content"
-            android:text="PARQ"
-            android:layout_alignParentLeft="true"></TextView>
-        <Button
-            android:id="@+id/unparqbutton"
-            android:layout_width="wrap_content"
-            android:background="@drawable/unparkbutton"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"></Button>
-        <Button
-            android:id="@+id/refillbutton"
-            android:layout_width="match_parent"
-            android:background="@drawable/refillbutton"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/unparqbutton"
-            android:layout_alignParentLeft="true"></Button>
-        <TextView
-            android:layout_width="match_parent"
-            android:id="@+id/location"
-            android:text="Enjoy your stay blah"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/welcomeuser"
-            android:layout_alignParentLeft="true"></TextView>
-        <TextView
-            android:layout_width="wrap_content"
-            android:id="@+id/welcomeuser"
-            android:text="Welcome Bob!"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/username"
-            android:layout_alignParentLeft="true"
-            android:layout_marginTop="29dp"></TextView>
-        <TextView
-            android:layout_width="wrap_content"
-            android:id="@+id/timeleftdisplay"
-            android:text="0:00:00"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textSize="55sp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/location"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="46dp"></TextView>
-    </RelativeLayout>
-    -->
-
 </ViewFlipper>

@@ -99,19 +99,20 @@ public class SavedInfo{
 		editor.commit();
 		
 	}
-	//toggles parkState
-	public static void togglePark(Context activity){
-		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
-		SharedPreferences.Editor editor = check.edit();
-		if(check.getBoolean("parkState", false)){
-			//if parked, set as not parked
-			editor.putBoolean("parkState", false);
-		}else{
-			//if not parked, set as parked.
-			editor.putBoolean("parkState", true);
-		}
-		editor.commit();
+	public static String getParkId(Context activity, SharedPreferences prefs) {
+	    return prefs.getString("PARKID", "");
 	}
+    public static void unpark(Context activity, SharedPreferences.Editor edit) {
+        edit.putBoolean("parkState", false);
+        edit.putString("PARKID", "");
+        setEndTime(activity, edit, 0);
+    }
+    public static void park(Context activity, ParkInstanceObject park) {
+        SharedPreferences.Editor edit = activity.getSharedPreferences(SAVED_INFO, 0).edit();
+        edit.putBoolean("parkState", true);
+        edit.putString("PARKID", park.getParkingReferenceNumber());
+        setEndTime(activity, edit, park.getEndTime());
+    }
 	public static void logIn(Context activity, boolean parkState, String email, long uid, String password){
 		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
 		SharedPreferences.Editor editor = check.edit();
@@ -121,6 +122,15 @@ public class SavedInfo{
 		editor.putString("password", password);
 		editor.commit();
 	}
+    public static void logOut(Context activity){
+        SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
+        SharedPreferences.Editor editor = check.edit();
+        editor.putBoolean("parkState", false);
+        editor.putString("email", "");
+        editor.putLong("uid", -1);
+        editor.putString("password", "");
+        editor.commit();
+    }
 	
 	public static void syncParkingSession(Context activity, ParkSync sync){
 		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
@@ -135,15 +145,6 @@ public class SavedInfo{
 		editor.putInt("minTime", sync.getMinTime());
 		editor.putString("PARKID", sync.getParkingReferenceNumber());
 		editor.putLong("spotId", sync.getSpotId());
-		editor.commit();
-	}
-	public static void logOut(Context activity){
-		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
-		SharedPreferences.Editor editor = check.edit();
-		editor.putBoolean("parkState", false);
-		editor.putString("email", "");
-		editor.putLong("uid", -1);
-		editor.putString("password", "");
 		editor.commit();
 	}
 	public static void toggleVibrate(Context activity){
@@ -208,7 +209,6 @@ public class SavedInfo{
 	}
 	private static final SavedInfo INSTANCE = new SavedInfo();
 	private RateObject currentSpot;
-	private ParkInstanceObject currentPark;
 	private SavedInfo() { }
 	public static SavedInfo getInstance() {
 		return INSTANCE;
@@ -224,17 +224,5 @@ public class SavedInfo{
 	 */
 	public void setSpot(RateObject currentSpot) {
 		this.currentSpot = currentSpot;
-	}
-	/**
-	 * @return the currentPark
-	 */
-	public ParkInstanceObject getPark() {
-		return currentPark;
-	}
-	/**
-	 * @param currentPark the currentPark to set
-	 */
-	public void setPark(ParkInstanceObject currentPark) {
-		this.currentPark = currentPark;
 	}
 }

@@ -93,10 +93,10 @@ public class Background extends Service{
 			public void run() {
 				
 				 String parkingReferenceNumber = "";
-				 if(ServerCalls.unPark(0, parkingReferenceNumber, check)==1){
+				 if(ServerCalls.unPark(0, parkingReferenceNumber, check)){
 					 
 					((Vibrator)getSystemService(VIBRATOR_SERVICE)).vibrate(500);
-					SavedInfo.togglePark(Background.this);
+					SavedInfo.unpark(Background.this, check.edit());
 					
 					//TODO intent below causes crash.  
 //					Intent myIntent = new Intent(Background.this, LoginActivity.class);
