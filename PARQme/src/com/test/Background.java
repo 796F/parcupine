@@ -11,6 +11,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Vibrator;
@@ -28,6 +29,7 @@ public class Background extends Service{
 	private Timer x;
 	private View mainView;
 	private ViewFlipper vf;
+	private static MediaPlayer mediaPlayer;
 	@Override
 	public IBinder onBind(Intent arg0) {
 		return null;
@@ -37,6 +39,7 @@ public class Background extends Service{
 	public int onStartCommand(Intent intent, int flags, int startId){
 		b = intent.getExtras();
 		
+		mediaPlayer = MediaPlayer.create(this, R.raw.alarm);
 		final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 		final SharedPreferences.Editor editor = check.edit();
 		//grab current time, and declare end time
@@ -64,7 +67,7 @@ public class Background extends Service{
 				@Override
 				public void run() {
 
-					MainActivity.warnMe(Background.this);
+					warnMe(Background.this);
 					Intent myIntent = new Intent(Background.this, LoginActivity.class);
 					myIntent.setAction(Intent.ACTION_MAIN);
 					myIntent.addCategory(Intent.CATEGORY_LAUNCHER);
@@ -143,6 +146,20 @@ public class Background extends Service{
 		super.onDestroy();
 		}catch(Exception e){
 			//do nothing.
+		}
+	}
+	
+	static void warnMe(Context activity){
+		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO,0);
+		//if time warning is enabled
+		if(check.getBoolean("warningEnable", false)){
+			//vibrate if settings say so
+			if(check.getBoolean("vibrateEnable", false)){
+				((Vibrator)activity.getSystemService(VIBRATOR_SERVICE)).vibrate(1000);
+			}
+			if(check.getBoolean("ringEnable", false)){
+				mediaPlayer.start();
+			}
 		}
 	}
 

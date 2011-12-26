@@ -1,5 +1,7 @@
 package com.objects;
 
+import java.util.Date;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -33,25 +35,10 @@ public class SavedInfo{
 		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO,0);
 		return check.getBoolean("autoRefill", true);
 	}
-	//initializes all necessary states to initial if its first time app is run.  
-	public static void reset(Context activity){
-		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO,0);
-		SharedPreferences.Editor editor = check.edit();
-		editor.putString("endTime", ""); 
-		editor.putString("code", "");
-		editor.putBoolean("parkState", false); 
-		editor.putBoolean("remember", false);
-		editor.putBoolean("vibrateEnable", false); 
-		editor.putBoolean("warningEnable", false); 
-		editor.putBoolean("ringEnable", false);
-		editor.putBoolean("autoRefill", false);
-		editor.putBoolean("firstTimeFlag", false);
-		editor.commit();
-	}
 	public static void eraseTimer(Context activity){
 		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO,0);
 		SharedPreferences.Editor editor = check.edit();
-		editor.putString("TIMER", "");
+		editor.putLong("endTime", 0);
 		editor.commit();
 	}
 	//if parked return true, else false
@@ -79,17 +66,16 @@ public class SavedInfo{
 		editor.putBoolean(title, input);
 		editor.commit();
 	}
-	//set's end time to a string
-	public static void setEndTime(Context activity, String endTime){
-		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
-		SharedPreferences.Editor editor = check.edit();
-		editor.putString("endTime", endTime);
-		editor.commit();
-		
+	//sets end time to a long
+	public static void setEndTime(Context activity, SharedPreferences.Editor editor, long endTime){
+		editor.putLong("endTime", endTime);
 	}
-	public static String getEndTime(Context activity){
-		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
-		return check.getString("endTime", null);
+
+	public static long getEndTime(Context activity, SharedPreferences prefs){
+		return prefs.getLong("endTime", 0);
+	}
+	public static Date getEndTimeDate(Context activity, SharedPreferences prefs) {
+		return new Date(getEndTime(activity, prefs));
 	}
 	public static String getEmail(Context activity){
 		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);

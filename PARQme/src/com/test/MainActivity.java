@@ -120,6 +120,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	private TextView increment;
 	private TextView lotDesc;
 	private TextView spot;
+	private TextView parkingMeter;
 
 	/*Buttons declared here*/
 	private EditText spotNum;
@@ -146,7 +147,6 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	private CountDownTimer timer;
 	public static ViewFlipper vf;
 	private AlertDialog alert;
-	private static MediaPlayer mediaPlayer;
 	private NumberPicker parkTimePicker;
 	/*final variables*/
 	public static final String SAVED_INFO = "ParqMeInfo";
@@ -182,10 +182,10 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 		increment = (TextView) findViewById(R.id.increment);
 		lotDesc = (TextView) findViewById(R.id.lot_description);
 		spot = (TextView) findViewById(R.id.spot);
+		parkingMeter = (TextView) findViewById(R.id.parking_meter);
 		vf = (ViewFlipper) findViewById(R.id.flipper);
 
 		//		parkTimePicker = (NumberPicker) findViewById(R.id.parktimepicker);
-		mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.alarm);
 		final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 
 		/*	ON CREATE
@@ -200,22 +200,16 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 		 * 
 		 * */
 
-		try {
-			Date timerEnd = Global.sdf.parse(check.getString("TIMER", ""));
-			Date now = new Date();
-			int seconds = (int)(timerEnd.getTime() - now.getTime())/1000;
+		final long endTime = SavedInfo.getEndTime(this, check);
+		final long now = System.currentTimeMillis();
+		if (endTime != 0) {
+			int seconds = (int)(endTime - now)/1000;
 			if(seconds>0){
 				vf.showNext();
 				vf.showNext();
-				timer = initiateTimer(timerEnd, vf);
+				timer = initiateTimer(endTime, vf);
 				timer.start();
-			}else{
-				SharedPreferences.Editor edit = check.edit();
-				edit.putString("TIMER", "none");
-				edit.commit();
 			}
-		} catch (ParseException e) {
-			//bad time in timer, thus no timer was active.  do nothing.  
 		}
 
 		//if parkstate returned from login was true, then go to the refill view.  
@@ -327,12 +321,24 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 		parkButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				//call park, which ONLY updates server and gives us response code
-				int parkResult = park();
-				//if that response code is good,
-				if (parkResult==1){
-					totalTimeParked+=getParkMins();
-					parkCost = getCostInCents(getParkMins(), mySpot);
+				final SharedPreferences prefs = getSharedPreferences(SAVED_INFO, 0);
+
+				final int parkingTime = getParkMins();
+				ParkInstanceObject parkInstance = ServerCalls.park(mySpot.getSpot(), parkingTime, prefs);
+				if (parkInstance == null || parkInstance.getEndTime() == 0) {
+					parkInstance = new ParkInstanceObject(0,System.currentTimeMillis()+5*60*1000);
+				}
+				if(parkInstance != null){
+					//Toast.makeText(MainActivity.this, ""+ServerCalls.addHistory(parkDate, starttime, endtime, contents, email, parkCost), Toast.LENGTH_SHORT).show();
+					final long endTime = parkInstance.getEndTime();
+					SharedPreferences.Editor edit = prefs.edit();
+					edit.putString("PARKID", String.valueOf(parkInstance.getParkInstanceId()));
+					SavedInfo.setEndTime(MainActivity.this, edit, endTime);
+					//			ServerCalls.addHistory(parkDate, starttime, endtime, contents, email, parkCost);
+					//return a happy response
+
+					totalTimeParked+=parkingTime;
+					parkCost = getCostInCents(parkingTime, mySpot);
 					if(totalTimeParked == maxTime){
 						ThrowDialog.show(MainActivity.this, ThrowDialog.MAX_TIME);
 					}
@@ -343,24 +349,17 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 					//END TESTING CODE
 
 					//create and start countdown display
-					try {
-						timer = initiateTimer(Global.sdf.parse(check.getString("TIMER", "")), vf);
-					} catch (ParseException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					timer = initiateTimer(endTime, vf);
 					timer.start();
 					//start timer background service
 					startService(new Intent(MainActivity.this, Background.class).putExtra("time", remainSeconds));
 
-					SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
-					SharedPreferences.Editor editor = check.edit();
 					/*mark the user as currently parked*/
-					editor.putBoolean("parkState", true);
-					editor.commit();
+					edit.putBoolean("parkState", true);
+					edit.commit();
 
 					//display where user is parked and who they are
-					userDisplay.setText("Welcome " + check.getString("fname", "")); 
+					userDisplay.setText("Welcome " + prefs.getString("fname", "")); 
 					locDisplay.setText("You are parked at\n" + mySpot.getDescription()+"\nAt spot # " + mySpot.getSpot());
 
 
@@ -396,7 +395,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 							//and set user as not currently parked
 							SharedPreferences.Editor editor = check.edit();
 							editor.putBoolean("parkState", false);
-							editor.putString("TIMER", "");
+							SavedInfo.setEndTime(MainActivity.this, editor, 0);
 							editor.commit();
 						}else{
 							Toast.makeText(MainActivity.this, unparkResult, Toast.LENGTH_LONG);
@@ -574,36 +573,6 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 		}
 
 	}
-	private int park(){
-		//		//grab qr code content from saved info.  
-		//		SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
-		//		String contents = check.getString("code", "");
-		//
-		//		String email = check.getString("email", "bademail");
-		//		//calculate when parking ends
-		//		globalEndTime = new Date();
-		//		String starttime = Global.sdf.format(globalEndTime);
-		//		String parkDate = Global.sdfDate.format(globalEndTime);		
-		//		globalEndTime.setSeconds(globalEndTime.getSeconds()+remainSeconds);
-		//		String endtime = Global.sdf.format(globalEndTime);
-
-		final SharedPreferences prefs = getSharedPreferences(SAVED_INFO, 0);
-
-		final ParkInstanceObject parkInstance = ServerCalls.park(mySpot.getSpot(), getParkMins(), prefs);
-		if(parkInstance != null){
-			//Toast.makeText(MainActivity.this, ""+ServerCalls.addHistory(parkDate, starttime, endtime, contents, email, parkCost), Toast.LENGTH_SHORT).show();
-			SharedPreferences.Editor edit = prefs.edit();
-			edit.putString("PARKID", String.valueOf(parkInstance.getParkInstanceId()));
-			edit.putString("TIMER", String.valueOf(parkInstance.getEndTime()));
-			edit.commit();
-			//			ServerCalls.addHistory(parkDate, starttime, endtime, contents, email, parkCost);
-			//return a happy response
-			return 1;
-		}else{
-			ThrowDialog.show(MainActivity.this, ThrowDialog.UNPARK_ERROR);
-			return 0;
-		}
-	}
 
 	private void refillMe(int refillMinutes){
 		//if we haven't gone past the total time we're allowed to park
@@ -623,14 +592,12 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 			try{
 
 				SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
-				Date oldEnd = Global.sdf.parse(check.getString("TIMER", ""));
-				oldEnd.setMinutes(oldEnd.getMinutes() + refillMinutes);
+				final long oldEnd = SavedInfo.getEndTime(this, check);
+				final long newEnd = oldEnd + refillMinutes*60*1000;
 				//calculate new endtime and initiate timer from it.  
 				timer.cancel();
-				timer = initiateTimer(oldEnd, vf);
+				timer = initiateTimer(newEnd, vf);
 				stopService(new Intent(MainActivity.this, Background.class));
-				int testing = unpark();
-				int testing2 = park();
 				timer.start();
 				startService(new Intent(MainActivity.this, Background.class).putExtra("time", remainSeconds));
 				if(totalTimeParked==maxTime){
@@ -728,18 +695,17 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 
 	/* THIS TIMER is only used for in-app visuals.  The actual server updating and such are
 	 * done via user button clicks, and the background service we run.  */
-	private CountDownTimer initiateTimer(Date endTime, final ViewFlipper myvf){
+	private CountDownTimer initiateTimer(long endTime, final ViewFlipper myvf){
 		//creates the countdown timer
-		Date now = new Date();
-		int countDownSeconds = (int)(endTime.getTime() - now.getTime())/1000;
-		return new CountDownTimer(countDownSeconds*1000, 1000){
+		long now = System.currentTimeMillis();
+		return new CountDownTimer(endTime - now, 1000){
 			//on each 1 second tick, 
 			@Override
-			public void onTick(long arg0) {
+			public void onTick(long millisUntilFinished) {
 
-				int seconds = (int)arg0/1000;
+				int seconds = (int)millisUntilFinished/1000;
 				//if the time is what our warning-time is set to
-				if(seconds==warnTime&&SavedInfo.autoRefill(MainActivity.this)==false){
+				if(seconds==warnTime && !SavedInfo.autoRefill(MainActivity.this)){
 					//alert the user
 					alert.show();
 				}
@@ -772,20 +738,6 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 		};
 
 	}
-	static void warnMe(Context activity){
-		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO,0);
-		//if time warning is enabled
-		if(check.getBoolean("warningEnable", false)){
-			//vibrate if settings say so
-			if(check.getBoolean("vibrateEnable", false)){
-				((Vibrator)activity.getSystemService(VIBRATOR_SERVICE)).vibrate(1000);
-			}
-			if(check.getBoolean("ringEnable", false)){
-				mediaPlayer.start();
-			}
-		}
-	}
-
 
 	//converts cents to "$ x.xx"
 	private String formatCents(int m) {
