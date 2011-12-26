@@ -206,7 +206,7 @@ public class ServerCalls {
 		try {
 			final HttpURLConnection conn =
 					(HttpURLConnection)
-						new URL(SERVER_HOSTNAME + "/parkservice.resources/park")
+						new URL(SERVER_HOSTNAME + "/parkservice.park/park")
 						.openConnection();
 			conn.setRequestProperty("Accept", "application/json");
 			conn.setRequestProperty("Content-Type", "application/json");

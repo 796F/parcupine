@@ -129,7 +129,6 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	private Button refillButton;
 	private Button cancelPark;
 	private Button parkButton;
-	private Button gpsButton;
 	private Button pickerIncButton;
 	private Button pickerDecButton;
 
@@ -142,22 +141,22 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	private int parkCost =0;
 
 	/*various Objects used declared here*/
-	private static RateObject mySpot;
+	private RateObject mySpot;
 	private static RateResponse myRateResponse;
 	private CountDownTimer timer;
 	public static ViewFlipper vf;
 	private AlertDialog alert;
 	private static MediaPlayer mediaPlayer;
 	private NumberPicker parkTimePicker;
-	private Date globalEndTime;
 	/*final variables*/
 	public static final String SAVED_INFO = "ParqMeInfo";
+
+	private SavedInfo savedInfo;
 
 	private LocationManager locationManager;
 	private Location lastLocation;
 	private static final float LOCATION_ACCURACY = 20f;
 	private boolean goodLocation = false;
-	private Runnable test;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -166,6 +165,9 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 		//check for internet on create, do it a lot later too.
 		//use flipper view
 		setContentView(R.layout.flipper);
+
+		savedInfo = SavedInfo.getInstance();
+		mySpot = savedInfo.getSpot();
 
 		//Create refill dialog which has special components
 		alert = makeRefillDialog();
@@ -259,6 +261,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 				mySpot = myRateResponse.getRateObject();
 				// if we get the object successfully
 				if (myRateResponse.getResp().equals("OK")) {
+					savedInfo.setSpot(mySpot);
 					vf.showNext();
 					// prepare time picker for this spot
 					//					parkTimePicker.setRange(mySpot.getMinIncrement(),
@@ -329,7 +332,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 				//if that response code is good,
 				if (parkResult==1){
 					totalTimeParked+=getParkMins();
-					parkCost = getCostInCents(getParkMins());
+					parkCost = getCostInCents(getParkMins(), mySpot);
 					if(totalTimeParked == maxTime){
 						ThrowDialog.show(MainActivity.this, ThrowDialog.MAX_TIME);
 					}
@@ -586,7 +589,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 
 		final SharedPreferences prefs = getSharedPreferences(SAVED_INFO, 0);
 
-		final ParkInstanceObject parkInstance = ServerCalls.park(mySpot.getSpot(), remainSeconds, prefs);
+		final ParkInstanceObject parkInstance = ServerCalls.park(mySpot.getSpot(), getParkMins(), prefs);
 		if(parkInstance != null){
 			//Toast.makeText(MainActivity.this, ""+ServerCalls.addHistory(parkDate, starttime, endtime, contents, email, parkCost), Toast.LENGTH_SHORT).show();
 			SharedPreferences.Editor edit = prefs.edit();
@@ -607,7 +610,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 		if(totalTimeParked+refillMinutes<=maxTime){
 
 			//update the total time parked and remaining time.
-			parkCost = getCostInCents(getParkMins());
+			parkCost = getCostInCents(getParkMins(), mySpot);
 			totalTimeParked+=refillMinutes;
 			remainSeconds+=refillMinutes*60;
 			updateDisplay(getParkMins()+refillMinutes);
@@ -806,14 +809,14 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 		return "BADBADBAD";
 	}
 	//TODO:  THIN METHOD -- will become robust later.  must support varying units and different parking minutes and all day parking etc.
-	private static int getCostInCents(int mins) {
+	private static int getCostInCents(int mins, RateObject rate) {
 		//number of minutes parked, divided by the minimum increment (aka unit of time), multiplied by price per unit in cents
-		return (mins/(mySpot.getMinIncrement())) * mySpot.getDefaultRate();
+		return (mins/(rate.getMinIncrement())) * rate.getDefaultRate();
 	}
 	private void updateDisplay(int time) {
 		hours.setText(String.valueOf(time/60));
 		minutes.setText(String.valueOf(time%60));
-		price.setText(formatCents(getCostInCents(time)));
+		price.setText(formatCents(getCostInCents(time, mySpot)));
 	}
 
 	@Override
