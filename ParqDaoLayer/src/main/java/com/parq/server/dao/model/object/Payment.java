@@ -127,4 +127,57 @@ public class Payment implements Serializable {
 	public long getAccountId() {
 		return accountId;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (accountId ^ (accountId >>> 32));
+		result = prime * result + amountPaid;
+		result = prime * result
+				+ (int) (parkingInstId ^ (parkingInstId >>> 32));
+		result = prime * result + (int) (paymentId ^ (paymentId >>> 32));
+		result = prime
+				* result
+				+ ((paymentRefNumber == null) ? 0 : paymentRefNumber.hashCode());
+		result = prime * result
+				+ ((paymentType == null) ? 0 : paymentType.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Payment other = (Payment) obj;
+		if (accountId != other.accountId)
+			return false;
+		if (amountPaid != other.amountPaid)
+			return false;
+		if (parkingInstId != other.parkingInstId)
+			return false;
+		if (paymentId != other.paymentId)
+			return false;
+		if (paymentRefNumber == null) {
+			if (other.paymentRefNumber != null)
+				return false;
+		} else if (!paymentRefNumber.equals(other.paymentRefNumber))
+			return false;
+		if (paymentType == null) {
+			if (other.paymentType != null)
+				return false;
+		} else if (!paymentType.equals(other.paymentType))
+			return false;
+		return true;
+	}
 }
