@@ -60,10 +60,11 @@ public class LoginActivity extends Activity {
 				UserObject user = ServerCalls.getUser(email, pass);
 				if(user!=null){
 					if (user.getUid() != -1) {
-						SavedInfo.logIn(LoginActivity.this, user.getParkState(), email, user.getUid(), pass);
-						startActivity(new Intent(LoginActivity.this,
-								TabsActivity.class));
-						finish();
+						if(user.getParkState()==false){
+							SavedInfo.logIn(LoginActivity.this, user.getParkState(), email, user.getUid(), pass);
+							startActivity(new Intent(LoginActivity.this, TabsActivity.class));
+							finish();
+						}
 					} else {
 						ThrowDialog.show(LoginActivity.this, ThrowDialog.COULD_NOT_AUTH);
 					}

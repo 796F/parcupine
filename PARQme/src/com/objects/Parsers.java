@@ -28,7 +28,7 @@ public class Parsers {
 	private static final String PARAM_PARK_REFERENCE = "parkingReferenceNumber";
 	private static final String PARAM_END_TIME = "endTime";
 	
-	private static final String PARAM_PARK_SYNC = "parkSync";
+	private static final String PARAM_PARK_SYNC = "sync";
 	private static final String PARAM_RATE_OBJECT = "rateObject";
 
 	// {"fname":"xia@umd.edu","lname":"Mikey","phone":"1337"}

@@ -29,6 +29,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Vibrator;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
@@ -117,6 +118,8 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	private TextView userDisplay;
 	private TextView locDisplay;
 	private TextView timeDisplay;
+	private EditText hours;
+	private EditText minutes;
 
 	/*Buttons declared here*/
 	private EditText spotNum;
@@ -127,8 +130,8 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	private Button cancelPark;
 	private Button parkButton;
 	private Button gpsButton;
-	private NumberPickerButton pickerIncButton;
-	private NumberPickerButton pickerDecButton;
+	private Button pickerIncButton;
+	private Button pickerDecButton;
 
 	/*ints used by calculations*/
 	private int warnTime = 30; //in seconds
@@ -155,7 +158,10 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	private Location lastLocation;
 	private static final float LOCATION_ACCURACY = 20f;
 	private boolean goodLocation = false;
-
+	private Runnable minusTime;
+	private Runnable plusTime;
+	private Runnable test;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -173,7 +179,9 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 		locDisplay = (TextView) findViewById(R.id.location);
 		timeDisplay = (TextView) findViewById(R.id.timeleftdisplay);
 		vf = (ViewFlipper) findViewById(R.id.flipper);
-//		parkTimePicker = (NumberPicker) findViewById(R.id.parktimepicker);
+
+
+		//		parkTimePicker = (NumberPicker) findViewById(R.id.parktimepicker);
 		mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.alarm);
 		final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 
@@ -206,37 +214,44 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 		} catch (ParseException e) {
 			//bad time in timer, thus no timer was active.  do nothing.  
 		}
-		
-		/*	Ping server in thread, 
-		 * 	if server reachable 
-		 * 		yay
-		 * 	else 
-		 * 		schedule runnable for 15 seconds later.  
-		 * 		repeat till yay
-		 * 
-		 * */
-		
+
+		//if parkstate returned from login was true, then go to the refill view.  
+		if(check.getBoolean("parkState", false)){
+			vf.showNext();
+		}
+
+
+
 		new Thread(new Runnable() {
-		    public void run() {
-		    	String host = "http://www.parqme.com";
-					try {
-						URL url = new URL(host);
-						HttpURLConnection urlc = (HttpURLConnection) url.openConnection();
-						urlc.setConnectTimeout(1000 * 60); // mTimeout is in seconds
-						urlc.connect();
-						
-						if (urlc.getResponseCode() != 200) {
-							throw new RuntimeException("LAAAA");
-						}
-					} catch (MalformedURLException e) {
-						e.printStackTrace();
-					} catch (IOException e) {
-						e.printStackTrace();
+			public void run() {
+				String host = "http://www.parqme.com";
+				try {
+					URL url = new URL(host);
+					HttpURLConnection urlc = (HttpURLConnection) url.openConnection();
+					urlc.setConnectTimeout(1000 * 60); // mTimeout is in seconds
+					urlc.connect();
+
+					if (urlc.getResponseCode() != 200) {
+						throw new RuntimeException("LAAAA");
 					}
-		    	
-		    }
-		  }).start();
-		
+				} catch (MalformedURLException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
+			}
+		}).start();
+
+		hours = (EditText) findViewById(R.id.hours);
+		hours.setInputType(InputType.TYPE_NULL);
+
+
+		minutes = (EditText) findViewById(R.id.mins);
+		minutes.setInputType(InputType.TYPE_NULL);
+
+
+
 		//initialize buttons and set actions
 		submitButton = (Button) findViewById(R.id.submitButton);
 		submitButton.setOnClickListener(new View.OnClickListener() {
@@ -262,9 +277,9 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 				if (myRateResponse.getResp().equals("OK")) {
 					vf.showNext();
 					// prepare time picker for this spot
-//					parkTimePicker.setRange(mySpot.getMinIncrement(),
-//							mySpot.getMaxTime());
-//					parkTimePicker.setMinInc(mySpot.getMinIncrement());
+					//					parkTimePicker.setRange(mySpot.getMinIncrement(),
+					//							mySpot.getMaxTime());
+					//					parkTimePicker.setMinInc(mySpot.getMinIncrement());
 
 					// initialize all variables to match spot
 					minimalIncrement = mySpot.getMinIncrement();
@@ -423,48 +438,89 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 				}
 			}});
 
-//		cancelPark = (Button) findViewById(R.id.cancelpark);
-//		cancelPark.setOnClickListener(new View.OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				mySpot=null;
-//				//return to previous view
-//				vf.showPrevious();
-//			}});
+		cancelPark = (Button) findViewById(R.id.cancel);
+		cancelPark.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				myRateResponse=null;
+				mySpot=null;
+				parkMinutes = 0;
+				remainSeconds = 0;
+				totalTimeParked = 0;
+				//return to previous view
+				vf.showPrevious();
+			}});
 
 		/*these buttons appear on the first park, not refills.*/
-//		pickerIncButton = parkTimePicker.getIncButton();
-//		pickerIncButton.setOnClickListener(new View.OnClickListener() {
-//
-//			@Override
-//			public void onClick(View arg0) {
-//				if(parkMinutes<maxTime){
-//					//update the parking minutes and seconds
-//					parkMinutes+=minimalIncrement;
-//					remainSeconds+=minimalIncrement*60;
-//					parkTimePicker.setCurrent(parkMinutes);
-//					updateDisplay();
-//				}
-//			}
-//		});
-//		pickerDecButton = parkTimePicker.getDecButton();
-//		pickerDecButton.setOnClickListener(new View.OnClickListener() {
-//
-//			@Override
-//			public void onClick(View arg0) {
-//				if(parkMinutes>minimalIncrement){
-//					//update the parking minutes and seconds
-//					parkMinutes-=minimalIncrement;
-//					remainSeconds-=minimalIncrement*60;
-//					parkTimePicker.setCurrent(parkMinutes);
-//					updateDisplay();
-//				}
-//			}
-//		});
+		pickerIncButton = (Button) findViewById(R.id.plus);
+		pickerIncButton.setOnClickListener(new View.OnClickListener() {
 
+			@Override
+			public void onClick(View arg0) {
+				plusTime.run();
+			}
+		});
+		pickerDecButton = (Button) findViewById(R.id.minus);
+		pickerDecButton.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				//				if(parkMinutes>minimalIncrement){
+				//					//update the parking minutes and seconds
+				//					parkMinutes-=minimalIncrement;
+				//					remainSeconds-=minimalIncrement*60;
+				//					parkTimePicker.setCurrent(parkMinutes);
+				//					updateDisplay();
+				//					
+				//				}
+				minusTime.run();
+			}
+		});
+
+		plusTime = new Runnable() {
+			public void run() {
+				if(hours.hasFocus()){
+					//if(parkMinutes+60<=maxTime){
+						//update the parking minutes and seconds
+						parkMinutes+=60;
+						remainSeconds+=60*60;
+						updateDisplay();
+					//}
+				}else if(minutes.hasFocus()){
+					//if(parkMinutes+minimalIncrement<=maxTime){
+						//update the parking minutes and seconds
+						parkMinutes+=minimalIncrement;
+						remainSeconds+=minimalIncrement*60;
+						updateDisplay();
+					//}
+				}
+			}
+		};
+		
+		
+		minusTime = new Runnable() {
+			public void run() {
+				if(hours.hasFocus()){
+					//if(parkMinutes+60<=maxTime){
+						//update the parking minutes and seconds
+						parkMinutes-=60;
+						remainSeconds-=60*60;
+						updateDisplay();
+					//}
+				}else if(minutes.hasFocus()){
+					//if(parkMinutes+minimalIncrement<=maxTime){
+						//update the parking minutes and seconds
+						parkMinutes-=minimalIncrement;
+						remainSeconds-=minimalIncrement*60;
+						updateDisplay();
+					//}
+				}
+			}
+		};
 		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		startGettingLocation();
 	}
+
 
 	private static boolean isLocationProviderAvailable(LocationManager locationManager, String provider) {
 		return locationManager.getProvider(provider) != null && locationManager.isProviderEnabled(provider);
@@ -536,17 +592,17 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 
 	}
 	private int park(){
-//		//grab qr code content from saved info.  
-//		SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
-//		String contents = check.getString("code", "");
-//
-//		String email = check.getString("email", "bademail");
-//		//calculate when parking ends
-//		globalEndTime = new Date();
-//		String starttime = Global.sdf.format(globalEndTime);
-//		String parkDate = Global.sdfDate.format(globalEndTime);		
-//		globalEndTime.setSeconds(globalEndTime.getSeconds()+remainSeconds);
-//		String endtime = Global.sdf.format(globalEndTime);
+		//		//grab qr code content from saved info.  
+		//		SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
+		//		String contents = check.getString("code", "");
+		//
+		//		String email = check.getString("email", "bademail");
+		//		//calculate when parking ends
+		//		globalEndTime = new Date();
+		//		String starttime = Global.sdf.format(globalEndTime);
+		//		String parkDate = Global.sdfDate.format(globalEndTime);		
+		//		globalEndTime.setSeconds(globalEndTime.getSeconds()+remainSeconds);
+		//		String endtime = Global.sdf.format(globalEndTime);
 
 		final SharedPreferences prefs = getSharedPreferences(SAVED_INFO, 0);
 
@@ -557,7 +613,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 			edit.putString("PARKID", String.valueOf(parkInstance.getParkInstanceId()));
 			edit.putString("TIMER", String.valueOf(parkInstance.getEndTime()));
 			edit.commit();
-//			ServerCalls.addHistory(parkDate, starttime, endtime, contents, email, parkCost);
+			//			ServerCalls.addHistory(parkDate, starttime, endtime, contents, email, parkCost);
 			//return a happy response
 			return 1;
 		}else{
@@ -585,7 +641,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 
 			//stop current timer, start new timer with current time + selectedNumber.
 			try{
-				
+
 				SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 				Date oldEnd = Global.sdf.parse(check.getString("TIMER", ""));
 				oldEnd.setMinutes(oldEnd.getMinutes() + refillMinutes);
@@ -609,7 +665,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	}
 
 	private NumberPickerDialog.OnNumberSetListener mRefillListener =
-		new NumberPickerDialog.OnNumberSetListener() {
+			new NumberPickerDialog.OnNumberSetListener() {
 		@Override
 		public void onNumberSet(int selectedNumber) {
 			if(selectedNumber>=minimalIncrement)
@@ -789,8 +845,10 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 		//number of minutes parked, divided by the minimum increment (aka unit of time), multiplied by price per unit in cents
 		return (mins/(mySpot.getMinIncrement())) * mySpot.getDefaultRate();
 	}
-	private void updateDisplay() {	
-		priceDisplay.setText(moneyConverter(getCostInCents(parkMinutes)) + " per " + mySpot.getMinIncrement() + " minutes");
+	private void updateDisplay() {
+		hours.setText(""+parkMinutes/60);
+		minutes.setText(""+parkMinutes%60);
+//		//priceDisplay.setText(moneyConverter(getCostInCents(parkMinutes)) + " per " + mySpot.getMinIncrement() + " minutes");
 	}
 
 	@Override
