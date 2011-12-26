@@ -11,7 +11,7 @@ public class EditUserRequest {
 	String email;
 	String password;
 	String phone;
-	AuthRequest userinfo;
+	AuthRequest userInfo;
 	
 	public int getUid() {
 		return uid;
@@ -55,17 +55,11 @@ public class EditUserRequest {
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
-	/**
-	 * @return the userinfo
-	 */
-	public AuthRequest getUserinfo() {
-		return userinfo;
+	public AuthRequest getUserInfo() {
+		return userInfo;
 	}
-	/**
-	 * @param userinfo the userinfo to set
-	 */
-	public void setUserinfo(AuthRequest userinfo) {
-		this.userinfo = userinfo;
+	public void setUserInfo(AuthRequest userInfo) {
+		this.userInfo = userInfo;
 	}
-	
+
 }

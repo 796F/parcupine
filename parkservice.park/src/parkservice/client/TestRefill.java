@@ -32,7 +32,7 @@ public class TestRefill {
 		pr.setPaymentType(0);
 		pr.setSpotid(61);
 		pr.setUid(31);
-		pr.setUserinfo(in);
+		pr.setUserInfo(in);
 		
 		String outstring = service.path("refill").type(MediaType.APPLICATION_JSON).post(String.class, pr);
 		System.out.println(outstring);

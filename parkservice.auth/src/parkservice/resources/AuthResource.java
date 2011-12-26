@@ -110,6 +110,6 @@ public class AuthResource{
 	@GET
 	@Produces(MediaType.TEXT_PLAIN)
 	public String sayPlainTextHello() {
-		return "Hi.  I am a bouncer.";
+		return "ur fake's no good here bro.";
 	}
 }

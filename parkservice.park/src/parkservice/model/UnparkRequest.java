@@ -12,7 +12,7 @@ public class UnparkRequest {
 	long uid;
 	long spotid;
 	String parkingReferenceNumber;
-	AuthRequest userinfo;
+	AuthRequest userInfo;
 	public long getUid() {
 		return uid;
 	}
@@ -31,17 +31,12 @@ public class UnparkRequest {
 	public void setParkingReferenceNumber(String parkingReferenceNumber) {
 		this.parkingReferenceNumber = parkingReferenceNumber;
 	}
-	public AuthRequest getUserinfo() {
-		return userinfo;
+	public AuthRequest getUserInfo() {
+		return userInfo;
 	}
-	public void setUserinfo(AuthRequest userinfo) {
-		this.userinfo = userinfo;
+	public void setUserInfo(AuthRequest userInfo) {
+		this.userInfo = userInfo;
 	}
-	
 
-	
-	
-	
-	
 
 }

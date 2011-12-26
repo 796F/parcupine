@@ -12,7 +12,7 @@ public class ParkRequest {
 	int durationMinutes;	
 	int chargeAmount;
 	int paymentType;
-	AuthRequest userinfo;
+	AuthRequest userInfo;
 	public long getUid() {
 		return uid;
 	}
@@ -43,12 +43,13 @@ public class ParkRequest {
 	public void setPaymentType(int paymentType) {
 		this.paymentType = paymentType;
 	}
-	public AuthRequest getUserinfo() {
-		return userinfo;
+	public AuthRequest getUserInfo() {
+		return userInfo;
 	}
-	public void setUserinfo(AuthRequest userinfo) {
-		this.userinfo = userinfo;
+	public void setUserInfo(AuthRequest userInfo) {
+		this.userInfo = userInfo;
 	}
+	
 	
 	
 }

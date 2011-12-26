@@ -14,7 +14,7 @@ public class RefillRequest {
 	int paymentType;
 	long spotid;
 	long uid;
-	AuthRequest userinfo;
+	AuthRequest userInfo;
 	public String getParkingReferenceNumber() {
 		return parkingReferenceNumber;
 	}
@@ -51,13 +51,12 @@ public class RefillRequest {
 	public void setUid(long uid) {
 		this.uid = uid;
 	}
-	public AuthRequest getUserinfo() {
-		return userinfo;
+	public AuthRequest getUserInfo() {
+		return userInfo;
 	}
-	public void setUserinfo(AuthRequest userinfo) {
-		this.userinfo = userinfo;
+	public void setUserInfo(AuthRequest userInfo) {
+		this.userInfo = userInfo;
 	}
-	
 	
 	
 	

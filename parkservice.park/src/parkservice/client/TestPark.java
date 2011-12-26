@@ -31,10 +31,10 @@ public class TestPark {
 		ParkRequest pr = new ParkRequest();
 		pr.setPaymentType(0);
 		pr.setSpotid(61);
-		pr.setUid(31);
-		pr.setUserinfo(in);
-		pr.setDurationMinutes(10);
-		pr.setChargeAmount(674);
+		pr.setUid(41);
+		pr.setUserInfo(in);
+		pr.setDurationMinutes(5);
+		pr.setChargeAmount(337);
 		
 		String outstring = service.path("park").type(MediaType.APPLICATION_JSON).post(String.class, pr);
 		System.out.println(outstring);
@@ -44,7 +44,7 @@ public class TestPark {
 
 	private static URI getBaseURI() {
 		return UriBuilder.fromUri(
-				"http://localhost:8080/parkservice.park").build();
+				"http://75.101.132.219:8080/parkservice.park").build();
 	}
 
 }

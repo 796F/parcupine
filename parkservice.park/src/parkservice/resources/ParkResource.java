@@ -100,7 +100,7 @@ public class ParkResource {
 
 		long uid = in.getUid();
 		//does user supplied info authenticate?
-		if(uid == innerAuthenticate(in.getUserinfo())){
+		if(uid == innerAuthenticate(in.getUserInfo())){
 			
 			ParkingStatusDao psd = new ParkingStatusDao();
 			ParkingInstance ps = null;
@@ -214,7 +214,7 @@ public class ParkResource {
 		RefillRequest in = info.getValue();
 		long uid = in.getUid();
 		int payment_type = in.getPaymentType();
-		if(uid == innerAuthenticate(in.getUserinfo())){
+		if(uid == innerAuthenticate(in.getUserInfo())){
 			String parkingReference = in.getParkingReferenceNumber();
 			ParkingStatusDao psd = new ParkingStatusDao();
 			ParkingInstance pi = null; try{
@@ -312,7 +312,7 @@ public class ParkResource {
 		UnparkResponse  output = new UnparkResponse ();
 		UnparkRequest in = info.getValue();
 		long uid = in.getUid();
-		if(uid==innerAuthenticate(in.getUserinfo())){
+		if(uid==innerAuthenticate(in.getUserInfo())){
 			ParkingStatusDao psd = new ParkingStatusDao();
 			boolean result = false;
 			try{

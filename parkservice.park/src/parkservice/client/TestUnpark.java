@@ -30,7 +30,7 @@ public class TestUnpark {
 			pr.setParkingReferenceNumber("31:61:1324848343");
 			pr.setSpotid(111); //works with wrong unpark
 			pr.setUid(31);
-			pr.setUserinfo(in);
+			pr.setUserInfo(in);
 			
 			
 			String outstring = service.path("unpark").type(MediaType.APPLICATION_JSON).post(String.class, pr);
