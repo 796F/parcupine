@@ -6,8 +6,21 @@
 		android:id="@+id/debugButton1" android:layout_height="wrap_content"
 		android:layout_alignParentBottom="true"
 		android:layout_alignParentLeft="true"></Button>
-	<TextView android:textAppearance="?android:attr/textAppearanceSmall" android:text="TextView" android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/debugText1" android:layout_alignParentTop="true" android:layout_alignParentLeft="true" android:layout_marginTop="88dp"></TextView>
-	<RadioButton android:layout_height="wrap_content" android:id="@+id/radioButton1" android:layout_width="wrap_content" android:layout_centerVertical="true" android:layout_centerHorizontal="true"></RadioButton>
 
+	<TextView
+	    android:id="@+id/debugText1"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentLeft="true"
+	    android:layout_alignParentTop="true"
+	    android:text="TextView"
+	    android:textAppearance="?android:attr/textAppearanceSmall" />
+
+	<RadioButton
+	    android:id="@+id/radioButton1"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_above="@+id/debugButton1"
+	    android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

@@ -1,27 +1,29 @@
 package com.objects;
 
 
+
 public class UserObject {
 	/* store user info on get auth to display*/
 	private long uid;
 	private boolean parkState;
-
-	public UserObject(long uid, boolean parkState) {
+	private ParkSync sync;
+	
+	
+	public UserObject(long uid, boolean parkState, ParkSync sync) {
+		super();
 		this.uid = uid;
 		this.parkState = parkState;
+		this.sync = sync;
 	}
-
-	/**
-	 * @return the uid
-	 */
 	public long getUid() {
 		return uid;
 	}
-
-	/**
-	 * @return the parkState
-	 */
 	public boolean getParkState() {
 		return parkState;
-	}	
+	}
+	public ParkSync getSync() {
+		return sync;
+	}
+	
+	
 }

@@ -46,7 +46,7 @@ public class DebugActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.debuglayout);
-	    SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
+	    final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 	    
 	    
 	    
@@ -60,7 +60,7 @@ public class DebugActivity extends Activity {
 			
 			@Override
 			public void onClick(View arg0) {
-				
+				display.setText(check.getAll().toString());
 				new Thread(new Runnable() {
 				    public void run() {
 				    	String host = "http://www.parqme.com";
@@ -77,7 +77,7 @@ public class DebugActivity extends Activity {
 									@Override
 									public void run() {
 										serverping.setChecked(true);
-										display.setText("trueth");
+										//display.setText("trueth");
 									}
 									
 									
@@ -85,7 +85,7 @@ public class DebugActivity extends Activity {
 							}
 						} catch (Exception e1) {
 							serverping.setChecked(false);
-							display.setText("FALSE LOL");
+							//display.setText("FALSE LOL");
 						} 
 				    	
 				    }

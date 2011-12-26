@@ -2,6 +2,7 @@ package com.objects;
 
 import java.io.IOException;
 
+import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.JsonToken;
 
@@ -11,26 +12,29 @@ public class Parsers {
 	private static final String PARAM_PARKSTATE = "parkstate";
 
 	// Response code parameter
-	private static final String PARAM_RESP_CODE = "responsecode";
+	private static final String PARAM_RESP_CODE = "resp";
 	private static final String RESP_CODE_OK = "OK";
 
 	// Park rate parameters
 	private static final String PARAM_LAT = "lat";
 	private static final String PARAM_LONG = "lon";
-	private static final String PARAM_LOCATION = "location";
 	private static final String PARAM_SPOT = "spotid";
 	private static final String PARAM_MIN_TIME = "minTime";
 	private static final String PARAM_MAX_TIME = "maxTime";
 	private static final String PARAM_DEFAULT_RATE = "defaultRate";
 	private static final String PARAM_MIN_INCREMENT = "minIncrement";
-	private static final String PARAM_DESCRIPTION = "description";
+	private static final String PARAM_DESCRIPTION = "location";
 
 	private static final String PARAM_PARK_REFERENCE = "parkingReferenceNumber";
 	private static final String PARAM_END_TIME = "endTime";
+	
+	private static final String PARAM_PARK_SYNC = "parkSync";
+	private static final String PARAM_RATE_OBJECT = "rateObject";
 
 	// {"fname":"xia@umd.edu","lname":"Mikey","phone":"1337"}
 	public static UserObject parseUser(JsonParser jp) throws IOException {
 		long uid = -1;
+		ParkSync sync = null;
 		boolean parkState = false;
 
 		JsonToken t = jp.nextToken();
@@ -44,9 +48,69 @@ public class Parsers {
 					parkState = jp.getIntValue() == 1;
 				}
 			}
+			if(t==JsonToken.START_OBJECT){
+				curr = jp.getCurrentName();
+				if(PARAM_PARK_SYNC.equals(curr)){
+
+					long endTime = 0; //how much to set timer
+					int minTime=0;			//must park 1 hour
+					int maxTime=0;			//max park 3 hours
+					int defaultRate=0; 		//rate is x/increment
+					int minIncrement=0;		//min increase 30mins
+
+					//THE FOLLOWING ARE FOR REFILLING/UNPARKING
+					String parkingReferenceNumber=""; 
+					double lat=0;
+					double lon=0;
+					long spotId=0;
+					String description ="";
+
+					JsonToken tt = jp.nextToken();
+					String current;
+
+					while (tt != null && tt != JsonToken.END_OBJECT) {
+						current = jp.getCurrentName();
+						switch (tt) {
+						case VALUE_NUMBER_INT: {
+							if (PARAM_SPOT.equals(current)) {
+								spotId = jp.getLongValue();
+							} else if (PARAM_MIN_TIME.equals(current)) {
+								minTime = jp.getIntValue();
+							} else if (PARAM_MAX_TIME.equals(current)) {
+								maxTime = jp.getIntValue();
+							} else if (PARAM_DEFAULT_RATE.equals(current)) {
+								defaultRate = jp.getIntValue();
+							} else if (PARAM_MIN_INCREMENT.equals(current)) {
+								minIncrement = jp.getIntValue();
+							} else if (PARAM_END_TIME.equals(current)){
+								endTime = jp.getLongValue();
+							}
+						}
+						case VALUE_NUMBER_FLOAT: {
+							if (PARAM_LAT.equals(current)) {
+								lat = jp.getDoubleValue();
+							} else if (PARAM_LONG.equals(current)) {
+								lon = jp.getDoubleValue();
+							}
+						}
+						case VALUE_STRING: {
+							if (PARAM_DESCRIPTION.equals(current)) {
+								description = jp.getText();
+							} else if (PARAM_PARK_REFERENCE.equals(current)){
+								parkingReferenceNumber = jp.getText();
+							}
+						}
+						}
+						tt = jp.nextToken();
+					}
+
+					sync = new ParkSync(endTime, minTime, maxTime, defaultRate, minIncrement, parkingReferenceNumber, lat, lon, spotId, description);
+
+				}
+			}
 			t = jp.nextToken();
 		}
-		return new UserObject(uid, parkState);
+		return new UserObject(uid, parkState, sync);
 	}
 
 	public static boolean parseResponseCode(JsonParser jp) throws IOException {
@@ -63,58 +127,10 @@ public class Parsers {
 		}
 		return false;
 	}
-
-	public static SpotObject parseRate(JsonParser jp) throws IOException {
-		double lat = 0;
-		double lon = 0;
-		String location = "";
-		long spot = 0;
-		int minTime = 1;
-		int maxTime = 3;
-		int defaultRate = 1;
-		int minIncrement = 30;
-		String description = "";
-
-		JsonToken t = jp.nextToken();
-		String curr;
-		while (t != null && t != JsonToken.END_OBJECT) {
-			curr = jp.getCurrentName();
-			switch (t) {
-				case VALUE_NUMBER_INT: {
-					if (PARAM_SPOT.equals(curr)) {
-						spot = jp.getLongValue();
-					} else if (PARAM_MIN_TIME.equals(curr)) {
-						minTime = jp.getIntValue();
-					} else if (PARAM_MAX_TIME.equals(curr)) {
-						maxTime = jp.getIntValue();
-					} else if (PARAM_DEFAULT_RATE.equals(curr)) {
-						defaultRate = jp.getIntValue();
-					} else if (PARAM_MIN_INCREMENT.equals(curr)) {
-						minIncrement = jp.getIntValue();
-					}
-				}
-				case VALUE_NUMBER_FLOAT: {
-					if (PARAM_LAT.equals(curr)) {
-						lat = jp.getDoubleValue();
-					} else if (PARAM_LONG.equals(curr)) {
-						lon = jp.getDoubleValue();
-					}
-				}
-				case VALUE_STRING: {
-					if (PARAM_LOCATION.equals(curr)) {
-						location = jp.getText();
-					} else if (PARAM_DESCRIPTION.equals(curr)) {
-						description = jp.getText();
-					}
-				}
-			}
-			t = jp.nextToken();
-		}
-		return new SpotObject(lat, lon, location, spot, minTime, maxTime,
-				defaultRate, minIncrement, description);
-	}
+	
 
 	public static ParkInstanceObject parseParkInstance(JsonParser jp) throws IOException {
+
 		long parkReference = 0;
 		long endTime = 0;
 
@@ -133,4 +149,102 @@ public class Parsers {
 		}
 		return new ParkInstanceObject(parkReference, endTime);
 	}
+	
+	public static RateResponse parseRateResponse(JsonParser jp) throws IOException {
+		String resp = "";
+		RateObject rate = null;
+		
+		JsonToken t = jp.nextToken();
+		String curr;
+		while (t != null && t != JsonToken.END_OBJECT) {
+			curr = jp.getCurrentName();
+				if(t==JsonToken.VALUE_STRING) {
+					if (PARAM_RESP_CODE.equals(curr)) {
+						resp = jp.getText();
+					}
+				}
+				/* if embedded object is detected and param matches rateObject, parse the object.  */
+				if(t==JsonToken.START_OBJECT){
+					curr = jp.getCurrentName();
+					if(PARAM_RATE_OBJECT.equals(curr)){
+						double lat = 0;
+						double lon = 0;
+						long spot = 0;
+						int minTime = 1;
+						int maxTime = 3;
+						int defaultRate = 1;
+						int minIncrement = 30;
+						String description = "";
+
+						JsonToken token = jp.nextToken();
+						String current;
+						while (token != null && token != JsonToken.END_OBJECT) {
+							current = jp.getCurrentName();
+							switch (token) {
+								case VALUE_NUMBER_INT: {
+									if (PARAM_SPOT.equals(current)) {
+										spot = jp.getLongValue();
+									} else if (PARAM_MIN_TIME.equals(current)) {
+										minTime = jp.getIntValue();
+									} else if (PARAM_MAX_TIME.equals(current)) {
+										maxTime = jp.getIntValue();
+									} else if (PARAM_DEFAULT_RATE.equals(current)) {
+										defaultRate = jp.getIntValue();
+									} else if (PARAM_MIN_INCREMENT.equals(current)) {
+										minIncrement = jp.getIntValue();
+									}
+								}
+								case VALUE_NUMBER_FLOAT: {
+									if (PARAM_LAT.equals(current)) {
+										lat = jp.getDoubleValue();
+									} else if (PARAM_LONG.equals(current)) {
+										lon = jp.getDoubleValue();
+									}
+								}
+								case VALUE_STRING: {
+									if (PARAM_DESCRIPTION.equals(current)) {
+										description = jp.getText();
+									}
+								}
+							}
+							token = jp.nextToken();
+						}
+						rate = new RateObject(lat, lon, spot, minTime, maxTime,defaultRate, minIncrement, description);
+					}
+				}
+			
+			t = jp.nextToken();
+		}
+		return new RateResponse(resp, rate);
+	}
+
+	public static ParkResponse parseParkingResponse(JsonParser jp) throws IOException {
+		long endTime =0;
+		String resp = "";
+		String parkingReferenceNumber= "";
+		
+		JsonToken t = jp.nextToken();
+		String curr;
+		while (t != null && t != JsonToken.END_OBJECT) {
+			curr = jp.getCurrentName();
+			switch (t) {
+				case VALUE_NUMBER_INT: {
+					if (PARAM_END_TIME.equals(curr)){
+						endTime = jp.getLongValue();
+					}
+				}
+				case VALUE_STRING: {
+					if (PARAM_RESP_CODE.equals(curr)) {
+						resp = jp.getText();
+					} else if (PARAM_PARK_REFERENCE.equals(curr)){
+						parkingReferenceNumber = jp.getText();
+					}
+				}
+			}
+			t = jp.nextToken();
+		}
+		return new ParkResponse(resp, endTime, parkingReferenceNumber);
+	}
 }
+
+

@@ -41,9 +41,10 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.objects.Global;
 import com.objects.ParkInstanceObject;
+import com.objects.RateResponse;
 import com.objects.SavedInfo;
 import com.objects.ServerCalls;
-import com.objects.SpotObject;
+import com.objects.RateObject;
 import com.objects.ThrowDialog;
 import com.quietlycoding.android.picker.NumberPicker;
 import com.quietlycoding.android.picker.NumberPickerButton;
@@ -139,7 +140,8 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	private int parkCost =0;
 
 	/*various Objects used declared here*/
-	private static SpotObject mySpot;
+	private static RateObject mySpot;
+	private static RateResponse myRateResponse;
 	private CountDownTimer timer;
 	public static ViewFlipper vf;
 	private AlertDialog alert;
@@ -254,9 +256,10 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 					lat = lastLocation.getLatitude();
 					lon = lastLocation.getLongitude();
 				}
-				mySpot = ServerCalls.getRateGps(contents, lat, lon, check);
+				myRateResponse = ServerCalls.getRateGps(contents, lat, lon, check);
+				mySpot = myRateResponse.getRateObject();
 				// if we get the object successfully
-				if (mySpot != null) {
+				if (myRateResponse.getResp().equals("OK")) {
 					vf.showNext();
 					// prepare time picker for this spot
 //					parkTimePicker.setRange(mySpot.getMinIncrement(),
@@ -351,7 +354,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 
 					//display where user is parked and who they are
 					userDisplay.setText("Welcome " + check.getString("fname", "")); 
-					locDisplay.setText("You are parked at\n" + mySpot.getLocation()+"\nAt spot # " + mySpot.getSpot());
+					locDisplay.setText("You are parked at\n" + mySpot.getDescription()+"\nAt spot # " + mySpot.getSpot());
 
 
 				}else{
@@ -627,9 +630,10 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 			if (contents != null) {
 				//contents contains string "parqme.com/p/c36/p123456" or w/e...
 				SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
-				mySpot = ServerCalls.getRateQr(contents, check);
+				myRateResponse = ServerCalls.getRateQr(contents, check);
+				mySpot = myRateResponse.getRateObject();
 				//if we get the object successfully
-				if(mySpot!=null){
+				if(myRateResponse.getRateObject().equals("OK")){
 					vf.showNext();
 					//prepare time picker for this spot
 					parkTimePicker.setRange(mySpot.getMinIncrement(), mySpot.getMaxTime());
@@ -660,9 +664,10 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 				contents = "3";
 				SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 				//contents contains string "parqme.com/p/c36/p123456" or w/e...
-				mySpot = ServerCalls.getRateQr(contents, check);
+				myRateResponse = ServerCalls.getRateQr(contents, check);
+				mySpot = myRateResponse.getRateObject();
 				//if we get the object successfully
-				if(mySpot!=null){
+				if(myRateResponse.getRateObject().equals("OK")){
 					vf.showNext();
 					//prepare time picker for this spot
 					parkTimePicker.setRange(mySpot.getMinIncrement(), mySpot.getMaxTime());

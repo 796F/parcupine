@@ -132,7 +132,7 @@ public class ServerCalls {
 		return -1;
 	}
 
-	public static SpotObject getRateGps(String spotNum, double lat, double lon, SharedPreferences prefs) {
+	public static RateResponse getRateGps(String spotNum, double lat, double lon, SharedPreferences prefs) {
 		try {
 			final HttpURLConnection conn =
 					(HttpURLConnection)
@@ -156,7 +156,7 @@ public class ServerCalls {
 			if (conn.getResponseCode() == 200) {
 				final JsonParser jp = JSON_FACTORY.createJsonParser(conn
 						.getInputStream());
-				final SpotObject rate = Parsers.parseRate(jp);
+				final RateResponse rate = Parsers.parseRateResponse(jp);
 				jp.close();
 				return rate;
 			}
@@ -166,7 +166,7 @@ public class ServerCalls {
 		return null;
 	}
 
-	public static SpotObject getRateQr(String qrcode, SharedPreferences prefs){
+	public static RateResponse getRateQr(String qrcode, SharedPreferences prefs){
 		final String[] tokens = qrcode.split("/");
 		if (tokens.length != 2) {
 			return null;
@@ -192,7 +192,7 @@ public class ServerCalls {
 			if (conn.getResponseCode() == 200) {
 				final JsonParser jp = JSON_FACTORY.createJsonParser(conn
 						.getInputStream());
-				final SpotObject rate = Parsers.parseRate(jp);
+				final RateResponse rate = Parsers.parseRateResponse(jp);
 				jp.close();
 				return rate;
 			}
@@ -211,7 +211,7 @@ public class ServerCalls {
 			conn.setRequestProperty("Accept", "application/json");
 			conn.setRequestProperty("Content-Type", "application/json");
 			conn.setDoOutput(true);
-			final SpotObject spot = SavedInfo.getInstance().currentSpot;
+			final RateObject spot = SavedInfo.getInstance().currentSpot;
 			final JsonGenerator jg = JSON_FACTORY.createJsonGenerator(conn.getOutputStream());
 			jg.writeStartObject();
 			jg.writeFieldName("spotid");

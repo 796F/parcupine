@@ -203,7 +203,7 @@ public class SavedInfo{
 		editor.commit();
 	}
 	private static final SavedInfo INSTANCE = new SavedInfo();
-	public SpotObject currentSpot;
+	public RateObject currentSpot;
 	public ParkInstanceObject currentPark;
 	private SavedInfo() { }
 	public static SavedInfo getInstance() {
