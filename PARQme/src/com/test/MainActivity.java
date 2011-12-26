@@ -118,6 +118,8 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	private EditText minutes;
 	private TextView price;
 	private TextView increment;
+	private TextView lotDesc;
+	private TextView spot;
 
 	/*Buttons declared here*/
 	private EditText spotNum;
@@ -173,6 +175,11 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 		userDisplay = (TextView) findViewById(R.id.welcomeuser);
 		locDisplay = (TextView) findViewById(R.id.location);
 		timeDisplay = (TextView) findViewById(R.id.timeleftdisplay);
+
+		price = (TextView) findViewById(R.id.total_price);
+		increment = (TextView) findViewById(R.id.increment);
+		lotDesc = (TextView) findViewById(R.id.lot_description);
+		spot = (TextView) findViewById(R.id.spot);
 		vf = (ViewFlipper) findViewById(R.id.flipper);
 
 		//		parkTimePicker = (NumberPicker) findViewById(R.id.parktimepicker);
@@ -231,9 +238,6 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 		minutes.setInputType(InputType.TYPE_NULL);
 		minutes.setOnFocusChangeListener(timeListener);
 
-		price = (TextView) findViewById(R.id.total_price);
-		increment = (TextView) findViewById(R.id.increment);
-
 		//initialize buttons and set actions
 		submitButton = (Button) findViewById(R.id.submitButton);
 		submitButton.setOnClickListener(new View.OnClickListener() {
@@ -270,6 +274,8 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 					remainSeconds = getParkMins() * 60;
 
 					rate.setText(moneyConverter(mySpot.getDefaultRate()) + " per " + minimalIncrement + " minutes");
+					lotDesc.setText(mySpot.getDescription());
+					spot.setText("Spot #" + contents);
 					if (mySpot.getMinIncrement() != 0) {
 						increment.setText(mySpot.getMinIncrement() + " minute increments");
 					}
