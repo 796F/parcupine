@@ -1,35 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/mainlayout" android:orientation="vertical"
-	android:layout_width="fill_parent" android:layout_height="fill_parent">
-
-	<com.google.android.maps.MapView
-		android:id="@+id/mapview" android:layout_width="fill_parent"
-		android:layout_height="fill_parent" android:clickable="true"
-		android:apiKey="0RlqMlfHhDpx9dI_AErM0dSZn_P1xznsgQeHA8Q" />
-	<Button android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:text="Find Parking"
-		android:id="@+id/findPark" android:layout_alignParentBottom="true"
-		android:layout_toRightOf="@+id/findCar" android:layout_marginBottom="46dp"></Button>
-	<Button android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:text="Find Car"
-		android:id="@+id/findCar" android:layout_alignBaseline="@+id/findPark"
-		android:layout_alignBottom="@+id/findPark" android:layout_toRightOf="@+id/findMe"></Button>
-	<Button android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:text="Find Me"
-		android:id="@+id/findMe" android:layout_alignBaseline="@+id/findCar"
-		android:layout_alignBottom="@+id/findCar"
-		android:layout_alignParentLeft="true"></Button>
-	<TextView android:textAppearance="?android:attr/textAppearanceSmall"
-		android:text="TextView" android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:id="@+id/latlontext"
-		android:layout_above="@+id/findMe" android:layout_alignParentLeft="true"></TextView>
-	<EditText android:id="@+id/addressinput" android:layout_height="wrap_content"
-		android:layout_alignParentTop="true" android:layout_width="250dp">
-		<requestFocus></requestFocus>
-	</EditText>
-	<Button android:text="Find" android:id="@+id/searchbutton"
-		android:layout_height="wrap_content" android:layout_width="wrap_content"
-		android:layout_alignParentTop="true" android:layout_toRightOf="@+id/addressinput"></Button>
-
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/mainlayout"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    <View
+        android:id="@+id/address_bar_back"
+        android:layout_width="fill_parent"
+        android:layout_height="54dp"
+        android:background="#ff8998A1" />
+    <Button
+        android:id="@+id/loc_button"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/ic_menu_mylocation"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="3dp"
+        android:layout_marginRight="3dp" />
+    <Button
+        android:id="@+id/searchbutton"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_toLeftOf="@id/loc_button"
+        android:layout_alignBottom="@id/loc_button"
+        android:background="@drawable/ic_btn_search"
+        android:layout_alignTop="@id/loc_button"
+        android:layout_marginLeft="3dp" />
+    <EditText
+        android:id="@+id/addressinput"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_width="fill_parent"
+        android:hint="Address"
+        android:layout_toLeftOf="@id/searchbutton"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="3dp">
+        <requestFocus />
+    </EditText>
+    <com.google.android.maps.MapView
+        android:id="@+id/mapview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:clickable="true"
+        android:apiKey="0RlqMlfHhDpx9dI_AErM0dSZn_P1xznsgQeHA8Q"
+        android:layout_below="@id/address_bar_back" />
+    <SlidingDrawer
+        android:id="@+id/drawer"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:handle="@+id/handle"
+        android:content="@+id/content">
+        <RelativeLayout
+            android:id="@id/handle"
+            android:layout_width="fill_parent"
+            android:layout_height="36dp">
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="#ff428AC7" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#fff"
+                android:textSize="18dp"
+                android:text="Locate"
+                android:layout_marginLeft="4dp"
+                android:textStyle="bold"
+                android:layout_centerVertical="true" />
+            <ImageView
+                android:id="@+id/arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/expander_close_holo_dark"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@id/content"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="#ff47585E">
+            <ListView
+                android:id="@+id/find_list"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+    </SlidingDrawer>
 </RelativeLayout>

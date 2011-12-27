@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
@@ -13,11 +12,18 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.SlidingDrawer;
+import android.widget.SlidingDrawer.OnDrawerCloseListener;
+import android.widget.SlidingDrawer.OnDrawerOpenListener;
 import android.widget.Toast;
 
 import com.google.android.maps.GeoPoint;
@@ -61,15 +67,11 @@ public class MapViewActivity extends MapActivity {
 	private List<Overlay> mapOverlays;
 	private Geocoder gc;
 	private EditText address;
-	//buttons used
-	private Button findParking;
-	private Button findMe;
-	private Button findCar;
+	private SlidingDrawer drawer;
+	private ListView findList;
+	private ImageView arrow;
 	private Button searchButton;
-	
-	//display elements
-	private TextView latlonTempDisplay;
-	
+	private Button locButton;
 	
 	@Override
 	protected boolean isRouteDisplayed() {
@@ -87,7 +89,6 @@ public class MapViewActivity extends MapActivity {
 		//hook elements
 		MapView mapView = (MapView) findViewById(R.id.mapview);
 		mapView.setBuiltInZoomControls(true);
-		latlonTempDisplay = (TextView) findViewById(R.id.latlontext);
 		address = (EditText) findViewById(R.id.addressinput);
 		mapCtrl = mapView.getController();
 		locMan = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -130,51 +131,71 @@ public class MapViewActivity extends MapActivity {
 				}
 			}
 		});
-		//initialize buttons and set listeners
-		findParking = (Button) findViewById(R.id.findPark);
-		findParking.setOnClickListener(new View.OnClickListener() {
-
+		locButton = (Button) findViewById(R.id.loc_button);
+		locButton.setOnClickListener(new OnClickListener() {
 			@Override
-			public void onClick(View arg0) {
-				//load information from database, change overlay to show where spots are
-				mapCtrl.animateTo(new GeoPoint((int)(38.984924*1e6),(int)(-76.935486*1e6)));
-				//throw dialog, ask for "current location, address"
-
-				//if current location, zoom there.
-
-				//else zoom to address
-
+			public void onClick(View v) {
+				findMe();
 			}
 		});
-		findCar = (Button) findViewById(R.id.findCar);
-		findCar.setOnClickListener(new View.OnClickListener() {
-
+		arrow = (ImageView) findViewById(R.id.arrow);
+		drawer = (SlidingDrawer) findViewById(R.id.drawer);
+		drawer.setOnDrawerCloseListener(new OnDrawerCloseListener() {
 			@Override
-			public void onClick(View arg0) {
-				//get saved info about spot and animate to location and zoom in.  
-				double testLat = SavedInfo.getLat(MapViewActivity.this);
-				double testLon = SavedInfo.getLon(MapViewActivity.this);
-				mapCtrl.animateTo(
-						new GeoPoint((int)(testLat*1e6), (int)(testLon*1e6))
-				);
-				mapCtrl.setZoom(21);
-				
+			public void onDrawerClosed() {
+				arrow.setImageResource(R.drawable.expander_close_holo_dark);
 			}
 		});
-
-		findMe = (Button) findViewById(R.id.findMe);
-		findMe.setOnClickListener(new View.OnClickListener() {
-
+		drawer.setOnDrawerOpenListener(new OnDrawerOpenListener() {
 			@Override
-			public void onClick(View arg0) {
-				//get phone's current location and animate
-				GeoPoint point = new GeoPoint((int)(lat*1e6),(int)(lon*1e6));
-				mapCtrl.animateTo(
-						point
-				);
-				mapCtrl.setZoom(zoomLevel);
+			public void onDrawerOpened() {
+				arrow.setImageResource(R.drawable.expander_open_holo_dark);
 			}
 		});
+		findList = (ListView) findViewById(R.id.find_list);
+		String[] findValues = new String[] { "Find Me", "Find My Car", "Find a Spot" };
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_list_item_1, findValues);
+		findList.setAdapter(adapter);
+		findList.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position,
+					long id) {
+				switch (position) {
+				case 0: // Find Me
+					findMe();
+					drawer.close();
+					break;
+				case 1: // Find My Car
+					//get saved info about spot and animate to location and zoom in.
+					double testLat = SavedInfo.getLat(MapViewActivity.this);
+					double testLon = SavedInfo.getLon(MapViewActivity.this);
+					mapCtrl.animateTo(
+							new GeoPoint((int)(testLat*1e6), (int)(testLon*1e6))
+					);
+					mapCtrl.setZoom(21);
+					drawer.close();
+					break;
+				case 2: // Find a Spot
+					//get phone's current location and animate
+					GeoPoint point = new GeoPoint((int)(lat*1e6),(int)(lon*1e6));
+					mapCtrl.animateTo(
+							point
+					);
+					mapCtrl.setZoom(zoomLevel);
+					drawer.close();
+					break;
+				}
+			}
+		});
+	}
+
+	private void findMe() {
+		//load information from database, change overlay to show where spots are
+		mapCtrl.animateTo(new GeoPoint((int)(38.984924*1e6),(int)(-76.935486*1e6)));
+		//throw dialog, ask for "current location, address"
+		//if current location, zoom there.
+		//else zoom to address
 	}
 
 	@Override
@@ -188,7 +209,6 @@ public class MapViewActivity extends MapActivity {
 				if (location.hasAccuracy() && location.getAccuracy() < DEFAULT_ACCURACY) {
 					lat = location.getLatitude();
 					lon = location.getLongitude();
-					latlonTempDisplay.setText("Lat:" +lat + "   Lon:" + lon);
 					((LocationManager) MapViewActivity.this
 							.getSystemService(Context.LOCATION_SERVICE))
 							.removeUpdates(this);
