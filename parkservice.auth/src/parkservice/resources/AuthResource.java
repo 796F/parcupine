@@ -65,11 +65,11 @@ public class AuthResource{
 			}
 			if(endTime==null){
 				//no endtime stored, user wasn't parked.  
-				x.setParkstate(0);
+				x.setParkState(0);
 				return x;
 			}else if(endTime.compareTo(new Date())<0){
 				//if end time is before now
-				x.setParkstate(0);
+				x.setParkState(0);
 				return x;
 			}else{
 				//if end time is after now, gather needed information and then return. 
@@ -93,7 +93,7 @@ public class AuthResource{
 					sync.setMinTime(pr.getMinParkMins());
 					sync.setSpotId(pi.getSpaceId());
 					x.setSync(sync);
-					x.setParkstate(1);
+					x.setParkState(1);
 				}catch(Exception e){
 					
 				}

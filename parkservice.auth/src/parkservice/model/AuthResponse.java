@@ -11,7 +11,7 @@ public class AuthResponse {
 	
 	//information about user that will be displayed. 
 	long uid;
-	int parkstate; //0 not parked, 1 parked
+	int parkState; //0 not parked, 1 parked
 	ParkSync sync;
 	/**
 	 * @return the uid
@@ -26,18 +26,6 @@ public class AuthResponse {
 		this.uid = uid;
 	}
 	/**
-	 * @return the parkstate
-	 */
-	public int getParkstate() {
-		return parkstate;
-	}
-	/**
-	 * @param parkstate the parkstate to set
-	 */
-	public void setParkstate(int parkstate) {
-		this.parkstate = parkstate;
-	}
-	/**
 	 * @return the sync
 	 */
 	public ParkSync getSync() {
@@ -48,6 +36,12 @@ public class AuthResponse {
 	 */
 	public void setSync(ParkSync sync) {
 		this.sync = sync;
+	}
+	public int getParkState() {
+		return parkState;
+	}
+	public void setParkState(int parkState) {
+		this.parkState = parkState;
 	}
 
 	
