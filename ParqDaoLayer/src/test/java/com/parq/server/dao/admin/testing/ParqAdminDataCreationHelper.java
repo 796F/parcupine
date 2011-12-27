@@ -12,46 +12,11 @@ import com.parq.server.dao.support.ParqMockObjectCreationDao;
  */
 final class ParqAdminDataCreationHelper extends ParqMockObjectCreationDao {
 
-	protected static final String CLIENT_ADDRESS = "ParqTestAddress";
-	protected static final String CLIENT_DESCRIPTION = "ParqTestClient";
-	protected static final String PARKING_LOCATION_NAME = "ParqTestingParkingLocation";
-	protected static final String PARKING_SPACE_LEVEL = "1";
-	protected static final int PARKING_RATE_INCREMENT = 5;
-	protected static final int LOCATION_RATE_PRIORITY = -20;
-	protected static final int PARKING_SPACE_RATE_PRIORITY = -100;
+
 	
 	// -------------------------------------------------------------------------------
 	// public methods for use for manual data creation for testing purposes
 	// -------------------------------------------------------------------------------
-
-	public boolean createNewClient(String clientName) {
-		return createNewClient(clientName, CLIENT_ADDRESS, CLIENT_DESCRIPTION);
-	}
-
-	public boolean createNewParkingLocation(String clientName,
-			String locationIdentifier) {
-		return createNewParkingLocation(clientName, locationIdentifier,
-				PARKING_LOCATION_NAME);
-	}
-
-	public boolean setGeoCoordinateForParkingLocation(
-			String locationIdentifier, double latitude, double logitude) {
-		return setGeoLocationForParkingLocation(locationIdentifier, latitude,
-				logitude);
-	}
-
-	public boolean insertParkingSpace(String locationIdentifier,
-			String spaceIdentifier, String parkingSpaceName) {
-		return insertParkingSpace(locationIdentifier, spaceIdentifier,
-				PARKING_SPACE_LEVEL, parkingSpaceName);
-	}
-
-	public boolean setParkingLocationRate(int parkingRateInCents,
-			String locationIdentifier, int parkingMinutesIncresments) {
-		return setParkingLocationRate(parkingRateInCents,
-				LOCATION_RATE_PRIORITY, locationIdentifier,
-				parkingMinutesIncresments);
-	}
 
 	@Override
 	public boolean executeSqlStatement(String sql, Object[] parms) {

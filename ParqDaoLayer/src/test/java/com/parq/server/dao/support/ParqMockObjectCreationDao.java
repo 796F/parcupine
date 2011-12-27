@@ -19,7 +19,7 @@ public class ParqMockObjectCreationDao extends DaoForTestingPurposes {
 		" ?, ?)" ;
 	
 	private static final String sqlInsertPaqkingSpace = 
-		"INSERT INTO parkingspace (location_id, space_identifier, parking_level, space_name) " + 
+		"INSERT INTO parkingspace (location_id, space_identifier, space_name, parking_level) " + 
 		" VALUE ((SELECT location_id FROM parkinglocation WHERE location_identifier = ? ), ?, ?, ?)";
 
 	private static final String sqlInsertLocationParkingRate = 
@@ -33,38 +33,38 @@ public class ParqMockObjectCreationDao extends DaoForTestingPurposes {
 		" (SELECT space_id FROM parkingspace WHERE space_identifier = ?), ?)";
 
 	
-	protected boolean createNewClient(String clientName, String clientAddress,
+	public boolean createNewClient(String clientName, String clientAddress,
 			String clientDesc) {
 		return executeSqlStatement(sqlInsertClientMain, new Object[] {
 				clientName, clientAddress, clientDesc });
 	}
 
-	protected boolean createNewParkingLocation(String clientName,
+	public boolean createNewParkingLocation(String clientName,
 			String locationIdentifier, String locationName) {
 		return executeSqlStatement(sqlInsertParkingLocationMain, new Object[] {
 				clientName, locationIdentifier, locationName });
 	}
 	
-	protected boolean setGeoLocationForParkingLocation(
+	public boolean setGeoCoordinateForParkingLocation(
 			String locationIdentifier, double latitude, double logitude) {
 		return executeSqlStatement(sqlInsertGeoLocation, new Object[] {
 				locationIdentifier, latitude, logitude });
 	}
 
-	protected boolean insertParkingSpace(String locationIdentifier,
-			String spaceIdentifier, String parkingLevel, String spaceName) {
+	public boolean insertParkingSpace(String locationIdentifier,
+			String spaceIdentifier, String spaceName, String parkingLevel) {
 		return executeSqlStatement(sqlInsertPaqkingSpace, new Object[] {
-				locationIdentifier, spaceIdentifier, parkingLevel, spaceName});
+				locationIdentifier, spaceIdentifier, spaceName, parkingLevel});
 	}
 
-	protected boolean setParkingLocationRate(int parkingRateInCents,
+	public boolean setParkingLocationRate(int parkingRateInCents,
 			int priority, String locationIdentifier, int parkingMinuteIncrement) {
 		return executeSqlStatement(sqlInsertLocationParkingRate, new Object[] {
 				parkingRateInCents, priority, locationIdentifier,
 				parkingMinuteIncrement });
 	}
 	
-	protected boolean setParkingSpaceRate(int parkingRateInCents,
+	public boolean setParkingSpaceRate(int parkingRateInCents,
 			int priority, String locationIdentifier, String spaceIdentifier, 
 			int parkingMinuteIncrement) {
 		return executeSqlStatement(insertSpaceParkingRate, new Object[] {

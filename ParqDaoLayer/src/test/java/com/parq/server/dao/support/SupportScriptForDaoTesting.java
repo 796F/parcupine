@@ -58,9 +58,9 @@ public final class SupportScriptForDaoTesting {
 			testDao.createNewParkingLocation(fakeClient1, fakeParkingLocation2, "TestParkingLocation");
 
 			// insert Geo-location coordinates for the 3 parking location
-			testDao.setGeoLocationForParkingLocation(parkingLocationNameMain, parkingLocationMainLatitude, parkingLocationMainLongtitude);
-			testDao.setGeoLocationForParkingLocation(fakeParkingLocation1, fakeParkingLocation1Latitude, fakeParkingLocation1Longtitude);
-			testDao.setGeoLocationForParkingLocation(fakeParkingLocation2, fakeParkingLocation2Latitude, fakeParkingLocation2Longtitude);
+			testDao.setGeoCoordinateForParkingLocation(parkingLocationNameMain, parkingLocationMainLatitude, parkingLocationMainLongtitude);
+			testDao.setGeoCoordinateForParkingLocation(fakeParkingLocation1, fakeParkingLocation1Latitude, fakeParkingLocation1Longtitude);
+			testDao.setGeoCoordinateForParkingLocation(fakeParkingLocation2, fakeParkingLocation2Latitude, fakeParkingLocation2Longtitude);
 
 			// insert 10 test parking spaces
 			testDao.insertParkingSpace(parkingLocationNameMain, spaceNameMain, "1", "space name 1");
@@ -75,10 +75,12 @@ public final class SupportScriptForDaoTesting {
 			testDao.insertParkingSpace(fakeParkingLocation2, "Test_Fake_7", "2", "space name 10");
 
 			// insert location based parking rate
-			testDao.setParkingLocationRate(parkingLocationRate, -100, parkingLocationNameMain, 5);
+			testDao.setParkingLocationRate(parkingLocationRate, parkingLocationParkingRatePriority, 
+					parkingLocationNameMain, 5);
 
 			// insert parking space based parking rate
-			testDao.setParkingSpaceRate(spaceRate, -20, parkingLocationNameMain, spaceNameMain, 5);
+			testDao.setParkingSpaceRate(spaceRate, parkingSpaceParkingRatePriority, 
+					parkingLocationNameMain, spaceNameMain, 5);
 			
 			mainDataSetInserted = true;
 		}
@@ -227,6 +229,9 @@ public final class SupportScriptForDaoTesting {
 	
 	public static String spaceNameMain2 = "2210";
 	public static String spaceNameMain3 = "3315";
+	
+	public static int parkingLocationParkingRatePriority = -100;
+	public static int parkingSpaceParkingRatePriority = -20;
 	
 
 	// ------------------------------------------------------------------------

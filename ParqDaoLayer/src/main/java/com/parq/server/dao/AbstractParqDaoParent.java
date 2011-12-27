@@ -51,7 +51,7 @@ public abstract class AbstractParqDaoParent {
 	protected static boolean connectionPoolAvailable;
 	protected static boolean cpWarningMessagePosted;
 	
-	protected static DataSource tomcatDatasource;
+	protected static DataSource tomcatDataSource;
 	
 	
 	// Initialize the db connection
@@ -150,8 +150,8 @@ public abstract class AbstractParqDaoParent {
 			poolProp.setJdbcInterceptors(jdbcInterceptors);
 			
 			// create the tomcat db pool
-			tomcatDatasource = new DataSource();
-			tomcatDatasource.setPoolProperties(poolProp);	
+			tomcatDataSource = new DataSource();
+			tomcatDataSource.setPoolProperties(poolProp);	
 			
 			connectionPoolInitialized = true;
 			connectionPoolAvailable = true;
@@ -190,7 +190,7 @@ public abstract class AbstractParqDaoParent {
 		Connection con;
 		try {
 			if (connectionPoolAvailable) {
-				con = tomcatDatasource.getConnection();
+				con = tomcatDataSource.getConnection();
 			}
 			else {
 				synchronized (AbstractParqDaoParent.class) {
