@@ -4,7 +4,7 @@ public class RateObject {
 	double lat;
 	double lon;
 	String location;
-	long spotid;
+	long spotId;
 	
 	/*these are the defaults*/
 	int minTime;			//must park 1 hour
@@ -29,11 +29,13 @@ public class RateObject {
 	public void setLocation(String location) {
 		this.location = location;
 	}
-	public long getSpotid() {
-		return spotid;
+
+
+	public long getSpotId() {
+		return spotId;
 	}
-	public void setSpotid(long spotid) {
-		this.spotid = spotid;
+	public void setSpotId(long spotId) {
+		this.spotId = spotId;
 	}
 	public int getMinTime() {
 		return minTime;

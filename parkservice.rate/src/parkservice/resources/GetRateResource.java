@@ -70,7 +70,7 @@ public class GetRateResource {
 				rate.setLat(loc.getLatitude());
 				rate.setLon(loc.getLongitude());
 				rate.setLocation(pspace.getSpaceName());
-				rate.setSpotid(pr.getSpaceId());
+				rate.setSpotId(pr.getSpaceId());
 				rate.setMinTime(pr.getMinParkMins());
 				rate.setMaxTime(pr.getMaxParkMins());
 				rate.setDefaultRate(pr.getParkingRateCents());
@@ -123,7 +123,7 @@ public class GetRateResource {
 							rate.setLon(g.getLongitude());
 							output.setResp("OK");
 							rate.setLocation(pspace.getSpaceName());
-							rate.setSpotid(pr.getSpaceId());
+							rate.setSpotId(pr.getSpaceId());
 							rate.setMinTime(pr.getMinParkMins());
 							rate.setMaxTime(pr.getMaxParkMins());
 							rate.setDefaultRate(pr.getParkingRateCents());
