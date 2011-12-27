@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class ParkRequest {
 	long uid;
-	long spotid;
+	long spotId;
 	int durationMinutes;	
 	int chargeAmount;
 	int paymentType;
@@ -19,11 +19,13 @@ public class ParkRequest {
 	public void setUid(long uid) {
 		this.uid = uid;
 	}
-	public long getSpotid() {
-		return spotid;
+	
+	
+	public long getSpotId() {
+		return spotId;
 	}
-	public void setSpotid(long spotid) {
-		this.spotid = spotid;
+	public void setSpotId(long spotId) {
+		this.spotId = spotId;
 	}
 	public int getDurationMinutes() {
 		return durationMinutes;

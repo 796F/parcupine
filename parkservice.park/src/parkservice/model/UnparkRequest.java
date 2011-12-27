@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class UnparkRequest {
 	long uid;
-	long spotid;
+	long spotId;
 	String parkingReferenceNumber;
 	AuthRequest userInfo;
 	public long getUid() {
@@ -19,11 +19,13 @@ public class UnparkRequest {
 	public void setUid(long uid) {
 		this.uid = uid;
 	}
-	public long getSpotid() {
-		return spotid;
+
+
+	public long getSpotId() {
+		return spotId;
 	}
-	public void setSpotid(long spotid) {
-		this.spotid = spotid;
+	public void setSpotId(long spotId) {
+		this.spotId = spotId;
 	}
 	public String getParkingReferenceNumber() {
 		return parkingReferenceNumber;

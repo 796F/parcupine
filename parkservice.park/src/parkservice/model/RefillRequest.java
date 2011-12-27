@@ -12,7 +12,7 @@ public class RefillRequest {
 	int durationMinutes;
 	int chargeAmount;
 	int paymentType;
-	long spotid;
+	long spotId;
 	long uid;
 	AuthRequest userInfo;
 	public String getParkingReferenceNumber() {
@@ -39,11 +39,12 @@ public class RefillRequest {
 	public void setPaymentType(int paymentType) {
 		this.paymentType = paymentType;
 	}
-	public long getSpotid() {
-		return spotid;
+
+	public long getSpotId() {
+		return spotId;
 	}
-	public void setSpotid(long spotid) {
-		this.spotid = spotid;
+	public void setSpotId(long spotId) {
+		this.spotId = spotId;
 	}
 	public long getUid() {
 		return uid;

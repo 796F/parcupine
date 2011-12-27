@@ -28,7 +28,7 @@ public class TestUnpark {
 			UnparkRequest pr = new UnparkRequest();
 			
 			pr.setParkingReferenceNumber("31:61:1324848343");
-			pr.setSpotid(111); //works with wrong unpark
+			pr.setSpotId(111); //works with wrong unpark
 			pr.setUid(31);
 			pr.setUserInfo(in);
 			

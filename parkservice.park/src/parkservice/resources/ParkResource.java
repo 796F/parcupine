@@ -110,7 +110,7 @@ public class ParkResource {
 			//was user previously parked?
 			if(ps==null||(new Date()).compareTo(ps.getParkingEndTime())>0){
 				
-				long spot_id = in.getSpotid();
+				long spot_id = in.getSpotId();
 				
 				//nowtime is after previous end time.  user was not parked.  
 				ParkingRateDao prd = new ParkingRateDao();
@@ -222,7 +222,7 @@ public class ParkResource {
 			}catch(Exception e){}
 			
 			if(pi!=null && pi.getParkingRefNumber().equals(parkingReference)){
-				long spotid = in.getSpotid();
+				long spotid = in.getSpotId();
 				int durationMinutes = in.getDurationMinutes();
 				int pay_amount = in.getChargeAmount();
 				ParkingRateDao prd = new ParkingRateDao();
@@ -316,7 +316,7 @@ public class ParkResource {
 			ParkingStatusDao psd = new ParkingStatusDao();
 			boolean result = false;
 			try{
-				result = psd.unparkBySpaceIdAndParkingRefNum(in.getSpotid(),in.getParkingReferenceNumber(), new Date());
+				result = psd.unparkBySpaceIdAndParkingRefNum(in.getSpotId(),in.getParkingReferenceNumber(), new Date());
 			}catch(Exception e){
 
 			}

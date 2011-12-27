@@ -30,7 +30,7 @@ public class TestRefill {
 		pr.setChargeAmount(337);
 		pr.setDurationMinutes(5);
 		pr.setPaymentType(0);
-		pr.setSpotid(61);
+		pr.setSpotId(61);
 		pr.setUid(31);
 		pr.setUserInfo(in);
 		

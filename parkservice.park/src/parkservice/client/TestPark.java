@@ -30,7 +30,7 @@ public class TestPark {
 		
 		ParkRequest pr = new ParkRequest();
 		pr.setPaymentType(0);
-		pr.setSpotid(61);
+		pr.setSpotId(61);
 		pr.setUid(41);
 		pr.setUserInfo(in);
 		pr.setDurationMinutes(5);
