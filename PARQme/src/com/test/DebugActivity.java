@@ -27,6 +27,7 @@ import android.os.CountDownTimer;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
+import android.widget.SlidingDrawer;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -40,6 +41,8 @@ public class DebugActivity extends Activity {
 	private String bestProvider;
 	private RadioButton serverping;
 	int remainSeconds;
+	
+	private SlidingDrawer slidingDrawer;
 	public static final String SAVED_INFO = "ParqMeInfo";
 	/** Called when the activity is first created. */
 	@Override

@@ -157,7 +157,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	private Location lastLocation;
 	private static final float LOCATION_ACCURACY = 20f;
 	private boolean goodLocation = false;
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -252,36 +252,42 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 					lon = lastLocation.getLongitude();
 				}
 				myRateResponse = ServerCalls.getRateGps(contents, lat, lon, check);
-				mySpot = myRateResponse.getRateObject();
-				// if we get the object successfully
-				if (myRateResponse.getResp().equals("OK")) {
-					savedInfo.setSpot(mySpot);
-					vf.showNext();
-					// prepare time picker for this spot
-					//					parkTimePicker.setRange(mySpot.getMinIncrement(),
-					//							mySpot.getMaxTime());
-					//					parkTimePicker.setMinInc(mySpot.getMinIncrement());
+				if(myRateResponse!=null){
+					mySpot = myRateResponse.getRateObject();
 
-					// initialize all variables to match spot
-					minimalIncrement = mySpot.getMinIncrement();
-					maxTime = mySpot.getMaxTime();
+					// if we get the object successfully
+					if (myRateResponse.getResp().equals("OK")) {
+						savedInfo.setSpot(mySpot);
+						vf.showNext();
+						// prepare time picker for this spot
+						//					parkTimePicker.setRange(mySpot.getMinIncrement(),
+						//							mySpot.getMaxTime());
+						//					parkTimePicker.setMinInc(mySpot.getMinIncrement());
 
-					remainSeconds = getParkMins() * 60;
+						// initialize all variables to match spot
+						minimalIncrement = mySpot.getMinIncrement();
+						maxTime = mySpot.getMaxTime();
 
-					rate.setText(formatCents(mySpot.getDefaultRate()) + " per " + minimalIncrement + " minutes");
-					lotDesc.setText(mySpot.getDescription());
-					spot.setText("Spot #" + contents);
-					if (mySpot.getMinIncrement() != 0) {
-						increment.setText(mySpot.getMinIncrement() + " minute increments");
+						remainSeconds = getParkMins() * 60;
+
+						rate.setText(formatCents(mySpot.getDefaultRate()) + " per " + minimalIncrement + " minutes");
+						lotDesc.setText(mySpot.getDescription());
+						spot.setText("Spot #" + contents);
+						if (mySpot.getMinIncrement() != 0) {
+							increment.setText(mySpot.getMinIncrement() + " minute increments");
+						}
+						// store some used info
+						SharedPreferences.Editor editor = check.edit();
+						editor.putString("code", contents);
+						editor.putFloat("lat", (float) mySpot.getLat());
+						editor.putFloat("lon", (float) mySpot.getLon());
+						editor.commit();
+						updateDisplay(minimalIncrement);
+					} else {
+						ThrowDialog.show(MainActivity.this,
+								ThrowDialog.RESULT_ERROR);
 					}
-					// store some used info
-					SharedPreferences.Editor editor = check.edit();
-					editor.putString("code", contents);
-					editor.putFloat("lat", (float) mySpot.getLat());
-					editor.putFloat("lon", (float) mySpot.getLon());
-					editor.commit();
-					updateDisplay(minimalIncrement);
-				} else {
+				}	else {
 					ThrowDialog.show(MainActivity.this,
 							ThrowDialog.RESULT_ERROR);
 				}
@@ -483,11 +489,11 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 		if(hours.hasFocus()){
 			//update the parking minutes and seconds
 			remainSeconds+=60*60;
-//			updateDisplay(Math.min(maxTime, getParkMins()+60));
+			//			updateDisplay(Math.min(maxTime, getParkMins()+60));
 			updateDisplay(getParkMins()+60);
 		} else {
 			remainSeconds+=minimalIncrement*60;
-//			updateDisplay(Math.min(maxTime, getParkMins()+minimalIncrement));
+			//			updateDisplay(Math.min(maxTime, getParkMins()+minimalIncrement));
 			updateDisplay(getParkMins()+minimalIncrement);
 		}
 	}
@@ -631,61 +637,87 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 			//call server using the qr code, to get a resulting spot's info.
 			String contents = scanResult.getContents();
 			if (contents != null) {
-				//contents contains string "parqme.com/p/c36/p123456" or w/e...
 				SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
+				//contents contains string "parqme.com/p/c36/p123456" or w/e...
 				myRateResponse = ServerCalls.getRateQr(contents, check);
-				mySpot = myRateResponse.getRateObject();
-				//if we get the object successfully
-				if(myRateResponse.getRateObject().equals("OK")){
-					vf.showNext();
-					//prepare time picker for this spot
-					parkTimePicker.setRange(mySpot.getMinIncrement(), mySpot.getMaxTime());
-					parkTimePicker.setMinInc(mySpot.getMinIncrement());
+				if(myRateResponse!=null){
+					mySpot = myRateResponse.getRateObject();
+					
+					//if we get the object successfully
+					if(myRateResponse.getResp().equals("OK")){
+						savedInfo.setSpot(mySpot);
+						vf.showNext();
+						// prepare time picker for this spot
+						//					parkTimePicker.setRange(mySpot.getMinIncrement(),
+						//							mySpot.getMaxTime());
+						//					parkTimePicker.setMinInc(mySpot.getMinIncrement());
 
-					//initialize all variables to match spot
-					minimalIncrement=mySpot.getMinIncrement();
-					maxTime = mySpot.getMaxTime();
+						// initialize all variables to match spot
+						minimalIncrement = mySpot.getMinIncrement();
+						maxTime = mySpot.getMaxTime();
 
-					//TODO delete me testing
-					updateDisplay(1);
-					remainSeconds=getParkMins()*60;
-
-					//store some used info
-					SharedPreferences.Editor editor = check.edit();
-					editor.putString("code", contents);
-					editor.putFloat("lat", (float) mySpot.getLat());
-					editor.putFloat("lon", (float) mySpot.getLon());
-					editor.commit();
+						remainSeconds = getParkMins() * 60;
+						String [] test = contents.split("/");
+						rate.setText(formatCents(mySpot.getDefaultRate()) + " per " + minimalIncrement + " minutes");
+						lotDesc.setText(mySpot.getDescription());
+						spot.setText("Spot #" + test[2]);
+						if (mySpot.getMinIncrement() != 0) {
+							increment.setText(mySpot.getMinIncrement() + " minute increments");
+						}
+						// store some used info
+						SharedPreferences.Editor editor = check.edit();
+						editor.putString("code", contents);
+						editor.putFloat("lat", (float) mySpot.getLat());
+						editor.putFloat("lon", (float) mySpot.getLon());
+						editor.commit();
+						updateDisplay(minimalIncrement);
+					}else{
+						ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
+					}
 				}else{
 					ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
 				}
 			} else {
 				//do nothing if the user doesn't scan and just cancels.
 				//call server using the qr code, to get a resulting spot's info.
-				contents = "3";
+				contents = "parqme.com/main_lot/1412";
 				SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 				//contents contains string "parqme.com/p/c36/p123456" or w/e...
 				myRateResponse = ServerCalls.getRateQr(contents, check);
-				mySpot = myRateResponse.getRateObject();
-				//if we get the object successfully
-				if(myRateResponse.getRateObject().equals("OK")){
-					vf.showNext();
-					//prepare time picker for this spot
-					parkTimePicker.setRange(mySpot.getMinIncrement(), mySpot.getMaxTime());
-					parkTimePicker.setMinInc(mySpot.getMinIncrement());
-					//initialize all variables to match spot
-					minimalIncrement=mySpot.getMinIncrement();
-					maxTime = mySpot.getMaxTime();
+				if(myRateResponse!=null){
+					mySpot = myRateResponse.getRateObject();
+					
+					//if we get the object successfully
+					if(myRateResponse.getResp().equals("OK")){
+						savedInfo.setSpot(mySpot);
+						vf.showNext();
+						// prepare time picker for this spot
+						//					parkTimePicker.setRange(mySpot.getMinIncrement(),
+						//							mySpot.getMaxTime());
+						//					parkTimePicker.setMinInc(mySpot.getMinIncrement());
 
-					updateDisplay(minimalIncrement);
-					remainSeconds=minimalIncrement*60;
+						// initialize all variables to match spot
+						minimalIncrement = mySpot.getMinIncrement();
+						maxTime = mySpot.getMaxTime();
 
-					//store some used info
-					SharedPreferences.Editor editor = check.edit();
-					editor.putString("code", contents);
-					editor.putFloat("lat", (float) mySpot.getLat());
-					editor.putFloat("lon", (float) mySpot.getLon());
-					editor.commit();
+						remainSeconds = getParkMins() * 60;
+						String [] test = contents.split("/");
+						rate.setText(formatCents(mySpot.getDefaultRate()) + " per " + minimalIncrement + " minutes");
+						lotDesc.setText(mySpot.getDescription());
+						spot.setText("Spot #" + test[2]);
+						if (mySpot.getMinIncrement() != 0) {
+							increment.setText(mySpot.getMinIncrement() + " minute increments");
+						}
+						// store some used info
+						SharedPreferences.Editor editor = check.edit();
+						editor.putString("code", contents);
+						editor.putFloat("lat", (float) mySpot.getLat());
+						editor.putFloat("lon", (float) mySpot.getLon());
+						editor.commit();
+						updateDisplay(minimalIncrement);
+					}else{
+						ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
+					}
 				}else{
 					ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
 				}

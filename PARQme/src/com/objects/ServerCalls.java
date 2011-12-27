@@ -168,7 +168,8 @@ public class ServerCalls {
 
 	public static RateResponse getRateQr(String qrcode, SharedPreferences prefs){
 		final String[] tokens = qrcode.split("/");
-		if (tokens.length != 2) {
+		// qr code is url, parqme.com/main_lot/1412
+		if (tokens.length != 3) {
 			return null;
 		}
 		try {
@@ -182,9 +183,9 @@ public class ServerCalls {
 			final JsonGenerator jg = JSON_FACTORY.createJsonGenerator(conn.getOutputStream());
 			jg.writeStartObject();
 			jg.writeFieldName("lot");
-			jg.writeString(tokens[0]);
-			jg.writeFieldName("spot");
 			jg.writeString(tokens[1]);
+			jg.writeFieldName("spot");
+			jg.writeString(tokens[2]);
 			writeUserDetails(jg, prefs);
 			jg.writeEndObject();
 			jg.flush();
