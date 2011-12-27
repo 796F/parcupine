@@ -4,10 +4,10 @@
 	android:layout_gravity="bottom" android:layout_height="match_parent">
 	<LinearLayout android:orientation="vertical"
 		android:layout_width="fill_parent" android:layout_height="fill_parent"
-		android:padding="5dp" android:background="@drawable/backgroundlayer">
+		android:padding="0dp" android:background="@drawable/backgroundlayer">
 		<FrameLayout android:id="@android:id/tabcontent"
 			android:layout_height="wrap_content" android:layout_weight="1"
-			android:layout_width="fill_parent" android:padding="5dp">
+			android:layout_width="fill_parent" android:padding="0dp">
 <!-- 			<RelativeLayout android:layout_height="wrap_content"
 				android:layout_width="fill_parent" android:id="@+id/testrel">
 				<TextView android:id="@+id/topleft" android:layout_width="wrap_content"

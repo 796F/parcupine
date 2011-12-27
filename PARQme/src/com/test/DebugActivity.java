@@ -49,54 +49,5 @@ public class DebugActivity extends Activity {
 	    final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 	    
 	    
-	    
-		serverping = (RadioButton) findViewById(R.id.radioButton1);
-	    debugbutton = (Button) findViewById(R.id.debugButton1);
-	    display = (TextView) findViewById(R.id.debugText1);
-
-	    
-	    
-	    debugbutton.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View arg0) {
-				display.setText(check.getAll().toString());
-				new Thread(new Runnable() {
-				    public void run() {
-				    	String host = "http://www.parqme.com";
-						try {
-							URL url = new URL(host);
-							HttpURLConnection urlc = (HttpURLConnection) url.openConnection();
-							urlc.setConnectTimeout(1000 * 2); // mTimeout is in seconds
-							urlc.connect();
-							
-							View z = getWindow().getDecorView().findViewById(R.layout.debuglayout);
-							if (urlc.getResponseCode() == 200) {
-								serverping.post(new Runnable(){
-
-									@Override
-									public void run() {
-										serverping.setChecked(true);
-										//display.setText("trueth");
-									}
-									
-									
-								});
-							}
-						} catch (Exception e1) {
-							serverping.setChecked(false);
-							//display.setText("FALSE LOL");
-						} 
-				    	
-				    }
-				  }).start();
-				
-				
-				
-				
-			}
-			
-		});
-	    
 	}
 }

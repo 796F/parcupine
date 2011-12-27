@@ -1,26 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/mainlayout" android:orientation="vertical"
-	android:layout_width="fill_parent" android:layout_height="fill_parent">
-	<Button android:text="Button" android:layout_width="wrap_content"
-		android:id="@+id/debugButton1" android:layout_height="wrap_content"
-		android:layout_alignParentBottom="true"
-		android:layout_alignParentLeft="true"></Button>
+    android:id="@+id/mainlayout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
 
-	<TextView
-	    android:id="@+id/debugText1"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:layout_alignParentLeft="true"
-	    android:layout_alignParentTop="true"
-	    android:text="TextView"
-	    android:textAppearance="?android:attr/textAppearanceSmall" />
+    <RelativeLayout
+        android:id="@+id/relativeLayout1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
 
-	<RadioButton
-	    android:id="@+id/radioButton1"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:layout_above="@+id/debugButton1"
-	    android:layout_centerHorizontal="true" />
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:background="#ff428AC7" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="6dp"
+            android:text="Account Information"
+            android:textColor="#fff"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+	<com.objects.WrappingSlidingDrawer
+        android:id="@+id/pref_drawer"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:handle="@+id/handle"
+        android:layout_alignParentBottom="true"
+        android:content="@+id/pref_content">
+        <RelativeLayout
+            android:id="@id/handle"
+            android:layout_width="fill_parent"
+            android:layout_height="36dp">
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:background="#ff428AC7" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#fff"
+                android:textSize="20dp"
+                android:text="Settings"
+                android:layout_marginLeft="6dp"
+                android:textStyle="bold"
+                android:layout_centerVertical="true" />
+            <ImageView
+                android:id="@+id/arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/expander_close_holo_dark"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@id/pref_content"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="#ff47585E">
+            <ListView
+                android:id="@+id/find_list"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+    </com.objects.WrappingSlidingDrawer>
 </RelativeLayout>
