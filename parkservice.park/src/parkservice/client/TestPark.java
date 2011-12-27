@@ -30,8 +30,8 @@ public class TestPark {
 		
 		ParkRequest pr = new ParkRequest();
 		pr.setPaymentType(0);
-		pr.setSpotId(61);
-		pr.setUid(41);
+		pr.setSpotId(71);
+		pr.setUid(12);
 		pr.setUserInfo(in);
 		pr.setDurationMinutes(5);
 		pr.setChargeAmount(337);
@@ -44,7 +44,7 @@ public class TestPark {
 
 	private static URI getBaseURI() {
 		return UriBuilder.fromUri(
-				"http://75.101.132.219:8080/parkservice.park").build();
+				"http://localhost:8080/parkservice.park").build();
 	}
 
 }

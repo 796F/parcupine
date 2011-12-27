@@ -32,7 +32,7 @@ public class TestRegister {
 		rq.setEmail("miguel@parqme.com");
 		rq.setExpMonth(4);
 		rq.setExpYear(2015);
-		
+		rq.setAddress("2406 Oakmere Road");
 		rq.setHolderName("Michael Xia");
 		rq.setPassword("a");
 		rq.setZipcode("19810");

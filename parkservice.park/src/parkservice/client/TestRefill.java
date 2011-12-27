@@ -26,12 +26,12 @@ public class TestRefill {
 		//{"endTime":1324848301801,"parkingReferenceNumber":"31:61:1324847703","resp":"OK"}
 
 		RefillRequest pr = new RefillRequest();
-		pr.setParkingReferenceNumber("31:61:1324847703");
+		pr.setParkingReferenceNumber("12:71:1325022511");
 		pr.setChargeAmount(337);
 		pr.setDurationMinutes(5);
 		pr.setPaymentType(0);
-		pr.setSpotId(61);
-		pr.setUid(31);
+		pr.setSpotId(71);
+		pr.setUid(12);
 		pr.setUserInfo(in);
 		
 		String outstring = service.path("refill").type(MediaType.APPLICATION_JSON).post(String.class, pr);
