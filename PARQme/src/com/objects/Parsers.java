@@ -9,7 +9,7 @@ import org.codehaus.jackson.JsonToken;
 public class Parsers {
 	// User parameters
 	private static final String PARAM_UID = "uid";
-	private static final String PARAM_PARKSTATE = "parkstate";
+	private static final String PARAM_PARKSTATE = "parkState";
 
 	// Response code parameter
 	private static final String PARAM_RESP_CODE = "resp";
@@ -18,7 +18,7 @@ public class Parsers {
 	// Park rate parameters
 	private static final String PARAM_LAT = "lat";
 	private static final String PARAM_LONG = "lon";
-	private static final String PARAM_SPOT = "spotid";
+	private static final String PARAM_SPOT = "spotId";
 	private static final String PARAM_MIN_TIME = "minTime";
 	private static final String PARAM_MAX_TIME = "maxTime";
 	private static final String PARAM_DEFAULT_RATE = "defaultRate";

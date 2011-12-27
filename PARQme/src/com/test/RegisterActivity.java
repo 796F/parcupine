@@ -24,6 +24,7 @@ public class RegisterActivity extends Activity {
 	EditText ccBox;
 	EditText cscBox;
 	EditText zipBox;
+	EditText addrBox;
 	Spinner expMonthSpinner;
 	Spinner expYearSpinner;
 
@@ -39,7 +40,8 @@ public class RegisterActivity extends Activity {
 		ccBox = (EditText)findViewById(R.id.ccBox);
 		cscBox = (EditText)findViewById(R.id.cscBox);
 		zipBox = (EditText)findViewById(R.id.zipBox);
-
+		addrBox = (EditText)findViewById(R.id.addrBox);
+		
 		expMonthSpinner = (Spinner) findViewById(R.id.expmonth_spinner);
 	    final ArrayAdapter<CharSequence> monthAdapter = ArrayAdapter.createFromResource(
 	            this, R.array.exp_months_array, android.R.layout.simple_spinner_item);
@@ -73,7 +75,8 @@ public class RegisterActivity extends Activity {
 					final int expMonth = expMonthSpinner.getSelectedItemPosition() + 1;
 					final int expYear = Integer.valueOf(expYearSpinner.getSelectedItem().toString());
 					final String zip = zipBox.getText().toString();
-					if (ServerCalls.registerNewUser(email, password, name, ccNumber, cscNumber, expMonth, expYear, zip)) {
+					final String addr = addrBox.getText().toString();
+					if (ServerCalls.registerNewUser(email, password, name, ccNumber, cscNumber, expMonth, expYear, zip, addr)) {
 						UserObject user = ServerCalls.getUser(email, password);
 						if(user!=null){
 							if (user.getUid() != -1) {

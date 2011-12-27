@@ -58,6 +58,14 @@
 			style="@style/FormLabelTight"/>
 		<EditText android:id="@+id/zipBox" android:inputType="number"
 			style="@style/FormField"/>
+		
+		<!-- Added address box.   -->
+		<TextView android:id="@+id/addr_label" android:text="Billing Address"
+			style="@style/FormLabelTight"/>
+		<EditText android:id="@+id/addrBox" android:inputType="text"
+			style="@style/FormField"/>
+		
+		
 		<LinearLayout android:layout_height="wrap_content" android:layout_width="fill_parent"
 			android:layout_marginTop="18dp">
 			<Button android:id="@+id/submit" android:text="Submit" android:layout_width="150dp"

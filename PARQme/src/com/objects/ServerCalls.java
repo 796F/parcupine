@@ -62,7 +62,7 @@ public class ServerCalls {
 	}
 
 	public static boolean registerNewUser(String email, String password, String name,
-			String ccNumber, String cscNumber, int expMonth, int expYear, String zip) {
+			String ccNumber, String cscNumber, int expMonth, int expYear, String zip, String address) {
 		try {	
 			final HttpURLConnection conn =
 					(HttpURLConnection)
@@ -89,6 +89,8 @@ public class ServerCalls {
 			jg.writeString(password);
 			jg.writeFieldName("zipcode");
 			jg.writeString(zip);
+			jg.writeFieldName("address");
+			jg.writeString(address);
 			jg.writeEndObject();
 			jg.flush();
 			jg.close();
@@ -215,7 +217,7 @@ public class ServerCalls {
 			final RateObject spot = SavedInfo.getInstance().getSpot();
 			final JsonGenerator jg = JSON_FACTORY.createJsonGenerator(conn.getOutputStream());
 			jg.writeStartObject();
-			jg.writeFieldName("spotid");
+			jg.writeFieldName("spotId");
 			jg.writeNumber(spotid);
 			jg.writeFieldName("durationMinutes");
 			jg.writeNumber(duration);
