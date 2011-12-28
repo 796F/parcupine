@@ -22,14 +22,14 @@ public class TestUnpark {
 			WebResource service = client.resource(getBaseURI());
 			
 			AuthRequest in = new AuthRequest();
-			in.setEmail("miguel@parqme.com");
-			in.setPassword("a");
+			in.setEmail("xia.umd@gmail.com");
+			in.setPassword("aaaaaa");
 			
 			UnparkRequest pr = new UnparkRequest();
 			
-			pr.setParkingReferenceNumber("12:71:1325022511");
+			pr.setParkingReferenceNumber("21:153:1325023135");
 			pr.setSpotId(111); //works with wrong unpark
-			pr.setUid(12);
+			pr.setUid(23);
 			pr.setUserInfo(in);
 			
 			
@@ -41,7 +41,7 @@ public class TestUnpark {
 
 		private static URI getBaseURI() {
 			return UriBuilder.fromUri(
-					"http://localhost:8080/parkservice.park").build();
+					"http://75.101.132.219:8080/parkservice.park").build();
 		}
 	
 
