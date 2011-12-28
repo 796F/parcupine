@@ -27,11 +27,14 @@ import android.os.Vibrator;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
+import android.view.View.OnKeyListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
@@ -223,15 +226,29 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 				updateDisplay(getParkMins());
 			}
 		};
+		
+		final OnKeyListener cancelKeyListener = new OnKeyListener(){
+
+			@Override
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
+				updateDisplay(getParkMins());
+				return true;
+			}
+		};
 
 		hours = (EditText) findViewById(R.id.hours);
 		hours.setInputType(InputType.TYPE_NULL);
 		hours.setOnFocusChangeListener(timeListener);
+		hours.setCursorVisible(false);
+		
+		hours.setOnKeyListener(cancelKeyListener);
 
 		minutes = (EditText) findViewById(R.id.mins);
 		minutes.setInputType(InputType.TYPE_NULL);
 		minutes.setOnFocusChangeListener(timeListener);
-
+		minutes.setCursorVisible(false);
+		minutes.setOnKeyListener(cancelKeyListener);
+		
 		//initialize buttons and set actions
 		submitButton = (Button) findViewById(R.id.submitButton);
 		submitButton.setOnClickListener(new View.OnClickListener() {
@@ -438,8 +455,9 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 		cancelPark.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				myRateResponse=null;
-				mySpot=null;
+				myRateResponse = null;
+				
+				parkCost =0;
 				remainSeconds = 0;
 				totalTimeParked = 0;
 				//return to previous view
