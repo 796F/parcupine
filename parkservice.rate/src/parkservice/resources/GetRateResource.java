@@ -79,7 +79,11 @@ public class GetRateResource {
 				output.setRateObject(rate);
 				return output;
 			}else{
-				output.setResp("ONE WAS NULL");
+				String x = "";
+				if(loc==null) x+=pr.getLocationId();
+				if(pspace==null) x+="   " +pr.getSpaceId();
+				
+				output.setResp(x);
 				return output;
 			}
 		}else{
@@ -104,14 +108,15 @@ public class GetRateResource {
 
 			GeolocationDao gdao = new GeolocationDao();
 			List<Geolocation> spots = gdao.findCloseByParkingLocation(x-0.0004, x+0.0004, y-0.0004, y+0.0004);
-
+			String ss = "";
 			for(Geolocation g: spots){
+					ss+="loc string " + g.getLocationIdentifier();
 					ParkingRateDao p = new ParkingRateDao();
 					ParkingRate pr;
 					//											this is main_lot	   input.getspot is 1412
 					try{
 						pr = p.getParkingRateByName(g.getLocationIdentifier(), input.getSpot());
-
+						ss+="  pr spaceid" + pr.getSpaceId();
 						ParkingSpaceDao psdao = new ParkingSpaceDao();
 						ParkingSpace pspace = null;
 						try{
@@ -131,18 +136,21 @@ public class GetRateResource {
 							output.setRateObject(rate);
 							return output;
 						}else{
-							output.setResp("SPACE_NULL");
+							output.setResp("SPACE_NULL" + pr.getSpaceId());
+							return output;
 						}
 					}catch (Exception e){
 						output.setResp("EXCEPTION GETTING PARKING RATE");
+						return output;
 					}
 				
 			}
 			output.setResp("NO_SPOTS");
+			return output;
 		}else{
 			output.setResp("BAD_AUTH");
+			return output;
 		}
-		return output;
 	}
 	/**
 	 * returns User_ID, or -1 if bad
