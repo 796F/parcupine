@@ -2,6 +2,8 @@ package com.test;
 
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -19,6 +21,7 @@ import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.objects.SavedInfo;
+import com.objects.ServerCalls;
 import com.objects.ThrowDialog;
 
 public class AccountActivity extends Activity {
@@ -120,16 +123,35 @@ public class AccountActivity extends Activity {
 		
 		logout.setOnClickListener(new View.OnClickListener() {
 			@Override
-			public void onClick(View v) {
-				//if not currently parked.
-				if(!check.getBoolean("parkState", false)){
-					SavedInfo.logOut(AccountActivity.this);
-					startActivity(new Intent(AccountActivity.this, LoginActivity.class));
-					finish();
-				}else{
-					ThrowDialog.show(AccountActivity.this, ThrowDialog.IS_PARKED);
-				}
-			}});
+            public void onClick(View v) {
+                // if not currently parked.
+                if (SavedInfo.isParked(check)) {
+                    new AlertDialog.Builder(AccountActivity.this)
+                            .setMessage("Are you sure you want to unpark?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int id) {
+                                    final SharedPreferences check = getSharedPreferences(
+                                            SAVED_INFO, 0);
+                                    final String parkId = SavedInfo.getParkId(check);
+                                    if (ServerCalls.unPark(111, parkId, check)) {
+                                    } else {
+                                        ThrowDialog.show(AccountActivity.this,
+                                                ThrowDialog.UNPARK_ERROR);
+                                    }
+
+                                    SavedInfo.logOut(AccountActivity.this);
+                                    startActivity(new Intent(AccountActivity.this,
+                                            LoginActivity.class));
+                                    finish();
+                                }
+                            }).setNegativeButton("No", null).create().show();
+                } else {
+                    SavedInfo.logOut(AccountActivity.this);
+                    startActivity(new Intent(AccountActivity.this, LoginActivity.class));
+                    finish();
+                }
+            }});
 		
 		settings = (Button) findViewById(R.id.setting);
 		settings.setOnClickListener(new View.OnClickListener() {

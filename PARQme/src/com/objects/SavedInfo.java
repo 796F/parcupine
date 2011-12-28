@@ -2,8 +2,6 @@ package com.objects;
 
 import java.util.Date;
 
-import com.test.LoginActivity;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -44,9 +42,8 @@ public class SavedInfo{
 		editor.commit();
 	}
 	//if parked return true, else false
-	public static boolean isParked(Context activity){
-		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO,0);
-		return check.getBoolean("parkState", false);
+	public static boolean isParked(SharedPreferences check){
+		return check.getLong("endTime", 0) > System.currentTimeMillis();
 	}
 	//if logged in returns true, else false
 	public static boolean isLoggedIn(Context activity){
@@ -98,13 +95,19 @@ public class SavedInfo{
 	    return prefs.getString("PARKID", "");
 	}
     public static void unpark(SharedPreferences.Editor edit) {
-        edit.putBoolean("parkState", false);
-        edit.putString("PARKID", "");
-        edit.putLong("endTime", 0);
+        edit.remove("PARKID");
+        edit.remove("endTime");
+        edit.remove("lat");
+        edit.remove("lon");
+        edit.remove("spot");
+        edit.remove("minTime");
+        edit.remove("maxTime");
+        edit.remove("defaultRate");
+        edit.remove("minIncrement");
+        edit.remove("description");
     }
     public static void park(Context activity, ParkInstanceObject park, RateObject rate) {
         SharedPreferences.Editor edit = activity.getSharedPreferences(SAVED_INFO, 0).edit();
-        edit.putBoolean("parkState", true);
         edit.putString("PARKID", park.getParkingReferenceNumber());
         edit.putLong("endTime", park.getEndTime());
         edit.putString("lat", String.valueOf(rate.getLat()));
@@ -129,27 +132,20 @@ public class SavedInfo{
         return new RateObject(lat, lon, spot, minTime, maxTime, defaultRate, minIncrement, description);
     }
 	public static void logIn(Context activity, boolean parkState, String email, long uid, String password){
-		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
-		SharedPreferences.Editor editor = check.edit();
-		editor.putBoolean("parkState", parkState);
+		SharedPreferences.Editor editor = activity.getSharedPreferences(SAVED_INFO, 0).edit();
 		editor.putString("email", email);
 		editor.putLong("uid", uid);
 		editor.putString("password", password);
 		editor.commit();
 	}
     public static void logOut(Context activity){
-        SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
-        SharedPreferences.Editor editor = check.edit();
-        editor.putBoolean("parkState", false);
-        editor.putString("email", "");
-        editor.putLong("uid", -1);
-        editor.putString("password", "");
+        SharedPreferences.Editor editor = activity.getSharedPreferences(SAVED_INFO, 0).edit();
+        editor.clear();
         editor.commit();
     }
 	
 	public static void syncParkingSession(Context activity, ParkSync sync){
-		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
-		SharedPreferences.Editor editor = check.edit();
+		SharedPreferences.Editor editor = activity.getSharedPreferences(SAVED_INFO, 0).edit();
 		editor.putInt("defaultRate", sync.getDefaultRate());
 		editor.putString("description",sync.getDescription());
 		editor.putLong("endTime", sync.getEndTime());
