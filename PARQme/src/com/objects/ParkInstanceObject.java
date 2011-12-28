@@ -3,11 +3,8 @@ package com.objects;
 public class ParkInstanceObject {
 	private long endTime;
 	private String parkingReferenceNumber;
-	
-	
 
 	public ParkInstanceObject(long endTime, String parkingReferenceNumber) {
-		super();
 		this.endTime = endTime;
 		this.parkingReferenceNumber = parkingReferenceNumber;
 	}
@@ -23,7 +20,4 @@ public class ParkInstanceObject {
 	public void setParkingReferenceNumber(String parkingReferenceNumber) {
 		this.parkingReferenceNumber = parkingReferenceNumber;
 	}
-
-	
-	
 }

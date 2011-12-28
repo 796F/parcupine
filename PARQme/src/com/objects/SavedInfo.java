@@ -68,11 +68,6 @@ public class SavedInfo{
 		editor.putBoolean(title, input);
 		editor.commit();
 	}
-	//sets end time to a long
-	public static void setEndTime(Context activity, SharedPreferences.Editor editor, long endTime){
-		editor.putLong("endTime", endTime);
-	}
-
 	public static long getEndTime(Context activity, SharedPreferences prefs){
 		return prefs.getLong("endTime", 0);
 	}
@@ -105,13 +100,14 @@ public class SavedInfo{
     public static void unpark(Context activity, SharedPreferences.Editor edit) {
         edit.putBoolean("parkState", false);
         edit.putString("PARKID", "");
-        setEndTime(activity, edit, 0);
+        edit.putLong("endTime", 0);
     }
     public static void park(Context activity, ParkInstanceObject park) {
         SharedPreferences.Editor edit = activity.getSharedPreferences(SAVED_INFO, 0).edit();
         edit.putBoolean("parkState", true);
         edit.putString("PARKID", park.getParkingReferenceNumber());
-        setEndTime(activity, edit, park.getEndTime());
+        edit.putLong("endTime", park.getEndTime());
+        edit.commit();
     }
 	public static void logIn(Context activity, boolean parkState, String email, long uid, String password){
 		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);

@@ -211,7 +211,7 @@ public class ServerCalls {
 		return null;
 	}
 
-	public static ParkInstanceObject park(long duration, RateObject spot, SharedPreferences prefs){
+	public static ParkInstanceObject park(int duration, RateObject spot, SharedPreferences prefs){
 		try {
 			final HttpURLConnection conn =
 					(HttpURLConnection)
@@ -246,6 +246,43 @@ public class ServerCalls {
 		}
 		return null;
 	}
+    public static ParkInstanceObject refill(int duration, RateObject spot, String parkId, SharedPreferences prefs){
+        try {
+            final HttpURLConnection conn =
+                    (HttpURLConnection)
+                    new URL(SERVER_HOSTNAME + "/parkservice.park/refill")
+            .openConnection();
+            conn.setRequestProperty("Accept", "application/json");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setDoOutput(true);
+            final JsonGenerator jg = JSON_FACTORY.createJsonGenerator(conn.getOutputStream());
+            jg.writeStartObject();
+            jg.writeFieldName("parkingReferenceNumber");
+            jg.writeString(parkId);
+            jg.writeFieldName("spotId");
+            jg.writeNumber(spot.getSpot());
+            jg.writeFieldName("durationMinutes");
+            jg.writeNumber(duration);
+            jg.writeFieldName("chargeAmount");
+            jg.writeNumber(duration / spot.getMinIncrement() * spot.getDefaultRate());
+            jg.writeFieldName("paymentType");
+            jg.writeNumber(0);
+            writeUserDetails(jg, prefs);
+            jg.writeEndObject();
+            jg.flush();
+            jg.close();
+            if (conn.getResponseCode() == 200) {
+                final JsonParser jp = JSON_FACTORY.createJsonParser(conn
+                        .getInputStream());
+                final ParkInstanceObject response = Parsers.parseParkInstance(jp);
+                jp.close();
+                return response;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 	public static int addHistory(String date, String starttime, String endtime, String location, String email, int cost){
 		try {
 			String data = URLEncoder.encode("date", "UTF-8") + "=" + URLEncoder.encode(date, "UTF-8");

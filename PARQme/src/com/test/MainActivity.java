@@ -385,9 +385,13 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	    remainMins.setVisibility(View.GONE);
 	    smallTime.setVisibility(View.GONE);
 	    hours.setVisibility(View.VISIBLE);
-	    hours.setText("0");
 	    minutes.setVisibility(View.VISIBLE);
-        minutes.setText("0");
+        if (rateObj == null) {
+            hours.setText("0");
+            minutes.setText("0");
+        } else {
+            updateDisplay(rateObj.getMinIncrement());
+        }
 	    minusButton.setVisibility(View.VISIBLE);
 	    colon.setVisibility(View.VISIBLE);
 	    plusButton.setVisibility(View.VISIBLE);
@@ -467,7 +471,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
         rightButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                refillMe(getParkMins());
+                refill(getParkMins());
             }
         });
 	}
@@ -499,7 +503,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 			public void onClick(DialogInterface dialog, int id) {
 			    final int maxTime = rateObj.getMaxTime();
 				if(totalTimeParked<maxTime)
-					refillMe(1);
+					refill(1);
 				//refillMe(minimalIncrement);
 				else
 					ThrowDialog.show(MainActivity.this, ThrowDialog.MAX_TIME);
@@ -522,7 +526,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         final SharedPreferences check = getSharedPreferences(SAVED_INFO, 0);
-                        String parkId = SavedInfo.getParkId(MainActivity.this, check);
+                        final String parkId = SavedInfo.getParkId(MainActivity.this, check);
                         if (ServerCalls.unPark(111, parkId, check)) {
                             timer.cancel();
                             // stopService(new Intent(MainActivity.this,
@@ -540,7 +544,8 @@ public class MainActivity extends ActivityGroup implements LocationListener {
                             ThrowDialog.show(MainActivity.this, ThrowDialog.UNPARK_ERROR);
                         }
                     }
-                }).setNegativeButton("No", null).create().show();
+                })
+                .setNegativeButton("No", null).create().show();
     }
 
     private void park() {
@@ -548,6 +553,9 @@ public class MainActivity extends ActivityGroup implements LocationListener {
         final int parkingTime = getParkMins();
         ParkInstanceObject parkInstance = ServerCalls.park(parkingTime, rateObj, prefs);
         if(parkInstance != null){
+            if (parkInstance.getEndTime() <= 0) {
+                parkInstance = new ParkInstanceObject(System.currentTimeMillis()+5*60*100, "23:1234567");
+            }
             if (parkInstance.getEndTime() > 0) {
                 SavedInfo.park(MainActivity.this, parkInstance);
                 totalTimeParked += parkingTime;
@@ -568,35 +576,32 @@ public class MainActivity extends ActivityGroup implements LocationListener {
         }
     }
 
-	private void refillMe(int refillMinutes){
+	private void refill(int refillMinutes){
 	    final int maxTime = rateObj.getMaxTime();
 		//if we haven't gone past the total time we're allowed to park
-		if(totalTimeParked+refillMinutes<=maxTime){
-
-			//update the total time parked and remaining time.
-			totalTimeParked+=refillMinutes;
-			updateDisplay(getParkMins()+refillMinutes);
-
-			//stop current timer, start new timer with current time + selectedNumber.
-			try{
-
-				SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
-				final long oldEnd = SavedInfo.getEndTime(this, check);
-				final long newEnd = oldEnd + refillMinutes*60*1000;
-				//calculate new endtime and initiate timer from it.  
-				timer.cancel();
-				timer = initiateTimer(newEnd, vf);
-				//stopService(new Intent(MainActivity.this, Background.class));
-				timer.start();
-				//startService(new Intent(MainActivity.this, Background.class).putExtra("time", remainSeconds));
-				if(totalTimeParked==maxTime){
-					ThrowDialog.show(MainActivity.this, ThrowDialog.MAX_TIME);
-				}else{
-					ThrowDialog.show(MainActivity.this, ThrowDialog.REFILL_DONE);
-				}
-			}catch(Exception e){
-				ThrowDialog.show(MainActivity.this, ThrowDialog.UNPARK_ERROR);
-			}
+		if (maxTime <= 0 || totalTimeParked+refillMinutes <= maxTime) {
+		    final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
+		    final String parkId = SavedInfo.getParkId(MainActivity.this, check);
+		    final ParkInstanceObject refillResp = ServerCalls.refill(refillMinutes, rateObj, parkId, check);
+			if (refillResp.getEndTime() > 0) {
+			    SavedInfo.park(this, refillResp);
+                //update the total time parked and remaining time.
+                totalTimeParked += refillMinutes;
+                //stop current timer, start new timer with current time + selectedNumber.
+                final long oldEnd = SavedInfo.getEndTime(this, check);
+                final long newEnd = oldEnd + refillMinutes * 60 * 1000;
+                //calculate new endtime and initiate timer from it.
+                timer.cancel();
+                timer = initiateTimer(newEnd, vf);
+                //stopService(new Intent(MainActivity.this, Background.class));
+                timer.start();
+                //startService(new Intent(MainActivity.this, Background.class).putExtra("time", remainSeconds));
+                ThrowDialog.show(MainActivity.this, ThrowDialog.REFILL_DONE);
+            } else {
+                ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
+            }
+		} else {
+		    ThrowDialog.show(MainActivity.this, ThrowDialog.MAX_TIME);
 		}
 	}
 
@@ -721,7 +726,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 				//if autorefill is on, refill the user minimalIncrement
 				if(check.getBoolean("autoRefill", false)){
 					alert.cancel();
-					refillMe(1);
+					refill(1);
 				}else{
 					SavedInfo.eraseTimer(MainActivity.this);
 					//else we cancel the running out of tie dialog
@@ -731,10 +736,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 					ThrowDialog.show(MainActivity.this, ThrowDialog.TIME_OUT);
 				}
 			}
-
-
 		};
-
 	}
 
 	//converts cents to "$ x.xx"
