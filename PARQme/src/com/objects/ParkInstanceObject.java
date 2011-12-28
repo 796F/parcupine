@@ -1,24 +1,15 @@
 package com.objects;
 
 public class ParkInstanceObject {
-	private String resp;
 	private long endTime;
 	private String parkingReferenceNumber;
 	
 	
 
-	public ParkInstanceObject(String resp, long endTime,
-			String parkingReferenceNumber) {
+	public ParkInstanceObject(long endTime, String parkingReferenceNumber) {
 		super();
-		this.resp = resp;
 		this.endTime = endTime;
 		this.parkingReferenceNumber = parkingReferenceNumber;
-	}
-	public String getResp() {
-		return resp;
-	}
-	public void setResp(String resp) {
-		this.resp = resp;
 	}
 	public long getEndTime() {
 		return endTime;

@@ -359,7 +359,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 				final int parkingTime = getParkMins();
 				ParkInstanceObject parkInstance = ServerCalls.park(mySpot.getSpot(), parkingTime, prefs);
 				if (parkInstance == null || parkInstance.getEndTime() == 0) {
-					//parkInstance = new ParkInstanceObject(0,System.currentTimeMillis()+5*60*1000);
+//					parkInstance = new ParkInstanceObject(System.currentTimeMillis()+5*60*1000, "");
 				}
 				if(parkInstance != null){
 					//Toast.makeText(MainActivity.this, ""+ServerCalls.addHistory(parkDate, starttime, endtime, contents, email, parkCost), Toast.LENGTH_SHORT).show();

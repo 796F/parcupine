@@ -244,11 +244,7 @@ public class ServerCalls {
 						.getInputStream());
 				final ParkInstanceObject response = Parsers.parseParkInstance(jp);
 				jp.close();
-				if(response.getResp().equals("OK")){
-					return response;
-				}else{
-					return null;
-				}
+				return response;
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
