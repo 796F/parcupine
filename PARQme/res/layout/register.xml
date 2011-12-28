@@ -1,80 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android=
-     "http://schemas.android.com/apk/res/android"
-  android:layout_width="fill_parent"
-  android:layout_height="fill_parent">
-	<ScrollView android:layout_width="fill_parent" android:layout_height="fill_parent">
-	<LinearLayout android:layout_width = "fill_parent"
-			android:layout_height="fill_parent"
-			android:id="@+id/register"
-			android:orientation="vertical">
-		<TextView android:id="@+id/email_label" android:text="Email:"
-			style="@style/FormLabelTight"/>
-		<EditText android:id="@+id/emailBox"
-			android:inputType="textEmailAddress"
-			style="@style/FormField"/>
-		<TextView android:id="@+id/password_label" android:text="Password:"
-			style="@style/FormLabelTight"/>
-		<EditText android:id="@+id/passwordBox" android:inputType="textPassword"
-			style="@style/FormField"/>
-		<TextView android:id="@+id/confirm_label" android:text="Confirm password:"
-			style="@style/FormLabelTight"/>
-		<EditText android:id="@+id/confirmBox" android:inputType="textPassword"
-			style="@style/FormField"/>
-		<TextView android:id="@+id/name_label" android:text="Full name:"
-			style="@style/FormLabelTight"/>
-		<EditText android:id="@+id/nameBox" android:inputType="textPersonName"
-			style="@style/FormField"/>
-		<TextView android:id="@+id/cc_label" android:text="Credit card number:"
-			style="@style/FormLabelTight"/>
-		<EditText android:id="@+id/ccBox" android:inputType="number"
-			style="@style/FormField"/>
-		<TextView android:id="@+id/csc_label" android:text="Card security code:"
-			style="@style/FormLabelTight"/>
-		<EditText android:id="@+id/cscBox" android:inputType="number"
-			style="@style/FormField"/>
-		<TextView android:id="@+id/ccexp_label" android:text="Expiration:"
-			style="@style/FormLabelTight"/>
-		<LinearLayout
-			android:layout_height="wrap_content"
-			android:layout_width="fill_parent"
-			android:layout_marginLeft="10dp"
-			android:layout_marginRight="10dp"
-			android:layout_gravity="center">
-			<Spinner
-		        android:id="@+id/expmonth_spinner"
-		        android:layout_width="150dp"
-		        android:layout_height="wrap_content"
-		        android:layout_alignParentLeft="true"
-		    />
-			<Spinner
-		        android:id="@+id/expyear_spinner"
-		        android:layout_width="150dp"
-		        android:layout_height="wrap_content"
-		        android:layout_alignParentRight="true"
-		    />
-		</LinearLayout>
-		<TextView android:id="@+id/zip_label" android:text="ZIP Code:"
-			style="@style/FormLabelTight"/>
-		<EditText android:id="@+id/zipBox" android:inputType="number"
-			style="@style/FormField"/>
-		
-		<!-- Added address box.   -->
-		<TextView android:id="@+id/addr_label" android:text="Billing Address"
-			style="@style/FormLabelTight"/>
-		<EditText android:id="@+id/addrBox" android:inputType="text"
-			style="@style/FormField"/>
-		
-		
-		<LinearLayout android:layout_height="wrap_content" android:layout_width="fill_parent"
-			android:layout_marginTop="18dp">
-			<Button android:id="@+id/submit" android:text="Submit" android:layout_width="150dp"
-				android:layout_margin="5dp"
-				android:layout_height="wrap_content" android:layout_alignParentLeft="true" />
-			<Button android:id="@+id/cancel" android:text="Cancel" android:layout_width="150dp"
-				android:layout_margin="5dp"
-				android:layout_height="wrap_content" android:layout_alignParentRight="true"/>
-		</LinearLayout>
-	</LinearLayout>
-	</ScrollView>
-  </LinearLayout>
+<ViewFlipper
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/flipper"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:fillViewport="true">
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/email_label"
+                android:text="Email:"
+                style="@style/FormLabelTight" />
+            <EditText
+                android:id="@+id/emailBox"
+                android:inputType="textEmailAddress"
+                style="@style/FormField" />
+            <TextView
+                android:id="@+id/password_label"
+                android:text="Password:"
+                style="@style/FormLabelTight" />
+            <EditText
+                android:id="@+id/passwordBox"
+                android:inputType="textPassword"
+                style="@style/FormField" />
+            <TextView
+                android:id="@+id/confirm_label"
+                android:text="Confirm password:"
+                style="@style/FormLabelTight" />
+            <EditText
+                android:id="@+id/confirmBox"
+                android:inputType="textPassword"
+                style="@style/FormField" />
+            <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="fill_parent"
+                android:layout_marginTop="18dp">
+                <Button
+                    android:id="@+id/cancel"
+                    android:text="Cancel"
+                    android:layout_width="150dp"
+                    android:layout_margin="5dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true" />
+                <Button
+                    android:id="@+id/next"
+                    android:text="Next"
+                    android:layout_width="150dp"
+                    android:layout_margin="5dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:fillViewport="true">
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/name_label"
+                android:text="Full name:"
+                style="@style/FormLabelTight" />
+            <EditText
+                android:id="@+id/nameBox"
+                android:inputType="textPersonName"
+                style="@style/FormField" />
+            <TextView
+                android:id="@+id/cc_label"
+                android:text="Credit card number:"
+                style="@style/FormLabelTight" />
+            <EditText
+                android:id="@+id/ccBox"
+                android:inputType="number"
+                style="@style/FormField" />
+            <TextView
+                android:id="@+id/csc_label"
+                android:text="Card security code:"
+                style="@style/FormLabelTight" />
+            <EditText
+                android:id="@+id/cscBox"
+                android:inputType="number"
+                style="@style/FormField" />
+            <TextView
+                android:id="@+id/ccexp_label"
+                android:text="Expiration:"
+                style="@style/FormLabelTight" />
+            <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="fill_parent"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_gravity="center">
+                <Spinner
+                    android:id="@+id/expmonth_spinner"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true" />
+                <Spinner
+                    android:id="@+id/expyear_spinner"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true" />
+            </LinearLayout>
+            <TextView
+                android:id="@+id/street_label"
+                android:text="Street"
+                style="@style/FormLabelTight" />
+            <EditText
+                android:id="@+id/streetBox"
+                android:inputType="text"
+                style="@style/FormField" />
+            <TextView
+                android:id="@+id/zip_label"
+                android:text="ZIP Code:"
+                style="@style/FormLabelTight" />
+            <EditText
+                android:id="@+id/zipBox"
+                android:inputType="number"
+                style="@style/FormField" />
+            <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="fill_parent"
+                android:layout_marginTop="18dp">
+                <Button
+                    android:id="@+id/back"
+                    android:text="Back"
+                    android:layout_width="150dp"
+                    android:layout_margin="5dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true" />
+                <Button
+                    android:id="@+id/submit"
+                    android:text="Submit"
+                    android:layout_width="150dp"
+                    android:layout_margin="5dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</ViewFlipper>
