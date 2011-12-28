@@ -1,41 +1,300 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:id="@+id/LinearLayout1"
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical" android:layout_width="match_parent"
-	android:layout_height="match_parent">
-	<Button android:background="@drawable/logout"
-		android:layout_width="match_parent" android:id="@+id/logoutbutton"
-		android:layout_height="wrap_content" android:layout_alignParentBottom="true"
-		android:layout_alignParentLeft="true"></Button>
-	<Button android:layout_height="wrap_content" android:id="@+id/setting"
-		android:background="@drawable/setting" android:layout_width="wrap_content"
-		android:layout_above="@+id/logoutbutton" android:layout_alignLeft="@+id/logoutbutton"
-		android:layout_alignRight="@+id/logoutbutton"></Button>
-	<TextView android:textAppearance="?android:attr/textAppearanceLarge"
-		android:layout_width="wrap_content" android:text="Email: "
-		android:layout_height="wrap_content" android:id="@+id/accemailfield"
-		android:layout_below="@+id/accinfolabel"
-		android:layout_alignParentLeft="true"></TextView>
-	<TextView android:textAppearance="?android:attr/textAppearanceMedium"
-		android:layout_width="wrap_content" android:text="City: "
-		android:layout_height="wrap_content" android:id="@+id/acccityfield"
-		android:layout_below="@+id/accemailfield"
-		android:layout_alignParentLeft="true"></TextView>
-	<TextView android:textAppearance="?android:attr/textAppearanceMedium"
-		android:layout_width="wrap_content" android:text="CC: "
-		android:layout_height="wrap_content" android:id="@+id/creditcardfield"
-		android:layout_below="@+id/acccityfield"
-		android:layout_alignParentLeft="true"></TextView>
-	
-	<ListView android:id="@+id/listView1" android:layout_width="match_parent"
-		android:layout_height="match_parent" android:layout_below="@+id/creditcardfield"
-		android:layout_alignParentLeft="true" android:layout_above="@+id/setting"
-		android:cacheColorHint="#00000000">
-		</ListView>
-	<TextView android:textAppearance="?android:attr/textAppearanceLarge"
-		android:text="Account Information" android:id="@+id/accinfolabel"
-		android:layout_width="wrap_content" android:layout_height="wrap_content"
-		android:layout_below="@+id/textView7" android:layout_centerHorizontal="true"
-		android:layout_marginTop="24dp"></TextView>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/mainlayout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
 
+    <RelativeLayout
+        android:id="@+id/relativeLayout1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:background="#ff428AC7" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="6dp"
+            android:text="Account Information"
+            android:textColor="#fff"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+	
+	<View
+            android:id="@+id/profile_back_banner"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/profile_banner"
+            android:layout_alignTop="@+id/profile_banner"
+            android:background="#4a585d" />
+	<TextView
+	    android:id="@+id/profile_banner"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentLeft="true"
+	    android:layout_below="@+id/relativeLayout1"
+	    android:padding="5dp"
+	    android:text="Profile"
+            android:textStyle="bold"
+	    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+	<Button
+	    android:id="@+id/logoutbutton"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignBottom="@+id/profile_banner"
+	    android:layout_alignParentRight="true"
+	    android:layout_below="@+id/relativeLayout1"
+	    android:text="Logout" />
+
+	
+	<View
+            android:id="@+id/profile_name_back"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/profile_affiliation"
+            android:layout_alignTop="@+id/profile_name"
+            android:background="#757f84" />
+	<TextView
+	    android:id="@+id/profile_name"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentLeft="true"
+	    android:layout_below="@+id/profile_back_banner"
+	    android:text="Robert Smith"
+	    android:padding="3dp"
+            android:textStyle="bold"
+	    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+	<TextView
+	    android:id="@+id/profile_affiliation"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentLeft="true"
+	    android:layout_below="@+id/profile_name"
+	    android:text="Student"
+	    android:padding="3dp"
+	    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+	<Button
+	    android:id="@+id/profile_name_button"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignBottom="@+id/profile_affiliation"
+	    android:layout_alignParentRight="true"
+	    android:padding="3dp"
+	    android:text="Edit" />
+	
+	<View
+            android:id="@+id/profile_email_back"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/profile_email_small"
+            android:layout_alignTop="@+id/profile_email_large"
+            android:background="#757f84" />
+	<TextView
+	    android:id="@+id/profile_email_large"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentLeft="true"
+	    android:layout_below="@+id/profile_affiliation"
+	    android:text="Email"
+	    android:padding="3dp"
+            android:textStyle="bold"
+	    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+	<TextView
+	    android:id="@+id/profile_email_small"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentLeft="true"
+	    android:layout_below="@+id/profile_email_large"
+	    android:text="parq@spot.com"
+	    android:padding="3dp"
+	    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+	<Button
+	    android:id="@+id/profile_email_button"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignBottom="@+id/profile_email_small"
+	    android:layout_alignParentRight="true"
+	    android:padding="3dp"
+	    android:text="Edit" />
+	
+	<View
+            android:id="@+id/profile_city_back"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/profile_city_small"
+            android:layout_alignTop="@+id/profile_city_large"
+            android:background="#757f84" />
+	<TextView
+	    android:id="@+id/profile_city_large"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentLeft="true"
+	    android:layout_below="@+id/profile_email_small"
+	    android:text="City"
+	    android:padding="3dp"
+            android:textStyle="bold"
+	    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+	<TextView
+	    android:id="@+id/profile_city_small"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentLeft="true"
+	    android:layout_below="@+id/profile_city_large"
+	    android:text="Boston"
+	    android:padding="3dp"
+	    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+	<Button
+	    android:id="@+id/profile_city_button"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignBottom="@+id/profile_city_small"
+	    android:layout_alignParentRight="true"
+	    android:padding="3dp"
+	    android:text="Edit" />
+
+	<View
+            android:id="@+id/profile_card_back"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/profile_card_small"
+            android:layout_alignTop="@+id/profile_card_large"
+            android:background="#757f84" />
+	<TextView
+	    android:id="@+id/profile_card_large"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentLeft="true"
+	    android:layout_below="@+id/profile_city_small"
+	    android:text="Credit Card"
+	    android:padding="3dp"
+            android:textStyle="bold"
+	    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+	<TextView
+	    android:id="@+id/profile_card_small"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentLeft="true"
+	    android:layout_below="@+id/profile_card_large"
+	    android:text="**** **** **** **** 1234"
+	    android:padding="3dp"
+	    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+	<Button
+	    android:id="@+id/profile_card_button"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignBottom="@+id/profile_card_small"
+	    android:layout_alignParentRight="true"
+	    android:padding="3dp"
+	    android:text="Edit" />
+	<com.objects.WrappingSlidingDrawer
+        android:id="@+id/pref_drawer"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:handle="@+id/pref_handle"
+        android:layout_alignParentBottom="true"
+        android:content="@+id/pref_content">
+        <RelativeLayout
+            android:id="@id/pref_handle"
+            android:layout_width="fill_parent"
+            android:layout_height="36dp">
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:background="#ff428AC7" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#fff"
+                android:textSize="20dp"
+                android:text="Settings"
+                android:layout_marginLeft="6dp"
+                android:textStyle="bold"
+                android:layout_centerVertical="true" />
+            <ImageView
+                android:id="@+id/arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/expander_close_holo_dark"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@id/pref_content"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="#000000">
+            
+                
+                <TextView android:id="@+id/enable_alarm"
+                    android:text="Enable Alarm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" 
+                    android:layout_below="@+id/pref_handle" 
+                    android:textStyle="bold"
+                    android:padding="7dp"
+	   				android:textAppearance="?android:attr/textAppearanceLarge"
+	   				android:background="#000000"/>
+                <CheckBox
+                     android:id="@+id/alarm_checkbox"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:layout_alignParentRight="true"
+                     android:layout_alignBottom="@+id/enable_alarm"
+                     android:padding="3dp"
+                     />
+                
+                
+                <TextView android:id="@+id/enable_vibrate"
+                    android:text="Enable Vibrate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" 
+                    android:layout_below="@+id/enable_alarm" 
+                    android:textStyle="bold"
+                    android:padding="7dp"
+	    			android:textAppearance="?android:attr/textAppearanceLarge"
+	    			android:background="#000000"/>
+                 <CheckBox
+                     android:id="@+id/vibrate_checkbox"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:layout_alignParentRight="true"
+                     android:layout_alignBottom="@+id/enable_vibrate"
+                     android:padding="3dp"
+                     />
+                 <TextView android:id="@+id/enable_refill"
+                    android:text="Auto Refill"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" 
+                   android:layout_below="@+id/enable_vibrate" 
+                    android:textStyle="bold"
+                    android:padding="7dp"
+	    			android:textAppearance="?android:attr/textAppearanceLarge"
+	    			android:background="#000000"/>
+ 				<CheckBox
+                     android:id="@+id/refill_checkbox"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:layout_alignParentRight="true"
+                     android:layout_alignBottom="@+id/enable_refill"
+                     android:padding="3dp"
+                     />
+                 
+            
+        </RelativeLayout>
+    </com.objects.WrappingSlidingDrawer>
 </RelativeLayout>

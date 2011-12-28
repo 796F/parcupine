@@ -31,7 +31,7 @@ public class TabsActivity extends TabActivity {
                       .setContent(intent);
         tabHost.addTab(spec);
 
-        intent = new Intent().setClass(this, Preferences.class);
+        intent = new Intent().setClass(this, AccountActivity.class);
         spec = tabHost.newTabSpec("info").setIndicator("Account",
                           res.getDrawable(R.drawable.ic_tab_account))
                       .setContent(intent);

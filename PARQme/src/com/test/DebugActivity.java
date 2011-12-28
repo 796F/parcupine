@@ -51,6 +51,15 @@ public class DebugActivity extends Activity {
 	    setContentView(R.layout.debuglayout);
 	    final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 	    
-	    
+	    debugbutton = (Button)findViewById(R.id.debug_button);
+	    display = (TextView)findViewById(R.id.debug_text);
+	    debugbutton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				display.setText(check.getAll().toString());
+				
+			}
+		});
 	}
 }
