@@ -68,11 +68,11 @@ public class SavedInfo{
 		editor.putBoolean(title, input);
 		editor.commit();
 	}
-	public static long getEndTime(Context activity, SharedPreferences prefs){
+	public static long getEndTime(SharedPreferences prefs){
 		return prefs.getLong("endTime", 0);
 	}
-	public static Date getEndTimeDate(Context activity, SharedPreferences prefs) {
-		return new Date(getEndTime(activity, prefs));
+	public static Date getEndTimeDate(SharedPreferences prefs) {
+		return new Date(getEndTime(prefs));
 	}
 	public static String getEmail(Context activity){
 		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
@@ -94,20 +94,39 @@ public class SavedInfo{
 		editor.commit();
 		
 	}
-	public static String getParkId(Context activity, SharedPreferences prefs) {
+	public static String getParkId(SharedPreferences prefs) {
 	    return prefs.getString("PARKID", "");
 	}
-    public static void unpark(Context activity, SharedPreferences.Editor edit) {
+    public static void unpark(SharedPreferences.Editor edit) {
         edit.putBoolean("parkState", false);
         edit.putString("PARKID", "");
         edit.putLong("endTime", 0);
     }
-    public static void park(Context activity, ParkInstanceObject park) {
+    public static void park(Context activity, ParkInstanceObject park, RateObject rate) {
         SharedPreferences.Editor edit = activity.getSharedPreferences(SAVED_INFO, 0).edit();
         edit.putBoolean("parkState", true);
         edit.putString("PARKID", park.getParkingReferenceNumber());
         edit.putLong("endTime", park.getEndTime());
+        edit.putString("lat", String.valueOf(rate.getLat()));
+        edit.putString("lon", String.valueOf(rate.getLon()));
+        edit.putLong("spot", rate.getSpot());
+        edit.putInt("minTime", rate.getMinTime());
+        edit.putInt("maxTime", rate.getMaxTime());
+        edit.putInt("defaultRate", rate.getDefaultRate());
+        edit.putInt("minIncrement", rate.getMinIncrement());
+        edit.putString("description", rate.getDescription());
         edit.commit();
+    }
+    public static RateObject getRate(SharedPreferences prefs) {
+        final double lat = Double.valueOf(prefs.getString("lat", "0"));
+        final double lon = Double.valueOf(prefs.getString("lon", "0"));
+        final long spot = prefs.getLong("spot", 0);
+        final int minTime = prefs.getInt("minTime", 0);
+        final int maxTime = prefs.getInt("maxTime", 0);
+        final int defaultRate = prefs.getInt("defaultRate", 0);
+        final int minIncrement = prefs.getInt("minIncrement", 0);
+        final String description = prefs.getString("description", "");
+        return new RateObject(lat, lon, spot, minTime, maxTime, defaultRate, minIncrement, description);
     }
 	public static void logIn(Context activity, boolean parkState, String email, long uid, String password){
 		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);

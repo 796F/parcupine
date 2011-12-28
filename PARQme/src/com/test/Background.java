@@ -96,7 +96,7 @@ public class Background extends Service{
 				 if(ServerCalls.unPark(0, parkingReferenceNumber, check)){
 					 
 					((Vibrator)getSystemService(VIBRATOR_SERVICE)).vibrate(500);
-					SavedInfo.unpark(Background.this, check.edit());
+					SavedInfo.unpark(check.edit());
 					
 					//TODO intent below causes crash.  
 //					Intent myIntent = new Intent(Background.this, LoginActivity.class);

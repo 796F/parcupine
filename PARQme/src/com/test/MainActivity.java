@@ -177,36 +177,6 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 
 		final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 
-		/*	ON CREATE
-		 * 	grab string from TIMER
-		 * 	parse it to a date
-		 * 	compare with current time
-		 * 	
-		 *	if time left, 
-		 *		showNext() x2, initiate timer
-		 *	if else
-		 *		set TIMER = "none"
-		 * 
-		 * */
-
-		final long endTime = SavedInfo.getEndTime(this, check);
-		if (endTime != 0) {
-		    final long now = System.currentTimeMillis();
-			int seconds = (int)(endTime - now)/1000;
-			if(seconds>0){
-				vf.showNext();
-				switchToParkedLayout();
-				timer = initiateTimer(endTime, vf);
-				timer.start();
-			}
-		}
-
-		//if parkstate returned from login was true, then go to the refill view.  
-		if(check.getBoolean("parkState", false)){
-			vf.showNext();
-			switchToParkedLayout();
-		}
-
 		final OnFocusChangeListener timeListener = new OnFocusChangeListener() {
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
@@ -328,6 +298,20 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 				minusTime();
 			}
 		});
+
+        final long endTime = SavedInfo.getEndTime(check);
+        final long now = System.currentTimeMillis();
+        if (endTime > now) {
+            int seconds = (int)(endTime - now)/1000;
+            if(seconds>0){
+                rateObj = SavedInfo.getRate(check);
+                switchToParkedLayout();
+                timer = initiateTimer(endTime, vf);
+                timer.start();
+                vf.showNext();
+                return;
+            }
+        }
 
 		switchToParkingLayout();
 
@@ -526,7 +510,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         final SharedPreferences check = getSharedPreferences(SAVED_INFO, 0);
-                        final String parkId = SavedInfo.getParkId(MainActivity.this, check);
+                        final String parkId = SavedInfo.getParkId(check);
                         if (ServerCalls.unPark(111, parkId, check)) {
                             timer.cancel();
                             // stopService(new Intent(MainActivity.this,
@@ -536,7 +520,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
                             totalTimeParked = 0;
 
                             SharedPreferences.Editor editor = check.edit();
-                            SavedInfo.unpark(MainActivity.this, editor);
+                            SavedInfo.unpark(editor);
                             editor.commit();
 
                             switchToParkingLayout();
@@ -557,7 +541,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
                 parkInstance = new ParkInstanceObject(System.currentTimeMillis()+5*60*100, "23:1234567");
             }
             if (parkInstance.getEndTime() > 0) {
-                SavedInfo.park(MainActivity.this, parkInstance);
+                SavedInfo.park(MainActivity.this, parkInstance, rateObj);
                 totalTimeParked += parkingTime;
                 if (totalTimeParked == rateObj.getMaxTime()) {
                     ThrowDialog.show(MainActivity.this, ThrowDialog.MAX_TIME);
@@ -581,18 +565,16 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 		//if we haven't gone past the total time we're allowed to park
 		if (maxTime <= 0 || totalTimeParked+refillMinutes <= maxTime) {
 		    final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
-		    final String parkId = SavedInfo.getParkId(MainActivity.this, check);
+		    final String parkId = SavedInfo.getParkId(check);
 		    final ParkInstanceObject refillResp = ServerCalls.refill(refillMinutes, rateObj, parkId, check);
 			if (refillResp.getEndTime() > 0) {
-			    SavedInfo.park(this, refillResp);
+			    SavedInfo.park(this, refillResp, rateObj);
                 //update the total time parked and remaining time.
                 totalTimeParked += refillMinutes;
                 //stop current timer, start new timer with current time + selectedNumber.
-                final long oldEnd = SavedInfo.getEndTime(this, check);
-                final long newEnd = oldEnd + refillMinutes * 60 * 1000;
                 //calculate new endtime and initiate timer from it.
                 timer.cancel();
-                timer = initiateTimer(newEnd, vf);
+                timer = initiateTimer(refillResp.getEndTime(), vf);
                 //stopService(new Intent(MainActivity.this, Background.class));
                 timer.start();
                 //startService(new Intent(MainActivity.this, Background.class).putExtra("time", remainSeconds));
@@ -695,7 +677,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	 * done via user button clicks, and the background service we run.  */
 	private CountDownTimer initiateTimer(long endTime, final ViewFlipper myvf){
 		//creates the countdown timer
-		long now = System.currentTimeMillis();
+		final long now = System.currentTimeMillis();
 		return new CountDownTimer(endTime - now, 1000){
 			//on each 1 second tick, 
 			@Override
