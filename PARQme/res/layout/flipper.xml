@@ -16,11 +16,12 @@
             <Button
                 android:id="@+id/scanButton"
                 style="ParqButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="192dp"
+                android:layout_height="128dp"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="60dp"
-                android:text="Scan QR Code" />
+                android:layout_marginTop="36dp"
+                android:text="Scan QR Code" 
+                android:textSize="24dp"/>
             <View
                 android:id="@+id/hr"
                 android:layout_width="fill_parent"
@@ -29,7 +30,7 @@
                 android:layout_marginBottom="6dp"
                 android:layout_marginLeft="6dp"
                 android:layout_marginRight="6dp"
-                android:layout_marginTop="60dp"
+                android:layout_marginTop="36dp"
                 android:background="#888" />
             <TextView
                 android:id="@+id/enter_spot_num"
@@ -37,13 +38,15 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/hr"
                 android:layout_marginLeft="6dp"
-                android:text="Enter spot number" />
+                android:text="Enter spot number"
+                android:textColor="#fff" />
             <EditText
                 android:id="@+id/spot_num"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/enter_spot_num"
                 android:layout_centerHorizontal="true"
+                android:layout_marginTop="4dp"
                 android:layout_marginLeft="6dp"
                 android:layout_marginRight="6dp"
                 android:hint="Spot #"
@@ -51,12 +54,11 @@
                 android:singleLine="true" />
             <Button
                 android:id="@+id/submitButton"
-                style="ParqButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/ParqButton"
                 android:layout_alignParentRight="true"
                 android:layout_below="@id/spot_num"
-                android:layout_marginRight="4dp"
+                android:layout_marginTop="6dp"
+                android:layout_marginRight="6dp"
                 android:enabled="false"
                 android:text="PARQ me!" />
         </RelativeLayout>
