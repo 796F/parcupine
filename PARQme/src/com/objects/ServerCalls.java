@@ -107,28 +107,38 @@ public class ServerCalls {
 		return false;
 	}
 	
-	public static int unPark(String qrcode, String email){
+	public static int unPark(long spotid, String parkingReferenceNumber, SharedPreferences prefs){
 		try {
-			String data = URLEncoder.encode("code", "UTF-8") + "=" + URLEncoder.encode(qrcode, "UTF-8");
-			data+= "&"+URLEncoder.encode("email", "UTF-8") + "=" + URLEncoder.encode(email, "UTF-8");
-			// Send data
-			URL url = new URL("http://parqme.com/unpark.php");
-			URLConnection conn = url.openConnection();
-			
+			final HttpURLConnection conn =
+					(HttpURLConnection)
+						new URL(SERVER_HOSTNAME + "/parkservice.park/unpark")
+						.openConnection();
+			conn.setRequestProperty("Accept", "application/json");
+			conn.setRequestProperty("Content-Type", "application/json");
 			conn.setDoOutput(true);
-			OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-			wr.write(data);
-			wr.flush();
-			//write data
-			int bytesRead = 1;
-			byte[] buffer = new byte[1];
-			//prepare buffers
-			BufferedInputStream bufferedInput = new BufferedInputStream(conn.getInputStream());
-			bufferedInput.read(buffer);
-			//read into buffer
-			String x =(new String(buffer, 0,bytesRead));
-			return Integer.parseInt(x);
-		}catch (Exception e){
+			
+			final JsonGenerator jg = JSON_FACTORY.createJsonGenerator(conn.getOutputStream());
+			jg.writeStartObject();
+			jg.writeFieldName("spotId");
+			jg.writeNumber(spotid);
+			jg.writeFieldName("parkingReferenceNumber");
+			jg.writeString(parkingReferenceNumber);
+			writeUserDetails(jg, prefs);
+			jg.writeEndObject();
+			jg.flush();
+			jg.close();
+			if (conn.getResponseCode() == 200) {
+				final JsonParser jp = JSON_FACTORY.createJsonParser(conn
+						.getInputStream());
+				final boolean response = Parsers.parseResponseCode(jp);
+				jp.close();
+				if(response){
+					return 1;
+				}else{
+					return 0;
+				}
+			}
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return -1;

@@ -116,9 +116,11 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	private TextView rate;
 	private TextView userDisplay;
 	private TextView locDisplay;
-	private TextView timeDisplay;
 	private EditText hours;
 	private EditText minutes;
+	private EditText remain_hours;
+	private EditText remain_mins;
+	private EditText remain_secs;
 	private TextView price;
 	private TextView increment;
 	private TextView lotDesc;
@@ -164,7 +166,14 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		final OnKeyListener cancelKeyListener = new OnKeyListener(){
 
+			@Override
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
+				updateDisplay(getParkMins());
+				return true;
+			}
+		};
 		//check for internet on create, do it a lot later too.
 		//use flipper view
 		setContentView(R.layout.flipper);
@@ -179,8 +188,19 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 		rate = (TextView) findViewById(R.id.rate);
 		userDisplay = (TextView) findViewById(R.id.welcomeuser);
 		locDisplay = (TextView) findViewById(R.id.location);
-		timeDisplay = (TextView) findViewById(R.id.timeleftdisplay);
-
+		
+		
+		remain_hours = (EditText) findViewById(R.id.remaining_hours);
+		remain_hours.setOnKeyListener(cancelKeyListener);
+		remain_hours.setInputType(InputType.TYPE_NULL);
+		remain_mins  = (EditText) findViewById(R.id.remaining_minutes);
+		remain_mins.setOnKeyListener(cancelKeyListener);
+		remain_mins.setInputType(InputType.TYPE_NULL);
+		remain_secs  = (EditText) findViewById(R.id.remaining_seconds);
+		remain_secs.setOnKeyListener(cancelKeyListener);
+		remain_secs.setInputType(InputType.TYPE_NULL);
+		
+		
 		price = (TextView) findViewById(R.id.total_price);
 		increment = (TextView) findViewById(R.id.increment);
 		lotDesc = (TextView) findViewById(R.id.lot_description);
@@ -227,27 +247,17 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 			}
 		};
 		
-		final OnKeyListener cancelKeyListener = new OnKeyListener(){
-
-			@Override
-			public boolean onKey(View v, int keyCode, KeyEvent event) {
-				updateDisplay(getParkMins());
-				return true;
-			}
-		};
+		
 
 		hours = (EditText) findViewById(R.id.hours);
 		hours.setInputType(InputType.TYPE_NULL);
 		hours.setOnFocusChangeListener(timeListener);
-		hours.setCursorVisible(false);
-		
 		hours.setOnKeyListener(cancelKeyListener);
 
 		minutes = (EditText) findViewById(R.id.mins);
 		minutes.setInputType(InputType.TYPE_NULL);
 		minutes.setOnFocusChangeListener(timeListener);
-		minutes.setCursorVisible(false);
-		minutes.setOnKeyListener(cancelKeyListener);
+		//minutes.setOnKeyListener(cancelKeyListener);
 		
 		//initialize buttons and set actions
 		submitButton = (Button) findViewById(R.id.submitButton);
@@ -349,13 +359,13 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 				final int parkingTime = getParkMins();
 				ParkInstanceObject parkInstance = ServerCalls.park(mySpot.getSpot(), parkingTime, prefs);
 				if (parkInstance == null || parkInstance.getEndTime() == 0) {
-					parkInstance = new ParkInstanceObject(0,System.currentTimeMillis()+5*60*1000);
+					//parkInstance = new ParkInstanceObject(0,System.currentTimeMillis()+5*60*1000);
 				}
 				if(parkInstance != null){
 					//Toast.makeText(MainActivity.this, ""+ServerCalls.addHistory(parkDate, starttime, endtime, contents, email, parkCost), Toast.LENGTH_SHORT).show();
 					final long endTime = parkInstance.getEndTime();
 					SharedPreferences.Editor edit = prefs.edit();
-					edit.putString("PARKID", String.valueOf(parkInstance.getParkInstanceId()));
+					edit.putString("PARKID", parkInstance.getParkingReferenceNumber());
 					SavedInfo.setEndTime(MainActivity.this, edit, endTime);
 					//			ServerCalls.addHistory(parkDate, starttime, endtime, contents, email, parkCost);
 					//return a happy response
@@ -382,8 +392,8 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 					edit.commit();
 
 					//display where user is parked and who they are
-					userDisplay.setText("Welcome " + prefs.getString("fname", "")); 
-					locDisplay.setText("You are parked at\n" + mySpot.getDescription()+"\nAt spot # " + mySpot.getSpot());
+					//userDisplay.setText("Welcome " + prefs.getString("fname", "")); 
+					//locDisplay.setText("You are parked at\n" + mySpot.getDescription()+"\nAt spot # " + mySpot.getSpot());
 
 
 				}else{
@@ -421,7 +431,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 							SavedInfo.setEndTime(MainActivity.this, editor, 0);
 							editor.commit();
 						}else{
-							Toast.makeText(MainActivity.this, unparkResult, Toast.LENGTH_LONG);
+							//Toast.makeText(MainActivity.this, unparkResult, Toast.LENGTH_LONG);
 						}
 					}
 				})
@@ -578,15 +588,15 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	private int unpark(){
 		//grab the qr code and user email from saved info
 		SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
-		String qrcode = check.getString("code", "badcode");
-		String email = check.getString("email", "bademail");
+		
+		String parkingReferenceNumber = check.getString("PARKID", "");
 		//use them to unpark the user serverside
-
-		if (ServerCalls.unPark(qrcode, email)==1){
+		//spotid isn't used, but 0 doens't work, so use 111
+		if (ServerCalls.unPark(111, parkingReferenceNumber, check)==1){
 			try{
 				//stop the countdown timer and service
 				timer.cancel();
-				stopService(new Intent(MainActivity.this, Background.class));
+				//stopService(new Intent(MainActivity.this, Background.class));
 				//return happy
 				return 1;
 			}catch (Exception e){
@@ -761,7 +771,9 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 				}
 				//update remain seconds and timer.
 				remainSeconds = seconds;
-				timeDisplay.setText(formatMe(seconds));
+				remain_secs.setText(""+remainSeconds%60);
+				remain_hours.setText(""+remainSeconds/360);
+				remain_hours.setText(""+(remainSeconds%360 - remainSeconds%60));
 			}
 			//on last tick,
 			//TODO calling alert.cancel() or throwdialog when app isn't in forefront may cause crash?

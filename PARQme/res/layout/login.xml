@@ -10,7 +10,7 @@
 		style="@style/FormLabel"/>
 	<EditText
 		android:id="@+id/emailForm"
-		android:text="miguel@parqme.com"
+		android:text="xia.umd@gmail.com"
 		android:inputType="textEmailAddress"
 		style="@style/FormField"/>
 	<TextView

@@ -92,9 +92,8 @@ public class Background extends Service{
 			@Override
 			public void run() {
 				
-				 String qrcode = check.getString("code", "badcode");
-				 String email = check.getString("email", "bademail");
-				 if(ServerCalls.unPark(qrcode, email)==1){
+				 String parkingReferenceNumber = "";
+				 if(ServerCalls.unPark(0, parkingReferenceNumber, check)==1){
 					 
 					((Vibrator)getSystemService(VIBRATOR_SERVICE)).vibrate(500);
 					SavedInfo.togglePark(Background.this);

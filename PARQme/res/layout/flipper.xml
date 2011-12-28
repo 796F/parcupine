@@ -1,215 +1,394 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ViewFlipper
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ViewFlipper xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/flipper"
-    android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
     <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:fillViewport="true">
+        android:fillViewport="true" >
+
         <RelativeLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/view1"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/view1">
+            android:layout_height="match_parent" >
+
             <Button
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
                 android:id="@+id/scanButton"
-                android:text="Scan QR Code"
-                android:layout_marginTop="60dp"
+                style="ParqButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                style="ParqButton" />
+                android:layout_marginTop="60dp"
+                android:text="Scan QR Code" />
+
             <View
                 android:id="@+id/hr"
                 android:layout_width="fill_parent"
                 android:layout_height="1dp"
-                android:background="#ff888888"
+                android:layout_below="@id/scanButton"
+                android:layout_marginBottom="6dp"
                 android:layout_marginLeft="6dp"
                 android:layout_marginRight="6dp"
                 android:layout_marginTop="60dp"
-                android:layout_marginBottom="6dp"
-                android:layout_below="@id/scanButton" />
+                android:background="#ff888888" />
+
             <TextView
                 android:id="@+id/enter_spot_num"
-                android:text="Enter spot number"
-                android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/hr"
                 android:layout_marginLeft="6dp"
-                android:layout_below="@id/hr" />
+                android:text="Enter spot number" />
+
             <EditText
                 android:id="@+id/spot_num"
-                android:layout_height="wrap_content"
                 android:layout_width="fill_parent"
-                android:singleLine="true"
-                android:inputType="number"
-                android:hint="Spot #"
+                android:layout_height="wrap_content"
                 android:layout_below="@id/enter_spot_num"
+                android:layout_centerHorizontal="true"
                 android:layout_marginLeft="6dp"
                 android:layout_marginRight="6dp"
-                android:layout_centerHorizontal="true" />
+                android:hint="Spot #"
+                android:inputType="number"
+                android:singleLine="true" />
+
             <Button
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
                 android:id="@+id/submitButton"
-                android:text="PARQ me!"
-                android:layout_below="@id/spot_num"
+                style="ParqButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
+                android:layout_below="@id/spot_num"
                 android:layout_marginRight="4dp"
                 android:enabled="false"
-                style="ParqButton" />
+                android:text="PARQ me!" />
         </RelativeLayout>
     </ScrollView>
+
     <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:fillViewport="true">
+        android:fillViewport="true" >
+
         <RelativeLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent" >
+
             <View
                 android:id="@+id/banner_back"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="#ff47585E"
+                android:layout_alignBottom="@+id/lot_description"
                 android:layout_alignTop="@+id/lot_description"
-                android:layout_alignBottom="@id/lot_description" />
+                android:background="#ff47585E" />
+
             <TextView
                 android:id="@id/lot_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="14dp"
-                android:textColor="#fff" />
+                android:textColor="#fff"
+                android:textSize="14dp" />
+
             <TextView
                 android:id="@+id/spot"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="14dp"
                 android:layout_alignParentRight="true"
                 android:layout_alignTop="@id/lot_description"
-                android:textColor="#fff" />
+                android:textColor="#fff"
+                android:textSize="14dp" />
+
             <TextView
                 android:id="@+id/rate_header"
-                android:text="Rates"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="22dp"
-                android:layout_below="@id/lot_description" />
+                android:layout_below="@id/lot_description"
+                android:text="Rates"
+                android:textSize="22dp" />
+
             <TextView
                 android:id="@+id/rate"
-                android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:textSize="18dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/rate_header"
                 android:layout_marginLeft="18dp"
-                android:layout_below="@id/rate_header" />
+                android:textSize="18dp" />
+
             <View
                 android:id="@+id/hr1"
                 android:layout_width="fill_parent"
                 android:layout_height="1dp"
-                android:background="#ff888888"
+                android:layout_below="@id/rate"
                 android:layout_marginTop="6dp"
-                android:layout_below="@id/rate" />
+                android:background="#ff888888" />
+
             <TextView
                 android:id="@+id/parking_meter"
-                android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:textSize="22dp"
-                android:text="Parking Meter"
+                android:layout_height="wrap_content"
                 android:layout_below="@id/hr1"
                 android:layout_marginBottom="3dp"
-                android:textColor="#fff" />
+                android:text="Parking Meter"
+                android:textColor="#fff"
+                android:textSize="22dp" />
+
             <TextView
                 android:id="@+id/colon"
-                android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:textSize="48dp"
-                android:text=":"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/parking_meter"
                 android:layout_centerHorizontal="true"
-                android:layout_below="@id/parking_meter" />
+                android:text=":"
+                android:textSize="48dp" />
+
             <EditText
                 android:id="@+id/hours"
-                android:layout_height="72dp"
                 android:layout_width="72dp"
-                android:textSize="48dp"
-                android:layout_toLeftOf="@id/colon"
+                android:layout_height="72dp"
                 android:layout_below="@id/parking_meter"
+                android:layout_toLeftOf="@id/colon"
                 android:gravity="right"
                 android:inputType="number"
-                android:text="0" />
+                android:text="0"
+                android:textSize="48dp" />
+
             <EditText
                 android:id="@+id/mins"
-                android:layout_height="72dp"
                 android:layout_width="72dp"
-                android:textSize="48dp"
+                android:layout_height="72dp"
+                android:layout_below="@id/parking_meter"
                 android:layout_marginRight="6dp"
                 android:layout_toRightOf="@id/colon"
-                android:layout_below="@id/parking_meter"
                 android:gravity="right"
                 android:inputType="number"
-                android:text="0" />
+                android:text="0"
+                android:textSize="48dp" />
+
             <Button
                 android:id="@+id/plus"
-                android:layout_height="36dp"
                 android:layout_width="72dp"
-                android:textSize="18dp"
-                android:layout_toRightOf="@id/mins"
+                android:layout_height="36dp"
                 android:layout_alignTop="@id/mins"
-                android:text="+" />
+                android:layout_toRightOf="@id/mins"
+                android:text="+"
+                android:textSize="18dp" />
+
             <Button
                 android:id="@+id/minus"
-                android:layout_height="36dp"
                 android:layout_width="72dp"
-                android:textSize="18dp"
-                android:layout_toRightOf="@id/mins"
+                android:layout_height="36dp"
                 android:layout_alignBottom="@id/mins"
-                android:text="-" />
+                android:layout_toRightOf="@id/mins"
+                android:text="-"
+                android:textSize="18dp" />
+
             <TextView
                 android:id="@+id/increment"
-                android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:textSize="10dp"
+                android:layout_height="wrap_content"
                 android:layout_below="@id/hours"
-                android:textColor="#fff" />
+                android:textColor="#fff"
+                android:textSize="10dp" />
+
             <View
                 android:id="@+id/hr2"
                 android:layout_width="fill_parent"
                 android:layout_height="1dp"
-                android:background="#ff888888"
+                android:layout_below="@id/increment"
                 android:layout_marginTop="6dp"
-                android:layout_below="@id/increment" />
+                android:background="#ff888888" />
+
             <TextView
                 android:id="@+id/total"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="18dp"
                 android:layout_below="@id/hr2"
+                android:text="Total"
                 android:textColor="#fff"
-                android:text="Total" />
+                android:textSize="18dp" />
+
             <TextView
                 android:id="@+id/total_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="28dp"
-                android:layout_below="@id/hr2"
                 android:layout_alignParentRight="true"
-                android:textColor="#fff" />
+                android:layout_below="@id/hr2"
+                android:textColor="#fff"
+                android:textSize="28dp" />
+
             <Button
                 android:id="@+id/parkbutton"
-                android:text="PARQ Me"
-                android:layout_below="@id/total_price"
+                style="@style/ParqButton"
                 android:layout_alignParentRight="true"
-                style="@style/ParqButton"/>
+                android:layout_below="@id/total_price"
+                android:text="PARQ Me" />
+
             <Button
                 android:id="@+id/cancel"
-                android:text="Cancel"
-                android:layout_below="@id/parkbutton"
+                style="@style/ParqButton"
                 android:layout_alignParentRight="true"
-                style="@style/ParqButton" />
+                android:layout_below="@id/parkbutton"
+                android:text="Cancel" />
         </RelativeLayout>
     </ScrollView>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <View
+            android:id="@+id/another_banner_back"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/another_lot_description"
+            android:layout_alignTop="@+id/another_lot_description"
+            android:background="#ff47585E" />
+
+        <TextView
+            android:id="@+id/another_lot_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="main_lot"
+            android:textColor="#fff"
+            android:textSize="14dp" />
+
+        <TextView
+            android:id="@+id/another_spot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/another_lot_description"
+            android:text="Spot#1412"
+            android:textColor="#fff"
+            android:textSize="14dp" />
+
+        <View
+            android:id="@+id/hr2"
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="20dp"
+            android:background="#ff888888" />
+
+        <EditText
+            android:id="@+id/remaining_minutes"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:layout_above="@+id/hr2"
+            android:layout_centerHorizontal="true"
+            android:gravity="right"
+            android:inputType="number"
+            android:text="0"
+            android:textSize="48dp" />
+
+        <TextView
+            android:id="@+id/leftcolon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/remaining_minutes"
+            android:layout_toLeftOf="@+id/remaining_minutes"
+            android:text=":"
+            android:textSize="48dp" />
+
+        <EditText
+            android:id="@+id/remaining_hours"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:layout_above="@+id/hr2"
+            android:layout_toLeftOf="@+id/leftcolon"
+            android:gravity="right"
+            android:inputType="number"
+            android:text="0"
+            android:textSize="48dp" >
+
+            <requestFocus />
+        </EditText>
+
+        <TextView
+            android:id="@+id/rightcolon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/remaining_minutes"
+            android:layout_toRightOf="@+id/remaining_minutes"
+            android:text=":"
+            android:textSize="48dp" />
+
+        <EditText
+            android:id="@+id/remaining_seconds"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:layout_alignTop="@+id/rightcolon"
+            android:layout_toRightOf="@+id/rightcolon"
+            android:gravity="right"
+            android:inputType="number"
+            android:text="0"
+            android:textSize="48dp" />
+
+        <TextView
+            android:id="@+id/parking_meter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/remaining_minutes"
+            android:layout_alignParentLeft="true"
+            android:layout_marginBottom="32dp"
+            android:text="Time Remaining"
+            android:textColor="#fff"
+            android:textSize="22dp" />
+
+        <View
+            android:id="@+id/hr1"
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:layout_above="@+id/parking_meter"
+            android:layout_alignParentLeft="true"
+            android:background="#ff888888" />
+
+        <Button
+            android:id="@+id/refillbutton"
+            style="@style/ParqButton"
+            android:layout_below="@+id/hr2"
+            android:layout_marginTop="58dp"
+            android:layout_toRightOf="@+id/remaining_minutes"
+            android:text="Refill" />
+
+        <Button
+            android:id="@+id/unparqbutton"
+            style="@style/ParqButton"
+            android:layout_alignBaseline="@+id/refillbutton"
+            android:layout_alignBottom="@+id/refillbutton"
+            android:layout_alignRight="@+id/leftcolon"
+            android:text="Unpark" />
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="20dp"
+            android:text="Rates"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/textView1"
+            android:layout_marginLeft="20dp"
+            android:layout_toLeftOf="@+id/spot"
+            android:text="Large Text"
+            android:layout_marginBottom="5dp"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+    </RelativeLayout>
+
+    <!--
     <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical"
@@ -273,4 +452,6 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="46dp"></TextView>
     </RelativeLayout>
+    -->
+
 </ViewFlipper>

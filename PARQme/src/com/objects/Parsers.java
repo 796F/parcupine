@@ -120,6 +120,8 @@ public class Parsers {
 			if (t == JsonToken.VALUE_STRING) {
 				curr = jp.getCurrentName();
 				if (PARAM_RESP_CODE.equals(curr)) {
+					String test = jp.getText();
+					String jj = RESP_CODE_OK;
 					return RESP_CODE_OK.equals(jp.getText());
 				}
 			}
@@ -133,21 +135,27 @@ public class Parsers {
 
 		long parkReference = 0;
 		long endTime = 0;
-
+		String parkingReferenceNumber = "";
+		
 		JsonToken t = jp.nextToken();
 		String curr;
 		while (t != null && t != JsonToken.END_OBJECT) {
 			curr = jp.getCurrentName();
 			if (t == JsonToken.VALUE_NUMBER_INT) {
-				if (PARAM_PARK_REFERENCE.equals(curr)) {
-					parkReference = jp.getLongValue();
-				} else if (PARAM_END_TIME.equals(curr)) {
+				if (PARAM_END_TIME.equals(curr)) {
 					endTime = jp.getLongValue();
+				}
+				
+			}
+			if(t == JsonToken.VALUE_STRING){
+				if (PARAM_PARK_REFERENCE.equals(curr)) {
+					parkingReferenceNumber = jp.getText();
 				}
 			}
 			t = jp.nextToken();
 		}
-		return new ParkInstanceObject(parkReference, endTime);
+		//CHANGED because apparently dao doesn't use the long, it uses the reference to unparq.  
+		return new ParkInstanceObject(0, endTime, parkingReferenceNumber);
 	}
 	
 	public static RateResponse parseRateResponse(JsonParser jp) throws IOException {
