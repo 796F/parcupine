@@ -251,17 +251,13 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 			}
 		};
 		
-		
-
 		hours = (EditText) findViewById(R.id.hours);
 		hours.setInputType(InputType.TYPE_NULL);
 		hours.setOnFocusChangeListener(timeListener);
-		hours.setOnKeyListener(cancelKeyListener);
 
 		minutes = (EditText) findViewById(R.id.mins);
 		minutes.setInputType(InputType.TYPE_NULL);
 		minutes.setOnFocusChangeListener(timeListener);
-		//minutes.setOnKeyListener(cancelKeyListener);
 		
 		//initialize buttons and set actions
 		submitButton = (Button) findViewById(R.id.submitButton);
