@@ -537,9 +537,6 @@ public class MainActivity extends ActivityGroup implements LocationListener {
         final int parkingTime = getParkMins();
         ParkInstanceObject parkInstance = ServerCalls.park(parkingTime, rateObj, prefs);
         if(parkInstance != null){
-            if (parkInstance.getEndTime() <= 0) {
-                parkInstance = new ParkInstanceObject(System.currentTimeMillis()+5*60*100, "23:1234567");
-            }
             if (parkInstance.getEndTime() > 0) {
                 SavedInfo.park(MainActivity.this, parkInstance, rateObj);
                 totalTimeParked += parkingTime;
