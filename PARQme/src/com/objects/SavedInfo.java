@@ -207,22 +207,4 @@ public class SavedInfo{
 		}
 		editor.commit();
 	}
-	private static final SavedInfo INSTANCE = new SavedInfo();
-	private RateObject currentSpot;
-	private SavedInfo() { }
-	public static SavedInfo getInstance() {
-		return INSTANCE;
-	}
-	/**
-	 * @return the currentSpot
-	 */
-	public RateObject getSpot() {
-		return currentSpot;
-	}
-	/**
-	 * @param currentSpot the currentSpot to set
-	 */
-	public void setSpot(RateObject currentSpot) {
-		this.currentSpot = currentSpot;
-	}
 }

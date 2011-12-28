@@ -7,10 +7,6 @@
 
 package com.test;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import android.app.ActivityGroup;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -25,11 +21,9 @@ import android.os.CountDownTimer;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
-import android.view.View.OnKeyListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -43,7 +37,6 @@ import com.objects.RateResponse;
 import com.objects.SavedInfo;
 import com.objects.ServerCalls;
 import com.objects.ThrowDialog;
-import com.quietlycoding.android.picker.NumberPicker;
 import com.quietlycoding.android.picker.NumberPickerDialog;
 
 /**
@@ -114,7 +107,6 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	private EditText minutes;
 	private TextView remain_hours;
 	private TextView remain_mins;
-//	private EditText remain_secs;
 	private TextView colon;
 	private TextView price;
 	private TextView increment;
@@ -133,32 +125,27 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	private Button minusButton;
 
 	/*ints used by calculations*/
-	private static final int WARN_TIME = 30; //in seconds
 	private int totalTimeParked = 0; //in minutes
 
 	/*various Objects used declared here*/
-	private RateObject mySpot;
-	private static RateResponse myRateResponse;
+	private RateObject rateObj;
+	private RateResponse rateResponse;
 	private CountDownTimer timer;
-	public static ViewFlipper vf;
+	public ViewFlipper vf;
 	private AlertDialog alert;
 	/*final variables*/
 	public static final String SAVED_INFO = "ParqMeInfo";
-
-	private SavedInfo savedInfo;
+    private static final int WARN_TIME = 30; //in seconds
+    private static final float LOCATION_ACCURACY = 20f;
 
 	private LocationManager locationManager;
 	private Location lastLocation;
-	private static final float LOCATION_ACCURACY = 20f;
 	private boolean goodLocation = false;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.flipper);
-
-		savedInfo = SavedInfo.getInstance();
-		mySpot = savedInfo.getSpot();
 
 		//Create refill dialog which has special components
 		alert = makeRefillDialog();
@@ -180,7 +167,6 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 		priceHeader = (TextView) findViewById(R.id.price_header);
 		vf = (ViewFlipper) findViewById(R.id.flipper);
 
-		//		parkTimePicker = (NumberPicker) findViewById(R.id.parktimepicker);
 		final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 
 		/*	ON CREATE
@@ -247,13 +233,12 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 					lat = lastLocation.getLatitude();
 					lon = lastLocation.getLongitude();
 				}
-				myRateResponse = ServerCalls.getRateGps(contents, lat, lon, check);
-				if(myRateResponse!=null){
-					mySpot = myRateResponse.getRateObject();
+				rateResponse = ServerCalls.getRateGps(contents, lat, lon, check);
+				if(rateResponse!=null){
+					rateObj = rateResponse.getRateObject();
 
 					// if we get the object successfully
-					if (myRateResponse.getResp().equals("OK")) {
-						savedInfo.setSpot(mySpot);
+					if (rateResponse.getResp().equals("OK")) {
 						vf.showNext();
 						// prepare time picker for this spot
 						//					parkTimePicker.setRange(mySpot.getMinIncrement(),
@@ -261,19 +246,19 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 						//					parkTimePicker.setMinInc(mySpot.getMinIncrement());
 
 						// initialize all variables to match spot
-						final int minimalIncrement = mySpot.getMinIncrement();
+						final int minimalIncrement = rateObj.getMinIncrement();
 
-						rate.setText(formatCents(mySpot.getDefaultRate()) + " per " + minimalIncrement + " minutes");
-						lotDesc.setText(mySpot.getDescription());
+						rate.setText(formatCents(rateObj.getDefaultRate()) + " per " + minimalIncrement + " minutes");
+						lotDesc.setText(rateObj.getDescription());
 						spot.setText("Spot #" + contents);
-						if (mySpot.getMinIncrement() != 0) {
-							increment.setText(mySpot.getMinIncrement() + " minute increments");
+						if (rateObj.getMinIncrement() != 0) {
+							increment.setText(rateObj.getMinIncrement() + " minute increments");
 						}
 						// store some used info
 						SharedPreferences.Editor editor = check.edit();
 						editor.putString("code", contents);
-						editor.putFloat("lat", (float) mySpot.getLat());
-						editor.putFloat("lon", (float) mySpot.getLon());
+						editor.putFloat("lat", (float) rateObj.getLat());
+						editor.putFloat("lon", (float) rateObj.getLon());
 						editor.commit();
 						updateDisplay(minimalIncrement);
 					} else {
@@ -355,13 +340,13 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 			m = 0;
 		}
 		int time = h*60+m;
-		time -= time % mySpot.getMinIncrement();
+		time -= time % rateObj.getMinIncrement();
 		return time;
 	}
 
 	private void plusTime() {
-	    final int maxTime = mySpot.getMaxTime();
-	    final int minIncrement = mySpot.getMinIncrement();
+	    final int maxTime = rateObj.getMaxTime();
+	    final int minIncrement = rateObj.getMinIncrement();
 		if (hours.hasFocus()) {
 			if (maxTime > 0) {
 			    updateDisplay(Math.min(maxTime, getParkMins()+60));
@@ -378,7 +363,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	}
 
 	private void minusTime() {
-	    final int minIncrement = mySpot.getMinIncrement();
+	    final int minIncrement = rateObj.getMinIncrement();
 		if (hours.hasFocus()) {
 			//update the parking minutes and seconds
 			updateDisplay(Math.max(minIncrement, getParkMins()-60));
@@ -402,7 +387,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	    leftButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                myRateResponse = null;
+                rateResponse = null;
                 totalTimeParked = 0;
                 //return to previous view
                 vf.showPrevious();
@@ -438,11 +423,11 @@ public class MainActivity extends ActivityGroup implements LocationListener {
         rightButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                final int maxTime = mySpot.getMaxTime();
+                final int maxTime = rateObj.getMaxTime();
                 if(maxTime <= 0 || totalTimeParked<maxTime){
                     NumberPickerDialog y = new NumberPickerDialog(MainActivity.this, 0,0);
-                    y.setRange(mySpot.getMinIncrement(), mySpot.getMaxTime()-totalTimeParked);
-                    y.setMinInc(mySpot.getMinIncrement());
+                    y.setRange(rateObj.getMinIncrement(), rateObj.getMaxTime()-totalTimeParked);
+                    y.setMinInc(rateObj.getMinIncrement());
                     y.setOnNumberSetListener(mRefillListener);
                     y.show();
                 }else{
@@ -477,7 +462,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 		.setPositiveButton("Refill", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int id) {
-			    final int maxTime = mySpot.getMaxTime();
+			    final int maxTime = rateObj.getMaxTime();
 				if(totalTimeParked<maxTime)
 					refillMe(1);
 				//refillMe(minimalIncrement);
@@ -526,12 +511,12 @@ public class MainActivity extends ActivityGroup implements LocationListener {
     private void park() {
         final SharedPreferences prefs = getSharedPreferences(SAVED_INFO, 0);
         final int parkingTime = getParkMins();
-        ParkInstanceObject parkInstance = ServerCalls.park(mySpot.getSpot(), parkingTime, prefs);
+        ParkInstanceObject parkInstance = ServerCalls.park(parkingTime, rateObj, prefs);
         if(parkInstance != null){
             if (parkInstance.getEndTime() > 0) {
                 SavedInfo.park(MainActivity.this, parkInstance);
                 totalTimeParked += parkingTime;
-                if (totalTimeParked == mySpot.getMaxTime()) {
+                if (totalTimeParked == rateObj.getMaxTime()) {
                     ThrowDialog.show(MainActivity.this, ThrowDialog.MAX_TIME);
                 }
                 switchToParkedLayout();
@@ -549,7 +534,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
     }
 
 	private void refillMe(int refillMinutes){
-	    final int maxTime = mySpot.getMaxTime();
+	    final int maxTime = rateObj.getMaxTime();
 		//if we haven't gone past the total time we're allowed to park
 		if(totalTimeParked+refillMinutes<=maxTime){
 
@@ -584,7 +569,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 			new NumberPickerDialog.OnNumberSetListener() {
 		@Override
 		public void onNumberSet(int selectedNumber) {
-			if(selectedNumber>=mySpot.getMinIncrement())
+			if(selectedNumber>=rateObj.getMinIncrement())
 				//TODO testing delete me
 				refillMe(1);
 			//refillMe(selectedNumber);
@@ -602,32 +587,31 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 			if (contents != null) {
 				SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 				//contents contains string "parqme.com/p/c36/p123456" or w/e...
-				myRateResponse = ServerCalls.getRateQr(contents, check);
-				if(myRateResponse!=null){
-					mySpot = myRateResponse.getRateObject();
+				rateResponse = ServerCalls.getRateQr(contents, check);
+				if(rateResponse!=null){
+					rateObj = rateResponse.getRateObject();
 					
 					//if we get the object successfully
-					if(myRateResponse.getResp().equals("OK")){
-						savedInfo.setSpot(mySpot);
+					if(rateResponse.getResp().equals("OK")){
 						vf.showNext();
 						// prepare time picker for this spot
 						//					parkTimePicker.setRange(mySpot.getMinIncrement(),
 						//							mySpot.getMaxTime());
 						//					parkTimePicker.setMinInc(mySpot.getMinIncrement());
 
-						final int minIncrement = mySpot.getMinIncrement();
+						final int minIncrement = rateObj.getMinIncrement();
 						String [] test = contents.split("/");
-						rate.setText(formatCents(mySpot.getDefaultRate()) + " per " + minIncrement + " minutes");
-						lotDesc.setText(mySpot.getDescription());
+						rate.setText(formatCents(rateObj.getDefaultRate()) + " per " + minIncrement + " minutes");
+						lotDesc.setText(rateObj.getDescription());
 						spot.setText("Spot #" + test[2]);
-						if (mySpot.getMinIncrement() != 0) {
-							increment.setText(mySpot.getMinIncrement() + " minute increments");
+						if (rateObj.getMinIncrement() != 0) {
+							increment.setText(rateObj.getMinIncrement() + " minute increments");
 						}
 						// store some used info
 						SharedPreferences.Editor editor = check.edit();
 						editor.putString("code", contents);
-						editor.putFloat("lat", (float) mySpot.getLat());
-						editor.putFloat("lon", (float) mySpot.getLon());
+						editor.putFloat("lat", (float) rateObj.getLat());
+						editor.putFloat("lon", (float) rateObj.getLon());
 						editor.commit();
 						updateDisplay(minIncrement);
 					}else{
@@ -642,23 +626,22 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 				contents = "parqme.com/main_lot/1412";
 				SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 				//contents contains string "parqme.com/p/c36/p123456" or w/e...
-				myRateResponse = ServerCalls.getRateQr(contents, check);
-				if(myRateResponse!=null){
-					mySpot = myRateResponse.getRateObject();
+				rateResponse = ServerCalls.getRateQr(contents, check);
+				if(rateResponse!=null){
+					rateObj = rateResponse.getRateObject();
 					
 					//if we get the object successfully
-					if(myRateResponse.getResp().equals("OK")){
-						savedInfo.setSpot(mySpot);
+					if(rateResponse.getResp().equals("OK")){
 						vf.showNext();
 						// prepare time picker for this spot
 						//					parkTimePicker.setRange(mySpot.getMinIncrement(),
 						//							mySpot.getMaxTime());
 						//					parkTimePicker.setMinInc(mySpot.getMinIncrement());
 
-						final int minIncrement = mySpot.getMinIncrement();
+						final int minIncrement = rateObj.getMinIncrement();
 						String [] test = contents.split("/");
-						rate.setText(formatCents(mySpot.getDefaultRate()) + " per " + minIncrement + " minutes");
-						lotDesc.setText(mySpot.getDescription());
+						rate.setText(formatCents(rateObj.getDefaultRate()) + " per " + minIncrement + " minutes");
+						lotDesc.setText(rateObj.getDescription());
 						spot.setText("Spot #" + test[2]);
 						if (minIncrement != 0) {
 							increment.setText(minIncrement + " minute increments");
@@ -666,8 +649,8 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 						// store some used info
 						SharedPreferences.Editor editor = check.edit();
 						editor.putString("code", contents);
-						editor.putFloat("lat", (float) mySpot.getLat());
-						editor.putFloat("lon", (float) mySpot.getLon());
+						editor.putFloat("lat", (float) rateObj.getLat());
+						editor.putFloat("lon", (float) rateObj.getLon());
 						editor.commit();
 						updateDisplay(minIncrement);
 					}else{
@@ -727,7 +710,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	}
 
 	//converts cents to "$ x.xx"
-	private String formatCents(int m) {
+	private static String formatCents(int m) {
 		final String dollars = String.valueOf(m / 100);
 		String cents = String.valueOf(m % 100);
 		if (m % 100 < 10) {
@@ -743,7 +726,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	private void updateDisplay(int time) {
 		hours.setText(String.valueOf(time/60));
 		minutes.setText(String.valueOf(time%60));
-		price.setText(formatCents(getCostInCents(time, mySpot)));
+		price.setText(formatCents(getCostInCents(time, rateObj)));
 	}
 
 	private void flashColon() {

@@ -211,7 +211,7 @@ public class ServerCalls {
 		return null;
 	}
 
-	public static ParkInstanceObject park(long spotid, long duration, SharedPreferences prefs){
+	public static ParkInstanceObject park(long duration, RateObject spot, SharedPreferences prefs){
 		try {
 			final HttpURLConnection conn =
 					(HttpURLConnection)
@@ -220,11 +220,10 @@ public class ServerCalls {
 			conn.setRequestProperty("Accept", "application/json");
 			conn.setRequestProperty("Content-Type", "application/json");
 			conn.setDoOutput(true);
-			final RateObject spot = SavedInfo.getInstance().getSpot();
 			final JsonGenerator jg = JSON_FACTORY.createJsonGenerator(conn.getOutputStream());
 			jg.writeStartObject();
 			jg.writeFieldName("spotId");
-			jg.writeNumber(spotid);
+			jg.writeNumber(spot.getSpot());
 			jg.writeFieldName("durationMinutes");
 			jg.writeNumber(duration);
 			jg.writeFieldName("chargeAmount");
