@@ -26,6 +26,7 @@ import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
@@ -37,7 +38,6 @@ import com.objects.RateResponse;
 import com.objects.SavedInfo;
 import com.objects.ServerCalls;
 import com.objects.ThrowDialog;
-import com.quietlycoding.android.picker.NumberPickerDialog;
 
 /**
  * connection ready display, ping server.  
@@ -105,8 +105,8 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	private TextView rate;
 	private EditText hours;
 	private EditText minutes;
-	private TextView remain_hours;
-	private TextView remain_mins;
+	private TextView remainHours;
+	private TextView remainMins;
 	private TextView colon;
 	private TextView price;
 	private TextView increment;
@@ -114,6 +114,11 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	private TextView spot;
 	private TextView timeHeader;
 	private TextView priceHeader;
+
+	private RelativeLayout smallTime;
+	private TextView smallColon;
+	private TextView smallHours;
+	private TextView smallMins;
 
 	/*Buttons declared here*/
 	private EditText spotNum;
@@ -154,10 +159,13 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 		rate = (TextView) findViewById(R.id.rate);
 		colon = (TextView) findViewById(R.id.colon);
 
-		remain_hours = (TextView) findViewById(R.id.hours_remaining);
-		remain_hours.setInputType(InputType.TYPE_NULL);
-		remain_mins  = (TextView) findViewById(R.id.mins_remaining);
-		remain_mins.setInputType(InputType.TYPE_NULL);
+		remainHours = (TextView) findViewById(R.id.hours_remaining);
+		remainMins  = (TextView) findViewById(R.id.mins_remaining);
+
+        smallTime = (RelativeLayout) findViewById(R.id.small_time);
+        smallColon = (TextView) findViewById(R.id.small_colon);
+        smallHours = (TextView) findViewById(R.id.small_hours);
+        smallMins = (TextView) findViewById(R.id.small_mins);
 		
 		price = (TextView) findViewById(R.id.total_price);
 		increment = (TextView) findViewById(R.id.increment);
@@ -373,11 +381,15 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	}
 
 	private void switchToParkingLayout() {
-	    remain_hours.setVisibility(View.GONE);
-	    remain_mins.setVisibility(View.GONE);
+	    remainHours.setVisibility(View.GONE);
+	    remainMins.setVisibility(View.GONE);
+	    smallTime.setVisibility(View.GONE);
 	    hours.setVisibility(View.VISIBLE);
+	    hours.setText("0");
 	    minutes.setVisibility(View.VISIBLE);
+        minutes.setText("0");
 	    minusButton.setVisibility(View.VISIBLE);
+	    colon.setVisibility(View.VISIBLE);
 	    plusButton.setVisibility(View.VISIBLE);
 	    priceHeader.setVisibility(View.VISIBLE);
 	    price.setVisibility(View.VISIBLE);
@@ -405,12 +417,14 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	private void switchToParkedLayout() {
 	    hours.setVisibility(View.GONE);
 	    minutes.setVisibility(View.GONE);
+	    colon.setVisibility(View.GONE);
 	    minusButton.setVisibility(View.GONE);
 	    plusButton.setVisibility(View.GONE);
+	    smallTime.setVisibility(View.GONE);
 	    priceHeader.setVisibility(View.INVISIBLE);
 	    price.setVisibility(View.INVISIBLE);
-	    remain_hours.setVisibility(View.VISIBLE);
-	    remain_mins.setVisibility(View.VISIBLE);
+	    remainHours.setVisibility(View.VISIBLE);
+	    remainMins.setVisibility(View.VISIBLE);
 		timeHeader.setText("Time Remaining");
 		leftButton.setText("Unpark");
         leftButton.setOnClickListener(new OnClickListener() {
@@ -423,16 +437,37 @@ public class MainActivity extends ActivityGroup implements LocationListener {
         rightButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                final int maxTime = rateObj.getMaxTime();
-                if(maxTime <= 0 || totalTimeParked<maxTime){
-                    NumberPickerDialog y = new NumberPickerDialog(MainActivity.this, 0,0);
-                    y.setRange(rateObj.getMinIncrement(), rateObj.getMaxTime()-totalTimeParked);
-                    y.setMinInc(rateObj.getMinIncrement());
-                    y.setOnNumberSetListener(mRefillListener);
-                    y.show();
-                }else{
-                    ThrowDialog.show(MainActivity.this, ThrowDialog.MAX_TIME);
-                }
+                switchToRefillingLayout();
+            }
+        });
+	}
+
+	private void switchToRefillingLayout() {
+        remainHours.setVisibility(View.GONE);
+        remainMins.setVisibility(View.GONE);
+        smallTime.setVisibility(View.VISIBLE);
+        hours.setVisibility(View.VISIBLE);
+        minutes.setVisibility(View.VISIBLE);
+        updateDisplay(rateObj.getMinIncrement());
+        colon.setVisibility(View.VISIBLE);
+        minusButton.setVisibility(View.VISIBLE);
+        plusButton.setVisibility(View.VISIBLE);
+        priceHeader.setVisibility(View.VISIBLE);
+        price.setVisibility(View.VISIBLE);
+        timeHeader.setText("Refill Time");
+        priceHeader.setText("Total");
+        leftButton.setText("Cancel");
+        leftButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switchToParkedLayout();
+            }
+        });
+        rightButton.setText("Add");
+        rightButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                refillMe(getParkMins());
             }
         });
 	}
@@ -565,18 +600,6 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 		}
 	}
 
-	private NumberPickerDialog.OnNumberSetListener mRefillListener =
-			new NumberPickerDialog.OnNumberSetListener() {
-		@Override
-		public void onNumberSet(int selectedNumber) {
-			if(selectedNumber>=rateObj.getMinIncrement())
-				//TODO testing delete me
-				refillMe(1);
-			//refillMe(selectedNumber);
-		}
-	};
-
-
 	//once we scan the qr code
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -672,17 +695,22 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 			//on each 1 second tick, 
 			@Override
 			public void onTick(long millisUntilFinished) {
-				int seconds = (int)millisUntilFinished/1000;
+				final int seconds = (int)millisUntilFinished/1000;
 				//if the time is what our warning-time is set to
 				if(seconds==WARN_TIME && !SavedInfo.autoRefill(MainActivity.this)){
 					//alert the user
 					alert.show();
 				}
 				//update remain seconds and timer.
-				remain_hours.setText(String.valueOf(seconds / 360));
-				remain_mins.setText(String.valueOf((seconds % 360 + 59) / 60));
-
-				flashColon();
+		        if (smallTime.getVisibility() != View.VISIBLE) {
+                    remainHours.setText(String.valueOf(seconds / 360));
+                    remainMins.setText(String.valueOf((seconds % 360 + 59) / 60));
+                    flashColon();
+		        } else {
+		            smallHours.setText(String.valueOf(seconds / 360));
+		            smallMins.setText(String.valueOf((seconds % 360 + 59) / 60));
+		            flashSmallColon();
+		        }
 			}
 			//on last tick,
 			//TODO calling alert.cancel() or throwdialog when app isn't in forefront may cause crash?
@@ -730,12 +758,20 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	}
 
 	private void flashColon() {
-	    if (colon.getVisibility() == View.VISIBLE) {
-	        colon.setVisibility(View.INVISIBLE);
-	    } else {
-	        colon.setVisibility(View.VISIBLE);
-	    }
+        if (colon.getVisibility() == View.VISIBLE) {
+            colon.setVisibility(View.INVISIBLE);
+        } else {
+            colon.setVisibility(View.VISIBLE);
+        }
 	}
+
+    private void flashSmallColon() {
+        if (smallColon.getVisibility() == View.VISIBLE) {
+            smallColon.setVisibility(View.INVISIBLE);
+        } else {
+            smallColon.setVisibility(View.VISIBLE);
+        }
+    }
 
 	@Override
 	public void onLocationChanged(Location location) {
