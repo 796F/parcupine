@@ -2,6 +2,8 @@ package com.objects;
 
 import java.util.Date;
 
+import com.test.LoginActivity;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -117,6 +119,22 @@ public class SavedInfo{
 		editor.putString("email", email);
 		editor.putLong("uid", uid);
 		editor.putString("password", password);
+		editor.commit();
+	}
+	
+	public static void syncParkingSession(Context activity, ParkSync sync){
+		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
+		SharedPreferences.Editor editor = check.edit();
+		editor.putInt("defaultRate", sync.getDefaultRate());
+		editor.putString("description",sync.getDescription());
+		editor.putLong("endTime", sync.getEndTime());
+		editor.putString("lat", ""+sync.getLat());
+		editor.putString("lon", ""+sync.getLon());
+		editor.putInt("maxTime", sync.getMaxTime());
+		editor.putInt("minIncrement", sync.getMinIncrement());
+		editor.putInt("minTime", sync.getMinTime());
+		editor.putString("PARKID", sync.getParkingReferenceNumber());
+		editor.putLong("spotId", sync.getSpotId());
 		editor.commit();
 	}
 	public static void logOut(Context activity){

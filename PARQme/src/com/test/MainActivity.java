@@ -232,11 +232,15 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 				vf.showNext();
 				timer = initiateTimer(endTime, vf);
 				timer.start();
+				remainSeconds = (int)(endTime-new Date().getTime())/1000; //in seconds
+				minimalIncrement=check.getInt("minIncrement", 15);//in minutes
+				maxTime=check.getInt("maxTime", 300); //in minutes
 			}
 		}
 
 		//if parkstate returned from login was true, then go to the refill view.  
 		if(check.getBoolean("parkState", false)){
+			vf.showNext();
 			vf.showNext();
 		}
 
@@ -369,23 +373,18 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 					SavedInfo.setEndTime(MainActivity.this, edit, endTime);
 					//			ServerCalls.addHistory(parkDate, starttime, endtime, contents, email, parkCost);
 					//return a happy response
-
+					remainSeconds = parkingTime*60;
 					totalTimeParked+=parkingTime;
 					parkCost = getCostInCents(parkingTime, mySpot);
 					if(totalTimeParked == maxTime){
 						ThrowDialog.show(MainActivity.this, ThrowDialog.MAX_TIME);
 					}
 					vf.showNext();
-
-					//TODO: DELETE ME FOR TESTING
-					remainSeconds = 60;
-					//END TESTING CODE
-
 					//create and start countdown display
 					timer = initiateTimer(endTime, vf);
 					timer.start();
 					//start timer background service
-					startService(new Intent(MainActivity.this, Background.class).putExtra("time", remainSeconds));
+					//startService(new Intent(MainActivity.this, Background.class).putExtra("time", remainSeconds));
 
 					/*mark the user as currently parked*/
 					edit.putBoolean("parkState", true);
@@ -598,10 +597,11 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 				timer.cancel();
 				//stopService(new Intent(MainActivity.this, Background.class));
 				//return happy
-				return 1;
+				
 			}catch (Exception e){
-				return 0;
+				
 			}
+			return 1;
 		}else{
 			return 0;
 		}
@@ -631,9 +631,9 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 				//calculate new endtime and initiate timer from it.  
 				timer.cancel();
 				timer = initiateTimer(newEnd, vf);
-				stopService(new Intent(MainActivity.this, Background.class));
+				//stopService(new Intent(MainActivity.this, Background.class));
 				timer.start();
-				startService(new Intent(MainActivity.this, Background.class).putExtra("time", remainSeconds));
+				//startService(new Intent(MainActivity.this, Background.class).putExtra("time", remainSeconds));
 				if(totalTimeParked==maxTime){
 					ThrowDialog.show(MainActivity.this, ThrowDialog.MAX_TIME);
 				}else{
@@ -773,7 +773,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 				remainSeconds = seconds;
 				remain_secs.setText(""+remainSeconds%60);
 				remain_hours.setText(""+remainSeconds/360);
-				remain_hours.setText(""+(remainSeconds%360 - remainSeconds%60));
+				remain_mins.setText(""+(remainSeconds%360 - remainSeconds%60));
 			}
 			//on last tick,
 			//TODO calling alert.cancel() or throwdialog when app isn't in forefront may cause crash?

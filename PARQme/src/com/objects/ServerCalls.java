@@ -25,15 +25,15 @@ public class ServerCalls {
 
 	public static final JsonFactory JSON_FACTORY = new JsonFactory();
 	private static final String SERVER_HOSTNAME = "http://75.101.132.219:8080";
-	
+
 	/*returns if authentication passed.*/
 	public static UserObject getUser(String email, String hash){
 		try {
 			//open connection
 			final HttpURLConnection conn =
 					(HttpURLConnection)
-						new URL(SERVER_HOSTNAME + "/parkservice.auth")
-						.openConnection();
+					new URL(SERVER_HOSTNAME + "/parkservice.auth")
+			.openConnection();
 			conn.setRequestProperty("Accept", "application/json");
 			conn.setRequestProperty("Content-Type", "application/json");
 			conn.setDoOutput(true);
@@ -58,7 +58,7 @@ public class ServerCalls {
 			e.printStackTrace();
 		}
 		return null;
-	
+
 	}
 
 	public static boolean registerNewUser(String email, String password, String name,
@@ -66,8 +66,8 @@ public class ServerCalls {
 		try {	
 			final HttpURLConnection conn =
 					(HttpURLConnection)
-						new URL(SERVER_HOSTNAME + "/parkservice.user/register")
-						.openConnection();
+					new URL(SERVER_HOSTNAME + "/parkservice.user/register")
+			.openConnection();
 			conn.setRequestProperty("Accept", "application/json");
 			conn.setRequestProperty("Content-Type", "application/json");
 			conn.setDoOutput(true);
@@ -106,17 +106,17 @@ public class ServerCalls {
 		}
 		return false;
 	}
-	
+
 	public static int unPark(long spotid, String parkingReferenceNumber, SharedPreferences prefs){
 		try {
 			final HttpURLConnection conn =
 					(HttpURLConnection)
-						new URL(SERVER_HOSTNAME + "/parkservice.park/unpark")
-						.openConnection();
+					new URL(SERVER_HOSTNAME + "/parkservice.park/unpark")
+			.openConnection();
 			conn.setRequestProperty("Accept", "application/json");
 			conn.setRequestProperty("Content-Type", "application/json");
 			conn.setDoOutput(true);
-			
+
 			final JsonGenerator jg = JSON_FACTORY.createJsonGenerator(conn.getOutputStream());
 			jg.writeStartObject();
 			jg.writeFieldName("spotId");
@@ -148,8 +148,8 @@ public class ServerCalls {
 		try {
 			final HttpURLConnection conn =
 					(HttpURLConnection)
-						new URL(SERVER_HOSTNAME + "/parkservice.rate/gps")
-						.openConnection();
+					new URL(SERVER_HOSTNAME + "/parkservice.rate/gps")
+			.openConnection();
 			conn.setRequestProperty("Accept", "application/json");
 			conn.setRequestProperty("Content-Type", "application/json");
 			conn.setDoOutput(true);
@@ -187,8 +187,8 @@ public class ServerCalls {
 		try {
 			final HttpURLConnection conn =
 					(HttpURLConnection)
-						new URL(SERVER_HOSTNAME + "/parkservice.rate/qrcode")
-						.openConnection();
+					new URL(SERVER_HOSTNAME + "/parkservice.rate/qrcode")
+			.openConnection();
 			conn.setRequestProperty("Accept", "application/json");
 			conn.setRequestProperty("Content-Type", "application/json");
 			conn.setDoOutput(true);
@@ -219,8 +219,8 @@ public class ServerCalls {
 		try {
 			final HttpURLConnection conn =
 					(HttpURLConnection)
-						new URL(SERVER_HOSTNAME + "/parkservice.park/park")
-						.openConnection();
+					new URL(SERVER_HOSTNAME + "/parkservice.park/park")
+			.openConnection();
 			conn.setRequestProperty("Accept", "application/json");
 			conn.setRequestProperty("Content-Type", "application/json");
 			conn.setDoOutput(true);
@@ -244,7 +244,11 @@ public class ServerCalls {
 						.getInputStream());
 				final ParkInstanceObject response = Parsers.parseParkInstance(jp);
 				jp.close();
-				return response;
+				if(response.getResp().equals("OK")){
+					return response;
+				}else{
+					return null;
+				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -262,7 +266,7 @@ public class ServerCalls {
 			// Send data
 			URL url = new URL("http://parqme.com/add_history.php");
 			URLConnection conn = url.openConnection();
-			
+
 			conn.setDoOutput(true);
 			OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
 			wr.write(data);
@@ -289,9 +293,9 @@ public class ServerCalls {
 			// Send data
 			URL url = new URL("http://localhost:8080/UserBounce/UpdateDatabase");
 			URLConnection conn = url.openConnection();
-			
+
 			conn.setRequestProperty("fromApp", "yes");
-			
+
 			conn.setDoOutput(true);
 			OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
 			wr.write(data);

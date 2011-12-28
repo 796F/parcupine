@@ -52,11 +52,11 @@ public class TabsActivity extends TabActivity {
 //        	tabHost.setCurrentTab(3);
 //        	//initialize all needed fields to starting values
 //        	SavedInfo.reset(TabsActivity.this);
-        /*}else*/ if(check.getBoolean("parkState", false))
+        /*}else if(check.getBoolean("parkState", false))
         	tabHost.setCurrentTab(2);
         else{
         	tabHost.setCurrentTab(0);
-        }
+        }*/
     }
     
     

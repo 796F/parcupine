@@ -132,8 +132,8 @@ public class Parsers {
 	
 
 	public static ParkInstanceObject parseParkInstance(JsonParser jp) throws IOException {
-
-		long parkReference = 0;
+		
+		String resp = "";
 		long endTime = 0;
 		String parkingReferenceNumber = "";
 		
@@ -155,7 +155,7 @@ public class Parsers {
 			t = jp.nextToken();
 		}
 		//CHANGED because apparently dao doesn't use the long, it uses the reference to unparq.  
-		return new ParkInstanceObject(0, endTime, parkingReferenceNumber);
+		return new ParkInstanceObject(resp, endTime, parkingReferenceNumber);
 	}
 	
 	public static RateResponse parseRateResponse(JsonParser jp) throws IOException {

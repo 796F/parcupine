@@ -64,6 +64,11 @@ public class LoginActivity extends Activity {
 							SavedInfo.logIn(LoginActivity.this, user.getParkState(), email, user.getUid(), pass);
 							startActivity(new Intent(LoginActivity.this, TabsActivity.class));
 							finish();
+						}else{
+							SavedInfo.logIn(LoginActivity.this, user.getParkState(), email, user.getUid(), pass);
+							SavedInfo.syncParkingSession(LoginActivity.this, user.getSync());
+							startActivity(new Intent(LoginActivity.this, TabsActivity.class));
+							finish();
 						}
 					} else {
 						ThrowDialog.show(LoginActivity.this, ThrowDialog.COULD_NOT_AUTH);
