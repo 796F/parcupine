@@ -148,11 +148,11 @@ public class RegisterActivity extends Activity {
 
     private InvalidField validateScreen1() {
         final String[] email = emailBox.getText().toString().split("@");
-        if (email.length != 2 || email[0].length() <= 0) {
+        if (email.length != 2 || email[0].length() < 1) {
             return InvalidField.EMAIL;
         }
         final String[] host = email[1].split("\\.");
-        if (host.length != 2 || host[0].length() <= 0 || host[1].length() <= 1) {
+        if (host.length != 2 || host[0].length() < 1 || host[1].length() < 2) {
             return InvalidField.EMAIL;
         }
         final CharSequence password = passwordBox.getText();
@@ -166,7 +166,7 @@ public class RegisterActivity extends Activity {
     }
 
     private InvalidField validateScreen2() {
-        if (nameBox.getText().length() <= 1) {
+        if (nameBox.getText().length() < 1) {
             return InvalidField.NAME;
         }
         final int ccLen = ccBox.getText().length();
@@ -176,7 +176,7 @@ public class RegisterActivity extends Activity {
         if (cscBox.getText().length() != 3) {
             return InvalidField.CSC;
         }
-        if (streetBox.getText().length() <= 0) {
+        if (streetBox.getText().length() < 1) {
             return InvalidField.STREET;
         }
         if (zipBox.getText().length() != 5) {
