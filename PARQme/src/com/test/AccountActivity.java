@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Debug;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -49,6 +50,7 @@ public class AccountActivity extends Activity {
 	private EditText editCityBox;
 	private EditText editCardBox;
 	
+	private TextView debug;
 	public CheckBox getBox(){
 		return (CheckBox) findViewById(R.id.vibrateEnable);
 	}
@@ -58,11 +60,14 @@ public class AccountActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.account);
 
-		
+		final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 	    final DialogInterface.OnClickListener saveEditListener = new DialogInterface.OnClickListener(){
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
+				SharedPreferences.Editor edit = check.edit();
+				edit.putString(""+which, ""+which);
+				edit.commit();
 				dialog.cancel();
 			}
 			
@@ -129,7 +134,6 @@ public class AccountActivity extends Activity {
 		//		    }
 		//		  });
 
-		final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 
 		vibrateBox = (CheckBox) findViewById(R.id.vibrate_checkbox);
 		vibrateBox.setOnCheckedChangeListener(new OnCheckedChangeListener(){
@@ -212,15 +216,30 @@ public class AccountActivity extends Activity {
 	public void showEditDialog(int i, DialogInterface.OnClickListener a,DialogInterface.OnClickListener b){
 		AlertDialog.Builder alert = new AlertDialog.Builder(AccountActivity.this);     
 	    LayoutInflater  factory = LayoutInflater.from(AccountActivity.this);
-	    View layout =factory.inflate(R.layout.edit_text_dialog ,null);
+	    String g = "";
+	    View layout = null;
+	    switch(i){
+	    	case 0:
+	    		layout =factory.inflate(R.layout.edit_text_dialog ,null);
+	    		g = "Name";
+	    		break;
+	    	case 1:
+	    		layout = factory.inflate(R.layout.edit_email_layout, null);
+	    		g = "Email";
+	    		break;
+	    	case 2:
+	    		layout = factory.inflate(R.layout.edit_text_dialog, null);
+	    		g = "City";
+	    		break;
+	    	case 3:
+	    		layout = factory.inflate(R.layout.edit_card_layout, null);
+	    		g = "Card";
+	    		break;
+	    }
+	    
 	    alert.setView(layout); 
 	    alert.setPositiveButton("Save", a);
 	    alert.setNegativeButton("Cancel", b);
-	    String g = "";
-	    if(i==0) g = "Name";
-	    if(i==1) g = "Email";
-	    if(i==2) g = "City";
-	    if(i==3) g = "Card";
 	    alert.setTitle("Edit " + g);
 		AlertDialog gg = alert.create();
 		gg.show();
