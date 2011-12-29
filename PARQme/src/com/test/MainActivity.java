@@ -265,14 +265,8 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 		scanButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if(!SavedInfo.isLoggedIn(MainActivity.this)){
-					//if not logged in, alert user via dialog
-					ThrowDialog.show(MainActivity.this, ThrowDialog.MUST_LOGIN);
-				}else{
-
-					//else start scan intent
+					//start scan intent
 					IntentIntegrator.initiateScan(MainActivity.this);
-				}
 			}
 		});
 
@@ -537,6 +531,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
                             editor.commit();
 
                             switchToParkingLayout();
+                            vf.showPrevious();
                         } else {
                             ThrowDialog.show(MainActivity.this, ThrowDialog.UNPARK_ERROR);
                         }
@@ -671,43 +666,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 				}
 			} else {
 				//do nothing if the user doesn't scan and just cancels.
-				//call server using the qr code, to get a resulting spot's info.
-				contents = "parqme.com/main_lot/1412";
-				SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
-				//contents contains string "parqme.com/p/c36/p123456" or w/e...
-				final RateResponse rateResponse = ServerCalls.getRateQr(contents, check);
-				if(rateResponse!=null){
-					rateObj = rateResponse.getRateObject();
-					
-					//if we get the object successfully
-					if(rateResponse.getResp().equals("OK")){
-						vf.showNext();
-						// prepare time picker for this spot
-						//					parkTimePicker.setRange(mySpot.getMinIncrement(),
-						//							mySpot.getMaxTime());
-						//					parkTimePicker.setMinInc(mySpot.getMinIncrement());
-
-						final int minIncrement = rateObj.getMinIncrement();
-						final String [] test = contents.split("/");
-						rate.setText(formatCents(rateObj.getDefaultRate()) + " per " + minIncrement + " minutes");
-						lotDesc.setText(rateObj.getDescription());
-						spot.setText("Spot #" + test[2]);
-						if (minIncrement != 0) {
-							increment.setText(minIncrement + " minute increments");
-						}
-						// store some used info
-						final SharedPreferences.Editor editor = check.edit();
-						editor.putString("code", contents);
-						editor.putFloat("lat", (float) rateObj.getLat());
-						editor.putFloat("lon", (float) rateObj.getLon());
-						editor.commit();
-						updateDisplay(minIncrement);
-					}else{
-						ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
-					}
-				}else{
-					ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
-				}
+			
 			}
 		}
 	}
@@ -817,5 +776,27 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
+	}
+	
+	@Override
+	public void onBackPressed() {
+	//user can be on 3 different pages.  
+	
+		//if on front page, exit app
+		try{
+			rateObj.getDefaultRate();
+		}catch(Exception e){
+			finish();
+		}
+		final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
+		if(SavedInfo.isParked(check)){
+			//if on parked page, throw dialog.  
+			ThrowDialog.show(MainActivity.this, ThrowDialog.IS_PARKED);
+		}else{
+			//if on rate page, go back
+			rateObj = null;
+			vf.showPrevious();
+		}
+	
 	}
 }

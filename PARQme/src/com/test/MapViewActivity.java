@@ -88,7 +88,7 @@ public class MapViewActivity extends MapActivity {
 
 		//hook elements
 		MapView mapView = (MapView) findViewById(R.id.mapview);
-		mapView.setBuiltInZoomControls(true);
+		mapView.setBuiltInZoomControls(false);
 		address = (EditText) findViewById(R.id.addressinput);
 		mapCtrl = mapView.getController();
 		locMan = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -227,6 +227,8 @@ public class MapViewActivity extends MapActivity {
 		locMan.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locListener);
 		locMan.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locListener);
 	}
+	
+	
 
 }
 
