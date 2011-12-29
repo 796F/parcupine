@@ -18,7 +18,8 @@ public class TestParkingSpaceDao extends TestCase {
 		SupportScriptForDaoTesting.insertMainTestDataSet();
 		
 		ParkingSpace pSpace = parkingSpaceDao
-				.getParkingSpaceBySpaceIdentifier(SupportScriptForDaoTesting.spaceNameMain);
+				.getParkingSpaceBySpaceIdentifier(
+						SupportScriptForDaoTesting.parkingLocationNameMain, SupportScriptForDaoTesting.spaceNameMain);
 		assertNotNull(pSpace);
 		assertTrue(pSpace.getSpaceId() > 0);
 		assertTrue(pSpace.getLocationId() > 0);
@@ -31,7 +32,8 @@ public class TestParkingSpaceDao extends TestCase {
 		SupportScriptForDaoTesting.insertMainTestDataSet();
 		
 		ParkingSpace pTemp = parkingSpaceDao
-			.getParkingSpaceBySpaceIdentifier(SupportScriptForDaoTesting.spaceNameMain);
+			.getParkingSpaceBySpaceIdentifier(
+					SupportScriptForDaoTesting.parkingLocationNameMain, SupportScriptForDaoTesting.spaceNameMain);
 		ParkingSpace pSpace = parkingSpaceDao
 			.getParkingSpaceBySpaceId(pTemp.getSpaceId());
 		

@@ -15,12 +15,14 @@ public class ParkingSpaceDao extends AbstractParqDaoParent {
 		" WHERE space_id = ? "; 
 	
 	private static final String sqlGetParkingSpaceBySpaceIdentifier = 
-		"SELECT space_id, space_identifier, location_id, parking_level, space_name " +
-		" FROM parkingspace " +
-		" WHERE space_identifier = ? "; 
+		"SELECT s.space_id, s.space_identifier, s.location_id, s.parking_level, s.space_name " +
+		" FROM parkingspace s, parkinglocation l " +
+		" WHERE s.location_id = l.location_id " +
+		" AND location_identifier = ? " +
+		" AND space_identifier = ? "; 
 	
 	
-	public ParkingSpace getParkingSpaceBySpaceIdentifier(String spaceIdentifier) {
+	public ParkingSpace getParkingSpaceBySpaceIdentifier(String locationIdentifer, String spaceIdentifier) {
 		ParkingSpace space = null;		
 		// query the DB for the user object
 		PreparedStatement pstmt = null;
@@ -28,7 +30,8 @@ public class ParkingSpaceDao extends AbstractParqDaoParent {
 		try {
 			con = getConnection();
 			pstmt = con.prepareStatement(sqlGetParkingSpaceBySpaceIdentifier);
-			pstmt.setString(1, spaceIdentifier);
+			pstmt.setString(1, locationIdentifer);
+			pstmt.setString(2, spaceIdentifier);
 
 			// System.out.println(pstmt);
 			

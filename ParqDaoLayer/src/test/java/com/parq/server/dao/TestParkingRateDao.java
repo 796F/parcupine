@@ -95,7 +95,8 @@ public class TestParkingRateDao extends TestCase {
 
 		// test get the parking rate by parking space id for rate specific to a location
 		ParkingSpaceDao spaceDao = new ParkingSpaceDao();
-		ParkingSpace nonRatedSpace = spaceDao.getParkingSpaceBySpaceIdentifier(SupportScriptForDaoTesting.spaceNameMain2);
+		ParkingSpace nonRatedSpace = spaceDao.getParkingSpaceBySpaceIdentifier(
+				SupportScriptForDaoTesting.parkingLocationNameMain, SupportScriptForDaoTesting.spaceNameMain2);
 		ParkingRate pRate2 = parkingRateDao.getParkingRateBySpaceId(nonRatedSpace.getSpaceId());
 		assertNotNull(pRate2);
 		assertEquals(pRate2.getRateType(), ParkingRate.RateType.LOCATION);
