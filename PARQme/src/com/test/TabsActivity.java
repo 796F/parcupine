@@ -21,7 +21,7 @@ public class TabsActivity extends TabActivity {
 
         intent = new Intent().setClass(this, MainActivity.class);
         spec = tabHost.newTabSpec("parq").setIndicator("PARQ",
-        		res.getDrawable(R.drawable.ic_tab_camera))
+        		res.getDrawable(R.drawable.ic_tab_parq))
                       .setContent(intent);
         tabHost.addTab(spec);
         
