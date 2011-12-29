@@ -50,7 +50,16 @@ public class AccountActivity extends Activity {
 	private EditText editCityBox;
 	private EditText editCardBox;
 	
-	private TextView debug;
+	//these allow us to circumvent data from custom dialogs into this class. 
+	int saveType = -1;
+    private View myPrivateView = null;
+    private View layout = null;
+    
+	private TextView emailDisplay;
+	private TextView nameDisplay;
+	private TextView cityDisplay;
+	private TextView cardDisplay;
+	
 	public CheckBox getBox(){
 		return (CheckBox) findViewById(R.id.vibrateEnable);
 	}
@@ -59,14 +68,38 @@ public class AccountActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.account);
-
+		emailDisplay = (TextView)findViewById(R.id.profile_email_small);
+		nameDisplay = (TextView)findViewById(R.id.profile_name);
 		final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 	    final DialogInterface.OnClickListener saveEditListener = new DialogInterface.OnClickListener(){
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				SharedPreferences.Editor edit = check.edit();
-				edit.putString(""+which, ""+which);
+				if(saveType==0){
+					EditText test = (EditText) layout.findViewById(R.id.editText1);
+					String name = test.getText().toString();
+					edit.putString("fullName", name);
+					nameDisplay.setText(name);
+				}else if (saveType==1){
+					EditText test = (EditText) layout.findViewById(R.id.current_email_box);
+					String oldEmail = test.getText().toString();
+					if(oldEmail.equals(check.getString("email", ""))){
+						test = (EditText) layout.findViewById(R.id.new_email_box);
+						String newEmail = test.getText().toString();
+						edit.putString("email", newEmail);
+						emailDisplay.setText(newEmail);
+					}else{
+						ThrowDialog.show(AccountActivity.this, ThrowDialog.COULD_NOT_AUTH);
+					}
+				}else if (saveType==2){
+					EditText test = (EditText) layout.findViewById(R.id.editText1);
+					String name = test.getText().toString();
+					edit.putString("city", name);
+					cityDisplay.setText(name);
+				}else if(saveType==3){
+					//on server side, delete old account, register new account, send back the new uid and stuff to sync app.  
+				}
 				edit.commit();
 				dialog.cancel();
 			}
@@ -86,11 +119,6 @@ public class AccountActivity extends Activity {
 		final Button editEmail= (Button) findViewById(R.id.profile_email_button);
 		final Button editCity= (Button) findViewById(R.id.profile_city_button);
 		final Button editCard= (Button) findViewById(R.id.profile_card_button);
-
-		final EditText editNameBox = (EditText)findViewById(R.id.editprofname);
-		final EditText editEmailBox= (EditText)findViewById(R.id.editprofemail);
-		final EditText editCityBox= (EditText)findViewById(R.id.editprofcity);
-		final EditText editCardBox= (EditText)findViewById(R.id.editprofcard);
 
 		
 		View.OnClickListener showEditText = new View.OnClickListener() {
@@ -216,8 +244,7 @@ public class AccountActivity extends Activity {
 	public void showEditDialog(int i, DialogInterface.OnClickListener a,DialogInterface.OnClickListener b){
 		AlertDialog.Builder alert = new AlertDialog.Builder(AccountActivity.this);     
 	    LayoutInflater  factory = LayoutInflater.from(AccountActivity.this);
-	    String g = "";
-	    View layout = null;
+	    String g = null;
 	    switch(i){
 	    	case 0:
 	    		layout =factory.inflate(R.layout.edit_text_dialog ,null);
@@ -236,7 +263,7 @@ public class AccountActivity extends Activity {
 	    		g = "Card";
 	    		break;
 	    }
-	    
+	    saveType = i;
 	    alert.setView(layout); 
 	    alert.setPositiveButton("Save", a);
 	    alert.setNegativeButton("Cancel", b);

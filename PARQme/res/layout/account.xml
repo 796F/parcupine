@@ -298,50 +298,6 @@
         </RelativeLayout>
     </com.objects.WrappingSlidingDrawer>
 
-	<EditText
-	    android:id="@+id/editprofname"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:layout_alignBottom="@+id/profile_name_back"
-	    android:layout_alignParentLeft="true"
-	    android:layout_alignTop="@+id/profile_name_back"
-	    android:layout_toLeftOf="@+id/logoutbutton"
-	    android:inputType="textPersonName" 
-	    android:visibility="gone">
 
-	    <requestFocus />
-	</EditText>
-
-	<EditText
-	    android:id="@+id/editprofemail"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:layout_alignBottom="@+id/profile_email_back"
-	    android:layout_alignParentLeft="true"
-	    android:layout_below="@+id/profile_name_back"
-	    android:layout_toLeftOf="@+id/profile_email_button"
-	    android:inputType="textEmailAddress"
-	    android:visibility="gone" />
-
-	<EditText
-	    android:id="@+id/editprofcity"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:layout_above="@+id/profile_card_back"
-	    android:layout_alignParentLeft="true"
-	    android:layout_below="@+id/profile_email_back"
-	    android:layout_toLeftOf="@+id/logoutbutton" 
-	    android:visibility="gone" />
-
-	<EditText
-	    android:id="@+id/editprofcard"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:layout_alignBottom="@+id/profile_card_back"
-	    android:layout_alignParentLeft="true"
-	    android:layout_alignTop="@+id/profile_card_back"
-	    android:layout_toLeftOf="@+id/profile_card_button"
-	    android:inputType="number" 
-	     android:visibility="gone"/>
 
 </RelativeLayout>
