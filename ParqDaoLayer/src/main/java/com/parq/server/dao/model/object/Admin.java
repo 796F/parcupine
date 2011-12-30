@@ -15,7 +15,6 @@ public class Admin implements Serializable {
 	 */
 	private static final long serialVersionUID = -4671173403978454253L;
 	private long adminId = -1;
-	private String userName;
 	private String password;
 	private String email;
 	
@@ -38,21 +37,6 @@ public class Admin implements Serializable {
 	 */
 	public void setAdminId(long adminId) {
 		this.adminId = adminId;
-	}
-
-	/**
-	 * @return the userName
-	 */
-	public String getUserName() {
-		return userName;
-	}
-
-	/**
-	 * @param userName
-	 *            the userName to set
-	 */
-	public void setUserName(String userName) {
-		this.userName = userName;
 	}
 
 	/**

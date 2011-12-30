@@ -60,9 +60,7 @@ INSERT INTO parkingspace (location_id, space_identifier, space_name, parking_lev
 	VALUE ((SELECT location_id FROM parkinglocation WHERE location_identifier = 'stdm' ), '0012', 'MIT_TEST: space num 12', '1');
 
 -- create an admin user for MIT_TEST client call MitTestAdmin
-INSERT INTO admin (username, password, email) VALUES ('MitTestAdmin', 'mit', 'ParqTestUser@parq.com');
--- create a new admin role call 'admin' for the MIT_TEST client
-INSERT INTO adminrole (role_name, role_desc) VALUES ('admin', 'test admin for MIT_TEST client');
+INSERT INTO admin (email, password ) VALUES ('ParqTestUser@parq.com', 'mit');
 -- associate the MitTestAdmin with the MIT_TEST client 
 INSERT INTO adminclientrelationship (client_id, admin_id, adminrole_id)
 	VALUE ((SELECT client_id FROM client WHERE name = 'MIT_TEST'),
@@ -75,7 +73,6 @@ INSERT INTO adminclientrelationship (client_id, admin_id, adminrole_id)
 -- The following delete sql script delete the above test data
 -- Delete the admin user along with the client relationship
 DELETE FROM adminclientrelationship WHERE client_id = (SELECT client_id FROM client WHERE name = 'MIT_TEST');
-DELETE FROM adminrole WHERE role_name = 'admin';
 DELETE FROM admin WHERE username = 'MitTestAdmin';
 -- Delete the parking location and parking space data 
 DELETE FROM geolocation WHERE location_id 

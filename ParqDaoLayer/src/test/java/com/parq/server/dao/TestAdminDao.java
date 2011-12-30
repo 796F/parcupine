@@ -3,6 +3,8 @@ package com.parq.server.dao;
 import junit.framework.TestCase;
 
 import com.parq.server.dao.model.object.Admin;
+import com.parq.server.dao.model.object.AdminRole;
+import com.parq.server.dao.model.object.Client;
 import com.parq.server.dao.support.SupportScriptForDaoTesting;
 
 /**
@@ -12,28 +14,88 @@ import com.parq.server.dao.support.SupportScriptForDaoTesting;
 public class TestAdminDao extends TestCase {
 
 	private AdminDao adminDao;
+	
+	private String email = "test4545@asdf.com";
+	private String password = "dfasdfdwfe";
 
 	private static boolean testDataCreated = false;
 
 	@Override
 	protected void setUp() throws Exception {
 		adminDao = new AdminDao();
-		
 		createTestData();
 	}
 	
 	private void createTestData() {
 		if (!testDataCreated){
 			testDataCreated = true;
+			SupportScriptForDaoTesting.insertMainTestDataSet();
 			SupportScriptForDaoTesting.createAdminUserTestData();
 		}
 	}
-
-	public void testGetAdminByAdminName() {
-		Admin admin = adminDao.getAdminByUserName(SupportScriptForDaoTesting.adminName);
+	
+	public void testCreateAdmin(){
+		Admin newAdmin = new Admin();
+		newAdmin.setEmail(email);
+		newAdmin.setPassword(password);
+		
+		ClientDao clientDao = new ClientDao();
+		Client client = clientDao.getClientByName(SupportScriptForDaoTesting.clientNameMain);
+		
+		Boolean createSuccessful = 
+			adminDao.createAdmin(newAdmin, client.getId(), AdminRole.admin);
+		assertTrue(createSuccessful);
+		
+		Admin newlyCreatedAdmin = adminDao.getAdminByEmail(email);
+		assertEquals(email, newlyCreatedAdmin.getEmail());
+		assertEquals(password, newlyCreatedAdmin.getPassword());
+		assertNotNull(newlyCreatedAdmin.getClientRelationships());
+		assertTrue(newlyCreatedAdmin.getClientRelationships().size() > 0);
+		assertTrue(newlyCreatedAdmin.getAdminId() > 0);
+	}
+	
+	public void testUpdateAdmin(){
+		String tempEmail = "testUHJ@87864.com";
+		String tempPassword = "78615";
+		
+		// test admin update
+		Admin admin = adminDao.getAdminByEmail(email);
+		admin.setEmail(tempEmail);
+		admin.setPassword(tempPassword);
+		boolean updateSuccessful = adminDao.updateAdmin(admin);
+		assertTrue(updateSuccessful);
+		
+		Admin uAdmin = adminDao.getAdminByEmail(tempEmail);
+		assertNotNull(uAdmin);
+		assertEquals(tempEmail, uAdmin.getEmail());
+		assertEquals(tempPassword, uAdmin.getPassword());
+		
+		// revert the admin back to the old value
+		admin.setEmail(email);
+		admin.setPassword(password);
+		updateSuccessful = adminDao.updateAdmin(admin);
+		assertTrue(updateSuccessful);
+		
+		uAdmin = adminDao.getAdminByEmail(email);
+		assertNotNull(uAdmin);
+		assertEquals(email, uAdmin.getEmail());
+		assertEquals(password, uAdmin.getPassword());
+		
+	}
+	
+	public void testDeleteAdmin() {
+		Admin admin = adminDao.getAdminByEmail(email);
+		boolean deleteSuccessful = adminDao.deleteAdmin(admin.getAdminId());
+		assertTrue(deleteSuccessful); 
+		
+		admin = adminDao.getAdminByEmail(email);
+		assertNull(admin);
+	}
+	
+	public void testGetAdminByEmail() {
+		Admin admin = adminDao.getAdminByEmail(SupportScriptForDaoTesting.adminEMail);
 
 		assertNotNull(admin);
-		assertEquals(admin.getUserName(), SupportScriptForDaoTesting.adminName);
 		assertEquals(admin.getPassword(), SupportScriptForDaoTesting.adminPassword);
 		assertEquals(admin.getEmail(), SupportScriptForDaoTesting.adminEMail);
 		assertTrue(admin.getAdminId() > 0);
@@ -45,26 +107,10 @@ public class TestAdminDao extends TestCase {
 	}
 	
 	public void testGetAdminById() {
-		Admin adminTemp = adminDao.getAdminByUserName(SupportScriptForDaoTesting.adminName);
+		Admin adminTemp = adminDao.getAdminByEmail(SupportScriptForDaoTesting.adminEMail);
 		Admin admin = adminDao.getAdminById(adminTemp.getAdminId());
 
 		assertNotNull(admin);
-		assertEquals(admin.getUserName(), SupportScriptForDaoTesting.adminName);
-		assertEquals(admin.getPassword(), SupportScriptForDaoTesting.adminPassword);
-		assertEquals(admin.getEmail(), SupportScriptForDaoTesting.adminEMail);
-		assertTrue(admin.getAdminId() > 0);
-		assertFalse(admin.getClientRelationships().isEmpty());
-		assertTrue(admin.getClientRelationships().get(0).getAdminId() == admin.getAdminId());
-		assertTrue(admin.getClientRelationships().get(0).getClientId() > 0);
-		assertTrue(admin.getClientRelationships().get(0).getRelationShipId() > 0);
-		assertTrue(admin.getClientRelationships().get(0).getRoleId() > 0);
-	}
-	
-	public void testGetAdminByEmail() {
-		Admin admin = adminDao.getAdminByEmail(SupportScriptForDaoTesting.adminEMail);
-
-		assertNotNull(admin);
-		assertEquals(admin.getUserName(), SupportScriptForDaoTesting.adminName);
 		assertEquals(admin.getPassword(), SupportScriptForDaoTesting.adminPassword);
 		assertEquals(admin.getEmail(), SupportScriptForDaoTesting.adminEMail);
 		assertTrue(admin.getAdminId() > 0);
@@ -79,10 +125,10 @@ public class TestAdminDao extends TestCase {
 		
 		for (int i = 0; i < 1000; i++)
 		{
-			Admin admin = adminDao.getAdminByUserName(SupportScriptForDaoTesting.adminName);
-			Admin admin1 = adminDao.getAdminByUserName(SupportScriptForDaoTesting.adminName);
-			Admin admin2 = adminDao.getAdminByUserName(SupportScriptForDaoTesting.adminName);
-			Admin admin3 = adminDao.getAdminByUserName(SupportScriptForDaoTesting.adminName);
+			Admin admin = adminDao.getAdminByEmail(SupportScriptForDaoTesting.adminEMail);
+			Admin admin1 = adminDao.getAdminByEmail(SupportScriptForDaoTesting.adminEMail);
+			Admin admin2 = adminDao.getAdminByEmail(SupportScriptForDaoTesting.adminEMail);
+			Admin admin3 = adminDao.getAdminByEmail(SupportScriptForDaoTesting.adminEMail);
 			assertNotNull(admin);
 			assertSame(admin, admin1);
 			assertSame(admin, admin2);

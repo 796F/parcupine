@@ -20,7 +20,6 @@ import com.parq.server.dao.model.object.Payment.PaymentType;
  */
 public final class SupportScriptForDaoTesting {
 
-	public static final String adminName = "Test_Admin_1";
 	public static final String adminPassword = "Password123";
 	public static final String adminEMail = "TestAdmin12@testCorp.com";
 	public static final String adminRoleName = "TestRole";
@@ -99,18 +98,18 @@ public final class SupportScriptForDaoTesting {
 		
 		testDao.executeSqlStatement("DELETE FROM adminclientrelationship WHERE client_id = (SELECT client_id FROM client WHERE name='" + adminClientName + "')");
 		testDao.executeSqlStatement("DELETE FROM adminrole WHERE role_name = '" + adminRoleName + "'");
-		testDao.executeSqlStatement("DELETE FROM admin WHERE username = '" + adminName + "'");
+		testDao.executeSqlStatement("DELETE FROM admin WHERE email = '" + adminEMail + "'");
 		testDao.executeSqlStatement("DELETE FROM client WHERE name='" + adminClientName + "'");
 		
-		String sqlInsertAdmin = "INSERT INTO admin (username, password, email) " +
-			"VALUES ('" + adminName + "', '" + adminPassword +"', '" + adminEMail + "')";
+		String sqlInsertAdmin = "INSERT INTO admin (password, email) " +
+			"VALUES ('" + adminPassword +"', '" + adminEMail + "')";
 		String sqlInsertRole =  "INSERT INTO adminrole (role_name) " +
 			"VALUES ('" + adminRoleName + "')";
 		String sqlInsertClient = "INSERT INTO client (name) VALUES ('" + adminClientName + "')";
 		String sqlInsertAdminClientRelationship = 
 			"INSERT INTO adminclientrelationship (admin_id, client_id, adminrole_id) " +
 			"VALUES (" +
-			"(SELECT admin_id FROM admin WHERE username = '" + adminName  + "'), " +
+			"(SELECT admin_id FROM admin WHERE email = '" + adminEMail  + "'), " +
 			"(SELECT client_id FROM client WHERE name = '" + adminClientName + "'), " +
 			"(SELECT adminrole_id FROM adminrole WHERE role_name = '" + adminRoleName + "'))";
 		
@@ -269,10 +268,13 @@ public final class SupportScriptForDaoTesting {
 		" IN (SELECT location_id FROM parkinglocation WHERE location_identifier " +
 		" IN ('" + parkingLocationNameMain + "', '" + fakeParkingLocation1 + "', '" + 
 			fakeParkingLocation2 + "'))";
+	
+	private static String deleteAdminClientRelationship = 
+		"DELETE FROM adminclientrelationship";
 
 	
 	public static String[] sqlDeleteStmtList = new String[] {
-		deleteGeoLocations, deletePayments, deleteParkingInstances, deleteParkingRates, 
-		deleteSpaces, deleteLocations, deleteClients
-	};
+		deleteAdminClientRelationship, deleteGeoLocations, deletePayments, 
+		deleteParkingInstances, deleteParkingRates,	deleteSpaces, 
+		deleteLocations, deleteClients };
 }
