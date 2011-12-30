@@ -3,10 +3,21 @@ package com.objects;
 public class ParkInstanceObject {
 	private long endTime;
 	private String parkingReferenceNumber;
-
-	public ParkInstanceObject(long endTime, String parkingReferenceNumber) {
+	private ParkSync sync;
+	
+	
+	public ParkInstanceObject(long endTime, String parkingReferenceNumber,
+			ParkSync sync) {
+		super();
 		this.endTime = endTime;
 		this.parkingReferenceNumber = parkingReferenceNumber;
+		this.sync = sync;
+	}
+	public ParkSync getSync() {
+		return sync;
+	}
+	public void setSync(ParkSync sync) {
+		this.sync = sync;
 	}
 	public long getEndTime() {
 		return endTime;

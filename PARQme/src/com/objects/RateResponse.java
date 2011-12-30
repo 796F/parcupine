@@ -3,7 +3,15 @@ package com.objects;
 public class RateResponse {
 	private String resp;
 	private RateObject rateObject;
-
+	private ParkSync sync;
+	
+	
+	public RateResponse(String resp, RateObject rateObject, ParkSync sync) {
+		super();
+		this.resp = resp;
+		this.rateObject = rateObject;
+		this.sync = sync;
+	}
 	public String getResp() {
 		return resp;
 	}
@@ -16,11 +24,7 @@ public class RateResponse {
 	public void setRateObject(RateObject rateObject) {
 		this.rateObject = rateObject;
 	}
-	public RateResponse(String resp, RateObject rateObject) {
-		super();
-		this.resp = resp;
-		this.rateObject = rateObject;
-	}
+
 	
 	
 	
