@@ -9,6 +9,7 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 
 import com.parq.server.dao.model.object.ParkingRate;
+import com.parq.server.dao.model.object.ParkingSpace;
 import com.parq.server.dao.model.object.ParkingRate.RateType;
 
 /**
@@ -131,6 +132,13 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 			closeConnection(con);
 		}
 
+		if (spaceIdentifier != null && !spaceIdentifier.isEmpty()) {
+			ParkingSpaceDao spaceDao = new ParkingSpaceDao();
+			ParkingSpace pSpace = 
+				spaceDao.getParkingSpaceBySpaceIdentifier(locationIdentifier, spaceIdentifier);
+			rate.setSpaceId(pSpace.getSpaceId());
+		}
+		
 		// put result into cache
 		myCache.put(new Element(cacheKey, rate));
 		
@@ -200,6 +208,9 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 			
 			ResultSet rs = pstmt.executeQuery();
 			rate = createParkingRate(rs, true);
+			if (rate != null) {
+				rate.setSpaceId(spaceId);
+			}
 
 		} catch (SQLException sqle) {
 			System.out.println("SQL statement is invalid: " + pstmt);
