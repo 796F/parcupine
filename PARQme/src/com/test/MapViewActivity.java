@@ -34,6 +34,7 @@ import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 import com.objects.MapOverlays;
 import com.objects.SavedInfo;
+import com.objects.ThrowDialog;
 
 /**
  * user loads map, on find car, we create an overlay item that holds info about where
@@ -58,7 +59,7 @@ public class MapViewActivity extends MapActivity {
 	private int zoomLevel = 21;
 	private double a;
 	private double b;
-
+	LocationListener locListener;
 	//map controlling elements
 	private LocationManager locMan;
 	private MapController mapCtrl;
@@ -72,6 +73,8 @@ public class MapViewActivity extends MapActivity {
 	private ImageView arrow;
 	private Button searchButton;
 	private Button locButton;
+	private LocationManager locationManager;
+	
 	
 	@Override
 	protected boolean isRouteDisplayed() {
@@ -85,7 +88,28 @@ public class MapViewActivity extends MapActivity {
 		gc = new Geocoder(this);
 //		parkLoc = new ArrayList<OverlayItem>();
 //		parkLoc.add(new OverlayItem(new GeoPoint((int)(38.984924*1e6),(int)(-76.935486*1e6)), "Ritchie Parking Lot", "Second Line"));
-
+		locListener = new LocationListener(){
+				private static final float DEFAULT_ACCURACY = 100;
+				@Override
+				public void onLocationChanged(Location location) {
+					if (location.hasAccuracy() && location.getAccuracy() < DEFAULT_ACCURACY) {
+						lat = location.getLatitude();
+						lon = location.getLongitude();
+						((LocationManager) MapViewActivity.this
+								.getSystemService(Context.LOCATION_SERVICE))
+								.removeUpdates(this);
+					}
+				}
+				@Override
+				public void onProviderDisabled(String arg0) {
+				}
+				@Override
+				public void onProviderEnabled(String arg0) {
+				}
+				@Override
+				public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
+				}
+		};
 		//hook elements
 		MapView mapView = (MapView) findViewById(R.id.mapview);
 		mapView.setBuiltInZoomControls(false);
@@ -201,35 +225,19 @@ public class MapViewActivity extends MapActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-
-		final LocationListener locListener = new LocationListener(){
-			private static final float DEFAULT_ACCURACY = 100;
-			@Override
-			public void onLocationChanged(Location location) {
-				if (location.hasAccuracy() && location.getAccuracy() < DEFAULT_ACCURACY) {
-					lat = location.getLatitude();
-					lon = location.getLongitude();
-					((LocationManager) MapViewActivity.this
-							.getSystemService(Context.LOCATION_SERVICE))
-							.removeUpdates(this);
-				}
-			}
-			@Override
-			public void onProviderDisabled(String arg0) {
-			}
-			@Override
-			public void onProviderEnabled(String arg0) {
-			}
-			@Override
-			public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
-			}
-		};
-		locMan.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locListener);
+		//locMan.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locListener);
 		locMan.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locListener);
 	}
-	
-	
-
+	@Override
+	public void onPause(){
+		super.onPause();
+		locMan.removeUpdates(locListener);
+	}
+	@Override
+	public void onBackPressed(){
+		super.finish();
+		finish();
+	}
 }
 
 /* Parking Lot Locations

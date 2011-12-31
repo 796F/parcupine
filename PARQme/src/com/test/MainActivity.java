@@ -779,6 +779,12 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	}
 	
 	@Override
+	public void onPause(){
+		super.onPause();
+		stopGettingLocation();
+	}
+	
+	@Override
 	public void onBackPressed() {
 	//user can be on 3 different pages.  
 	
@@ -786,6 +792,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 		try{
 			rateObj.getDefaultRate();
 		}catch(Exception e){
+			super.finish();
 			finish();
 		}
 		final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
@@ -796,6 +803,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 			//if on rate page, go back
 			rateObj = null;
 			vf.showPrevious();
+			startGettingLocation();
 		}
 	
 	}
