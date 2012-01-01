@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:layout_alignParentRight="true"
-        android:background="@drawable/ic_menu_mylocation"
+        android:background="@drawable/ic_btn_mylocation"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="3dp"
         android:layout_marginRight="3dp" />
