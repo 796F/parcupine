@@ -8,7 +8,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
-import java.util.Date;
+import java.util.List;
 
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonGenerationException;
@@ -279,6 +279,38 @@ public class ServerCalls {
                 final ParkInstanceObject response = Parsers.parseParkInstance(jp);
                 jp.close();
                 return response;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static List<Spot> findSpots(double lat, double lon, SharedPreferences prefs){
+        try {
+            final HttpURLConnection conn =
+                    (HttpURLConnection)
+                    new URL(SERVER_HOSTNAME + "/parkservice.maps/find")
+            .openConnection();
+            conn.setRequestProperty("Accept", "application/json");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setDoOutput(true);
+            final JsonGenerator jg = JSON_FACTORY.createJsonGenerator(conn.getOutputStream());
+            jg.writeStartObject();
+            jg.writeFieldName("lat");
+            jg.writeNumber(lat);
+            jg.writeFieldName("lon");
+            jg.writeNumber(lon);
+            writeUserDetails(jg, prefs);
+            jg.writeEndObject();
+            jg.flush();
+            jg.close();
+            if (conn.getResponseCode() == 200) {
+                final JsonParser jp = JSON_FACTORY.createJsonParser(conn
+                        .getInputStream());
+                final List<Spot> spots = Parsers.parseSpots(jp);
+                jp.close();
+                return spots;
             }
         } catch (IOException e) {
             e.printStackTrace();

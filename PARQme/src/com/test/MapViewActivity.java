@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
@@ -33,6 +34,8 @@ import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 import com.objects.MapOverlays;
 import com.objects.SavedInfo;
+import com.objects.ServerCalls;
+import com.objects.Spot;
 
 /**
  * user loads map, on find car, we create an overlay item that holds info about where
@@ -96,7 +99,7 @@ public class MapViewActivity extends MapActivity {
 				}
 		};
 		//hook elements
-		MapView mapView = (MapView) findViewById(R.id.mapview);
+		final MapView mapView = (MapView) findViewById(R.id.mapview);
 		mapView.setBuiltInZoomControls(false);
 		final EditText address = (EditText) findViewById(R.id.addressinput);
 		mapCtrl = mapView.getController();
@@ -106,19 +109,9 @@ public class MapViewActivity extends MapActivity {
 		final List<Overlay> mapOverlays = mapView.getOverlays();
 		//find a drawable you want, can declare multiple drawables
 		
-		Drawable drawable = this.getResources().getDrawable(R.drawable.bluep);
+		final Drawable drawable = this.getResources().getDrawable(R.drawable.bluep);
 		//then create an itemized overlay using said drawable, can make more itemizzedoverlays.
 		MapOverlays itemizedOverlay = new MapOverlays(drawable,mapView);
-		GeoPoint point = new GeoPoint((int)(38.984924*1e6),(int)(-76.935486*1e6));
-		OverlayItem x = new OverlayItem(point, "Ritchie Parking Lot", "Spot: D6");
-		itemizedOverlay.addOverlay(x);
-		mapOverlays.add(itemizedOverlay);
-		
-		itemizedOverlay = new MapOverlays(drawable,mapView);
-		GeoPoint point2 = new GeoPoint((int)(38.935898*1e6),(int)(-77.08712*1e6));
-		OverlayItem xy = new OverlayItem(point2, "Nebraska Avenue", "Spot: 2231");
-		itemizedOverlay.addOverlay(xy);
-		mapOverlays.add(itemizedOverlay);
 		
 		final Button searchButton = (Button) findViewById(R.id.searchbutton);
 		searchButton.setOnClickListener(new View.OnClickListener() {
@@ -167,34 +160,72 @@ public class MapViewActivity extends MapActivity {
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, findValues);
 		findList.setAdapter(adapter);
-		findList.setOnItemClickListener(new OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position,
-					long id) {
-				switch (position) {
-				case 0: // Find Me
-					findMe();
-					drawer.close();
-					break;
-				case 1: // Find My Car
-					//get saved info about spot and animate to location and zoom in.
-					double testLat = Double.valueOf(SavedInfo.getLat(MapViewActivity.this));
-					double testLon = Double.valueOf(SavedInfo.getLon(MapViewActivity.this));
-					mapCtrl.animateTo(
-							new GeoPoint((int)(testLat*1e6), (int)(testLon*1e6))
-					);
-					mapCtrl.setZoom(ZOOM_LEVEL);
-					drawer.close();
-					break;
-				case 2: // Find a Spot
-					//get phone's current location and animate
-			        mapCtrl.animateTo(new GeoPoint((int)(38.984924*1e6),(int)(-76.935486*1e6)));
-					mapCtrl.setZoom(ZOOM_LEVEL);
-					drawer.close();
-					break;
-				}
-			}
-		});
+        findList.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case 0: { // Find Me
+                        findMe();
+                        drawer.close();
+                        break;
+                    }
+                    case 1: { // Find My Car
+                        final double carLat = Double.valueOf(SavedInfo.getLat(MapViewActivity.this));
+                        final double carLon = Double.valueOf(SavedInfo.getLon(MapViewActivity.this));
+                        mapCtrl.animateTo(new GeoPoint((int) (carLat * 1e6), (int) (carLon * 1e6)));
+                        mapCtrl.setZoom(ZOOM_LEVEL);
+                        drawer.close();
+                        break;
+                    }
+                    case 2: { // Find a Spot
+                        SharedPreferences prefs = getSharedPreferences(MainActivity.SAVED_INFO, 0);
+                        List<Spot> spots = ServerCalls.findSpots(userLat, userLon, prefs);
+                        double lat;
+                        double lon;
+                        double latSum = 0d;
+                        double lonSum = 0d;
+                        double minLat = Double.MAX_VALUE;
+                        double maxLat = -Double.MAX_VALUE;
+                        double minLon = Double.MAX_VALUE;
+                        double maxLon = -Double.MAX_VALUE;
+                        MapOverlays itemizedOverlay;
+                        GeoPoint point;
+                        for (Spot spot : spots) {
+                            lat = spot.getLat();
+                            lon = spot.getLon();
+                            latSum += lat;
+                            lonSum += lon;
+
+                            if (lat < minLat) {
+                                minLat = lat;
+                            } else if (lat > maxLat) {
+                                maxLat = lat;
+                            }
+                            if (lon < minLon) {
+                                minLon = lon;
+                            } else if (lon > maxLon) {
+                                maxLon = lon;
+                            }
+
+                            itemizedOverlay = new MapOverlays(drawable, mapView);
+                            point = new GeoPoint((int) (lat * 1e6), (int) (lon * 1e6));
+                            itemizedOverlay.addOverlay(new OverlayItem(point, spot.getSpotName(),
+                                    null));
+                            mapOverlays.add(itemizedOverlay);
+                        }
+                        final int numSpots = spots.size();
+                        if (numSpots > 0) {
+                            mapCtrl.animateTo(new GeoPoint((int) (latSum / numSpots * 1e6),
+                                    (int) (lonSum / numSpots * 1e6)));
+                            mapCtrl.zoomToSpan((int) ((maxLat - minLat) * 1e6 + 1),
+                                    (int) ((maxLon - minLon) * 1e6 + 1));
+                        }
+                        drawer.close();
+                        break;
+                    }
+                }
+            }
+        });
 	}
 
 	private void findMe() {

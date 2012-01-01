@@ -1,8 +1,10 @@
 package com.objects;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.JsonToken;
 
@@ -17,8 +19,8 @@ public class Parsers {
 
 	// Park rate parameters
 	private static final String PARAM_LAT = "lat";
-	private static final String PARAM_LONG = "lon";
-	private static final String PARAM_SPOT = "spotId";
+	private static final String PARAM_LON = "lon";
+	private static final String PARAM_SPOT_ID = "spotId";
 	private static final String PARAM_MIN_TIME = "minTime";
 	private static final String PARAM_MAX_TIME = "maxTime";
 	private static final String PARAM_DEFAULT_RATE = "defaultRate";
@@ -30,6 +32,9 @@ public class Parsers {
 	
 	private static final String PARAM_PARK_SYNC = "sync";
 	private static final String PARAM_RATE_OBJECT = "rateObject";
+
+	private static final String PARAM_LOCATION_LIST = "locationList";
+	private static final String PARAM_SPOT_NAME = "spot";
 
 	// {"fname":"xia@umd.edu","lname":"Mikey","phone":"1337"}
 	public static UserObject parseUser(JsonParser jp) throws IOException {
@@ -72,7 +77,7 @@ public class Parsers {
 						current = jp.getCurrentName();
 						switch (tt) {
 						case VALUE_NUMBER_INT: {
-							if (PARAM_SPOT.equals(current)) {
+							if (PARAM_SPOT_ID.equals(current)) {
 								spotId = jp.getLongValue();
 							} else if (PARAM_MIN_TIME.equals(current)) {
 								minTime = jp.getIntValue();
@@ -89,7 +94,7 @@ public class Parsers {
 						case VALUE_NUMBER_FLOAT: {
 							if (PARAM_LAT.equals(current)) {
 								lat = jp.getDoubleValue();
-							} else if (PARAM_LONG.equals(current)) {
+							} else if (PARAM_LON.equals(current)) {
 								lon = jp.getDoubleValue();
 							}
 						}
@@ -173,7 +178,7 @@ public class Parsers {
 						current = jp.getCurrentName();
 						switch (tt) {
 						case VALUE_NUMBER_INT: {
-							if (PARAM_SPOT.equals(current)) {
+							if (PARAM_SPOT_ID.equals(current)) {
 								spotId = jp.getLongValue();
 							} else if (PARAM_MIN_TIME.equals(current)) {
 								minTime = jp.getIntValue();
@@ -190,7 +195,7 @@ public class Parsers {
 						case VALUE_NUMBER_FLOAT: {
 							if (PARAM_LAT.equals(current)) {
 								lat = jp.getDoubleValue();
-							} else if (PARAM_LONG.equals(current)) {
+							} else if (PARAM_LON.equals(current)) {
 								lon = jp.getDoubleValue();
 							}
 						}
@@ -246,7 +251,7 @@ public class Parsers {
 							current = jp.getCurrentName();
 							switch (token) {
 								case VALUE_NUMBER_INT: {
-									if (PARAM_SPOT.equals(current)) {
+									if (PARAM_SPOT_ID.equals(current)) {
 										spot = jp.getLongValue();
 									} else if (PARAM_MIN_TIME.equals(current)) {
 										minTime = jp.getIntValue();
@@ -261,7 +266,7 @@ public class Parsers {
 								case VALUE_NUMBER_FLOAT: {
 									if (PARAM_LAT.equals(current)) {
 										lat = jp.getDoubleValue();
-									} else if (PARAM_LONG.equals(current)) {
+									} else if (PARAM_LON.equals(current)) {
 										lon = jp.getDoubleValue();
 									}
 								}
@@ -297,7 +302,7 @@ public class Parsers {
 							current = jp.getCurrentName();
 							switch (tt) {
 							case VALUE_NUMBER_INT: {
-								if (PARAM_SPOT.equals(current)) {
+								if (PARAM_SPOT_ID.equals(current)) {
 									spotId = jp.getLongValue();
 								} else if (PARAM_MIN_TIME.equals(current)) {
 									minTime = jp.getIntValue();
@@ -314,7 +319,7 @@ public class Parsers {
 							case VALUE_NUMBER_FLOAT: {
 								if (PARAM_LAT.equals(current)) {
 									lat = jp.getDoubleValue();
-								} else if (PARAM_LONG.equals(current)) {
+								} else if (PARAM_LON.equals(current)) {
 									lon = jp.getDoubleValue();
 								}
 							}
@@ -385,7 +390,7 @@ public class Parsers {
 							current = jp.getCurrentName();
 							switch (tt) {
 							case VALUE_NUMBER_INT: {
-								if (PARAM_SPOT.equals(current)) {
+								if (PARAM_SPOT_ID.equals(current)) {
 									spotId = jp.getLongValue();
 								} else if (PARAM_MIN_TIME.equals(current)) {
 									minTime = jp.getIntValue();
@@ -402,7 +407,7 @@ public class Parsers {
 							case VALUE_NUMBER_FLOAT: {
 								if (PARAM_LAT.equals(current)) {
 									lat = jp.getDoubleValue();
-								} else if (PARAM_LONG.equals(current)) {
+								} else if (PARAM_LON.equals(current)) {
 									lon = jp.getDoubleValue();
 								}
 							}
@@ -427,6 +432,48 @@ public class Parsers {
 		}
 		return new ParkResponse(resp, endTime, parkingReferenceNumber, null);
 	}
+
+    public static List<Spot> parseSpots(JsonParser jp) throws IOException {
+        final List<Spot> spots = new ArrayList<Spot>();
+
+        JsonToken t = jp.nextToken();
+        String curr;
+        while (t != null && t != JsonToken.END_OBJECT) {
+            curr = jp.getCurrentName();
+            if (t == JsonToken.START_ARRAY && PARAM_LOCATION_LIST.equals(curr)) {
+                JsonToken tt = jp.nextToken();
+                while (tt != null && tt != JsonToken.END_ARRAY) {
+                    spots.add(parseSpot(jp));
+                    tt = jp.nextToken();
+                }
+            }
+            t = jp.nextToken();
+        }
+        return spots;
+    }
+
+    private static Spot parseSpot(JsonParser jp) throws IOException {
+        double lat = 0d;
+        double lon = 0d;
+        String spotName = "";
+
+        JsonToken t = jp.nextToken();
+        String curr;
+        while (t != null && t != JsonToken.END_OBJECT) {
+            if (t == JsonToken.VALUE_STRING) {
+                curr = jp.getCurrentName();
+                if (PARAM_LAT.equals(curr)) {
+                    lat = jp.getDoubleValue();
+                } else if (PARAM_LON.equals(curr)) {
+                    lon = jp.getDoubleValue();
+                } else if (PARAM_SPOT_NAME.equals(curr)) {
+                    spotName = jp.getText();
+                }
+            }
+            t = jp.nextToken();
+        }
+        return new Spot(lat, lon, spotName);
+    }
 }
 
 
