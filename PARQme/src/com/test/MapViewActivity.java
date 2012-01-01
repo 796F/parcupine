@@ -244,15 +244,10 @@ public class MapViewActivity extends MapActivity {
 		locMan.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locListener);
 	}
 	@Override
-	public void onPause(){
-		super.onPause();
-		locMan.removeUpdates(locListener);
-	}
-	@Override
-	public void onBackPressed(){
-		super.finish();
-		finish();
-	}
+    public void onPause() {
+        locMan.removeUpdates(locListener);
+        super.onPause();
+    }
 }
 
 /* Parking Lot Locations

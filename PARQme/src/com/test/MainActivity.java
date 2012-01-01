@@ -147,6 +147,8 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	private Location lastLocation;
 	private boolean goodLocation = false;
 
+	private State state;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -219,6 +221,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 					// if we get the object successfully
 					if (rateResponse.getResp().equals("OK")) {
 						vf.showNext();
+						state = State.PARKING;
 						// prepare time picker for this spot
 						//					parkTimePicker.setRange(mySpot.getMinIncrement(),
 						//							mySpot.getMaxTime());
@@ -307,17 +310,23 @@ public class MainActivity extends ActivityGroup implements LocationListener {
                 timer = initiateTimer(endTime, vf);
                 timer.start();
                 vf.showNext();
+                state = State.PARKING;
                 return;
             }
         }
-
 		switchToParkingLayout();
-
-		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		startGettingLocation();
 	}
 
-	private int getParkMins() {
+    @Override
+    protected void onResume() {
+        super.onResume();
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (state == State.UNPARKED) {
+            startGettingLocation();
+        }
+    }
+
+    private int getParkMins() {
 		int h, m;
 		try {
 			h = Integer.valueOf(hours.getText().toString());
@@ -370,6 +379,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	}
 
 	private void switchToParkingLayout() {
+        state = State.PARKING;
 	    remainHours.setVisibility(View.GONE);
 	    remainMins.setVisibility(View.GONE);
 	    smallTime.setVisibility(View.GONE);
@@ -396,6 +406,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
                 totalTimeParked = 0;
                 //return to previous view
                 vf.showPrevious();
+                state = State.UNPARKED;
             }
         });
 	    rightButton.setText("PARQ now");
@@ -409,6 +420,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	}
 
 	private void switchToParkedLayout() {
+        state = State.PARKED;
 	    hours.setVisibility(View.GONE);
 	    minutes.setVisibility(View.GONE);
 	    colon.setVisibility(View.GONE);
@@ -437,6 +449,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	}
 
 	private void switchToRefillingLayout() {
+        state = State.REFILLING;
         remainHours.setVisibility(View.GONE);
         remainMins.setVisibility(View.GONE);
         smallTime.setVisibility(View.VISIBLE);
@@ -532,6 +545,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 
                             switchToParkingLayout();
                             vf.showPrevious();
+                            state = State.UNPARKED;
                         } else {
                             ThrowDialog.show(MainActivity.this, ThrowDialog.UNPARK_ERROR);
                         }
@@ -639,6 +653,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 					//if we get the object successfully
 					if(rateResponse.getResp().equals("OK")){
 						vf.showNext();
+						state = State.PARKING;
 						// prepare time picker for this spot
 						//					parkTimePicker.setRange(mySpot.getMinIncrement(),
 						//							mySpot.getMaxTime());
@@ -780,32 +795,26 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	}
 	
 	@Override
-	public void onPause(){
-		super.onPause();
-		stopGettingLocation();
-	}
+    public void onPause() {
+        stopGettingLocation();
+        super.onPause();
+    }
 	
-	@Override
-	public void onBackPressed() {
-	//user can be on 3 different pages.  
-	
-		//if on front page, exit app
-		try{
-			rateObj.getDefaultRate();
-		}catch(Exception e){
-			super.finish();
-			finish();
-		}
-		final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
-		if(SavedInfo.isParked(check)){
-			//if on parked page, throw dialog.  
-			ThrowDialog.show(MainActivity.this, ThrowDialog.IS_PARKED);
-		}else{
-			//if on rate page, go back
-			rateObj = null;
-			vf.showPrevious();
-			startGettingLocation();
-		}
-	
+    @Override
+    public void onBackPressed() {
+        if (state == State.PARKING) {
+            rateObj = null;
+            vf.showPrevious();
+            state = State.UNPARKED;
+            startGettingLocation();
+        } else if (state == State.REFILLING) {
+            switchToParkedLayout();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+	private enum State {
+	    UNPARKED, PARKING, PARKED, REFILLING;
 	}
 }
