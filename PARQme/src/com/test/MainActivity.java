@@ -599,6 +599,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
                             final ParkInstanceObject refillResp = ServerCalls.refill(refillMinutes, rateObj, parkId, check);
                             if (refillResp != null && refillResp.getEndTime() > 0) {
                                 SavedInfo.park(MainActivity.this, refillResp, rateObj);
+                                switchToParkedLayout();
                                 //update the total time parked and remaining time.
                                 totalTimeParked += refillMinutes;
                                 //stop current timer, start new timer with current time + selectedNumber.
@@ -688,12 +689,12 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 				}
 				//update remain seconds and timer.
 		        if (smallTime.getVisibility() != View.VISIBLE) {
-                    remainHours.setText(String.valueOf(seconds / 360));
-                    remainMins.setText(String.valueOf((seconds % 360 + 59) / 60));
+                    remainHours.setText(String.valueOf(seconds / 3600));
+                    remainMins.setText(String.valueOf((seconds % 3600) / 60));
                     flashColon();
 		        } else {
-		            smallHours.setText(String.valueOf(seconds / 360));
-		            smallMins.setText(String.valueOf((seconds % 360 + 59) / 60));
+		            smallHours.setText(String.valueOf(seconds / 3600));
+		            smallMins.setText(String.valueOf((seconds % 3600) / 60));
 		            flashSmallColon();
 		        }
 			}
