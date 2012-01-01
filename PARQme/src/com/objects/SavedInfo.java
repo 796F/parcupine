@@ -75,13 +75,13 @@ public class SavedInfo{
 		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
 		return check.getString("email", null);
 	}
-	public static float getLat(Context activity){
+	public static String getLat(Context activity){
 		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
-		return check.getFloat("lat", 0);
+		return check.getString("lat", "0");
 	}
-	public static float getLon(Context activity){
+	public static String getLon(Context activity){
 		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
-		return check.getFloat("lon", 0);
+		return check.getString("lon", "0");
 	}
 	//set's code to a string
 	public static void setCode(Context activity, String code){

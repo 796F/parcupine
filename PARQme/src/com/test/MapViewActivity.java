@@ -1,7 +1,6 @@
 package com.test;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
@@ -34,7 +33,6 @@ import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 import com.objects.MapOverlays;
 import com.objects.SavedInfo;
-import com.objects.ThrowDialog;
 
 /**
  * user loads map, on find car, we create an overlay item that holds info about where
@@ -54,26 +52,13 @@ import com.objects.ThrowDialog;
  * */
 public class MapViewActivity extends MapActivity {
 	//private constants used
-	public double lat;
-	public double lon;
-	private int zoomLevel = 21;
-	private double a;
-	private double b;
+	private double userLat;
+	private double userLon;
+	private static final int ZOOM_LEVEL = 21;
 	LocationListener locListener;
 	//map controlling elements
 	private LocationManager locMan;
 	private MapController mapCtrl;
-	private ArrayList<OverlayItem> parkLoc;
-	private MapOverlays itemizedoverlay;
-	private List<Overlay> mapOverlays;
-	private Geocoder gc;
-	private EditText address;
-	private SlidingDrawer drawer;
-	private ListView findList;
-	private ImageView arrow;
-	private Button searchButton;
-	private Button locButton;
-	private LocationManager locationManager;
 	
 	
 	@Override
@@ -85,7 +70,7 @@ public class MapViewActivity extends MapActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.map);
-		gc = new Geocoder(this);
+		final Geocoder gc = new Geocoder(this);
 //		parkLoc = new ArrayList<OverlayItem>();
 //		parkLoc.add(new OverlayItem(new GeoPoint((int)(38.984924*1e6),(int)(-76.935486*1e6)), "Ritchie Parking Lot", "Second Line"));
 		locListener = new LocationListener(){
@@ -93,8 +78,8 @@ public class MapViewActivity extends MapActivity {
 				@Override
 				public void onLocationChanged(Location location) {
 					if (location.hasAccuracy() && location.getAccuracy() < DEFAULT_ACCURACY) {
-						lat = location.getLatitude();
-						lon = location.getLongitude();
+						userLat = location.getLatitude();
+						userLon = location.getLongitude();
 						((LocationManager) MapViewActivity.this
 								.getSystemService(Context.LOCATION_SERVICE))
 								.removeUpdates(this);
@@ -113,57 +98,58 @@ public class MapViewActivity extends MapActivity {
 		//hook elements
 		MapView mapView = (MapView) findViewById(R.id.mapview);
 		mapView.setBuiltInZoomControls(false);
-		address = (EditText) findViewById(R.id.addressinput);
+		final EditText address = (EditText) findViewById(R.id.addressinput);
 		mapCtrl = mapView.getController();
 		locMan = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		
 		//get reference to your map's overlays
-		mapOverlays = mapView.getOverlays();
+		final List<Overlay> mapOverlays = mapView.getOverlays();
 		//find a drawable you want, can declare multiple drawables
 		
 		Drawable drawable = this.getResources().getDrawable(R.drawable.bluep);
 		//then create an itemized overlay using said drawable, can make more itemizzedoverlays.
-		itemizedoverlay = new MapOverlays(drawable,mapView);
+		MapOverlays itemizedOverlay = new MapOverlays(drawable,mapView);
 		GeoPoint point = new GeoPoint((int)(38.984924*1e6),(int)(-76.935486*1e6));
 		OverlayItem x = new OverlayItem(point, "Ritchie Parking Lot", "Spot: D6");
-		itemizedoverlay.addOverlay(x);
-		mapOverlays.add(itemizedoverlay);
+		itemizedOverlay.addOverlay(x);
+		mapOverlays.add(itemizedOverlay);
 		
-		itemizedoverlay = new MapOverlays(drawable,mapView);
+		itemizedOverlay = new MapOverlays(drawable,mapView);
 		GeoPoint point2 = new GeoPoint((int)(38.935898*1e6),(int)(-77.08712*1e6));
 		OverlayItem xy = new OverlayItem(point2, "Nebraska Avenue", "Spot: 2231");
-		itemizedoverlay.addOverlay(xy);
-		mapOverlays.add(itemizedoverlay);
+		itemizedOverlay.addOverlay(xy);
+		mapOverlays.add(itemizedOverlay);
 		
-		searchButton = (Button) findViewById(R.id.searchbutton);
+		final Button searchButton = (Button) findViewById(R.id.searchbutton);
 		searchButton.setOnClickListener(new View.OnClickListener() {
-			
 			@Override
 			public void onClick(View arg0) {
 				String addressIn = address.getText().toString();
 				try {
-					List<Address> locations =  gc.getFromLocationName(addressIn, 5);
-					for(Address x: locations){
+				    double a=0d, b=0d;
+					List<Address> locations =  gc.getFromLocationName(addressIn, 1);
+					if (!locations.isEmpty()) {
+					    final Address x = locations.get(0);
 						Toast.makeText(MapViewActivity.this, x.getLatitude()+":"+x.getLongitude(), Toast.LENGTH_LONG);
 						a = x.getLatitude();
 						b = x.getLongitude();
+						mapCtrl.animateTo(new GeoPoint((int)(a*1e6), (int)(b*1e6)));
 					}
-					mapCtrl.animateTo(new GeoPoint((int)(a*1e6), (int)(b*1e6)));
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
 		});
-		locButton = (Button) findViewById(R.id.loc_button);
+		final Button locButton = (Button) findViewById(R.id.loc_button);
 		locButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				findMe();
 			}
 		});
-		arrow = (ImageView) findViewById(R.id.arrow);
-		drawer = (SlidingDrawer) findViewById(R.id.drawer);
+		final ImageView arrow = (ImageView) findViewById(R.id.arrow);
+		final SlidingDrawer drawer = (SlidingDrawer) findViewById(R.id.drawer);
 		drawer.setOnDrawerCloseListener(new OnDrawerCloseListener() {
 			@Override
 			public void onDrawerClosed() {
@@ -176,7 +162,7 @@ public class MapViewActivity extends MapActivity {
 				arrow.setImageResource(R.drawable.expander_open_holo_dark);
 			}
 		});
-		findList = (ListView) findViewById(R.id.find_list);
+		final ListView findList = (ListView) findViewById(R.id.find_list);
 		String[] findValues = new String[] { "Find Me", "Find My Car", "Find a Spot" };
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, findValues);
@@ -192,21 +178,18 @@ public class MapViewActivity extends MapActivity {
 					break;
 				case 1: // Find My Car
 					//get saved info about spot and animate to location and zoom in.
-					double testLat = SavedInfo.getLat(MapViewActivity.this);
-					double testLon = SavedInfo.getLon(MapViewActivity.this);
+					double testLat = Double.valueOf(SavedInfo.getLat(MapViewActivity.this));
+					double testLon = Double.valueOf(SavedInfo.getLon(MapViewActivity.this));
 					mapCtrl.animateTo(
 							new GeoPoint((int)(testLat*1e6), (int)(testLon*1e6))
 					);
-					mapCtrl.setZoom(21);
+					mapCtrl.setZoom(ZOOM_LEVEL);
 					drawer.close();
 					break;
 				case 2: // Find a Spot
 					//get phone's current location and animate
-					GeoPoint point = new GeoPoint((int)(lat*1e6),(int)(lon*1e6));
-					mapCtrl.animateTo(
-							point
-					);
-					mapCtrl.setZoom(zoomLevel);
+			        mapCtrl.animateTo(new GeoPoint((int)(38.984924*1e6),(int)(-76.935486*1e6)));
+					mapCtrl.setZoom(ZOOM_LEVEL);
 					drawer.close();
 					break;
 				}
@@ -216,7 +199,8 @@ public class MapViewActivity extends MapActivity {
 
 	private void findMe() {
 		//load information from database, change overlay to show where spots are
-		mapCtrl.animateTo(new GeoPoint((int)(38.984924*1e6),(int)(-76.935486*1e6)));
+        mapCtrl.animateTo(new GeoPoint((int)(userLat*1e6),(int)(userLon*1e6)));
+        mapCtrl.setZoom(ZOOM_LEVEL);
 		//throw dialog, ask for "current location, address"
 		//if current location, zoom there.
 		//else zoom to address
