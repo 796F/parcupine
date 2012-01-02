@@ -16,6 +16,7 @@ import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonParser;
 
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 
 /**
  * This object is used to store user preferences and such, passed between activities inside a bundle.  
@@ -27,38 +28,62 @@ public class ServerCalls {
 	private static final String SERVER_HOSTNAME = "http://75.101.132.219:8080";
 
 	/*returns if authentication passed.*/
-	public static UserObject getUser(String email, String hash){
-		try {
-			//open connection
-			final HttpURLConnection conn =
-					(HttpURLConnection)
-					new URL(SERVER_HOSTNAME + "/parkservice.auth")
-			.openConnection();
-			conn.setRequestProperty("Accept", "application/json");
-			conn.setRequestProperty("Content-Type", "application/json");
-			conn.setDoOutput(true);
-			//write data
-			final JsonGenerator jg = JSON_FACTORY.createJsonGenerator(conn.getOutputStream());
-			jg.writeStartObject();
-			jg.writeFieldName("email");
-			jg.writeString(email);
-			jg.writeFieldName("password");
-			jg.writeString(hash);
-			jg.writeEndObject();
-			jg.flush();
-			jg.close();
-			if (conn.getResponseCode() == 200) {
-				final JsonParser jp = JSON_FACTORY.createJsonParser(conn
-						.getInputStream());
-				final UserObject user = Parsers.parseUser(jp);
-				jp.close();
-				return user;
-			}
-		} catch (IOException e){
-			e.printStackTrace();
-		}
-		return null;
+	public static void authUser(String email, String hash, AuthUserCallback callback){
+	    new AuthUserTask(email, hash, callback).execute((Void) null);
+	}
 
+	public interface AuthUserCallback {
+	    void onAuthUserComplete(UserObject user);
+	}
+
+	private static class AuthUserTask extends AsyncTask<Void, Void, UserObject> {
+	    private final String mEmail;
+	    private final String mHash;
+	    private final AuthUserCallback mCallback;
+	    AuthUserTask(String email, String hash, AuthUserCallback callback) {
+	        mEmail = email;
+	        mHash = hash;
+	        mCallback = callback;
+	    }
+
+        @Override
+        protected UserObject doInBackground(Void... params) {
+            try {
+                //open connection
+                final HttpURLConnection conn =
+                        (HttpURLConnection)
+                        new URL(SERVER_HOSTNAME + "/parkservice.auth")
+                .openConnection();
+                conn.setRequestProperty("Accept", "application/json");
+                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setDoOutput(true);
+                //write data
+                final JsonGenerator jg = JSON_FACTORY.createJsonGenerator(conn.getOutputStream());
+                jg.writeStartObject();
+                jg.writeFieldName("email");
+                jg.writeString(mEmail);
+                jg.writeFieldName("password");
+                jg.writeString(mHash);
+                jg.writeEndObject();
+                jg.flush();
+                jg.close();
+                if (conn.getResponseCode() == 200) {
+                    final JsonParser jp = JSON_FACTORY.createJsonParser(conn
+                            .getInputStream());
+                    final UserObject user = Parsers.parseUser(jp);
+                    jp.close();
+                    return user;
+                }
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(UserObject result) {
+            mCallback.onAuthUserComplete(result);
+        }
 	}
 
 	public static boolean registerNewUser(String email, String password, String name,
