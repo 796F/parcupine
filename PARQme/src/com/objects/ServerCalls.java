@@ -132,37 +132,64 @@ public class ServerCalls {
 		return false;
 	}
 
-	public static boolean unPark(long spotid, String parkingReferenceNumber, SharedPreferences prefs){
-		try {
-			final HttpURLConnection conn =
-					(HttpURLConnection)
-					new URL(SERVER_HOSTNAME + "/parkservice.park/unpark")
-			.openConnection();
-			conn.setRequestProperty("Accept", "application/json");
-			conn.setRequestProperty("Content-Type", "application/json");
-			conn.setDoOutput(true);
+	public static void unpark(long spotId, String parkingReferenceNumber, SharedPreferences prefs, UnparkCallback callback) {
+	    new UnparkTask(spotId, parkingReferenceNumber, prefs, callback).execute((Void) null);
+	}
 
-			final JsonGenerator jg = JSON_FACTORY.createJsonGenerator(conn.getOutputStream());
-			jg.writeStartObject();
-			jg.writeFieldName("spotId");
-			jg.writeNumber(spotid);
-			jg.writeFieldName("parkingReferenceNumber");
-			jg.writeString(parkingReferenceNumber);
-			writeUserDetails(jg, prefs);
-			jg.writeEndObject();
-			jg.flush();
-			jg.close();
-			if (conn.getResponseCode() == 200) {
-				final JsonParser jp = JSON_FACTORY.createJsonParser(conn
-						.getInputStream());
-				final boolean response = Parsers.parseResponseCode(jp);
-				jp.close();
-				return response;
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return false;
+	public interface UnparkCallback {
+	    void onUnparkComplete(boolean success);
+	}
+
+	private static class UnparkTask extends AsyncTask<Void, Void, Boolean> {
+	    private final long mSpotId;
+	    private final String mParkingReferenceNumber;
+	    private final SharedPreferences mPrefs;
+	    private final UnparkCallback mCallback;
+	    UnparkTask(long spotId, String parkingReferenceNumber, SharedPreferences prefs, UnparkCallback callback) {
+	        mSpotId = spotId;
+	        mParkingReferenceNumber = parkingReferenceNumber;
+	        mPrefs = prefs;
+	        mCallback = callback;
+	    }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            try {
+                final HttpURLConnection conn =
+                        (HttpURLConnection)
+                        new URL(SERVER_HOSTNAME + "/parkservice.park/unpark")
+                .openConnection();
+                conn.setRequestProperty("Accept", "application/json");
+                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setDoOutput(true);
+
+                final JsonGenerator jg = JSON_FACTORY.createJsonGenerator(conn.getOutputStream());
+                jg.writeStartObject();
+                jg.writeFieldName("spotId");
+                jg.writeNumber(mSpotId);
+                jg.writeFieldName("parkingReferenceNumber");
+                jg.writeString(mParkingReferenceNumber);
+                writeUserDetails(jg, mPrefs);
+                jg.writeEndObject();
+                jg.flush();
+                jg.close();
+                if (conn.getResponseCode() == 200) {
+                    final JsonParser jp = JSON_FACTORY.createJsonParser(conn
+                            .getInputStream());
+                    final boolean response = Parsers.parseResponseCode(jp);
+                    jp.close();
+                    return response;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            mCallback.onUnparkComplete(result);
+        }
 	}
 
 	public static RateResponse getRateGps(String spotNum, double lat, double lon, SharedPreferences prefs) {
@@ -238,77 +265,132 @@ public class ServerCalls {
 		return null;
 	}
 
-	public static ParkInstanceObject park(int duration, RateObject spot, SharedPreferences prefs){
-		try {
-			final HttpURLConnection conn =
-					(HttpURLConnection)
-					new URL(SERVER_HOSTNAME + "/parkservice.park/park")
-			.openConnection();
-			conn.setRequestProperty("Accept", "application/json");
-			conn.setRequestProperty("Content-Type", "application/json");
-			conn.setDoOutput(true);
-			final JsonGenerator jg = JSON_FACTORY.createJsonGenerator(conn.getOutputStream());
-			jg.writeStartObject();
-			jg.writeFieldName("spotId");
-			jg.writeNumber(spot.getSpot());
-			jg.writeFieldName("durationMinutes");
-			jg.writeNumber(duration);
-			jg.writeFieldName("chargeAmount");
-			jg.writeNumber(duration / spot.getMinIncrement() * spot.getDefaultRate());
-			jg.writeFieldName("paymentType");
-			jg.writeNumber(0);
-			writeUserDetails(jg, prefs);
-			jg.writeEndObject();
-			jg.flush();
-			jg.close();
-			if (conn.getResponseCode() == 200) {
-				final JsonParser jp = JSON_FACTORY.createJsonParser(conn
-						.getInputStream());
-				final ParkInstanceObject response = Parsers.parseParkInstance(jp);
-				jp.close();
-				return response;
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
+	public static void park(int duration, RateObject spot, SharedPreferences prefs, ParkCallback callback) {
+	    new ParkTask(duration, spot, prefs, callback).execute((Void) null);
 	}
-    public static ParkInstanceObject refill(int duration, RateObject spot, String parkId, SharedPreferences prefs){
-        try {
-            final HttpURLConnection conn =
-                    (HttpURLConnection)
-                    new URL(SERVER_HOSTNAME + "/parkservice.park/refill")
-            .openConnection();
-            conn.setRequestProperty("Accept", "application/json");
-            conn.setRequestProperty("Content-Type", "application/json");
-            conn.setDoOutput(true);
-            final JsonGenerator jg = JSON_FACTORY.createJsonGenerator(conn.getOutputStream());
-            jg.writeStartObject();
-            jg.writeFieldName("parkingReferenceNumber");
-            jg.writeString(parkId);
-            jg.writeFieldName("spotId");
-            jg.writeNumber(spot.getSpot());
-            jg.writeFieldName("durationMinutes");
-            jg.writeNumber(duration);
-            jg.writeFieldName("chargeAmount");
-            jg.writeNumber(duration / spot.getMinIncrement() * spot.getDefaultRate());
-            jg.writeFieldName("paymentType");
-            jg.writeNumber(0);
-            writeUserDetails(jg, prefs);
-            jg.writeEndObject();
-            jg.flush();
-            jg.close();
-            if (conn.getResponseCode() == 200) {
-                final JsonParser jp = JSON_FACTORY.createJsonParser(conn
-                        .getInputStream());
-                final ParkInstanceObject response = Parsers.parseParkInstance(jp);
-                jp.close();
-                return response;
+
+	public interface ParkCallback {
+	    void onParkComplete(ParkInstanceObject parkInstance);
+	}
+
+	private static class ParkTask extends AsyncTask<Void, Void, ParkInstanceObject> {
+	    private final int mDuration;
+	    private final RateObject mSpot;
+	    private final SharedPreferences mPrefs;
+	    private final ParkCallback mCallback;
+	    ParkTask(int duration, RateObject spot, SharedPreferences prefs, ParkCallback callback) {
+	        mDuration = duration;
+	        mSpot = spot;
+	        mPrefs = prefs;
+	        mCallback = callback;
+	    }
+
+        @Override
+        protected ParkInstanceObject doInBackground(Void... params) {
+            try {
+                final HttpURLConnection conn = (HttpURLConnection) new URL(SERVER_HOSTNAME
+                        + "/parkservice.park/park")
+                .openConnection();
+                conn.setRequestProperty("Accept", "application/json");
+                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setDoOutput(true);
+                final JsonGenerator jg = JSON_FACTORY.createJsonGenerator(conn.getOutputStream());
+                jg.writeStartObject();
+                jg.writeFieldName("spotId");
+                jg.writeNumber(mSpot.getSpot());
+                jg.writeFieldName("durationMinutes");
+                jg.writeNumber(mDuration);
+                jg.writeFieldName("chargeAmount");
+                jg.writeNumber(mDuration / mSpot.getMinIncrement() * mSpot.getDefaultRate());
+                jg.writeFieldName("paymentType");
+                jg.writeNumber(0);
+                writeUserDetails(jg, mPrefs);
+                jg.writeEndObject();
+                jg.flush();
+                jg.close();
+                if (conn.getResponseCode() == 200) {
+                    final JsonParser jp = JSON_FACTORY.createJsonParser(conn.getInputStream());
+                    final ParkInstanceObject response = Parsers.parseParkInstance(jp);
+                    jp.close();
+                    return response;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+            return null;
         }
-        return null;
+
+        @Override
+        protected void onPostExecute(ParkInstanceObject result) {
+            mCallback.onParkComplete(result);
+        }
+	}
+
+    public static void refill(int duration, RateObject spot, String parkId, SharedPreferences prefs, RefillCallback callback){
+        new RefillTask(duration, spot, parkId, prefs, callback).execute((Void) null);
+    }
+
+    public interface RefillCallback {
+        void onRefillComplete(ParkInstanceObject parkInstance);
+    }
+
+    private static class RefillTask extends AsyncTask<Void, Void, ParkInstanceObject> {
+        final int mDuration;
+        final RateObject mSpot;
+        final String mParkId;
+        final SharedPreferences mPrefs;
+        final RefillCallback mCallback;
+        RefillTask(int duration, RateObject spot, String parkId, SharedPreferences prefs, RefillCallback callback) {
+            mDuration = duration;
+            mSpot = spot;
+            mParkId = parkId;
+            mPrefs = prefs;
+            mCallback = callback;
+        }
+
+        @Override
+        protected ParkInstanceObject doInBackground(Void... params) {
+            try {
+                final HttpURLConnection conn =
+                        (HttpURLConnection)
+                        new URL(SERVER_HOSTNAME + "/parkservice.park/refill")
+                .openConnection();
+                conn.setRequestProperty("Accept", "application/json");
+                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setDoOutput(true);
+                final JsonGenerator jg = JSON_FACTORY.createJsonGenerator(conn.getOutputStream());
+                jg.writeStartObject();
+                jg.writeFieldName("parkingReferenceNumber");
+                jg.writeString(mParkId);
+                jg.writeFieldName("spotId");
+                jg.writeNumber(mSpot.getSpot());
+                jg.writeFieldName("durationMinutes");
+                jg.writeNumber(mDuration);
+                jg.writeFieldName("chargeAmount");
+                jg.writeNumber(mDuration / mSpot.getMinIncrement() * mSpot.getDefaultRate());
+                jg.writeFieldName("paymentType");
+                jg.writeNumber(0);
+                writeUserDetails(jg, mPrefs);
+                jg.writeEndObject();
+                jg.flush();
+                jg.close();
+                if (conn.getResponseCode() == 200) {
+                    final JsonParser jp = JSON_FACTORY.createJsonParser(conn
+                            .getInputStream());
+                    final ParkInstanceObject response = Parsers.parseParkInstance(jp);
+                    jp.close();
+                    return response;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(ParkInstanceObject result) {
+            mCallback.onRefillComplete(result);
+        }
     }
 
     public static List<Spot> findSpots(double lat, double lon, SharedPreferences prefs){

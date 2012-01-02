@@ -9,6 +9,8 @@ package com.test;
 
 import android.app.ActivityGroup;
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -38,6 +40,8 @@ import com.objects.RateObject;
 import com.objects.RateResponse;
 import com.objects.SavedInfo;
 import com.objects.ServerCalls;
+import com.objects.ServerCalls.RefillCallback;
+import com.objects.ServerCalls.UnparkCallback;
 import com.objects.ThrowDialog;
 
 /**
@@ -142,6 +146,10 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	public static final String SAVED_INFO = "ParqMeInfo";
     private static final int WARN_TIME = 30; //in seconds
     private static final float LOCATION_ACCURACY = 20f;
+
+    private static final int DIALOG_PARKING = 1;
+    private static final int DIALOG_REFILLING = 2;
+    private static final int DIALOG_UNPARKING = 3;
 
 	private LocationManager locationManager;
 	private Location lastLocation;
@@ -423,12 +431,12 @@ public class MainActivity extends ActivityGroup implements LocationListener {
         state = State.PARKED;
 	    hours.setVisibility(View.GONE);
 	    minutes.setVisibility(View.GONE);
-	    colon.setVisibility(View.GONE);
 	    minusButton.setVisibility(View.GONE);
 	    plusButton.setVisibility(View.GONE);
 	    smallTime.setVisibility(View.GONE);
 	    priceHeader.setVisibility(View.INVISIBLE);
 	    price.setVisibility(View.INVISIBLE);
+	    colon.setVisibility(View.VISIBLE);
 	    remainHours.setVisibility(View.VISIBLE);
 	    remainMins.setVisibility(View.VISIBLE);
 		timeHeader.setText("Time Remaining");
@@ -531,24 +539,31 @@ public class MainActivity extends ActivityGroup implements LocationListener {
                     public void onClick(DialogInterface dialog, int id) {
                         final SharedPreferences check = getSharedPreferences(SAVED_INFO, 0);
                         final String parkId = SavedInfo.getParkId(check);
-                        if (ServerCalls.unPark(rateObj.getSpot(), parkId, check)) {
-                            timer.cancel();
-                            // stopService(new Intent(MainActivity.this,
-                            // Background.class));
+                        showDialog(DIALOG_UNPARKING);
+                        ServerCalls.unpark(rateObj.getSpot(), parkId, check, new UnparkCallback() {
+                            @Override
+                            public void onUnparkComplete(boolean success) {
+                                removeDialog(DIALOG_UNPARKING);
+                                if (success) {
+                                    timer.cancel();
+                                    // stopService(new Intent(MainActivity.this,
+                                    // Background.class));
 
-                            // reset ints
-                            totalTimeParked = 0;
+                                    // reset ints
+                                    totalTimeParked = 0;
 
-                            SharedPreferences.Editor editor = check.edit();
-                            SavedInfo.unpark(editor);
-                            editor.commit();
+                                    SharedPreferences.Editor editor = check.edit();
+                                    SavedInfo.unpark(editor);
+                                    editor.commit();
 
-                            switchToParkingLayout();
-                            vf.showPrevious();
-                            state = State.UNPARKED;
-                        } else {
-                            ThrowDialog.show(MainActivity.this, ThrowDialog.UNPARK_ERROR);
-                        }
+                                    switchToParkingLayout();
+                                    vf.showPrevious();
+                                    state = State.UNPARKED;
+                                } else {
+                                    ThrowDialog.show(MainActivity.this, ThrowDialog.UNPARK_ERROR);
+                                }
+                            }
+                        });
                     }
                 })
                 .setNegativeButton("No", null)
@@ -568,26 +583,37 @@ public class MainActivity extends ActivityGroup implements LocationListener {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         final SharedPreferences prefs = getSharedPreferences(SAVED_INFO, 0);
-                        ParkInstanceObject parkInstance = ServerCalls.park(parkingTime, rateObj, prefs);
-                        if(parkInstance != null){
-                            if (parkInstance.getEndTime() > 0) {
-                                SavedInfo.park(MainActivity.this, parkInstance, rateObj);
-                                totalTimeParked += parkingTime;
-                                if (totalTimeParked == rateObj.getMaxTime()) {
-                                    ThrowDialog.show(MainActivity.this, ThrowDialog.MAX_TIME);
+                        showDialog(DIALOG_PARKING);
+                        ServerCalls.park(parkingTime, rateObj, prefs, new ServerCalls.ParkCallback() {
+                            @Override
+                            public void onParkComplete(ParkInstanceObject parkInstance) {
+                                removeDialog(DIALOG_PARKING);
+                                if (parkInstance != null) {
+                                    if (parkInstance.getEndTime() > 0) {
+                                        SavedInfo.park(MainActivity.this, parkInstance, rateObj);
+                                        totalTimeParked += parkingTime;
+                                        if (totalTimeParked == rateObj.getMaxTime()) {
+                                            ThrowDialog.show(MainActivity.this,
+                                                    ThrowDialog.MAX_TIME);
+                                        }
+                                        switchToParkedLayout();
+                                        // create and start countdown// display
+                                        timer = initiateTimer(parkInstance.getEndTime(), vf);
+                                        timer.start();
+                                        // start timer background
+                                        // service
+                                        // startService(new
+                                        // Intent(MainActivity.this,
+                                        // Background.class).putExtra("time",
+                                        // remainSeconds));
+                                    } else {
+                                        ThrowDialog.show(MainActivity.this, ThrowDialog.IS_PARKED);
+                                    }
+                                } else {
+                                    ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
                                 }
-                                switchToParkedLayout();
-                                //create and start countdown display
-                                timer = initiateTimer(parkInstance.getEndTime(), vf);
-                                timer.start();
-                                //start timer background service
-                                //startService(new Intent(MainActivity.this, Background.class).putExtra("time", remainSeconds));
-                            } else {
-                                ThrowDialog.show(MainActivity.this, ThrowDialog.IS_PARKED);
                             }
-                        }else{
-                            ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
-                        }
+                        });
                     }
                 })
                 .setPositiveButton("Go back", null)
@@ -610,23 +636,29 @@ public class MainActivity extends ActivityGroup implements LocationListener {
                         public void onClick(DialogInterface dialog, int which) {
                             final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
                             final String parkId = SavedInfo.getParkId(check);
-                            final ParkInstanceObject refillResp = ServerCalls.refill(refillMinutes, rateObj, parkId, check);
-                            if (refillResp != null && refillResp.getEndTime() > 0) {
-                                SavedInfo.park(MainActivity.this, refillResp, rateObj);
-                                switchToParkedLayout();
-                                //update the total time parked and remaining time.
-                                totalTimeParked += refillMinutes;
-                                //stop current timer, start new timer with current time + selectedNumber.
-                                //calculate new endtime and initiate timer from it.
-                                timer.cancel();
-                                timer = initiateTimer(refillResp.getEndTime(), vf);
-                                //stopService(new Intent(MainActivity.this, Background.class));
-                                timer.start();
-                                //startService(new Intent(MainActivity.this, Background.class).putExtra("time", remainSeconds));
-                                ThrowDialog.show(MainActivity.this, ThrowDialog.REFILL_DONE);
-                            } else {
-                                ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
-                            }
+                            showDialog(DIALOG_REFILLING);
+                            ServerCalls.refill(refillMinutes, rateObj, parkId, check, new RefillCallback() {
+                                @Override
+                                public void onRefillComplete(ParkInstanceObject refillResp) {
+                                    removeDialog(DIALOG_REFILLING);
+                                    if (refillResp != null && refillResp.getEndTime() > 0) {
+                                        SavedInfo.park(MainActivity.this, refillResp, rateObj);
+                                        switchToParkedLayout();
+                                        //update the total time parked and remaining time.
+                                        totalTimeParked += refillMinutes;
+                                        //stop current timer, start new timer with current time + selectedNumber.
+                                        //calculate new endtime and initiate timer from it.
+                                        timer.cancel();
+                                        timer = initiateTimer(refillResp.getEndTime(), vf);
+                                        //stopService(new Intent(MainActivity.this, Background.class));
+                                        timer.start();
+                                        //startService(new Intent(MainActivity.this, Background.class).putExtra("time", remainSeconds));
+                                        ThrowDialog.show(MainActivity.this, ThrowDialog.REFILL_DONE);
+                                    } else {
+                                        ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
+                                    }
+                                }
+                            });
                         }
                     })
                     .setPositiveButton("Go back", null)
@@ -817,4 +849,37 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	private enum State {
 	    UNPARKED, PARKING, PARKED, REFILLING;
 	}
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        switch (id) {
+            case DIALOG_PARKING: {
+                final ProgressDialog dialog = new ProgressDialog(this);
+                dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                dialog.setMessage("Parking...");
+                dialog.setIndeterminate(true);
+                dialog.setCancelable(false);
+                return dialog;
+            }
+            case DIALOG_REFILLING: {
+                final ProgressDialog dialog = new ProgressDialog(this);
+                dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                dialog.setMessage("Refilling...");
+                dialog.setIndeterminate(true);
+                dialog.setCancelable(false);
+                return dialog;
+            }
+            case DIALOG_UNPARKING: {
+                final ProgressDialog dialog = new ProgressDialog(this);
+                dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                dialog.setMessage("Unparking...");
+                dialog.setIndeterminate(true);
+                dialog.setCancelable(false);
+                return dialog;
+            }
+            default: {
+                return super.onCreateDialog(id);
+            }
+        }
+    }
 }

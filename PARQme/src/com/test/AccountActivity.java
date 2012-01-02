@@ -1,35 +1,25 @@
 package com.test;
 
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Debug;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.ViewFlipper;
 
 import com.objects.SavedInfo;
 import com.objects.ServerCalls;
+import com.objects.ServerCalls.UnparkCallback;
 import com.objects.ThrowDialog;
 
 public class AccountActivity extends Activity {
@@ -59,6 +49,8 @@ public class AccountActivity extends Activity {
 	private TextView nameDisplay;
 	private TextView cityDisplay;
 	private TextView cardDisplay;
+
+	private static final int DIALOG_UNPARKING = 1;
 	
 	public CheckBox getBox(){
 		return (CheckBox) findViewById(R.id.vibrateEnable);
@@ -220,16 +212,22 @@ public class AccountActivity extends Activity {
 							final SharedPreferences check = getSharedPreferences(
 									SAVED_INFO, 0);
 							final String parkId = SavedInfo.getParkId(check);
-							if (ServerCalls.unPark(111, parkId, check)) {
-							} else {
-								ThrowDialog.show(AccountActivity.this,
-										ThrowDialog.UNPARK_ERROR);
-							}
-
-							SavedInfo.logOut(AccountActivity.this);
-							startActivity(new Intent(AccountActivity.this,
-									LoginActivity.class));
-							finish();
+							showDialog(DIALOG_UNPARKING);
+                            ServerCalls.unpark(111, parkId, check, new UnparkCallback() {
+                                @Override
+                                public void onUnparkComplete(boolean success) {
+                                    removeDialog(DIALOG_UNPARKING);
+                                    if (success) {
+                                        SavedInfo.logOut(AccountActivity.this);
+                                        startActivity(new Intent(AccountActivity.this,
+                                                LoginActivity.class));
+                                        finish();
+                                    } else {
+                                        ThrowDialog.show(AccountActivity.this,
+                                                ThrowDialog.UNPARK_ERROR);
+                                    }
+                                }
+                            });
 						}
 					}).setNegativeButton("No", null).create().show();
 				} else {
@@ -240,6 +238,20 @@ public class AccountActivity extends Activity {
 			}});
 
 	}
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        if (id == DIALOG_UNPARKING) {
+            final ProgressDialog dialog = new ProgressDialog(this);
+            dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            dialog.setMessage("Unparking...");
+            dialog.setIndeterminate(true);
+            dialog.setCancelable(false);
+            return dialog;
+        } else {
+            return super.onCreateDialog(id);
+        }
+    }
 	
 	public void showEditDialog(int i, DialogInterface.OnClickListener a,DialogInterface.OnClickListener b){
 		AlertDialog.Builder alert = new AlertDialog.Builder(AccountActivity.this);     

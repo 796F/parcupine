@@ -21,6 +21,7 @@ import android.widget.ViewFlipper;
 import com.objects.Global;
 import com.objects.SavedInfo;
 import com.objects.ServerCalls;
+import com.objects.ServerCalls.UnparkCallback;
 
 public class Background extends Service{
 	private int parkTime;
@@ -91,50 +92,52 @@ public class Background extends Service{
 		x.schedule(new TimerTask(){
 			@Override
 			public void run() {
-				
-				 String parkingReferenceNumber = "";
-				 if(ServerCalls.unPark(0, parkingReferenceNumber, check)){
-					 
-					((Vibrator)getSystemService(VIBRATOR_SERVICE)).vibrate(500);
-					SharedPreferences.Editor edit = check.edit();
-					SavedInfo.unpark(edit);
-					edit.commit();
-					
-					//TODO intent below causes crash.  
-//					Intent myIntent = new Intent(Background.this, LoginActivity.class);
-//					//the intent should be pointing to login now, no longer tabs.  
-//					myIntent.setAction(Intent.ACTION_MAIN);
-//					myIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-//					
-//					//myIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//					myIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-//					startActivity(myIntent);
-//					
-					 
-					Intent myIntent = new Intent(Background.this, LoginActivity.class);
-					myIntent.setAction(Intent.ACTION_MAIN);
-					myIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-					
-					//myIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
-					myIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-					
-                    final Notification n = new Notification(R.drawable.bluep,
-                            "Your parking time is about to expire", System.currentTimeMillis());
-					n.setLatestEventInfo(Background.this, Background.this
-							.getString(R.string.app_name),
-							"Your parking time is about to expire",
-							PendingIntent.getActivity(Background.this, 0,
-									myIntent, 0));
-                    n.flags |= Notification.FLAG_AUTO_CANCEL;
-                    ((NotificationManager) Background.this.getSystemService(Context.NOTIFICATION_SERVICE)).notify(0, n);
-					
-					stopService(new Intent(Background.this, Background.class));
-				 }else{
-					stopService(new Intent(Background.this, Background.class));
-				 }
-				
-				
-				
+				String parkingReferenceNumber = "";
+                ServerCalls.unpark(0, parkingReferenceNumber, check, new UnparkCallback() {
+                    @Override
+                    public void onUnparkComplete(boolean success) {
+                        if (success) {
+                            ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(500);
+                            SharedPreferences.Editor edit = check.edit();
+                            SavedInfo.unpark(edit);
+                            edit.commit();
+
+                            // TODO intent below causes crash.
+                            // Intent myIntent = new Intent(Background.this,
+                            // LoginActivity.class);
+                            // //the intent should be pointing to login now, no
+                            // longer tabs.
+                            // myIntent.setAction(Intent.ACTION_MAIN);
+                            // myIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+                            //
+                            // //myIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            // myIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                            // | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                            // startActivity(myIntent);
+                            //
+
+                            Intent myIntent = new Intent(Background.this, LoginActivity.class);
+                            myIntent.setAction(Intent.ACTION_MAIN);
+                            myIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+
+                            // myIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            myIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                                    | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+                            final Notification n = new Notification(R.drawable.bluep,
+                                    "Your parking time is about to expire", System
+                                            .currentTimeMillis());
+                            n.setLatestEventInfo(Background.this,
+                                    Background.this.getString(R.string.app_name),
+                                    "Your parking time is about to expire",
+                                    PendingIntent.getActivity(Background.this, 0, myIntent, 0));
+                            n.flags |= Notification.FLAG_AUTO_CANCEL;
+                            ((NotificationManager) Background.this
+                                    .getSystemService(Context.NOTIFICATION_SERVICE)).notify(0, n);
+                        }
+                        stopService(new Intent(Background.this, Background.class));
+                    }
+                });
 			}
 		},endTime);
 		
