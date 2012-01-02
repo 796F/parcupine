@@ -133,7 +133,7 @@ public class RegisterActivity extends Activity {
                                                         }
                                                         SavedInfo.logIn(RegisterActivity.this,
                                                                 false, email, user.getUid(),
-                                                                password);
+                                                                password, ccNumber.substring(12, 15));
                                                         startActivity(new Intent(
                                                                 RegisterActivity.this,
                                                                 TabsActivity.class));

@@ -99,7 +99,7 @@ public class Background extends Service{
                         if (success) {
                             ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(500);
                             SharedPreferences.Editor edit = check.edit();
-                            SavedInfo.unpark(edit);
+                            SavedInfo.unpark(Background.this);
                             edit.commit();
 
                             // TODO intent below causes crash.

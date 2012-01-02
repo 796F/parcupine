@@ -261,6 +261,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
             }
         }
 		switchToParkingLayout();
+		state = State.UNPARKED;
 	}
 
 	public void onSubmitClick(View view) {
@@ -554,9 +555,8 @@ public class MainActivity extends ActivityGroup implements LocationListener {
                                     // reset ints
                                     totalTimeParked = 0;
 
-                                    SharedPreferences.Editor editor = check.edit();
-                                    SavedInfo.unpark(editor);
-                                    editor.commit();
+                                    //SharedPreferences.Editor editor = check.edit();
+                                    SavedInfo.unpark(MainActivity.this);
 
                                     switchToParkingLayout();
                                     vf.showPrevious();
@@ -698,10 +698,10 @@ public class MainActivity extends ActivityGroup implements LocationListener {
                                 //                  parkTimePicker.setMinInc(mySpot.getMinIncrement());
 
                                 final int minIncrement = rateObj.getMinIncrement();
-                                final String [] test = contents.split("/");
+                                final String [] test = contents.split("http://|/");
                                 rate.setText(formatCents(rateObj.getDefaultRate()) + " per " + minIncrement + " minutes");
                                 lotDesc.setText(rateObj.getDescription());
-                                spot.setText("Spot #" + test[2]);
+                                spot.setText("Spot #" + test[3]);
                                 if (rateObj.getMinIncrement() != 0) {
                                     increment.setText(rateObj.getMinIncrement() + " minute increments");
                                 }
@@ -757,11 +757,11 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 				//timeDisplay.setText("0:00:00");
 				SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 				//if autorefill is on, refill the user minimalIncrement
-				if(check.getBoolean("autoRefill", false)){
+				if(SavedInfo.autoRefill(MainActivity.this)){
 					alert.cancel();
 					refill(1);
 				}else{
-					SavedInfo.eraseTimer(MainActivity.this);
+					SavedInfo.unpark(MainActivity.this);
 					//else we cancel the running out of tie dialog
 					alert.cancel();
 					//and restore view
@@ -781,7 +781,6 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 		}
 		return '$'+dollars+'.'+cents;
 	}
-	//TODO:  THIN METHOD -- will become robust later.  must support varying units and different parking minutes and all day parking etc.
 	private static int getCostInCents(int mins, RateObject rate) {
 		//number of minutes parked, divided by the minimum increment (aka unit of time), multiplied by price per unit in cents
 		return (mins/(rate.getMinIncrement())) * rate.getDefaultRate();

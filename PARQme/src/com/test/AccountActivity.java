@@ -61,7 +61,10 @@ public class AccountActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.account);
 		emailDisplay = (TextView)findViewById(R.id.profile_email_small);
+		emailDisplay.setText(SavedInfo.getEmail(AccountActivity.this));
 		nameDisplay = (TextView)findViewById(R.id.profile_name);
+		cardDisplay = (TextView)findViewById(R.id.profile_card_small);
+		cardDisplay.setText("XXXX XXXX XXXX "+SavedInfo.getCardStub(AccountActivity.this));
 		final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 	    final DialogInterface.OnClickListener saveEditListener = new DialogInterface.OnClickListener(){
 
@@ -107,22 +110,22 @@ public class AccountActivity extends Activity {
 		};
 
 		
-		final Button editName = (Button) findViewById(R.id.profile_name_button);
+		//final Button editName = (Button) findViewById(R.id.profile_name_button);
 		final Button editEmail= (Button) findViewById(R.id.profile_email_button);
-		final Button editCity= (Button) findViewById(R.id.profile_city_button);
+		//final Button editCity= (Button) findViewById(R.id.profile_city_button);
 		final Button editCard= (Button) findViewById(R.id.profile_card_button);
 
 		
 		View.OnClickListener showEditText = new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if(editName.isPressed()){
+				/*if(editName.isPressed()){
 					showEditDialog(0, saveEditListener,cancelEditListener);
-				}else if(editEmail.isPressed()){
+				}else */if(editEmail.isPressed()){
 					showEditDialog(1, saveEditListener,cancelEditListener);
-				}else if(editCity.isPressed()){
+				}/*else if(editCity.isPressed()){
 					showEditDialog(2, saveEditListener,cancelEditListener);
-				}else if (editCard.isPressed()){
+				}*/else if (editCard.isPressed()){
 					showEditDialog(3, saveEditListener,cancelEditListener);
 				}
 			}
@@ -130,9 +133,9 @@ public class AccountActivity extends Activity {
 
 	
 		
-		editName.setOnClickListener(showEditText);
+		//editName.setOnClickListener(showEditText);
 		editEmail.setOnClickListener(showEditText);
-		editCity.setOnClickListener(showEditText);
+		//editCity.setOnClickListener(showEditText);
 		editCard.setOnClickListener(showEditText);
 
 

@@ -76,6 +76,10 @@ public class SavedInfo{
 		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
 		return check.getString("email", null);
 	}
+	public static String getCardStub(Context activity){
+		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
+		return check.getString("ccStub", "****");
+	}
 	public static String getLat(Context activity){
 		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
 		return check.getString("lat", "0");
@@ -95,7 +99,9 @@ public class SavedInfo{
 	public static String getParkId(SharedPreferences prefs) {
 	    return prefs.getString("PARKID", "");
 	}
-    public static void unpark(SharedPreferences.Editor edit) {
+    public static void unpark(Context activity) {
+    	SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
+		SharedPreferences.Editor edit = check.edit();
         edit.remove("PARKID");
         edit.remove("endTime");
         edit.remove("lat");
@@ -106,6 +112,7 @@ public class SavedInfo{
         edit.remove("defaultRate");
         edit.remove("minIncrement");
         edit.remove("description");
+        edit.commit();
     }
     public static void park(Context activity, ParkInstanceObject park, RateObject rate) {
         SharedPreferences.Editor edit = activity.getSharedPreferences(SAVED_INFO, 0).edit();
@@ -132,11 +139,12 @@ public class SavedInfo{
         final String description = prefs.getString("description", "");
         return new RateObject(lat, lon, spot, minTime, maxTime, defaultRate, minIncrement, description);
     }
-	public static void logIn(Context activity, boolean parkState, String email, long uid, String password){
+	public static void logIn(Context activity, boolean parkState, String email, long uid, String password, String ccStub){
 		SharedPreferences.Editor editor = activity.getSharedPreferences(SAVED_INFO, 0).edit();
 		editor.putString("email", email);
 		editor.putLong("uid", uid);
 		editor.putString("password", password);
+		editor.putString("ccStub", ccStub);
 		editor.commit();
 	}
     public static void logOut(Context activity){

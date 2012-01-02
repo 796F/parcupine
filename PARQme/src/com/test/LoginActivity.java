@@ -80,7 +80,7 @@ public class LoginActivity extends Activity {
                 if (user.getParkState()) {
                     SavedInfo.syncParkingSession(LoginActivity.this, user.getSync());
                 }
-                SavedInfo.logIn(LoginActivity.this, user.getParkState(), email, user.getUid(), pass);
+                SavedInfo.logIn(LoginActivity.this, user.getParkState(), email, user.getUid(), pass, user.getCreditCardStub());
                 startActivity(new Intent(LoginActivity.this, TabsActivity.class));
                 finish();
             }
