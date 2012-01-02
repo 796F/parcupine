@@ -42,7 +42,8 @@ public class SavedInfo{
 		editor.commit();
 	}
 	//if parked return true, else false
-	public static boolean isParked(SharedPreferences check){
+	public static boolean isParked(Context activity){
+		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
 		return check.getLong("endTime", 0) > System.currentTimeMillis();
 	}
 	//if logged in returns true, else false

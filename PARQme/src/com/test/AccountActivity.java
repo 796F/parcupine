@@ -203,7 +203,7 @@ public class AccountActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				// if not currently parked.
-				if (SavedInfo.isParked(check)) {
+				if (SavedInfo.isParked(AccountActivity.this)) {
 					new AlertDialog.Builder(AccountActivity.this)
 					.setMessage("Are you sure you want to log out?\n You will be unparked.")
 					.setPositiveButton("Yes", new DialogInterface.OnClickListener() {

@@ -689,6 +689,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 
                             //if we get the object successfully
                             if (rateResponse.getResp().equals("OK")) {
+                            	removeDialog(DIALOG_GETTING_RATE);
                                 vf.showNext();
                                 state = State.PARKING;
                                 // prepare time picker for this spot
