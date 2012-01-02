@@ -86,50 +86,92 @@ public class ServerCalls {
         }
 	}
 
-	public static boolean registerNewUser(String email, String password, String name,
-			String ccNumber, String cscNumber, int expMonth, int expYear, String zip, String address) {
-		try {	
-			final HttpURLConnection conn =
-					(HttpURLConnection)
-					new URL(SERVER_HOSTNAME + "/parkservice.user/register")
-			.openConnection();
-			conn.setRequestProperty("Accept", "application/json");
-			conn.setRequestProperty("Content-Type", "application/json");
-			conn.setDoOutput(true);
-			final JsonGenerator jg = JSON_FACTORY.createJsonGenerator(conn.getOutputStream());
-			jg.writeStartObject();
-			jg.writeFieldName("creditCard");
-			jg.writeString(ccNumber);
-			jg.writeFieldName("holderName");
-			jg.writeString(name);
-			jg.writeFieldName("cscNumber");
-			jg.writeString(cscNumber);
-			jg.writeFieldName("expMonth");
-			jg.writeNumber(expMonth);
-			jg.writeFieldName("expYear");
-			jg.writeNumber(expYear);
-			jg.writeFieldName("email");
-			jg.writeString(email);
-			jg.writeFieldName("password");
-			jg.writeString(password);
-			jg.writeFieldName("zipcode");
-			jg.writeString(zip);
-			jg.writeFieldName("address");
-			jg.writeString(address);
-			jg.writeEndObject();
-			jg.flush();
-			jg.close();
-			if (conn.getResponseCode() == 200) {
-				final JsonParser jp = JSON_FACTORY.createJsonParser(conn
-						.getInputStream());
-				final boolean response = Parsers.parseResponseCode(jp);
-				jp.close();
-				return response;
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return false;
+    public static void registerNewUser(String email, String password, String name, String ccNumber,
+            String cscNumber, int expMonth, int expYear, String address, String zip,
+            RegisterCallback callback) {
+        new RegisterTask(email, password, name, ccNumber, cscNumber, expMonth, expYear, address,
+                zip, callback).execute((Void) null);
+	}
+
+	public interface RegisterCallback {
+	    void onRegisterComplete(boolean success);
+	}
+
+	private static class RegisterTask extends AsyncTask<Void, Void, Boolean> {
+	    private final String mEmail;
+	    private final String mPassword;
+	    private final String mName;
+	    private final String mCcNumber;
+	    private final String mCscNumber;
+	    private final int mExpMonth;
+	    private final int mExpYear;
+	    private final String mAddress;
+	    private final String mZip;
+	    private final RegisterCallback mCallback;
+        RegisterTask(String email, String password, String name, String ccNumber, String cscNumber,
+                int expMonth, int expYear, String address, String zip, RegisterCallback callback) {
+	        mEmail = email;
+	        mPassword = password;
+	        mName = name;
+	        mCcNumber = ccNumber;
+	        mCscNumber = cscNumber;
+	        mExpMonth = expMonth;
+	        mExpYear = expYear;
+	        mAddress = address;
+	        mZip = zip;
+	        mCallback = callback;
+	    }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            try {
+                final HttpURLConnection conn =
+                        (HttpURLConnection)
+                        new URL(SERVER_HOSTNAME + "/parkservice.user/register")
+                .openConnection();
+                conn.setRequestProperty("Accept", "application/json");
+                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setDoOutput(true);
+                final JsonGenerator jg = JSON_FACTORY.createJsonGenerator(conn.getOutputStream());
+                jg.writeStartObject();
+                jg.writeFieldName("creditCard");
+                jg.writeString(mCcNumber);
+                jg.writeFieldName("holderName");
+                jg.writeString(mName);
+                jg.writeFieldName("cscNumber");
+                jg.writeString(mCscNumber);
+                jg.writeFieldName("expMonth");
+                jg.writeNumber(mExpMonth);
+                jg.writeFieldName("expYear");
+                jg.writeNumber(mExpYear);
+                jg.writeFieldName("email");
+                jg.writeString(mEmail);
+                jg.writeFieldName("password");
+                jg.writeString(mPassword);
+                jg.writeFieldName("zipcode");
+                jg.writeString(mZip);
+                jg.writeFieldName("address");
+                jg.writeString(mAddress);
+                jg.writeEndObject();
+                jg.flush();
+                jg.close();
+                if (conn.getResponseCode() == 200) {
+                    final JsonParser jp = JSON_FACTORY.createJsonParser(conn
+                            .getInputStream());
+                    final boolean response = Parsers.parseResponseCode(jp);
+                    jp.close();
+                    return response;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            mCallback.onRegisterComplete(result);
+        }
 	}
 
 	public static void unpark(long spotId, String parkingReferenceNumber, SharedPreferences prefs, UnparkCallback callback) {
