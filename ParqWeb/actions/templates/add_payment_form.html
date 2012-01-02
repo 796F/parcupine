@@ -1,0 +1,48 @@
+<div class="modal-header">
+  <a class="close" href="#">x</a>
+  <h3>Add Payment Account</h3>
+</div>
+<div class="modal-body">
+  <form action="/actions/add_payment_account/" method="POST">
+    {% csrf_token %}    
+    <table>
+      <tr>
+	<td>{{form.name_on_card.label_tag}}</td>
+	<td>{{form.name_on_card}}</td>
+      </tr>
+      <tr>
+	<td>{{form.type.label_tag}}</td>
+	<td>{{form.type}}</td>
+      </tr>
+
+      <tr>
+	<td>{{form.card_number.label_tag}}</td>
+	<td>{{form.card_number}}</td>
+      </tr>
+      <tr>
+	<td><label>Expiration</label></td>
+	<td>
+	  {{form.month_expiration}}
+	  /
+	  {{form.year_expiration}}
+	</td>
+      </tr>
+      <tr>
+	<td>{{form.security_code.label_tag}}</td>
+	<td>{{form.security_code}}</td>
+      </tr>
+      <tr>
+	<td>{{form.is_default_payment.label_tag}}</td>
+	<td>{{form.is_default_payment}}</td>
+      </tr>
+
+      <tr>
+	<td colspan="2">
+	  <center>
+	  <input type="submit" class="btn large" value="Submit" />
+	  </center>
+	</td>
+      </tr>
+    </table>
+  </form>
+</div>

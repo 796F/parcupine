@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}PARQ | My Account {% endblock %}
+
+{% block extrahead %}
+<style>
+#location-info {height:200px;}
+#map_canvas {width:100%;height:100px;}
+</style>
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+
+<script type="text/javascript">
+{% include "view_location_map.js" %}
+</script>
+{% endblock %}
+
+{% block body %}
+
+<div class="container">
+  <div class="content">
+    <h2>Parking spaces for {{location.location_name}}</h2>
+    <div id="location-info">
+      <div class="pull-left span7 well">
+	<h3>Info</h3>
+	<ul>
+	  <li><b>Total spaces</b>: {{location.parking_spaces.count}}</li>
+	  <li><b>Address</b>: {{location.client.address}}</li>
+	  <li><b>Owner</b>: {{location.client.name}}</li>
+	  <li><b>Description</b>: {{location.client.client_desc}}</li>
+	</ul>
+      </div>
+      <div class="pull-right span8">
+	<div id="map_canvas">
+	</div>
+      </div>
+    </div>
+    <table class="zebra-striped">
+      <thead>
+	<th>Status</th>
+	<th>Parking Space Identifier</th>
+	<th>Parking Level</th>
+      </thead>
+      {% if not location.parking_spaces.count %}
+      <tr>
+	<td colspan="3">
+	  <h6>No parking spaces exist for this location</h6>
+	</td>
+      </tr>
+      {% else %}
+      {% for space in location.parking_spaces.all %}
+      <tr>
+	<td>{% if space.is_occupied %}
+	     <span class="label warning">Occupied</span>
+	     {% else %}
+	     <span class="label success">Open</span> 
+	     {% endif %}</td>
+	<td>{{space.space_identifier}}</td>
+	<td>{{space.parking_level}}</td>
+      </tr>
+      {% endfor %}
+      {% endif %}
+    </table>
+  </div>
+</div>
+
+{% endblock %}

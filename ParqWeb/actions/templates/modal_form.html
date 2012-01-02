@@ -1,0 +1,22 @@
+{% extends "modal.html" %}
+
+{% block modaltitle %}
+{{form_title}}
+{% endblock %}
+
+{% block modalbody %}
+<form action="{{form_action}}" method="POST">
+  {% csrf_token %}
+  <table>
+    {{form.as_table}}
+    <tr>
+      <td colspan="2">
+	<center>
+	  <input type="submit" class="btn large" value="{{form_button}}" />
+	</center>
+      </td>
+    </tr>
+  </table>
+</form>
+{% endblock %}
+

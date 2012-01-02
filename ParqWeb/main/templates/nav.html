@@ -1,0 +1,27 @@
+<div class="topbar">
+  <div class="fill">
+    <div class="container">
+      {% if user.parq_user and user.parq_user.is_parked%}
+	<a class="alert-message renew error" href="/user/renew/">You are currently parked. Renew your spot now</a>
+      {% endif %}
+      <div class="pull-right">
+	<ul>
+	  <li><a href="/">Home</a></li>
+	  <li><a href="/features">How it Works</a></li>
+	  <li><a href="/about">About PARQ</a></li>
+	  {% if user.is_authenticated %}
+	  <li>
+	  {% if user.admin_user %}
+	  <a href="/client/account">Parking Administration</a>
+	  {% else %}
+	  <a href="/user/account">Account Settings</a>
+	  {% endif %}
+	  </li>	    
+	  {% endif %}
+	</ul>
+      </div>
+    </div><!-- /container -->
+    <div id="message">
+    </div>
+  </div> <!-- /fill -->
+</div><!-- /topbar -->

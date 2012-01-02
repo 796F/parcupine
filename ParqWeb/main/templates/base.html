@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>{% block title %}Parqme {% endblock %}</title>
+    <link href="{{STATIC_URL}}less/bootstrap.less" type="text/css" rel="stylesheet/less" />
+    <script type="text/javascript" src="{{STATIC_URL}}js/less.min.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/jquery.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/bootstrap-modal.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/base.js"></script>
+    <link href="{{STATIC_URL}}css/base.css" type="text/css" rel="stylesheet" />
+    {% block extrahead %}
+    
+    {% endblock %}
+  </head>
+  <body>
+    <div class="container-fluid">	
+      {% include "nav.html" %}
+      {% include "header.html" %}
+      <div id="contentWrapper">      
+	{% block body %}
+	{% endblock %}
+	<!-- <div id="modalWrapper"> -->
+	<!--   <div id="modal" class="modal" data-backdrop="static"> -->
+	<!--   </div> -->
+	<!-- </div> -->
+	<div id="modalWrapper">
+          <div id="modal" class="modal" data-backdrop="static">
+          </div>
+	</div>
+
+      </div>
+      {% include "footer.html" %}
+    </div>
+  </div>      
+</body>
+</html>

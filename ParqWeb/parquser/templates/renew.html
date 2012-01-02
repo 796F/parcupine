@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}PARQ | Renew {% endblock %}
+
+{% block extrahead %}
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+<script type="text/javascript">
+{% include "renew_map.js" %}
+</script>
+<style>
+  .space_map_canvas {height:150px;}
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+  <div class="content">
+    <h1>Your current parking locations</h1>
+    {% if not user.parq_user.current_parking_spaces.exists %}
+    <h6>You are not currently parked</h6>
+    {% else %}
+    <ul class="stripped">
+      {% for instance in user.parq_user.current_parking_spaces %}
+      <li>
+	<div class="well span16">
+	  <div class="pull-left span8">
+	    <h2>Info</h2>
+	    <ul>
+	      <li><b>Location:</b>{{instance.space.location.location_name}}</li>
+	      <li><b>Space:</b>{{instance.space.space_name}}</li>
+	      <li><b>Start time:</b>{{instance.park_began_time|date:"m/d/y P"}}</li>
+	      <li><b>End time:</b>{{instance.park_end_time|date:"m/d/y P"}}</li>
+	      <li><b>Park Ref #:</b>{{instance.parkingrefnumber}}</li>
+	    </ul>
+	  </div>
+	  <div class="pull-right span8">
+	    <div class="space_map_canvas" id="map_canvas{{instance.parkinginst_id}}">
+	    </div>
+	  </div>
+	  <p class="clear"></p>
+	  <button class="btn large"><a href="/actions/renew/?iid={{instance.parkinginst_id}}">Renew</a></button>
+	</div>	
+      </li>
+      {% endfor %}
+    </ul>     
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}

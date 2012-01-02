@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% load time_left %}
+
+{% block title %}PARQ | Admin Dashboard {% endblock %}
+
+{% block extrahead %}
+<script type="text/javascript" src="{{STATIC_URL}}js/bootstrap-tabs"></script>
+<script type="text/javascript">
+   $(document).ready(function() {
+      $('.tabs').tabs();
+   });
+</script>
+
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+  <div class="sidebar">
+    <ul class="tabs">
+      <li><a class="acive" href="#parking-spaces">My Parking Spaces</a></li>
+      <li><a href="#parking-monitor">Parking Monitor</a></li>
+      <li><a href="#parking-reports">Parking Reports</a></li>
+      <li><a href="#current-activity">Current Activity</a></li>
+    </ul>
+  </div>
+  <div class="content">
+    <div class="pill-content">
+      <div class="active" id="parking-spaces">
+	<h2>My Parking Spaces</h2>
+	{% if not parking_spaces_by_client.items %}
+	<h6>You currently have no clients</h6>
+	{% else %}
+	{% for client,spaces in parking_spaces_by_client.items %}
+	<h3>Client: {{client.name}}</h3>
+	<table class="zebra-striped">
+	  <thead>
+	    <th>Space Identifier</th>
+	    <th>Location</th>
+	    <th>Space Name</th>
+	    <th>Parking Level</th>
+	    <th>Occupied?</th>
+	    <th></th>
+	  </thead>
+	  {% if not spaces|length %}
+	  <tr>
+	    <td colspan="5">
+	      <h6>No parking spaces on record</h6>
+	    </td>
+	  </tr>
+	  {% else %}
+	  {% for space in spaces %}
+	  <tr>
+	    <td>{{space.space_identifier}}</td>
+	    <td>{{space.location.location_name}}</td>
+	    <td>{{space.space_name}}</td>
+	    <td>{{space.parking_level}}</td>
+	    <td>{{space.is_occupied}}</td>
+	    <td>
+	      <a href="/client/activity_space/?sid={{space.space_id}}">
+		See Activity
+	      </a>
+	    </td>
+	  </tr>
+	  {% endfor %}
+	  {% endif %}
+	</table>
+	{% endfor %}
+	{% endif %}
+      </div>
+      <div id="parking-monitor">
+	<h2>Parking Monitor System</h2>
+	{% if not parking_spaces_by_client.items %}
+	<h6>You currently have no clients</h6>
+	{% else %}
+	<form action="/actions/filter_spaces/" method="GET">	 
+	  <div>
+	    <label for="client_id">Select the parking lot to monitor:</label>
+	    <select name="client_id">
+	      {% for client in parking_spaces_by_client.keys %}
+	      <option value="{{client.client_id}}">{{client.name}}</option>
+	      {% endfor %}
+	    </select>
+	  </div>
+	  <div>
+	    <label for="occupied">Show parking information for:</label>
+	    <select name="occupied">
+	      <option value="false">Not Occupied</option>
+	      <option value="true">Occupied</option>
+	      <option value="all">All</option>
+	    </select>
+	  </div>
+	  <input type="submit" class="btn large" value="update" />
+	</form>
+	<div id="filter-result">
+	</div>
+	{% endif %}
+      </div>
+      <div id="parking-reports">
+	<h3>Parking Reports</h3>
+	<table class="zebra-striped">
+	  <thead>
+	    <th>Park Ref #</th>
+	    <th>Occupant</th>
+	    <th>Date</th>
+	    <th>Amount Paid</th>	    
+	  </thead>
+	  {% if not parking_reports.count %}
+	  <tr>
+	    <td colspan="4">
+	      <h6>No parking reports on record</h6>
+	    </td>
+	  </tr>
+	  {% else %}
+	  {% for report in parking_reports %}
+	  <tr>
+	    <td>{{report.parkinginst.parkingrefnumber}}</td>
+	    <td>{{report.parkinginst.user.email}}</td>
+	    <td>{{report.payment_datetime|date:"m/d/y P"}}</td>
+	    <td>{{report.amount_paid_cents}} cents</td>
+	  </tr>	
+  	  {% endfor %}
+	  {% endif %}
+	</table>
+      </div>
+      <div id="current-activity">
+	<h3>Current Activity</h3>
+	<table class="zebra-striped">
+	  <thead>
+	    <th>Park ref #</th>
+	    <th>Occupant</th>
+	    <th>Last Occupied</th>
+	  </thead>
+	  <tbody>
+	    {% if not current_activity.count %}
+	    <tr>
+	      <td colspan="3">
+		<h6>No current activity</h6>
+	      </td>
+	    </tr>
+	    {% else %}
+	    {% for activity in current_activity %}
+	    <tr>
+	      <td>{{activity.parkingrefnumber}}</td>
+	      <td>{{activity.user.email}}</td>
+	      <td>{{activity.park_end_time|time_left}}</td>
+	    </tr>
+	    {% endfor %}
+	    {% endif %}
+	  </tbody>
+	</table>	      	      	  
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

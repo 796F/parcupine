@@ -1,0 +1,36 @@
+<div id="header">
+  <a href="/">
+    <img class="pull-left" src="{{STATIC_URL}}images/Parqme_small.png" />
+  </a>
+  <div class="pull-right span5">
+    <img class="pull-left" src="{{STATIC_URL}}images/badge_logo_small.png" />
+    <ul class="pull-left">
+      {% if not user.is_authenticated %}
+      <li>
+	<a class="loginButton" data-controls-modal="modal" data-backdrop="none" >Log in</a>
+      </li>      
+      <li>
+	<a class="signupButton" data-controls-modal="modal" data-backdrop="none">
+	  Sign up
+	</a>
+      </li>
+      {% else %}
+      <li>{{user.username}}</li>
+      <li>
+	{% if user.admin_user %}
+	<a href="/client/account/">Parking administration</a>
+	{% else %}
+	<a href="/user/account/">Account settings</a>
+	{% endif %}
+      </li>      
+      <li>
+	<a href="/actions/logout/">
+	  Log out
+	</a>
+      </li>
+      {% endif %}
+    </ul>
+  </div>
+</div>
+<p class="clear" ></p>
+<hr class="stripped" />

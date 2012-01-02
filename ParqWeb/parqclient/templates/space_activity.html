@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}PARQ | View Parking Space {% endblock %}
+
+{% block extrahead %}
+<style>
+#map_canvas {width:100%;height:100px;}
+</style>
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+<script type="text/javascript" src="http://code.google.com/apis/gears/gears_init.js"></script>
+
+<script type="text/javascript">
+{% include "map.js" %}
+</script>
+
+{% endblock %}
+
+{% block body %}
+<div class="container">
+  <div class="content">
+    <h1>Parking space: {{space.space_name}}</h1>
+    <div class="pull-left span7 well">
+      <h3>Info</h3>
+      <ul>
+	<li><b>Space Identifier</b> : {{space.space_identifier}}</li>
+	<li><b>Location</b> : {{space.location.location_name}}</li>
+	<li><b>Space name</b> : {{space.space_name}}</li>
+	<li><b>Parking level</b> : {{space.parking_level}}</li>
+      </ul>
+    </div>
+    <div class="pull-right span8">
+      <div id="map_canvas">
+      </div>
+    </div>
+    <p class="clear"></p>
+    <h3>History</h3>
+    <table class="zebra-striped">
+      <thead>
+	<th>Parking Ref #</th>
+	<th>Begin Time</th>
+	<th>End Time</th>
+	<th>Paid Parking</th>
+	<th>Amount paid (cents)</th>
+	<th>Date paid</th>
+      </thead>
+      <tbody>
+	{% if parking_history.count == 0 %}
+	<tr>
+	  <td colspan="6">
+	    <h6>No history for this space</h6>
+	  </td>
+	</tr>
+	{% else %}
+	{% for instance in parking_history %}
+	<tr>
+	  <td>{{instance.parkingrefnumber}}</td>
+	  <td>{{instance.park_begin_time|date:"m/d/y P"}}</td>
+	  <td>{{instance.park_end_time|date:"m/d/y P"}}</td>
+	  <td>
+	    {% if instance.is_paid_parking %}
+	    yes
+	    {% else %}
+	    no
+	    {% endif %}
+	  </td>	  
+	  <td>{{instance.payment.amount_paid_cents</td>
+	  <td>{{instance.payment.payment_datetime|date:"m/d/y P"}}</td>
+	</tr>
+	{% endfor %}
+	{% endif %}
+      </tbody>
+    </table>	    
+  </div>
+</div>  
+
+{% endblock %}

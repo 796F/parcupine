@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}PARQ | My Account {% endblock %}
+
+{% block extrahead %}
+<script type="text/javascript" src="{{STATIC_URL}}js/bootstrap-tabs"></script>
+<script type="text/javascript">
+   $(document).ready(function() {
+      $('.tabs').tabs();
+   });
+</script>
+
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+  <div class="sidebar">
+    <ul class="tabs">
+      <li class="active"><a href="#account-overview">Account Overview</a></li>
+      <li><a href="#parking-history">Parking History</a></li>
+      <li><a href="/">Map</a></li>
+    </ul>
+  </div>
+  <div class="content">
+    <div class="pill-content">
+      <div class="active" id="account-overview">
+	<h2>{{parq_user.email}}</h2>
+	<a class="changePassword" data-controls-modal="modal" data-backdrop="none">change password</a>
+	<hr />
+	<h3>Payment Methods 
+	  <small><a class="addPayment" data-controls-modal="modal" data-backdrop="none">(add payment)</a></small>
+	</h3>
+	  {% if accounts.count %}
+	  <table class="zebra-striped">
+	    {% for account in accounts %}
+	    {% if account.is_deleted != 0 %}
+	    {% else %}	    
+	    <tr>
+	      <td>Visa</td>
+	      <td>
+		{% if account.cc_stub %}
+		   *******{{account.cc_stub}}
+		{% else %}
+		   unknown
+		{% endif %}
+	      </td>
+	      <td>
+		<ul class="payment-actions">
+		  {% if account.is_default_payment %}
+		  <li>default</li>
+		  {% else %}
+		  <li><a href="/user/set_default_payment_account/?aid={{account.account_id}}">set as default</a></li>
+		  {% endif %}
+		  <li><a href="/user/delete_payment_account/?aid={{account.account_id}}">delete</a></li>
+		</ul>
+	      </td>
+	    </tr>
+	    {% endif %}
+	    {% endfor %}
+	  </table>	  
+	  {% else %}
+	  <h6>No payment methods found</h6>
+	  {% endif %}
+	  <p style="clear:both"></p>
+      </div>
+      <div id="parking-history">
+	<h2>Parking History</h2>
+	<table class="zebra-striped">
+	  <thead>
+	    <th>Date</th>
+	    <th>Location</th>
+	    <th>Start time</th>
+	    <th>End time</th>
+	    <th>Cost</th>
+	    <th>Parking Ref #</th>
+	    <th>
+	  </thead>
+	  {% if parking_history.count == 0 %}
+	  <tr>
+	    <td colspan="6">
+	      <h6>No history on record</h6>
+	    </td>
+	  </tr>
+	  {% else %}
+	  {% for instance in parking_history %}
+	  <tr>
+	    <td>{{instance.park_began_time|date:"m/d/Y"}}</td>
+	    <td>{{instance.space.location.location_name}}</td>
+	    <td>{{instance.park_began_time|date:"P"}}</td>
+	    <td>{{instance.park_end_time|date:"P"}}</td>
+	    <td>{% if instance.payment.amount_paid_cents %}
+	      {{instance.payment.amount_paid_cents}}
+	      {% else %}
+	      0
+	      {% endif %}
+	    </td>
+	    <td>{{instance.parkingrefnumber}}</td>
+	  </tr>
+	  {% endfor %}
+	  {% endif %}
+	</table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
