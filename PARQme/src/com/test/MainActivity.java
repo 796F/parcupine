@@ -40,6 +40,7 @@ import com.objects.RateObject;
 import com.objects.RateResponse;
 import com.objects.SavedInfo;
 import com.objects.ServerCalls;
+import com.objects.ServerCalls.RateCallback;
 import com.objects.ServerCalls.RefillCallback;
 import com.objects.ServerCalls.UnparkCallback;
 import com.objects.ThrowDialog;
@@ -127,8 +128,6 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 
 	/*Buttons declared here*/
 	private EditText spotNum;
-	private Button submitButton;
-	private Button scanButton;
 	private Button leftButton;
 	private Button rightButton;
 	private Button plusButton;
@@ -150,6 +149,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
     private static final int DIALOG_PARKING = 1;
     private static final int DIALOG_REFILLING = 2;
     private static final int DIALOG_UNPARKING = 3;
+    private static final int DIALOG_GETTING_RATE = 4;
 
 	private LocationManager locationManager;
 	private Location lastLocation;
@@ -204,61 +204,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 		minutes.setOnFocusChangeListener(timeListener);
 		
 		//initialize buttons and set actions
-		submitButton = (Button) findViewById(R.id.submitButton);
-		submitButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				final String contents = spotNum.getText().toString();
-				// contents contains string "parqme.com/p/c36/p123456" or w/e...
-				SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
-
-				final double lat;
-				final double lon;
-				if (!goodLocation) {
-					// TODO: Show a loading dialog and don't do the rest of this stuff yet
-					lat = 0f;
-					lon = 0f;
-				} else {
-					lat = lastLocation.getLatitude();
-					lon = lastLocation.getLongitude();
-				}
-				final RateResponse rateResponse = ServerCalls.getRateGps(contents, lat, lon, check);
-				if(rateResponse!=null){
-					rateObj = rateResponse.getRateObject();
-
-					// if we get the object successfully
-					if (rateResponse.getResp().equals("OK")) {
-						vf.showNext();
-						state = State.PARKING;
-						// prepare time picker for this spot
-						//					parkTimePicker.setRange(mySpot.getMinIncrement(),
-						//							mySpot.getMaxTime());
-						//					parkTimePicker.setMinInc(mySpot.getMinIncrement());
-
-						// initialize all variables to match spot
-						final int minimalIncrement = rateObj.getMinIncrement();
-						rate.setText(formatCents(rateObj.getDefaultRate()) + " per " + minimalIncrement + " minutes");
-						lotDesc.setText(rateObj.getDescription());
-						spot.setText("Spot #" + contents);
-						if (rateObj.getMinIncrement() != 0) {
-							increment.setText(rateObj.getMinIncrement() + " minute increments");
-						}
-						// store some used info
-						SharedPreferences.Editor editor = check.edit();
-						editor.putString("code", contents);
-						editor.putFloat("lat", (float) rateObj.getLat());
-						editor.putFloat("lon", (float) rateObj.getLon());
-						editor.commit();
-						updateDisplay(minimalIncrement);
-						minutes.requestFocus();
-					} else {
-                        ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
-					}
-                } else {
-                    ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
-                }
-			}
-		});
+		final Button submitButton = (Button) findViewById(R.id.submitButton);
 		spotNum = (EditText) findViewById(R.id.spot_num);
 		spotNum.addTextChangedListener(new TextWatcher() {
 			@Override
@@ -271,14 +217,6 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 			@Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
             }
-		});
-		scanButton = (Button) findViewById(R.id.scanButton);
-		scanButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-					//start scan intent
-					IntentIntegrator.initiateScan(MainActivity.this);
-			}
 		});
 
 		leftButton = (Button) findViewById(R.id.left_button);
@@ -323,6 +261,70 @@ public class MainActivity extends ActivityGroup implements LocationListener {
             }
         }
 		switchToParkingLayout();
+	}
+
+	public void onSubmitClick(View view) {
+        final String contents = spotNum.getText().toString();
+        // contents contains string "parqme.com/p/c36/p123456" or w/e...
+        final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
+
+        final double lat;
+        final double lon;
+        if (!goodLocation) {
+            // TODO: Show a loading dialog and don't do the rest of this stuff yet
+            lat = 0f;
+            lon = 0f;
+        } else {
+            lat = lastLocation.getLatitude();
+            lon = lastLocation.getLongitude();
+        }
+        showDialog(DIALOG_GETTING_RATE);
+        ServerCalls.getRateGps(contents, lat, lon, check, new RateCallback() {
+            @Override
+            public void onGetRateComplete(RateResponse rateResponse) {
+                removeDialog(DIALOG_GETTING_RATE);
+                if (rateResponse != null) {
+                    rateObj = rateResponse.getRateObject();
+
+                    // if we get the object successfully
+                    if (rateResponse.getResp().equals("OK")) {
+                        vf.showNext();
+                        state = State.PARKING;
+                        // prepare time picker for this spot
+                        // parkTimePicker.setRange(mySpot.getMinIncrement(),
+                        // mySpot.getMaxTime());
+                        // parkTimePicker.setMinInc(mySpot.getMinIncrement());
+
+                        // initialize all variables to match spot
+                        final int minimalIncrement = rateObj.getMinIncrement();
+                        rate.setText(formatCents(rateObj.getDefaultRate()) + " per "
+                                + minimalIncrement + " minutes");
+                        lotDesc.setText(rateObj.getDescription());
+                        spot.setText("Spot #" + contents);
+                        if (rateObj.getMinIncrement() != 0) {
+                            increment.setText(rateObj.getMinIncrement() + " minute increments");
+                        }
+                        // store some used info
+                        SharedPreferences.Editor editor = check.edit();
+                        editor.putString("code", contents);
+                        editor.putFloat("lat", (float) rateObj.getLat());
+                        editor.putFloat("lon", (float) rateObj.getLon());
+                        editor.commit();
+                        updateDisplay(minimalIncrement);
+                        minutes.requestFocus();
+                    } else {
+                        ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
+                    }
+                } else {
+                    ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
+                }
+            }
+        });
+    }
+
+	public void onScanClick(View view) {
+        //start scan intent
+        IntentIntegrator.initiateScan(MainActivity.this);
 	}
 
     @Override
@@ -674,47 +676,49 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 		final IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
 		if (scanResult != null) {
 			//call server using the qr code, to get a resulting spot's info.
-			String contents = scanResult.getContents();
+			final String contents = scanResult.getContents();
 			if (contents != null) {
 				final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 				//contents contains string "parqme.com/p/c36/p123456" or w/e...
-				final RateResponse rateResponse = ServerCalls.getRateQr(contents, check);
-				if(rateResponse!=null){
-					rateObj = rateResponse.getRateObject();
-					
-					//if we get the object successfully
-					if(rateResponse.getResp().equals("OK")){
-						vf.showNext();
-						state = State.PARKING;
-						// prepare time picker for this spot
-						//					parkTimePicker.setRange(mySpot.getMinIncrement(),
-						//							mySpot.getMaxTime());
-						//					parkTimePicker.setMinInc(mySpot.getMinIncrement());
+				showDialog(DIALOG_GETTING_RATE);
+				ServerCalls.getRateQr(contents, check, new RateCallback() {
+                    @Override
+                    public void onGetRateComplete(RateResponse rateResponse) {
+                        if (rateResponse!=null) {
+                            rateObj = rateResponse.getRateObject();
 
-						final int minIncrement = rateObj.getMinIncrement();
-						final String [] test = contents.split("/");
-						rate.setText(formatCents(rateObj.getDefaultRate()) + " per " + minIncrement + " minutes");
-						lotDesc.setText(rateObj.getDescription());
-						spot.setText("Spot #" + test[2]);
-						if (rateObj.getMinIncrement() != 0) {
-							increment.setText(rateObj.getMinIncrement() + " minute increments");
-						}
-						// store some used info
-						SharedPreferences.Editor editor = check.edit();
-						editor.putString("code", contents);
-						editor.putFloat("lat", (float) rateObj.getLat());
-						editor.putFloat("lon", (float) rateObj.getLon());
-						editor.commit();
-						updateDisplay(minIncrement);
-					}else{
-						ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
-					}
-				}else{
-					ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
-				}
-			} else {
-				//do nothing if the user doesn't scan and just cancels.
-			
+                            //if we get the object successfully
+                            if (rateResponse.getResp().equals("OK")) {
+                                vf.showNext();
+                                state = State.PARKING;
+                                // prepare time picker for this spot
+                                //                  parkTimePicker.setRange(mySpot.getMinIncrement(),
+                                //                          mySpot.getMaxTime());
+                                //                  parkTimePicker.setMinInc(mySpot.getMinIncrement());
+
+                                final int minIncrement = rateObj.getMinIncrement();
+                                final String [] test = contents.split("/");
+                                rate.setText(formatCents(rateObj.getDefaultRate()) + " per " + minIncrement + " minutes");
+                                lotDesc.setText(rateObj.getDescription());
+                                spot.setText("Spot #" + test[2]);
+                                if (rateObj.getMinIncrement() != 0) {
+                                    increment.setText(rateObj.getMinIncrement() + " minute increments");
+                                }
+                                // store some used info
+                                SharedPreferences.Editor editor = check.edit();
+                                editor.putString("code", contents);
+                                editor.putFloat("lat", (float) rateObj.getLat());
+                                editor.putFloat("lon", (float) rateObj.getLon());
+                                editor.commit();
+                                updateDisplay(minIncrement);
+                            } else {
+                                ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
+                            }
+                        } else {
+                            ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
+                        }
+                    }
+                });
 			}
 		}
 	}
@@ -873,6 +877,14 @@ public class MainActivity extends ActivityGroup implements LocationListener {
                 final ProgressDialog dialog = new ProgressDialog(this);
                 dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                 dialog.setMessage("Unparking...");
+                dialog.setIndeterminate(true);
+                dialog.setCancelable(false);
+                return dialog;
+            }
+            case DIALOG_GETTING_RATE: {
+                final ProgressDialog dialog = new ProgressDialog(this);
+                dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                dialog.setMessage("Looking up your spot...");
                 dialog.setIndeterminate(true);
                 dialog.setCancelable(false);
                 return dialog;

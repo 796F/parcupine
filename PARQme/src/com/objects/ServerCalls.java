@@ -192,77 +192,127 @@ public class ServerCalls {
         }
 	}
 
-	public static RateResponse getRateGps(String spotNum, double lat, double lon, SharedPreferences prefs) {
-		try {
-			final HttpURLConnection conn =
-					(HttpURLConnection)
-					new URL(SERVER_HOSTNAME + "/parkservice.rate/gps")
-			.openConnection();
-			conn.setRequestProperty("Accept", "application/json");
-			conn.setRequestProperty("Content-Type", "application/json");
-			conn.setDoOutput(true);
-			final JsonGenerator jg = JSON_FACTORY.createJsonGenerator(conn.getOutputStream());
-			jg.writeStartObject();
-			jg.writeFieldName("lat");
-			jg.writeNumber(lat);
-			jg.writeFieldName("lon");
-			jg.writeNumber(lon);
-			jg.writeFieldName("spot");
-			jg.writeString(spotNum);
-			writeUserDetails(jg, prefs);
-			jg.writeEndObject();
-			jg.flush();
-			jg.close();
-			if (conn.getResponseCode() == 200) {
-				final JsonParser jp = JSON_FACTORY.createJsonParser(conn
-						.getInputStream());
-				final RateResponse rate = Parsers.parseRateResponse(jp);
-				jp.close();
-				return rate;
-			}
-		} catch (IOException e){
-			e.printStackTrace();
-		}
-		return null;
+    public interface RateCallback {
+        void onGetRateComplete(RateResponse rateResponse);
+    }
+
+	public static void getRateGps(String spotNum, double lat, double lon, SharedPreferences prefs, RateCallback callback) {
+	    new RateGpsTask(spotNum, lat, lon, prefs, callback).execute((Void) null);
 	}
 
-	public static RateResponse getRateQr(String qrcode, SharedPreferences prefs){
-		///final String[] tokens = qrcode.split("/");
-		final String[] tokens = qrcode.split("http://|/");
-		//0 is empty, 1 is parqme.com, 2 is main_lot, 3 is 1412
-		// qr code is url, http://parqme.com/main_lot/1412
-		if (tokens.length != 4) {
-			return null;
-		}
-		try {
-			final HttpURLConnection conn =
-					(HttpURLConnection)
-					new URL(SERVER_HOSTNAME + "/parkservice.rate/qrcode")
-			.openConnection();
-			conn.setRequestProperty("Accept", "application/json");
-			conn.setRequestProperty("Content-Type", "application/json");
-			conn.setDoOutput(true);
-			final JsonGenerator jg = JSON_FACTORY.createJsonGenerator(conn.getOutputStream());
-			jg.writeStartObject();
-			jg.writeFieldName("lot");
-			jg.writeString(tokens[2]);
-			jg.writeFieldName("spot");
-			jg.writeString(tokens[3]);
-			writeUserDetails(jg, prefs);
-			jg.writeEndObject();
-			jg.flush();
-			jg.close();
-			if (conn.getResponseCode() == 200) {
-				final JsonParser jp = JSON_FACTORY.createJsonParser(conn
-						.getInputStream());
-				final RateResponse rate = Parsers.parseRateResponse(jp);
-				jp.close();
-				return rate;
-			}
-		} catch (IOException e){
-			e.printStackTrace();
-		}
-		return null;
+	private static class RateGpsTask extends AsyncTask<Void, Void, RateResponse> {
+	    private final String mSpotNum;
+	    private final double mLat;
+	    private final double mLon;
+	    private final SharedPreferences mPrefs;
+	    private final RateCallback mCallback;
+	    RateGpsTask(String spotNum, double lat, double lon, SharedPreferences prefs, RateCallback callback) {
+	        mSpotNum = spotNum;
+	        mLat = lat;
+	        mLon = lon;
+	        mPrefs = prefs;
+	        mCallback = callback;
+	    }
+
+        @Override
+        protected RateResponse doInBackground(Void... params) {
+            try {
+                final HttpURLConnection conn =
+                        (HttpURLConnection)
+                        new URL(SERVER_HOSTNAME + "/parkservice.rate/gps")
+                .openConnection();
+                conn.setRequestProperty("Accept", "application/json");
+                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setDoOutput(true);
+                final JsonGenerator jg = JSON_FACTORY.createJsonGenerator(conn.getOutputStream());
+                jg.writeStartObject();
+                jg.writeFieldName("lat");
+                jg.writeNumber(mLat);
+                jg.writeFieldName("lon");
+                jg.writeNumber(mLon);
+                jg.writeFieldName("spot");
+                jg.writeString(mSpotNum);
+                writeUserDetails(jg, mPrefs);
+                jg.writeEndObject();
+                jg.flush();
+                jg.close();
+                if (conn.getResponseCode() == 200) {
+                    final JsonParser jp = JSON_FACTORY.createJsonParser(conn
+                            .getInputStream());
+                    final RateResponse rate = Parsers.parseRateResponse(jp);
+                    jp.close();
+                    return rate;
+                }
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(RateResponse result) {
+            mCallback.onGetRateComplete(result);
+        }
+	}
+
+	public static void getRateQr(String qrCode, SharedPreferences prefs, RateCallback callback) {
+	    new RateQrTask(qrCode, prefs, callback).execute((Void) null);
+	}
+
+	private static class RateQrTask extends AsyncTask<Void, Void, RateResponse> {
+	    private final String mQrCode;
+	    private final SharedPreferences mPrefs;
+	    private final RateCallback mCallback;
+	    RateQrTask(String qrCode, SharedPreferences prefs, RateCallback callback) {
+	        mQrCode = qrCode;
+	        mPrefs = prefs;
+	        mCallback = callback;
+	    }
+
+        @Override
+        protected RateResponse doInBackground(Void... params) {
+            ///final String[] tokens = qrcode.split("/");
+            final String[] tokens = mQrCode.split("http://|/");
+            //0 is empty, 1 is parqme.com, 2 is main_lot, 3 is 1412
+            // qr code is url, http://parqme.com/main_lot/1412
+            if (tokens.length != 4) {
+                return null;
+            }
+            try {
+                final HttpURLConnection conn =
+                        (HttpURLConnection)
+                        new URL(SERVER_HOSTNAME + "/parkservice.rate/qrcode")
+                .openConnection();
+                conn.setRequestProperty("Accept", "application/json");
+                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setDoOutput(true);
+                final JsonGenerator jg = JSON_FACTORY.createJsonGenerator(conn.getOutputStream());
+                jg.writeStartObject();
+                jg.writeFieldName("lot");
+                jg.writeString(tokens[2]);
+                jg.writeFieldName("spot");
+                jg.writeString(tokens[3]);
+                writeUserDetails(jg, mPrefs);
+                jg.writeEndObject();
+                jg.flush();
+                jg.close();
+                if (conn.getResponseCode() == 200) {
+                    final JsonParser jp = JSON_FACTORY.createJsonParser(conn
+                            .getInputStream());
+                    final RateResponse rate = Parsers.parseRateResponse(jp);
+                    jp.close();
+                    return rate;
+                }
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(RateResponse result) {
+            mCallback.onGetRateComplete(result);
+        }
 	}
 
 	public static void park(int duration, RateObject spot, SharedPreferences prefs, ParkCallback callback) {

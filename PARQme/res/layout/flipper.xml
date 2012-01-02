@@ -21,7 +21,8 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="36dp"
                 android:text="Scan QR Code" 
-                android:textSize="24dp"/>
+                android:textSize="24dp"
+                android:onClick="onScanClick" />
             <View
                 android:id="@+id/hr"
                 android:layout_width="fill_parent"
@@ -60,7 +61,8 @@
                 android:layout_marginTop="6dp"
                 android:layout_marginRight="6dp"
                 android:enabled="false"
-                android:text="PARQ me!" />
+                android:text="PARQ me!"
+                android:onClick="onSubmitClick" />
         </RelativeLayout>
     </ScrollView>
 
