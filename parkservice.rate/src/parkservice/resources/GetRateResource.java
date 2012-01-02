@@ -54,14 +54,14 @@ public class GetRateResource {
 			try{
 				pr =p.getParkingRateByName(input.getLot(), input.getSpot());
 			}catch (Exception e){}
-
+			
 			GeolocationDao gdao = new GeolocationDao();
 			ParkingSpaceDao psdao = new ParkingSpaceDao();
 			ParkingSpace pspace = null;
 			Geolocation loc = null; 
 			try{
 				loc = gdao.getLocationById(pr.getLocationId());
-				pspace = psdao.getParkingSpaceBySpaceId(pr.getSpaceId());
+				pspace =psdao.getParkingSpaceBySpaceIdentifier(input.getLot(), input.getSpot());
 			}catch (Exception e){}
 
 			RateResponse output = new RateResponse();
@@ -81,7 +81,8 @@ public class GetRateResource {
 			}else{
 				String x = "";
 				if(loc==null) x+=pr.getLocationId();
-				if(pspace==null) x+="   " +pr.getSpaceId();
+				if(pspace==null) x+="spacid:" +pr.getSpaceId() + " lot:" + input.getLot() + " spot:" + input.getSpot();
+				x+= pr.getLocationName() + pr.getLocationId() + pr.getMaxParkMins() + pr.getSpaceName() + pr.getTimeIncrementsMins();
 				
 				output.setResp(x);
 				return output;
@@ -120,7 +121,7 @@ public class GetRateResource {
 						ParkingSpaceDao psdao = new ParkingSpaceDao();
 						ParkingSpace pspace = null;
 						try{
-							pspace = psdao.getParkingSpaceBySpaceId(pr.getSpaceId());
+							pspace =psdao.getParkingSpaceBySpaceIdentifier(g.getLocationIdentifier(), input.getSpot());
 						}catch (Exception e){}
 						if(pspace!=null){
 							RateObject rate = new RateObject();
