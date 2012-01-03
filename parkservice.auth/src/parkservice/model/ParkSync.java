@@ -14,15 +14,21 @@ public class ParkSync {
 	double lat;
 	double lon;
 	long spotId;
-	String description;
+	String location;
+	String spotNumber;
 	
 	
-	
-	public String getDescription() {
-		return description;
+	public String getLocation() {
+		return location;
 	}
-	public void setDescription(String description) {
-		this.description = description;
+	public void setLocation(String location) {
+		this.location = location;
+	}
+	public String getSpotNumber() {
+		return spotNumber;
+	}
+	public void setSpotNumber(String spotNumber) {
+		this.spotNumber = spotNumber;
 	}
 	public double getLat() {
 		return lat;

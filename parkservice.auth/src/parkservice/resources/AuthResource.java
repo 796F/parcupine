@@ -63,9 +63,9 @@ public class AuthResource{
 			ParkingInstance pi = null;
 			PaymentAccount pacc = null;
 			try{
-				pacc = pad.getAllPaymentMethodForUser(uid).get(0);
 				pi = psd.getUserParkingStatus(uid);
-				endTime = psd.getUserParkingStatus(uid).getParkingEndTime();
+				endTime = pi.getParkingEndTime();
+				pacc = pad.getAllPaymentMethodForUser(uid).get(0);
 			}catch(Exception e){
 			}
 			if(endTime==null){
@@ -89,7 +89,8 @@ public class AuthResource{
 					ParkingSpaceDao psdao = new ParkingSpaceDao();
 					ParkingSpace pspace = psdao.getParkingSpaceBySpaceId(pi.getSpaceId());
 					ParkSync sync = new ParkSync();
-					sync.setDescription(pspace.getSpaceName());
+					sync.setLocation(pspace.getSpaceName());
+					sync.setSpotNumber(pspace.getSpaceIdentifier());
 					sync.setLat(location.getLatitude());
 					sync.setLon(location.getLongitude());
 					sync.setEndTime(endTime.getTime());

@@ -94,6 +94,7 @@ public class ParkResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public ParkResponse parkUser(JAXBElement<ParkRequest> info){
+		Date start = new Date(); //start off now
 		//check if user is currently parked.  
 		ParkResponse output = new ParkResponse();
 		ParkRequest in = info.getValue();
@@ -108,7 +109,7 @@ public class ParkResource {
 				ps = psd.getUserParkingStatus(uid);
 			}catch (Exception e){}
 			//was user previously parked?
-			if(ps==null||(new Date()).compareTo(ps.getParkingEndTime())>0){
+			if(ps==null||ps.getParkingEndTime().compareTo(start)<0){
 				
 				long spot_id = in.getSpotId();
 				
@@ -126,7 +127,6 @@ public class ParkResource {
 					int iterations = durationMinutes/(pr.getTimeIncrementsMins());
 					if(iterations*pr.getParkingRateCents()==payment_amount){
 						//if the price, duration, and rate supplied match up,
-						Date start = new Date(); //start off now
 						Date end = new Date(); //end is iterations of increment + old time.  
 						long msec = 1000*durationMinutes*60;
 						end.setTime(start.getTime()+msec);

@@ -43,7 +43,7 @@ public class TestRegister {
 
 	private static URI getBaseURI() {
 		return UriBuilder.fromUri(
-				"http://localhost:8080/parkservice.user").build();
+				"http://75.101.132.219:8080/parkservice.user").build();
 	}
 
 }
