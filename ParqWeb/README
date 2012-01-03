@@ -1,0 +1,20 @@
+Dependencies:
+Apache HTTP Server w/ mod_wsgi
+Django 
+Django South Python Library
+MYSQL server
+
+Additional libraries are in the repository itself. They are located in the libraries directory. Make sure that the wsgi application changes the python path to point to this directory in order to use the packages located there.
+
+Deploy:
+Configure DB : You need to configure the settings.py file so django knows which database to use in MYSQL. Fill out the NAME, USER, and PASSWORD fields in DATABASES['default']
+
+Configure Apache Server : Use the provided configuration file. Make sure Apache is listening for parqweb.com (or whatever domain you choose to use) in the <insert-domain-here>. Restart Apache server by running "sudo apachectl restart" without the quotes.
+
+Also make sure that the configuration file is pointing to the correct location to the parqweb code. 
+
+In settings.py, set DEBUG to False. Set it back to True if you want to debug the server. By doing so, most errors (500 or 404) will return back debug information in the http response.
+
+
+
+NOTE: These deploy instructions are not comprehensive. Please send an email to robmcqn@gmail.com if you are having problems.
