@@ -180,7 +180,12 @@ public class SavedInfo{
 		editor.putInt("minTime", sync.getMinTime());
 		editor.putString("PARKID", sync.getParkingReferenceNumber());
 		editor.putLong("spot", sync.getSpotId());
+		editor.putString("spotNumber", sync.getSpotNumber());
 		editor.commit();
+	}
+	public static String getSpotNumber(SharedPreferences pref){
+		return pref.getString("spotNumber", "xxxx");
+		
 	}
 	public static void toggleVibrate(Context activity){
 		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);

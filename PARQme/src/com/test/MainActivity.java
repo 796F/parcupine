@@ -250,7 +250,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
                 final int minimalIncrement = rateObj.getMinIncrement();
                 rate.setText(formatCents(rateObj.getDefaultRate()) + " per " + minimalIncrement + " minutes");
                 lotDesc.setText(rateObj.getDescription());
-                spot.setText("Spot #" + rateObj.getSpot());
+                spot.setText("Spot # " + SavedInfo.getSpotNumber(check));
                 if (rateObj.getMinIncrement() != 0) {
                     increment.setText(rateObj.getMinIncrement() + " minute increments");
                 }
