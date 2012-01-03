@@ -60,6 +60,14 @@ public class SavedInfo{
 		editor.commit();
 		
 	}
+	public static void setLatLon(Context activity, double lat, double lon){
+		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
+		SharedPreferences.Editor editor = check.edit();
+		editor.putString("lat", ""+lat);
+		editor.putString("lon", ""+lon);
+		editor.commit();
+		
+	}
 	public static void setGeneric(Context activity, String title, boolean input){
 		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
 		SharedPreferences.Editor editor = check.edit();
@@ -95,6 +103,13 @@ public class SavedInfo{
 		editor.putString("code", code);
 		editor.commit();
 		
+	}
+	public static void setParkingReferenceNumber(Context activity, String parkReferenceNumber){
+
+		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
+		SharedPreferences.Editor editor = check.edit();
+		editor.putString("PARKID", parkReferenceNumber);
+		editor.commit();
 	}
 	public static String getParkId(SharedPreferences prefs) {
 	    return prefs.getString("PARKID", "");
@@ -164,7 +179,7 @@ public class SavedInfo{
 		editor.putInt("minIncrement", sync.getMinIncrement());
 		editor.putInt("minTime", sync.getMinTime());
 		editor.putString("PARKID", sync.getParkingReferenceNumber());
-		editor.putLong("spotId", sync.getSpotId());
+		editor.putLong("spot", sync.getSpotId());
 		editor.commit();
 	}
 	public static void toggleVibrate(Context activity){

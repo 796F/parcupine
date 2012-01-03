@@ -37,7 +37,7 @@ public class Parsers {
 	private static final String PARAM_SPOT_NAME = "spot";
 	
 	private static final String PARAM_CC_STUB= "creditCardStub";
-
+	private static final String PARAM_SPOT_NUMBER = "spotNumber";
 	// {"fname":"xia@umd.edu","lname":"Mikey","phone":"1337"}
 	public static UserObject parseUser(JsonParser jp) throws IOException {
 		long uid = -1;
@@ -77,7 +77,8 @@ public class Parsers {
 					double lon=0;
 					long spotId=0;
 					String description ="";
-
+					String spotNumber ="";
+					
 					JsonToken tt = jp.nextToken();
 					String current;
 
@@ -111,13 +112,15 @@ public class Parsers {
 								description = jp.getText();
 							} else if (PARAM_PARK_REFERENCE.equals(current)){
 								parkingReferenceNumber = jp.getText();
+							} else if (PARAM_SPOT_NUMBER.equals(current)){
+								spotNumber = jp.getText();
 							}
 						}
 						}
 						tt = jp.nextToken();
 					}
 
-					sync = new ParkSync(endTime, minTime, maxTime, defaultRate, minIncrement, parkingReferenceNumber, lat, lon, spotId, description);
+					sync = new ParkSync(endTime, minTime, maxTime, defaultRate, minIncrement, parkingReferenceNumber, lat, lon, spotId, description, spotNumber);
 
 				}
 			}
@@ -150,6 +153,7 @@ public class Parsers {
 		ParkSync sync = null;
 		JsonToken t = jp.nextToken();
 		String curr;
+		String resp = "";
 		while (t != null && t != JsonToken.END_OBJECT) {
 			curr = jp.getCurrentName();
 			if (t == JsonToken.VALUE_NUMBER_INT) {
@@ -160,6 +164,8 @@ public class Parsers {
 			if(t == JsonToken.VALUE_STRING){
 				if (PARAM_PARK_REFERENCE.equals(curr)) {
 					parkingReferenceNumber = jp.getText();
+				}else if(PARAM_RESP_CODE.equals(curr)){
+					resp = jp.getText();
 				}
 			}
 			if(t==JsonToken.START_OBJECT){
@@ -178,6 +184,7 @@ public class Parsers {
 					double lon=0;
 					long spotId=0;
 					String description ="";
+					String spotNumber = "";
 
 					JsonToken tt = jp.nextToken();
 					String current;
@@ -212,13 +219,15 @@ public class Parsers {
 								description = jp.getText();
 							} else if (PARAM_PARK_REFERENCE.equals(current)){
 								syncParkingReferenceNumber = jp.getText();
+							}else if (PARAM_SPOT_NUMBER.equals(current)){
+								spotNumber = jp.getText();
 							}
 						}
 						}
 						tt = jp.nextToken();
 					}
 
-					sync = new ParkSync(syncEndTime, minTime, maxTime, defaultRate, minIncrement, syncParkingReferenceNumber, lat, lon, spotId, description);
+					sync = new ParkSync(syncEndTime, minTime, maxTime, defaultRate, minIncrement, syncParkingReferenceNumber, lat, lon, spotId, description,spotNumber);
 					return new ParkInstanceObject(-1, null, sync);
 				}
 			}
@@ -302,6 +311,7 @@ public class Parsers {
 						double lon=0;
 						long spotId=0;
 						String description ="";
+						String spotNumber = "";
 
 						JsonToken tt = jp.nextToken();
 						String current;
@@ -336,13 +346,15 @@ public class Parsers {
 									description = jp.getText();
 								} else if (PARAM_PARK_REFERENCE.equals(current)){
 									syncParkingReferenceNumber = jp.getText();
+								}else if (PARAM_SPOT_NUMBER.equals(current)){
+									spotNumber = jp.getText();
 								}
 							}
 							}
 							tt = jp.nextToken();
 						}
 
-						sync = new ParkSync(syncEndTime, minTime, maxTime, defaultRate, minIncrement, syncParkingReferenceNumber, lat, lon, spotId, description);
+						sync = new ParkSync(syncEndTime, minTime, maxTime, defaultRate, minIncrement, syncParkingReferenceNumber, lat, lon, spotId, description,spotNumber);
 						return new RateResponse(null, null, sync);
 					}
 				}
@@ -390,6 +402,7 @@ public class Parsers {
 						double lon=0;
 						long spotId=0;
 						String description ="";
+						String spotNumber = "";
 
 						JsonToken tt = jp.nextToken();
 						String current;
@@ -424,13 +437,15 @@ public class Parsers {
 									description = jp.getText();
 								} else if (PARAM_PARK_REFERENCE.equals(current)){
 									syncParkingReferenceNumber = jp.getText();
+								}else if (PARAM_SPOT_NUMBER.equals(current)){
+									spotNumber = jp.getText();
 								}
 							}
 							}
 							tt = jp.nextToken();
 						}
 
-						sync = new ParkSync(syncEndTime, minTime, maxTime, defaultRate, minIncrement, syncParkingReferenceNumber, lat, lon, spotId, description);
+						sync = new ParkSync(syncEndTime, minTime, maxTime, defaultRate, minIncrement, syncParkingReferenceNumber, lat, lon, spotId, description, spotNumber);
 						return new ParkResponse(null, -1, null, sync);
 					}
 				}
