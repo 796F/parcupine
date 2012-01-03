@@ -1,6 +1,8 @@
 package com.test;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -14,6 +16,8 @@ import android.widget.ViewFlipper;
 
 import com.objects.SavedInfo;
 import com.objects.ServerCalls;
+import com.objects.ServerCalls.AuthUserCallback;
+import com.objects.ServerCalls.RegisterCallback;
 import com.objects.ThrowDialog;
 import com.objects.UserObject;
 
@@ -29,6 +33,8 @@ public class RegisterActivity extends Activity {
 	EditText streetBox;
 	Spinner expMonthSpinner;
 	Spinner expYearSpinner;
+
+	private static final int DIALOG_REGISTERING = 1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -99,29 +105,69 @@ public class RegisterActivity extends Activity {
 					final int expYear = Integer.valueOf(expYearSpinner.getSelectedItem().toString());
 					final String zip = zipBox.getText().toString();
 					final String addr = streetBox.getText().toString();
-					if (ServerCalls.registerNewUser(email, password, name, ccNumber, cscNumber, expMonth, expYear, zip, addr)) {
-						UserObject user = ServerCalls.getUser(email, password);
-						if(user!=null){
-							if (user.getUid() != -1) {
-								SavedInfo.logIn(RegisterActivity.this, false,
-										email, user.getUid(), password);
-								startActivity(new Intent(RegisterActivity.this,
-										TabsActivity.class));
-								finish();
-							} else {
-								ThrowDialog.show(RegisterActivity.this, ThrowDialog.COULD_NOT_AUTH);
-							}
-						}else{
-							ThrowDialog.show(RegisterActivity.this, ThrowDialog.NO_NET);
-						}
-					} else {
-						Toast.makeText(RegisterActivity.this, "An error occurred during registration", Toast.LENGTH_SHORT).show();
-					}
+					showDialog(DIALOG_REGISTERING);
+                    ServerCalls.registerNewUser(email, password, name, ccNumber, cscNumber,
+                            expMonth, expYear, addr, zip, new RegisterCallback() {
+                                @Override
+                                public void onRegisterComplete(boolean success) {
+                                    if (success) {
+                                        ServerCalls.authUser(email, password,
+                                                new AuthUserCallback() {
+                                                    @Override
+                                                    public void onAuthUserComplete(UserObject user) {
+                                                        removeDialog(DIALOG_REGISTERING);
+                                                        if (user == null) {
+                                                            ThrowDialog.show(RegisterActivity.this,
+                                                                    ThrowDialog.NO_NET);
+                                                            return;
+                                                        }
+                                                        if (user.getUid() == -1) {
+                                                            ThrowDialog.show(RegisterActivity.this,
+                                                                    ThrowDialog.COULD_NOT_AUTH);
+                                                            return;
+                                                        }
+                                                        if (user.getParkState()) {
+                                                            SavedInfo.syncParkingSession(
+                                                                    RegisterActivity.this,
+                                                                    user.getSync());
+                                                        }
+                                                        SavedInfo.logIn(RegisterActivity.this,
+                                                                false, email, user.getUid(),
+                                                                password, ccNumber.substring(12, 15));
+                                                        startActivity(new Intent(
+                                                                RegisterActivity.this,
+                                                                TabsActivity.class));
+                                                        finish();
+                                                    }
+                                                });
+                                    } else {
+                                        removeDialog(DIALOG_REGISTERING);
+                                        Toast.makeText(RegisterActivity.this,
+                                                "An error occurred during registration",
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
 				} else {
 					Toast.makeText(RegisterActivity.this, field.getErrorMsg(), Toast.LENGTH_LONG).show();
 				}
 			}
 		});
+    }
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        switch (id) {
+            case DIALOG_REGISTERING:
+                final ProgressDialog dialog = new ProgressDialog(this);
+                dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                dialog.setMessage("Registering...");
+                dialog.setIndeterminate(true);
+                dialog.setCancelable(false);
+                return dialog;
+            default:
+                return super.onCreateDialog(id);
+        }
     }
 
     private enum InvalidField {

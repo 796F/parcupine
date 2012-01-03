@@ -36,6 +36,7 @@ import com.objects.MapOverlays;
 import com.objects.SavedInfo;
 import com.objects.ServerCalls;
 import com.objects.Spot;
+import com.objects.ThrowDialog;
 
 /**
  * user loads map, on find car, we create an overlay item that holds info about where
@@ -170,11 +171,16 @@ public class MapViewActivity extends MapActivity {
                         break;
                     }
                     case 1: { // Find My Car
-                        final double carLat = Double.valueOf(SavedInfo.getLat(MapViewActivity.this));
-                        final double carLon = Double.valueOf(SavedInfo.getLon(MapViewActivity.this));
-                        mapCtrl.animateTo(new GeoPoint((int) (carLat * 1e6), (int) (carLon * 1e6)));
-                        mapCtrl.setZoom(ZOOM_LEVEL);
-                        drawer.close();
+                    	if(SavedInfo.isParked(MapViewActivity.this)){
+                    		final double carLat = Double.valueOf(SavedInfo.getLat(MapViewActivity.this));
+                            final double carLon = Double.valueOf(SavedInfo.getLon(MapViewActivity.this));
+                            mapCtrl.animateTo(new GeoPoint((int) (carLat * 1e6), (int) (carLon * 1e6)));
+                            mapCtrl.setZoom(ZOOM_LEVEL);
+                            drawer.close();
+                    	}else{
+                    		ThrowDialog.show(MapViewActivity.this, ThrowDialog.NOT_PARKED);
+                    	}
+                        
                         break;
                     }
                     case 2: { // Find a Spot

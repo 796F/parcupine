@@ -60,7 +60,8 @@
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/profile_affiliation"
             android:layout_alignTop="@+id/profile_name"
-            android:background="#757f84" />
+            android:background="#757f84" 
+            android:visibility="gone"/>
 	<TextView
 	    android:id="@+id/profile_name"
 	    android:layout_width="wrap_content"
@@ -70,7 +71,8 @@
 	    android:text="Robert Smith"
 	    android:padding="3dp"
             android:textStyle="bold"
-	    android:textAppearance="?android:attr/textAppearanceLarge" />
+	    android:textAppearance="?android:attr/textAppearanceLarge" 
+	    android:visibility="gone"/>
 
 	<TextView
 	    android:id="@+id/profile_affiliation"
@@ -80,7 +82,8 @@
 	    android:layout_below="@+id/profile_name"
 	    android:text="Student"
 	    android:padding="3dp"
-	    android:textAppearance="?android:attr/textAppearanceMedium" />
+	    android:textAppearance="?android:attr/textAppearanceMedium"
+	    android:visibility="gone" />
 
 	<Button
 	    android:id="@+id/profile_name_button"
@@ -89,7 +92,8 @@
 	    android:layout_alignBottom="@+id/profile_affiliation"
 	    android:layout_alignParentRight="true"
 	    android:padding="3dp"
-	    android:background="@drawable/account_pencil" />
+	    android:background="@drawable/account_pencil"
+	    android:visibility="gone" />
 	
 	<View
             android:id="@+id/profile_email_back"
@@ -134,7 +138,8 @@
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/profile_city_small"
             android:layout_alignTop="@+id/profile_city_large"
-            android:background="#757f84" />
+            android:background="#757f84" 
+            android:visibility="gone"/>
 	<TextView
 	    android:id="@+id/profile_city_large"
 	    android:layout_width="wrap_content"
@@ -144,7 +149,8 @@
 	    android:text="City"
 	    android:padding="3dp"
             android:textStyle="bold"
-	    android:textAppearance="?android:attr/textAppearanceLarge" />
+	    android:textAppearance="?android:attr/textAppearanceLarge" 
+	    android:visibility="gone"/>
 
 	<TextView
 	    android:id="@+id/profile_city_small"
@@ -154,7 +160,8 @@
 	    android:layout_below="@+id/profile_city_large"
 	    android:text="Boston"
 	    android:padding="3dp"
-	    android:textAppearance="?android:attr/textAppearanceMedium" />
+	    android:textAppearance="?android:attr/textAppearanceMedium"
+	    android:visibility="gone" />
 
 	<Button
 	    android:id="@+id/profile_city_button"
@@ -163,7 +170,8 @@
 	    android:layout_alignBottom="@+id/profile_city_small"
 	    android:layout_alignParentRight="true"
 	    android:padding="3dp"
-	     android:background="@drawable/account_pencil" />
+	     android:background="@drawable/account_pencil" 
+	     android:visibility="gone"/>
 
 	<View
             android:id="@+id/profile_card_back"

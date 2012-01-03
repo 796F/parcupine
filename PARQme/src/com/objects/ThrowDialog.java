@@ -23,6 +23,7 @@ public class ThrowDialog {
 	public final static int NO_REFILL=11;
 	public final static int NO_NET=12;
 	public final static int NO_LOCATION=13;
+	public final static int NOT_PARKED= 14;
 	public static void show(final Context c, int dialog){
 		AlertDialog.Builder alert = new AlertDialog.Builder(c);
 		AlertDialog a;
@@ -182,6 +183,13 @@ public class ThrowDialog {
 				}
 			});
 			alert.setNegativeButton("Cancel", null);
+			//alert.show();
+			break;
+		case NOT_PARKED:
+			alert.setMessage("You are not currently parked");
+			alert.setNegativeButton("Ok", null);
+			alert.show();
+			break;
 		}
 	}
 

@@ -12,7 +12,16 @@ public class AuthResponse {
 	//information about user that will be displayed. 
 	long uid;
 	int parkState; //0 not parked, 1 parked
+	String creditCardStub;
 	ParkSync sync;
+	
+	
+	public String getCreditCardStub() {
+		return creditCardStub;
+	}
+	public void setCreditCardStub(String creditCardStub) {
+		this.creditCardStub = creditCardStub;
+	}
 	/**
 	 * @return the uid
 	 */

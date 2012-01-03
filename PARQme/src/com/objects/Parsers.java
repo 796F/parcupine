@@ -35,13 +35,15 @@ public class Parsers {
 
 	private static final String PARAM_LOCATION_LIST = "locationList";
 	private static final String PARAM_SPOT_NAME = "spot";
+	
+	private static final String PARAM_CC_STUB= "creditCardStub";
 
 	// {"fname":"xia@umd.edu","lname":"Mikey","phone":"1337"}
 	public static UserObject parseUser(JsonParser jp) throws IOException {
 		long uid = -1;
 		ParkSync sync = null;
 		boolean parkState = false;
-
+		String creditCardStub = "";
 		JsonToken t = jp.nextToken();
 		String curr;
 		while (t != null && t != JsonToken.END_OBJECT) {
@@ -51,6 +53,12 @@ public class Parsers {
 					uid = jp.getIntValue();
 				} else if (PARAM_PARKSTATE.equals(curr)) {
 					parkState = jp.getIntValue() == 1;
+				}
+			}
+			if(t==JsonToken.VALUE_STRING){
+				curr = jp.getCurrentName();
+				if(PARAM_CC_STUB.equals(curr)){
+					creditCardStub = jp.getText();
 				}
 			}
 			if(t==JsonToken.START_OBJECT){
@@ -115,7 +123,7 @@ public class Parsers {
 			}
 			t = jp.nextToken();
 		}
-		return new UserObject(uid, parkState, sync);
+		return new UserObject(uid, parkState, sync, creditCardStub);
 	}
 
 	public static boolean parseResponseCode(JsonParser jp) throws IOException {
