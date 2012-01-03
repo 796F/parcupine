@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.SlidingDrawer;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -39,19 +40,19 @@ public class AccountActivity extends Activity {
 	private EditText editEmailBox;
 	private EditText editCityBox;
 	private EditText editCardBox;
-	
+
 	//these allow us to circumvent data from custom dialogs into this class. 
 	int saveType = -1;
-    private View myPrivateView = null;
-    private View layout = null;
-    
+	private View myPrivateView = null;
+	private View layout = null;
+
 	private TextView emailDisplay;
 	private TextView nameDisplay;
 	private TextView cityDisplay;
 	private TextView cardDisplay;
-
+	private AlertDialog autoRefillDialog;
 	private static final int DIALOG_UNPARKING = 1;
-	
+
 	public CheckBox getBox(){
 		return (CheckBox) findViewById(R.id.vibrateEnable);
 	}
@@ -60,13 +61,16 @@ public class AccountActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.account);
+
+		autoRefillDialog = makeRefillInfoDialog();
+		
 		emailDisplay = (TextView)findViewById(R.id.profile_email_small);
 		emailDisplay.setText(SavedInfo.getEmail(AccountActivity.this));
 		nameDisplay = (TextView)findViewById(R.id.profile_name);
 		cardDisplay = (TextView)findViewById(R.id.profile_card_small);
 		cardDisplay.setText("XXXX XXXX XXXX "+SavedInfo.getCardStub(AccountActivity.this));
 		final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
-	    final DialogInterface.OnClickListener saveEditListener = new DialogInterface.OnClickListener(){
+		final DialogInterface.OnClickListener saveEditListener = new DialogInterface.OnClickListener(){
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -98,7 +102,7 @@ public class AccountActivity extends Activity {
 				edit.commit();
 				dialog.cancel();
 			}
-			
+
 		};
 		final DialogInterface.OnClickListener cancelEditListener = new DialogInterface.OnClickListener(){
 
@@ -106,16 +110,16 @@ public class AccountActivity extends Activity {
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.cancel();
 			}
-			
+
 		};
 
-		
+
 		//final Button editName = (Button) findViewById(R.id.profile_name_button);
 		final Button editEmail= (Button) findViewById(R.id.profile_email_button);
 		//final Button editCity= (Button) findViewById(R.id.profile_city_button);
 		final Button editCard= (Button) findViewById(R.id.profile_card_button);
-
-		
+		final SlidingDrawer drawer = (SlidingDrawer) findViewById(R.id.pref_drawer);
+		drawer.open();
 		View.OnClickListener showEditText = new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -131,8 +135,8 @@ public class AccountActivity extends Activity {
 			}
 		};	
 
-	
-		
+
+
 		//editName.setOnClickListener(showEditText);
 		editEmail.setOnClickListener(showEditText);
 		//editCity.setOnClickListener(showEditText);
@@ -161,7 +165,7 @@ public class AccountActivity extends Activity {
 		vibrateBox = (CheckBox) findViewById(R.id.vibrate_checkbox);
 		vibrateBox.setOnCheckedChangeListener(new OnCheckedChangeListener(){
 			@Override
-			public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
+			public void onCheckedChanged(CompoundButton arg0, boolean isChecked) {
 				if(vibrateBox.isChecked()){
 					SavedInfo.setGeneric(AccountActivity.this, "vibrateEnable", true);
 					//set true in file
@@ -175,7 +179,7 @@ public class AccountActivity extends Activity {
 		ringBox = (CheckBox) findViewById(R.id.alarm_checkbox);
 		ringBox.setOnCheckedChangeListener(new OnCheckedChangeListener(){
 			@Override
-			public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
+			public void onCheckedChanged(CompoundButton arg0, boolean isChecked) {
 				if(ringBox.isChecked()){
 					SavedInfo.setGeneric(AccountActivity.this, "ringEnable", true);
 					//set true in file
@@ -188,20 +192,21 @@ public class AccountActivity extends Activity {
 
 		refillBox = (CheckBox) findViewById(R.id.refill_checkbox);
 		refillBox.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+
 			@Override
-			public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-				if(refillBox.isChecked()){
-					SavedInfo.setGeneric(AccountActivity.this, "autoRefill", true);
-					//set true in file
+			public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
+				if(isChecked){
+					//user tries to check box
+					autoRefillDialog.show();
 				}else{
-					//set false in file
+					refillBox.setChecked(false);
 					SavedInfo.setGeneric(AccountActivity.this, "autoRefill", false);
 				}
 			}
+			
 		});
-
+		
 		logout = (Button) findViewById(R.id.logoutbutton);
-
 		logout.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -216,21 +221,21 @@ public class AccountActivity extends Activity {
 									SAVED_INFO, 0);
 							final String parkId = SavedInfo.getParkId(check);
 							showDialog(DIALOG_UNPARKING);
-                            ServerCalls.unpark(111, parkId, check, new UnparkCallback() {
-                                @Override
-                                public void onUnparkComplete(boolean success) {
-                                    removeDialog(DIALOG_UNPARKING);
-                                    if (success) {
-                                        SavedInfo.logOut(AccountActivity.this);
-                                        startActivity(new Intent(AccountActivity.this,
-                                                LoginActivity.class));
-                                        finish();
-                                    } else {
-                                        ThrowDialog.show(AccountActivity.this,
-                                                ThrowDialog.UNPARK_ERROR);
-                                    }
-                                }
-                            });
+							ServerCalls.unpark(111, parkId, check, new UnparkCallback() {
+								@Override
+								public void onUnparkComplete(boolean success) {
+									removeDialog(DIALOG_UNPARKING);
+									if (success) {
+										SavedInfo.logOut(AccountActivity.this);
+										startActivity(new Intent(AccountActivity.this,
+												LoginActivity.class));
+										finish();
+									} else {
+										ThrowDialog.show(AccountActivity.this,
+												ThrowDialog.UNPARK_ERROR);
+									}
+								}
+							});
 						}
 					}).setNegativeButton("No", null).create().show();
 				} else {
@@ -242,51 +247,74 @@ public class AccountActivity extends Activity {
 
 	}
 
-    @Override
-    protected Dialog onCreateDialog(int id) {
-        if (id == DIALOG_UNPARKING) {
-            final ProgressDialog dialog = new ProgressDialog(this);
-            dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            dialog.setMessage("Unparking...");
-            dialog.setIndeterminate(true);
-            dialog.setCancelable(false);
-            return dialog;
-        } else {
-            return super.onCreateDialog(id);
-        }
-    }
-	
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		if (id == DIALOG_UNPARKING) {
+			final ProgressDialog dialog = new ProgressDialog(this);
+			dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+			dialog.setMessage("Unparking...");
+			dialog.setIndeterminate(true);
+			dialog.setCancelable(false);
+			return dialog;
+		} else {
+			return super.onCreateDialog(id);
+		}
+	}
+
 	public void showEditDialog(int i, DialogInterface.OnClickListener a,DialogInterface.OnClickListener b){
 		AlertDialog.Builder alert = new AlertDialog.Builder(AccountActivity.this);     
-	    LayoutInflater  factory = LayoutInflater.from(AccountActivity.this);
-	    String g = null;
-	    switch(i){
-	    	case 0:
-	    		layout =factory.inflate(R.layout.edit_text_dialog ,null);
-	    		g = "Name";
-	    		break;
-	    	case 1:
-	    		layout = factory.inflate(R.layout.edit_email_layout, null);
-	    		g = "Email";
-	    		break;
-	    	case 2:
-	    		layout = factory.inflate(R.layout.edit_text_dialog, null);
-	    		g = "City";
-	    		break;
-	    	case 3:
-	    		layout = factory.inflate(R.layout.edit_card_layout, null);
-	    		g = "Card";
-	    		break;
-	    }
-	    saveType = i;
-	    alert.setView(layout); 
-	    alert.setPositiveButton("Save", a);
-	    alert.setNegativeButton("Cancel", b);
-	    alert.setTitle("Edit " + g);
+		LayoutInflater  factory = LayoutInflater.from(AccountActivity.this);
+		String g = null;
+		switch(i){
+		case 0:
+			layout =factory.inflate(R.layout.edit_text_dialog ,null);
+			g = "Name";
+			break;
+		case 1:
+			layout = factory.inflate(R.layout.edit_email_layout, null);
+			g = "Email";
+			break;
+		case 2:
+			layout = factory.inflate(R.layout.edit_text_dialog, null);
+			g = "City";
+			break;
+		case 3:
+			layout = factory.inflate(R.layout.edit_card_layout, null);
+			g = "Card";
+			break;
+		}
+		saveType = i;
+		alert.setView(layout); 
+		alert.setPositiveButton("Save", a);
+		alert.setNegativeButton("Cancel", b);
+		alert.setTitle("Edit " + g);
 		AlertDialog gg = alert.create();
 		gg.show();
 	}
-	
+
+	private AlertDialog makeRefillInfoDialog(){
+		AlertDialog.Builder builder = new AlertDialog.Builder(AccountActivity.this);
+		builder.setMessage("Are you sure you want to refill your meter automatically when time runs out?")
+		.setCancelable(false)
+		.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int id) {
+				//toggle auto-refill
+				SavedInfo.setGeneric(AccountActivity.this, "autoRefill", true);
+				refillBox.setChecked(true);
+				dialog.cancel();
+			}
+		})
+		.setNegativeButton("No", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int id) {
+				//do nothing.  
+				dialog.cancel();
+			}
+		});
+		return builder.create();
+	}
+
 }
 
 

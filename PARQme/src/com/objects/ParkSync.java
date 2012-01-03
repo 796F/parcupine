@@ -16,12 +16,13 @@ public class ParkSync {
 	double lon;
 	long spotId;
 	String description;
+	String spotNumber;
 	
 	
 	
 	public ParkSync(long endTime, int minTime, int maxTime, int defaultRate,
 			int minIncrement, String parkingReferenceNumber, double lat,
-			double lon, long spotId, String description) {
+			double lon, long spotId, String description, String spotNumber) {
 		super();
 		this.endTime = endTime;
 		this.minTime = minTime;
@@ -33,6 +34,10 @@ public class ParkSync {
 		this.lon = lon;
 		this.spotId = spotId;
 		this.description = description;
+		this.spotNumber = spotNumber;
+	}
+	public String getSpotNumber() {
+		return spotNumber;
 	}
 	public String getDescription() {
 		return description;

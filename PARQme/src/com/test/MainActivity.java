@@ -36,6 +36,7 @@ import android.widget.ViewFlipper;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.objects.ParkInstanceObject;
+import com.objects.ParkSync;
 import com.objects.RateObject;
 import com.objects.RateResponse;
 import com.objects.SavedInfo;
@@ -591,6 +592,9 @@ public class MainActivity extends ActivityGroup implements LocationListener {
                             public void onParkComplete(ParkInstanceObject parkInstance) {
                                 removeDialog(DIALOG_PARKING);
                                 if (parkInstance != null) {
+                                	if(parkInstance.getSync()!= null){
+                                		String HELLO = "LOOK AT ME OMFG";
+                                	}
                                     if (parkInstance.getEndTime() > 0) {
                                         SavedInfo.park(MainActivity.this, parkInstance, rateObj);
                                         totalTimeParked += parkingTime;
@@ -692,10 +696,6 @@ public class MainActivity extends ActivityGroup implements LocationListener {
                             	removeDialog(DIALOG_GETTING_RATE);
                                 vf.showNext();
                                 state = State.PARKING;
-                                // prepare time picker for this spot
-                                //                  parkTimePicker.setRange(mySpot.getMinIncrement(),
-                                //                          mySpot.getMaxTime());
-                                //                  parkTimePicker.setMinInc(mySpot.getMinIncrement());
 
                                 final int minIncrement = rateObj.getMinIncrement();
                                 final String [] test = contents.split("http://|/");
@@ -706,11 +706,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
                                     increment.setText(rateObj.getMinIncrement() + " minute increments");
                                 }
                                 // store some used info
-                                SharedPreferences.Editor editor = check.edit();
-                                editor.putString("code", contents);
-                                editor.putFloat("lat", (float) rateObj.getLat());
-                                editor.putFloat("lon", (float) rateObj.getLon());
-                                editor.commit();
+                                SavedInfo.setLatLon(MainActivity.this, rateObj.getLat(), rateObj.getLon());
                                 updateDisplay(minIncrement);
                             } else {
                                 ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
@@ -758,18 +754,65 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 				SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 				//if autorefill is on, refill the user minimalIncrement
 				if(SavedInfo.autoRefill(MainActivity.this)){
-					alert.cancel();
-					refill(1);
+					ServerCalls.refill(rateObj.getMinIncrement(), rateObj, SavedInfo.getParkId(check), check, new RefillCallback() {
+                        @Override
+                        public void onRefillComplete(ParkInstanceObject refillResp) {
+                            if (refillResp != null && refillResp.getEndTime() > 0) {
+                                SavedInfo.park(MainActivity.this, refillResp, rateObj);
+                                switchToParkedLayout();
+                                //update the total time parked and remaining time.
+                                totalTimeParked += rateObj.getMinIncrement();
+                                //stop current timer, start new timer with current time + selectedNumber.
+                                //calculate new endtime and initiate timer from it.
+                                timer.cancel();
+                                timer = initiateTimer(refillResp.getEndTime(), vf);
+                                //stopService(new Intent(MainActivity.this, Background.class));
+                                timer.start();
+                                //startService(new Intent(MainActivity.this, Background.class).putExtra("time", remainSeconds));
+                                ThrowDialog.show(MainActivity.this, ThrowDialog.REFILL_DONE);
+                            } else {
+                                ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
+                            }
+                        }
+                    });
 				}else{
 					SavedInfo.unpark(MainActivity.this);
 					//else we cancel the running out of tie dialog
-					alert.cancel();
+					//alert.cancel();
 					//and restore view
 					switchToParkingLayout();
 					ThrowDialog.show(MainActivity.this, ThrowDialog.TIME_OUT);
 				}
 			}
 		};
+	}
+	
+	private void syncApp(ParkSync sync){
+		rateObj = new RateObject(sync.getLat(),sync.getLon(), sync.getSpotId(),
+				sync.getMinTime(), sync.getMaxTime(), sync.getDefaultRate(), sync.getMinIncrement(), sync.getDescription());
+		
+		SavedInfo.setParkingReferenceNumber(MainActivity.this, sync.getParkingReferenceNumber());
+		state = State.PARKING;
+         // prepare time picker for this spot
+         //                  parkTimePicker.setRange(mySpot.getMinIncrement(),
+         //                          mySpot.getMaxTime());
+         //                  parkTimePicker.setMinInc(mySpot.getMinIncrement());
+
+         final int minIncrement = rateObj.getMinIncrement();
+         rate.setText(formatCents(rateObj.getDefaultRate()) + " per " + minIncrement + " minutes");
+         lotDesc.setText(rateObj.getDescription());
+         spot.setText("Spot #" + sync.getSpotNumber());
+         
+         if (rateObj.getMinIncrement() != 0) {
+             increment.setText(rateObj.getMinIncrement() + " minute increments");
+         }
+         // store some used info
+         SavedInfo.setLatLon(MainActivity.this, rateObj.getLat(), rateObj.getLon());
+         updateDisplay(minIncrement);
+		switchToParkedLayout();
+		timer = initiateTimer(sync.getEndTime(), vf);
+        timer.start();
+        
 	}
 
 	//converts cents to "$ x.xx"
