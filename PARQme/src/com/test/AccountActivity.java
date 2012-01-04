@@ -310,6 +310,7 @@ public class AccountActivity extends Activity {
 			public void onClick(DialogInterface dialog, int id) {
 				//do nothing.  
 				dialog.cancel();
+				refillBox.setChecked(false);
 			}
 		});
 		return builder.create();

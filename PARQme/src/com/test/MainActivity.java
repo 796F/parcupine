@@ -735,14 +735,65 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 					//alert the user
 					alert.show();
 				}
+				
+				/*
+		int Dhour = time/60;
+		int Dmins = time%60;
+		if(Dmins==59){
+			//if we have 59 minutes, display h+1 and 00
+			minutes.setText("00");
+			hours.setText(String.valueOf(Dhour+1));
+		}else if(Dmins < 9){
+			minutes.setText("0"+String.valueOf(Dmins+1));
+			hours.setText(String.valueOf(Dhour));
+		}else{
+		
+			minutes.setText(String.valueOf(Dmins+1));
+			hours.setText(String.valueOf(Dhour));
+		}
+		
+		price.setText(formatCents(getCostInCents(time, rateObj)));*/
+				
 				//update remain seconds and timer.
 		        if (smallTime.getVisibility() != View.VISIBLE) {
-                    remainHours.setText(String.valueOf(seconds / 3600));
-                    remainMins.setText(String.valueOf((seconds % 3600) / 60));
+		        	int Dhour = seconds/3600;
+		        	int Dmin = (seconds%3600)/60;
+		        	if(Dmin==59){
+		        		//display 00 in minutes and bump hour up 1
+		        		remainMins.setText("00");
+		        		remainHours.setText(String.valueOf(Dhour+1));
+		        	}else if(Dmin<9){
+		        		//add the 0 in front of single digit minute count
+		        		remainMins.setText("0"+String.valueOf(Dmin+1));
+		        		remainHours.setText(String.valueOf(Dhour));
+		        	}else{
+		        		//simply increase minute display by 1
+		        		remainMins.setText(String.valueOf(Dmin+1));
+		        		remainHours.setText(String.valueOf(Dhour));
+		        	}
+		        	
+//                    remainHours.setText(String.valueOf(seconds / 3600));
+//                    remainMins.setText(String.valueOf((seconds % 3600) / 60));
                     flashColon();
 		        } else {
-		            smallHours.setText(String.valueOf(seconds / 3600));
-		            smallMins.setText(String.valueOf((seconds % 3600) / 60));
+		        	
+		        	int Dhour = seconds/3600;
+		        	int Dmin = (seconds%3600)/60;
+		        	if(Dmin==59){
+		        		//display 00 in minutes and bump hour up 1
+		        		remainMins.setText("00");
+		        		remainHours.setText(String.valueOf(Dhour+1));
+		        	}else if(Dmin<9){
+		        		//add the 0 in front of single digit minute count
+		        		remainMins.setText("0"+String.valueOf(Dmin+1));
+		        		remainHours.setText(String.valueOf(Dhour));
+		        	}else{
+		        		//simply increase minute display by 1
+		        		remainMins.setText(String.valueOf(Dmin+1));
+		        		remainHours.setText(String.valueOf(Dhour));
+		        	}
+//		            smallHours.setText(String.valueOf(seconds / 3600));
+//		            smallMins.setText(String.valueOf((seconds % 3600) / 60));
 		            flashSmallColon();
 		        }
 			}
@@ -830,7 +881,11 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	}
 	private void updateDisplay(int time) {
 		hours.setText(String.valueOf(time/60));
-		minutes.setText(String.valueOf(time%60));
+		if(time%60<10){
+			minutes.setText("0"+String.valueOf(time%60));
+		}else{
+			minutes.setText(String.valueOf(time%60));
+		}
 		price.setText(formatCents(getCostInCents(time, rateObj)));
 	}
 
