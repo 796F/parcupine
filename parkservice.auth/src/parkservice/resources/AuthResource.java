@@ -3,6 +3,7 @@ package parkservice.resources;
 
 
 import java.util.Date;
+import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -65,8 +66,13 @@ public class AuthResource{
 			try{
 				pi = psd.getUserParkingStatus(uid);
 				endTime = pi.getParkingEndTime();
-				pacc = pad.getAllPaymentMethodForUser(uid).get(0);
 			}catch(Exception e){
+			}
+			try{
+				List<PaymentAccount> list = pad.getAllPaymentMethodForUser(uid);
+				pacc = list.get(0);
+			}catch(Exception e){
+				
 			}
 			if(endTime==null){
 				//no endtime stored, user wasn't parked.  
