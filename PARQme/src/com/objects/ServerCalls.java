@@ -516,65 +516,41 @@ public class ServerCalls {
         }
         return null;
     }
-	public static int addHistory(String date, String starttime, String endtime, String location, String email, int cost){
-		try {
-			String data = URLEncoder.encode("date", "UTF-8") + "=" + URLEncoder.encode(date, "UTF-8");
-			data+= "&"+URLEncoder.encode("location", "UTF-8") + "=" + URLEncoder.encode(location, "UTF-8");
-			data+= "&"+URLEncoder.encode("starttime", "UTF-8") + "=" + URLEncoder.encode(starttime, "UTF-8");
-			data+= "&"+URLEncoder.encode("endtime", "UTF-8") + "=" + URLEncoder.encode(endtime, "UTF-8");
-			data+= "&"+URLEncoder.encode("email", "UTF-8") + "=" + URLEncoder.encode(email, "UTF-8");
-			data+= "&"+URLEncoder.encode("cost", "UTF-8") + "=" + URLEncoder.encode(cost+"", "UTF-8");
-			// Send data
-			URL url = new URL("http://parqme.com/add_history.php");
-			URLConnection conn = url.openConnection();
+    public static boolean editUser(SharedPreferences prefs, String newPassword, String newEmail, String newPhone){
+    	try {
+            final HttpURLConnection conn =
+                    (HttpURLConnection)
+                    new URL(SERVER_HOSTNAME + "/parkservice.user/update")
+            .openConnection();
+            conn.setRequestProperty("Accept", "application/json");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setDoOutput(true);
+            final JsonGenerator jg = JSON_FACTORY.createJsonGenerator(conn.getOutputStream());
+            jg.writeStartObject();
+            jg.writeFieldName("password");
+            jg.writeString(newPassword);
+            jg.writeFieldName("email");
+            jg.writeString(newEmail);
+            jg.writeFieldName("phone");
+            jg.writeString(newPhone);
+            writeUserDetails(jg, prefs);
+            jg.writeEndObject();
+            jg.flush();
+            jg.close();
+            if (conn.getResponseCode() == 200) {
+                final JsonParser jp = JSON_FACTORY.createJsonParser(conn
+                        .getInputStream());
+                final boolean result = Parsers.parseResponseCode(jp);
+                jp.close();
+                return result;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
-			conn.setDoOutput(true);
-			OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-			wr.write(data);
-			wr.flush();
-			//write data
-			int bytesRead = 1;
-			byte[] buffer = new byte[1];
-			//prepare buffers
-			BufferedInputStream bufferedInput = new BufferedInputStream(conn.getInputStream());
-			bufferedInput.read(buffer);
-			//read into buffer
-			String x =(new String(buffer, 0,bytesRead));
-			return Integer.parseInt(x);
-		}catch (Exception e){
-			e.printStackTrace();
-		}
-		return -1;
-	}
-	public static String test(String qrcode, String email, String endtime){
-		try {
-			String data = URLEncoder.encode("code", "UTF-8") + "=" + URLEncoder.encode(qrcode, "UTF-8");
-			data+= "&"+URLEncoder.encode("email", "UTF-8") + "=" + URLEncoder.encode(email, "UTF-8");
-			data+= "&"+URLEncoder.encode("endtime", "UTF-8") + "=" + URLEncoder.encode(endtime, "UTF-8");
-			// Send data
-			URL url = new URL("http://localhost:8080/UserBounce/UpdateDatabase");
-			URLConnection conn = url.openConnection();
 
-			conn.setRequestProperty("fromApp", "yes");
-
-			conn.setDoOutput(true);
-			OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-			wr.write(data);
-			wr.flush();
-			//write data
-			int bytesRead = 1024;
-			byte[] buffer = new byte[1];
-			//prepare buffers
-			BufferedInputStream bufferedInput = new BufferedInputStream(conn.getInputStream());
-			bufferedInput.read(buffer);
-			//read into buffer
-			String x =(new String(buffer, 0,bytesRead));
-			return x;
-		}catch (Exception e){
-			e.printStackTrace();
-		}
-		return "blah";
-	}
 	private static void writeUserDetails(JsonGenerator jg, SharedPreferences prefs) throws JsonGenerationException, IOException {
 		final long uid = prefs.getLong("uid", -1);
 		final String email = prefs.getString("email", "");

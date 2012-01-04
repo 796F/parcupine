@@ -62,7 +62,7 @@ public class AccountActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.account);
 
-		autoRefillDialog = makeRefillInfoDialog();
+		autoRefillDialog = makeAutoRefillDialog();
 		
 		emailDisplay = (TextView)findViewById(R.id.profile_email_small);
 		emailDisplay.setText(SavedInfo.getEmail(AccountActivity.this));
@@ -86,8 +86,13 @@ public class AccountActivity extends Activity {
 					if(oldEmail.equals(check.getString("email", ""))){
 						test = (EditText) layout.findViewById(R.id.new_email_box);
 						String newEmail = test.getText().toString();
-						edit.putString("email", newEmail);
-						emailDisplay.setText(newEmail);
+						if(ServerCalls.editUser(check, null, newEmail, null)){
+							edit.putString("email", newEmail);
+							emailDisplay.setText(newEmail);
+						}else{
+							//throw alert
+							ThrowDialog.show(AccountActivity.this, ThrowDialog.COULD_NOT_AUTH);
+						}
 					}else{
 						ThrowDialog.show(AccountActivity.this, ThrowDialog.COULD_NOT_AUTH);
 					}
@@ -292,7 +297,7 @@ public class AccountActivity extends Activity {
 		gg.show();
 	}
 
-	private AlertDialog makeRefillInfoDialog(){
+	private AlertDialog makeAutoRefillDialog(){
 		AlertDialog.Builder builder = new AlertDialog.Builder(AccountActivity.this);
 		builder.setMessage("Are you sure you want to refill your meter automatically when time runs out?")
 		.setCancelable(false)
