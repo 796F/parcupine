@@ -244,7 +244,7 @@ public class UserDao extends AbstractParqDaoParent {
 		}
 		
 		// clear out the cache entry for user that is going to be updated
-		revokeUserCacheById(user.getUserID());
+		clearUserCache();
 		
 		PreparedStatement pstmt = null;
 		Connection con = null;
