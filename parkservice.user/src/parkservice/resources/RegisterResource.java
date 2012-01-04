@@ -13,6 +13,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.ContextResolver;
 import javax.xml.bind.JAXBElement;
 
+import parkservice.model.AuthRequest;
+import parkservice.model.EditCCRequest;
+import parkservice.model.EditCCResponse;
 import parkservice.model.EditUserRequest;
 import parkservice.model.EditUserResponse;
 import parkservice.model.RegisterRequest;
@@ -48,12 +51,6 @@ public class RegisterResource {
 		xx.setMerchantCustomerId(""+uid);
 		return xx;
 	}
-	
-	/* CustomerProfileType.setShipToList(list of address types)
-	may be needed as a billing address.  	
-	
-	billTo	CustomerAddressType may be needed.  
-	*/
 
 	private CreateCustomerProfileResponseType validateCard(CustomerProfileType customer, String ccNum, String csc, int month, int year, 
 			String fname, String lname, String zipcode, String address){
@@ -193,29 +190,138 @@ public class RegisterResource {
 		EditUserRequest in = info.getValue();
 		UserDao userDb = new UserDao();
 		User editedUser = new User();
-		editedUser.setEmail(in.getEmail());
-		editedUser.setPassword(in.getPassword());
-		editedUser.setPhoneNumber(in.getPhone());
-		editedUser.setUserID(in.getUid());
+		AuthRequest userInfo = in.getUserInfo();
+		if(in.getUid()==innerAuthenticate(userInfo)){
+			
+			editedUser.setEmail(in.getEmail()); 
+			editedUser.setPassword(userInfo.getPassword()); 
+			
+//			if(in.getPassword()==null||in.getPassword().length()<6){
+//				editedUser.setPassword(userInfo.getPassword()); 
+//			}else {
+//				editedUser.setPassword(in.getPassword());
+//			}
+//			if(in.getPhone()==null || in.getPhone().length() < 10) {
+//				//use the old phone number provided (not implemented)
+//			}else{
+//				editedUser.setPhoneNumber(in.getPhone());
+//				
+//			}
+			
+			editedUser.setUserID(in.getUid());
 
-		boolean result = true;
-		try{
-			result = userDb.updateUser(editedUser);
-		}catch(IllegalStateException ex){
-			output.setResp("illegal state");
-		}catch(RuntimeException e){
-			output.setResp("runtime exception");
-		}
-		if(result){
-			output.setResp("OK");
+			boolean result = false;
+			try{
+				result = userDb.updateUser(editedUser);
+			}catch(IllegalStateException ex){
+				output.setResp("illegal state");
+				return output;
+			}catch(RuntimeException e){
+				output.setResp("runtime exception");
+				return output;
+			}
+			if(result){
+				output.setResp("OK");
+			}else{
+				output.setResp("BAD");
+			}
+			return output;
 		}else{
-			output.setResp("BAD");
+			output.setResp("BAD_AUTH");
+			return output;
+		}
+		
+	}
+	@POST
+	@Path("/changeCC")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public EditCCResponse changeCreditCard(JAXBElement<EditCCRequest> info){
+		EditCCRequest in = info.getValue();
+		EditCCResponse output = new EditCCResponse();
+		AuthRequest userInfo = in.getUserInfo();
+		if(in.getUid()==innerAuthenticate(userInfo)){
+			//get info from request
+			List<String> nameSplit = Arrays.asList(in.getHolderName().split(" "));
+			String fname = null;
+			String lname = null;
+			if(nameSplit.size()>1){
+				fname = nameSplit.get(0);
+				lname = nameSplit.get(nameSplit.size()-1);
+			}
+			//create new payment info
+			CustomerProfileType newCustomer = createUserProfile(in.getUid(), userInfo.getEmail(), "new cc "+ in.getUid());
+			CreateCustomerProfileResponseType response = validateCard(newCustomer, 
+					in.getCreditCard(), in.getCscNumber(), in.getExpMonth(), in.getExpYear(),
+					fname, lname, in.getZipcode(), in.getAddress());
+			//if new cc validates
+			if(response.getResultCode().value().equalsIgnoreCase("Ok")){
+				PaymentAccountDao pad = new PaymentAccountDao();
+				//get user's first payment method
+				List<PaymentAccount> pa = pad.getAllPaymentMethodForUser(in.getUid());
+				//delete it
+				boolean result = false;
+				
+				try{
+					result = pad.deletePaymentMethod(pa.get(0).getAccountId());
+				}catch(Exception e){
+				}
+				//if it's deleted fine,
+				if(result){
+					
+					long profileId = response.getCustomerProfileId();
+					List<Long> test = response.getCustomerPaymentProfileIdList().getLong();
+					long paymentProfileId = test.get(0);
+					PaymentAccount newPa = new PaymentAccount();
+					newPa.setCcStub(in.getCreditCard().substring(12, 16));
+					newPa.setCustomerId(""+profileId);
+					newPa.setDefaultPaymentMethod(true);
+					newPa.setPaymentMethodId(""+paymentProfileId);
+					newPa.setUserId(in.getUid());
+					//add the new
+					try{
+						result= pad.createNewPaymentMethod(newPa);
+					}catch(Exception e){}
+					
+					if(result){
+						output.setResp("OK");
+					}else{
+						output.setResp("CREATING new pa failed");
+					}
+				}else{
+					output.setResp("delete cc failed");
+				}
+				
+				
+			}else{
+				output.setResp("BAD_CC");
+			}
+		}else{
+			output.setResp("BAD_AUTH");
 		}
 		return output;
 	}
+	
 	@GET
 	@Produces(MediaType.TEXT_PLAIN)
 	public String sayPlainTextHello() {
 		return "goin shopping with YOUR credit card";
+	}
+	
+	/**
+	 * returns User_ID, or -1 if bad
+	 * */
+	private long innerAuthenticate(AuthRequest in){
+		UserDao userDb = new UserDao();
+		User user = null;
+		try{
+			user = userDb.getUserByEmail(in.getEmail());
+		}catch(RuntimeException e){
+		}
+		if(user!=null&&user.getPassword().equals(in.getPassword())){
+			return user.getUserID();
+		}else{
+			return -1;
+		}
 	}
 }
