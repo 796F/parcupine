@@ -549,8 +549,94 @@ public class ServerCalls {
         }
         return false;
     }
+    
+    
+    /* STARTING EDIT CC CODE*/
 
+    public static void editCreditCard(SharedPreferences prefs, String name, String ccNumber,
+            String cscNumber, int expMonth, int expYear, String address, String zip,
+            newCallback callback) {
+        new EditCreditCardTask(prefs, name, ccNumber, cscNumber, expMonth, expYear, address,
+                zip, callback).execute((Void) null);
+	}
 
+	public interface newCallback {
+	    void onEditCardComplete(boolean success);
+	}
+
+	private static class EditCreditCardTask extends AsyncTask<Void, Void, Boolean> {
+		private final SharedPreferences mPrefs;
+	    private final String mName;
+	    private final String mCcNumber;
+	    private final String mCscNumber;
+	    private final int mExpMonth;
+	    private final int mExpYear;
+	    private final String mAddress;
+	    private final String mZip;
+	    private final newCallback mCallback;
+	    EditCreditCardTask(SharedPreferences prefs, String name, String ccNumber, String cscNumber,
+                int expMonth, int expYear, String address, String zip, newCallback callback) {
+	        mPrefs = prefs;
+	        mName = name;
+	        mCcNumber = ccNumber;
+	        mCscNumber = cscNumber;
+	        mExpMonth = expMonth;
+	        mExpYear = expYear;
+	        mAddress = address;
+	        mZip = zip;
+	        mCallback = callback;
+	    }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            try {
+                final HttpURLConnection conn =
+                        (HttpURLConnection)
+                        new URL(SERVER_HOSTNAME + "/parkservice.user/changeCC")
+                .openConnection();
+                conn.setRequestProperty("Accept", "application/json");
+                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setDoOutput(true);
+                final JsonGenerator jg = JSON_FACTORY.createJsonGenerator(conn.getOutputStream());
+                jg.writeStartObject();
+                jg.writeFieldName("creditCard");
+                jg.writeString(mCcNumber);
+                jg.writeFieldName("holderName");
+                jg.writeString(mName);
+                jg.writeFieldName("cscNumber");
+                jg.writeString(mCscNumber);
+                jg.writeFieldName("expMonth");
+                jg.writeNumber(mExpMonth);
+                jg.writeFieldName("expYear");
+                jg.writeNumber(mExpYear);
+                writeUserDetails(jg, mPrefs);
+                jg.writeFieldName("zipcode");
+                jg.writeString(mZip);
+                jg.writeFieldName("address");
+                jg.writeString(mAddress);
+                jg.writeEndObject();
+                jg.flush();
+                jg.close();
+                if (conn.getResponseCode() == 200) {
+                    final JsonParser jp = JSON_FACTORY.createJsonParser(conn
+                            .getInputStream());
+                    final boolean response = Parsers.parseResponseCode(jp);
+                    jp.close();
+                    return response;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            mCallback.onEditCardComplete(result);
+        }
+	}
+
+    /* END EDIT CC CODE */
 	private static void writeUserDetails(JsonGenerator jg, SharedPreferences prefs) throws JsonGenerationException, IOException {
 		final long uid = prefs.getLong("uid", -1);
 		final String email = prefs.getString("email", "");

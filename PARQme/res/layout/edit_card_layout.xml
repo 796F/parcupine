@@ -29,17 +29,27 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/new_cc_box"
-        android:text="3-Digit CSC Number"
+        android:text="3 Digit CSC"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <EditText
         android:id="@+id/csc_box"
-        android:layout_width="fill_parent"
+        android:layout_width="90dp"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/csc"
         android:inputType="number" />
-
+    
+    <TextView
+        android:id="@+id/new_exp_mon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+		android:layout_toRightOf="@+id/csc"
+        android:layout_below="@+id/new_cc_box"
+        android:paddingLeft="40dp"
+        android:text="Exp. MM / YY"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+    
     <TextView
         android:id="@+id/new_card_name"
         android:layout_width="wrap_content"
@@ -87,6 +97,22 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/new_zip_code"
+        android:inputType="number" />
+
+    <EditText
+        android:id="@+id/new_exp_mon_box"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/new_exp_mon"
+        android:layout_toRightOf="@+id/new_card_name"
+        android:inputType="number" />
+    
+    <EditText
+        android:id="@+id/new_exp_yr_box"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/new_exp_mon"
+        android:layout_toRightOf="@+id/new_exp_mon_box"
         android:inputType="number" />
 
 </RelativeLayout>

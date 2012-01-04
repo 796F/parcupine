@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.SlidingDrawer;
+import android.widget.Toast;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 import com.objects.SavedInfo;
 import com.objects.ServerCalls;
 import com.objects.ServerCalls.UnparkCallback;
+import com.objects.ServerCalls.newCallback;
 import com.objects.ThrowDialog;
 
 public class AccountActivity extends Activity {
@@ -52,7 +54,8 @@ public class AccountActivity extends Activity {
 	private TextView cardDisplay;
 	private AlertDialog autoRefillDialog;
 	private static final int DIALOG_UNPARKING = 1;
-
+	private static final int DIALOG_REGISTERING = 3;
+	private String ccStub;
 	public CheckBox getBox(){
 		return (CheckBox) findViewById(R.id.vibrateEnable);
 	}
@@ -62,8 +65,10 @@ public class AccountActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.account);
 
+
+
 		autoRefillDialog = makeAutoRefillDialog();
-		
+
 		emailDisplay = (TextView)findViewById(R.id.profile_email_small);
 		emailDisplay.setText(SavedInfo.getEmail(AccountActivity.this));
 		nameDisplay = (TextView)findViewById(R.id.profile_name);
@@ -89,6 +94,7 @@ public class AccountActivity extends Activity {
 						if(ServerCalls.editUser(check, null, newEmail, null)){
 							edit.putString("email", newEmail);
 							emailDisplay.setText(newEmail);
+							edit.commit();
 						}else{
 							//throw alert
 							ThrowDialog.show(AccountActivity.this, ThrowDialog.COULD_NOT_AUTH);
@@ -102,7 +108,37 @@ public class AccountActivity extends Activity {
 					edit.putString("city", name);
 					cityDisplay.setText(name);
 				}else if(saveType==3){
-					//on server side, delete old account, register new account, send back the new uid and stuff to sync app.  
+					showDialog(DIALOG_REGISTERING);
+					EditText newHolderName = (EditText) layout.findViewById(R.id.new_card_name_box);
+					EditText newCardNum = (EditText) layout.findViewById(R.id.new_cc_box);
+					EditText newCSC = (EditText) layout.findViewById(R.id.csc_box);
+					EditText newExpMonth = (EditText) layout.findViewById(R.id.new_exp_mon_box);
+					EditText newExpYear = (EditText) layout.findViewById(R.id.new_exp_yr_box);
+					EditText newBillingAddress = (EditText) layout.findViewById(R.id.new_bill_addr_box);
+					EditText newZipcode = (EditText) layout.findViewById(R.id.new_zip_box);
+					ccStub = newCardNum.getText().toString().substring(12,16);
+					ServerCalls.editCreditCard(check, newHolderName.getText().toString(), newCardNum.getText().toString(), 
+							newCSC.getText().toString(), Integer.valueOf(newExpMonth.getText().toString()), 2000+Integer.valueOf(newExpYear.getText().toString()),
+							newBillingAddress.getText().toString(), newZipcode.getText().toString(), new newCallback(){
+
+						@Override
+						public void onEditCardComplete(boolean success) {
+							if(success){
+								removeDialog(DIALOG_REGISTERING);
+								cardDisplay.setText("XXXX XXXX XXXX " + ccStub);
+								SharedPreferences.Editor editz = check.edit();
+								editz.putString("ccStub", ccStub);
+								editz.commit();
+							}else{
+								removeDialog(DIALOG_REGISTERING);
+								Toast.makeText(AccountActivity.this,
+										"Your card could not be validated",
+										Toast.LENGTH_SHORT).show();
+							}
+						}
+
+
+					});
 				}
 				edit.commit();
 				dialog.cancel();
@@ -208,9 +244,9 @@ public class AccountActivity extends Activity {
 					SavedInfo.setGeneric(AccountActivity.this, "autoRefill", false);
 				}
 			}
-			
+
 		});
-		
+
 		logout = (Button) findViewById(R.id.logoutbutton);
 		logout.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -261,9 +297,18 @@ public class AccountActivity extends Activity {
 			dialog.setIndeterminate(true);
 			dialog.setCancelable(false);
 			return dialog;
-		} else {
+		} else if(id== DIALOG_REGISTERING){
+			final ProgressDialog dialog = new ProgressDialog(this);
+			dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+			dialog.setMessage("Validating...");
+			dialog.setIndeterminate(true);
+			dialog.setCancelable(false);
+			return dialog;
+		}else {
 			return super.onCreateDialog(id);
 		}
+
+
 	}
 
 	public void showEditDialog(int i, DialogInterface.OnClickListener a,DialogInterface.OnClickListener b){
@@ -320,6 +365,8 @@ public class AccountActivity extends Activity {
 		});
 		return builder.create();
 	}
+
+
 
 }
 
