@@ -183,6 +183,13 @@ public class SavedInfo{
 		return pref.getString("spotNumber", "xxxx");
 		
 	}
+	
+	public static void setSpotNumber(Context activity, String spotNumber){
+		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
+		SharedPreferences.Editor editor = check.edit();
+		editor.putString("spotNumber", spotNumber);
+		editor.commit();
+	}
 	public static void toggleVibrate(Context activity){
 		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
 		SharedPreferences.Editor editor = check.edit();

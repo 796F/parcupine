@@ -257,7 +257,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
                 timer = initiateTimer(endTime, vf);
                 timer.start();
                 vf.showNext();
-                state = State.PARKING;
+                state = State.PARKED;
                 return;
             }
         }
@@ -292,6 +292,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
                     if (rateResponse.getResp().equals("OK")) {
                         vf.showNext();
                         state = State.PARKING;
+                        SavedInfo.setSpotNumber(MainActivity.this, contents);
                         // prepare time picker for this spot
                         // parkTimePicker.setRange(mySpot.getMinIncrement(),
                         // mySpot.getMaxTime());
@@ -332,6 +333,15 @@ public class MainActivity extends ActivityGroup implements LocationListener {
     @Override
     protected void onResume() {
         super.onResume();
+//        if(rateObj==null){
+//        	state = State.UNPARKED;
+//        }else if(false){
+//        	state = State.PARKING;
+//        }else if (false){
+//        	state = State.PARKED;
+//        }else if(false){
+//        	state = State.REFILLING;
+//        }
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (state == State.UNPARKED) {
             startGettingLocation();
@@ -551,7 +561,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
                                 if (success) {
                                     timer.cancel();
                                     stopService(new Intent(MainActivity.this, Background.class));
-
+                                    rateObj = null;
                                     // reset ints
                                     totalTimeParked = 0;
 
@@ -694,9 +704,10 @@ public class MainActivity extends ActivityGroup implements LocationListener {
                             	removeDialog(DIALOG_GETTING_RATE);
                                 vf.showNext();
                                 state = State.PARKING;
-
                                 final int minIncrement = rateObj.getMinIncrement();
                                 final String [] test = contents.split("http://|/");
+
+                                SavedInfo.setSpotNumber(MainActivity.this, test[3]);
                                 rate.setText(formatCents(rateObj.getDefaultRate()) + " per " + minIncrement + " minutes");
                                 lotDesc.setText(rateObj.getDescription());
                                 spot.setText("Spot #" + test[3]);
@@ -836,7 +847,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 					//alert.cancel();
 					//and restore view
 					switchToParkingLayout();
-					ThrowDialog.show(MainActivity.this, ThrowDialog.TIME_OUT);
+					//ThrowDialog.show(MainActivity.this, ThrowDialog.TIME_OUT);
 				}
 			}
 		};

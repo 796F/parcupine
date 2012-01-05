@@ -58,7 +58,7 @@ public class MapViewActivity extends MapActivity {
 	//private constants used
 	private double userLat;
 	private double userLon;
-	private static final int ZOOM_LEVEL = 21;
+	private static final int ZOOM_LEVEL = 17;
 	LocationListener locListener;
 	//map controlling elements
 	private LocationManager locMan;
@@ -186,48 +186,53 @@ public class MapViewActivity extends MapActivity {
                     case 2: { // Find a Spot
                         SharedPreferences prefs = getSharedPreferences(MainActivity.SAVED_INFO, 0);
                         List<Spot> spots = ServerCalls.findSpots(userLat, userLon, prefs);
-                        double lat;
-                        double lon;
-                        double latSum = 0d;
-                        double lonSum = 0d;
-                        double minLat = Double.MAX_VALUE;
-                        double maxLat = -Double.MAX_VALUE;
-                        double minLon = Double.MAX_VALUE;
-                        double maxLon = -Double.MAX_VALUE;
-                        MapOverlays itemizedOverlay;
-                        GeoPoint point;
-                        for (Spot spot : spots) {
-                            lat = spot.getLat();
-                            lon = spot.getLon();
-                            latSum += lat;
-                            lonSum += lon;
+                        if(spots.size()>0){
+                            double lat;
+                            double lon;
+                            double latSum = 0d;
+                            double lonSum = 0d;
+                            double minLat = Double.MAX_VALUE;
+                            double maxLat = -Double.MAX_VALUE;
+                            double minLon = Double.MAX_VALUE;
+                            double maxLon = -Double.MAX_VALUE;
+                            MapOverlays itemizedOverlay;
+                            GeoPoint point;
+                            for (Spot spot : spots) {
+                                lat = spot.getLat();
+                                lon = spot.getLon();
+                                latSum += lat;
+                                lonSum += lon;
 
-                            if (lat < minLat) {
-                                minLat = lat;
-                            } else if (lat > maxLat) {
-                                maxLat = lat;
-                            }
-                            if (lon < minLon) {
-                                minLon = lon;
-                            } else if (lon > maxLon) {
-                                maxLon = lon;
-                            }
+                                if (lat < minLat) {
+                                    minLat = lat;
+                                } else if (lat > maxLat) {
+                                    maxLat = lat;
+                                }
+                                if (lon < minLon) {
+                                    minLon = lon;
+                                } else if (lon > maxLon) {
+                                    maxLon = lon;
+                                }
 
-                            itemizedOverlay = new MapOverlays(drawable, mapView);
-                            point = new GeoPoint((int) (lat * 1e6), (int) (lon * 1e6));
-                            itemizedOverlay.addOverlay(new OverlayItem(point, spot.getSpotName(),
-                                    null));
-                            mapOverlays.add(itemizedOverlay);
+                                itemizedOverlay = new MapOverlays(drawable, mapView);
+                                point = new GeoPoint((int) (lat * 1e6), (int) (lon * 1e6));
+                                itemizedOverlay.addOverlay(new OverlayItem(point, spot.getSpotName(),
+                                        null));
+                                mapOverlays.add(itemizedOverlay);
+                            }
+                            final int numSpots = spots.size();
+                            if (numSpots > 0) {
+                                mapCtrl.animateTo(new GeoPoint((int) (latSum / numSpots * 1e6),
+                                        (int) (lonSum / numSpots * 1e6)));
+                                mapCtrl.zoomToSpan((int) ((maxLat - minLat) * 1e6 + 1),
+                                        (int) ((maxLon - minLon) * 1e6 + 1));
+                            }
+                            drawer.close();
+                            break;
+                        }else{
+                        	ThrowDialog.show(MapViewActivity.this, ThrowDialog.NO_SPOTS);
+                        	break;
                         }
-                        final int numSpots = spots.size();
-                        if (numSpots > 0) {
-                            mapCtrl.animateTo(new GeoPoint((int) (latSum / numSpots * 1e6),
-                                    (int) (lonSum / numSpots * 1e6)));
-                            mapCtrl.zoomToSpan((int) ((maxLat - minLat) * 1e6 + 1),
-                                    (int) ((maxLon - minLon) * 1e6 + 1));
-                        }
-                        drawer.close();
-                        break;
                     }
                 }
             }
@@ -246,7 +251,7 @@ public class MapViewActivity extends MapActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		//locMan.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locListener);
+		locMan.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locListener);
 		locMan.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locListener);
 	}
 	@Override
