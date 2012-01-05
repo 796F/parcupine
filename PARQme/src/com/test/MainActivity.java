@@ -550,8 +550,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
                                 removeDialog(DIALOG_UNPARKING);
                                 if (success) {
                                     timer.cancel();
-                                    // stopService(new Intent(MainActivity.this,
-                                    // Background.class));
+                                    stopService(new Intent(MainActivity.this, Background.class));
 
                                     // reset ints
                                     totalTimeParked = 0;
@@ -606,12 +605,8 @@ public class MainActivity extends ActivityGroup implements LocationListener {
                                         // create and start countdown// display
                                         timer = initiateTimer(parkInstance.getEndTime(), vf);
                                         timer.start();
-                                        // start timer background
-                                        // service
-                                        // startService(new
-                                        // Intent(MainActivity.this,
-                                        // Background.class).putExtra("time",
-                                        // remainSeconds));
+                                        // start background
+                                        startService(new Intent(MainActivity.this,Background.class));
                                     } else {
                                         ThrowDialog.show(MainActivity.this, ThrowDialog.IS_PARKED);
                                     }
@@ -656,9 +651,12 @@ public class MainActivity extends ActivityGroup implements LocationListener {
                                         //calculate new endtime and initiate timer from it.
                                         timer.cancel();
                                         timer = initiateTimer(refillResp.getEndTime(), vf);
-                                        //stopService(new Intent(MainActivity.this, Background.class));
                                         timer.start();
-                                        //startService(new Intent(MainActivity.this, Background.class).putExtra("time", remainSeconds));
+                                        boolean result = false;
+                                        while(!result){
+                                        	result = stopService(new Intent(MainActivity.this, Background.class));
+                                        }
+                                        startService(new Intent(MainActivity.this, Background.class));
                                         ThrowDialog.show(MainActivity.this, ThrowDialog.REFILL_DONE);
                                     } else {
                                         ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
@@ -731,10 +729,10 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 			public void onTick(long millisUntilFinished) {
 				final int seconds = (int)millisUntilFinished/1000;
 				//if the time is what our warning-time is set to
-				if(seconds==WARN_TIME && !SavedInfo.autoRefill(MainActivity.this)){
-					//alert the user
-					alert.show();
-				}
+//				if(seconds==WARN_TIME && !SavedInfo.autoRefill(MainActivity.this)){
+//					//alert the user
+//					alert.show();
+//				}
 				
 				/*
 		int Dhour = time/60;
@@ -781,16 +779,16 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 		        	int Dmin = (seconds%3600)/60;
 		        	if(Dmin==59){
 		        		//display 00 in minutes and bump hour up 1
-		        		remainMins.setText("00");
-		        		remainHours.setText(String.valueOf(Dhour+1));
+		        		smallMins.setText("00");
+		        		smallHours.setText(String.valueOf(Dhour+1));
 		        	}else if(Dmin<9){
 		        		//add the 0 in front of single digit minute count
-		        		remainMins.setText("0"+String.valueOf(Dmin+1));
-		        		remainHours.setText(String.valueOf(Dhour));
+		        		smallMins.setText("0"+String.valueOf(Dmin+1));
+		        		smallHours.setText(String.valueOf(Dhour));
 		        	}else{
 		        		//simply increase minute display by 1
-		        		remainMins.setText(String.valueOf(Dmin+1));
-		        		remainHours.setText(String.valueOf(Dhour));
+		        		smallMins.setText(String.valueOf(Dmin+1));
+		        		smallHours.setText(String.valueOf(Dhour));
 		        	}
 //		            smallHours.setText(String.valueOf(seconds / 3600));
 //		            smallMins.setText(String.valueOf((seconds % 3600) / 60));
@@ -817,9 +815,13 @@ public class MainActivity extends ActivityGroup implements LocationListener {
                                 //calculate new endtime and initiate timer from it.
                                 timer.cancel();
                                 timer = initiateTimer(refillResp.getEndTime(), vf);
-                                //stopService(new Intent(MainActivity.this, Background.class));
+                                
                                 timer.start();
-                                //startService(new Intent(MainActivity.this, Background.class).putExtra("time", remainSeconds));
+                                boolean result = false;
+                                while(!result){
+                                	result = stopService(new Intent(MainActivity.this, Background.class));
+                                }
+                                startService(new Intent(MainActivity.this, Background.class));
                                 ThrowDialog.show(MainActivity.this, ThrowDialog.REFILL_DONE);
                             } else {
                                 ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);

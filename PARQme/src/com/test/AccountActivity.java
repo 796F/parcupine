@@ -108,7 +108,6 @@ public class AccountActivity extends Activity {
 					edit.putString("city", name);
 					cityDisplay.setText(name);
 				}else if(saveType==3){
-					showDialog(DIALOG_REGISTERING);
 					EditText newHolderName = (EditText) layout.findViewById(R.id.new_card_name_box);
 					EditText newCardNum = (EditText) layout.findViewById(R.id.new_cc_box);
 					EditText newCSC = (EditText) layout.findViewById(R.id.csc_box);
@@ -116,29 +115,39 @@ public class AccountActivity extends Activity {
 					EditText newExpYear = (EditText) layout.findViewById(R.id.new_exp_yr_box);
 					EditText newBillingAddress = (EditText) layout.findViewById(R.id.new_bill_addr_box);
 					EditText newZipcode = (EditText) layout.findViewById(R.id.new_zip_box);
-					ccStub = newCardNum.getText().toString().substring(12,16);
-					ServerCalls.editCreditCard(check, newHolderName.getText().toString(), newCardNum.getText().toString(), 
-							newCSC.getText().toString(), Integer.valueOf(newExpMonth.getText().toString()), 2000+Integer.valueOf(newExpYear.getText().toString()),
-							newBillingAddress.getText().toString(), newZipcode.getText().toString(), new newCallback(){
+					int nameSplit = newHolderName.getText().toString().split(" ").length;
+					if(newCardNum.getText().toString().length()==16 && newCSC.getText().toString().length()==3 &&
+							nameSplit>1){
+						showDialog(DIALOG_REGISTERING);
+						ccStub = newCardNum.getText().toString().substring(12,16);
+						ServerCalls.editCreditCard(check, newHolderName.getText().toString(), newCardNum.getText().toString(), 
+								newCSC.getText().toString(), Integer.valueOf(newExpMonth.getText().toString()), 2000+Integer.valueOf(newExpYear.getText().toString()),
+								newBillingAddress.getText().toString(), newZipcode.getText().toString(), new newCallback(){
 
-						@Override
-						public void onEditCardComplete(boolean success) {
-							if(success){
-								removeDialog(DIALOG_REGISTERING);
-								cardDisplay.setText("XXXX XXXX XXXX " + ccStub);
-								SharedPreferences.Editor editz = check.edit();
-								editz.putString("ccStub", ccStub);
-								editz.commit();
-							}else{
-								removeDialog(DIALOG_REGISTERING);
-								Toast.makeText(AccountActivity.this,
-										"Your card could not be validated",
-										Toast.LENGTH_SHORT).show();
+							@Override
+							public void onEditCardComplete(boolean success) {
+								if(success){
+									removeDialog(DIALOG_REGISTERING);
+									cardDisplay.setText("XXXX XXXX XXXX " + ccStub);
+									SharedPreferences.Editor editz = check.edit();
+									editz.putString("ccStub", ccStub);
+									editz.commit();
+								}else{
+									removeDialog(DIALOG_REGISTERING);
+									Toast.makeText(AccountActivity.this,
+											"Your card could not be validated",
+											Toast.LENGTH_SHORT).show();
+								}
 							}
-						}
 
 
-					});
+						});
+					}else{
+						Toast.makeText(AccountActivity.this,
+								"Please check your information.",
+								Toast.LENGTH_SHORT).show();
+					}
+
 				}
 				edit.commit();
 				dialog.cancel();
@@ -204,6 +213,9 @@ public class AccountActivity extends Activity {
 
 
 		vibrateBox = (CheckBox) findViewById(R.id.vibrate_checkbox);
+		if(SavedInfo.vibrateEnable(AccountActivity.this)){
+			vibrateBox.setChecked(true);
+		}
 		vibrateBox.setOnCheckedChangeListener(new OnCheckedChangeListener(){
 			@Override
 			public void onCheckedChanged(CompoundButton arg0, boolean isChecked) {
@@ -218,6 +230,9 @@ public class AccountActivity extends Activity {
 			}
 		});
 		ringBox = (CheckBox) findViewById(R.id.alarm_checkbox);
+		if(SavedInfo.ringEnable(AccountActivity.this)){
+			ringBox.setChecked(true);
+		}
 		ringBox.setOnCheckedChangeListener(new OnCheckedChangeListener(){
 			@Override
 			public void onCheckedChanged(CompoundButton arg0, boolean isChecked) {

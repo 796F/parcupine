@@ -21,19 +21,15 @@ public class SavedInfo{
 	}
 	public static boolean ringEnable(Context activity){
 		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO,0);
-		return check.getBoolean("ringEnable", true);
-	}
-	public static boolean warningEnable(Context activity){
-		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO,0);
-		return check.getBoolean("warningEnable", true);
+		return check.getBoolean("ringEnable", false);
 	}
 	public static boolean vibrateEnable(Context activity){
 		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO,0);
-		return check.getBoolean("vibrateEnable", true);
+		return check.getBoolean("vibrateEnable", false);
 	}
 	public static boolean autoRefill(Context activity){
 		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO,0);
-		return check.getBoolean("autoRefill", true);
+		return check.getBoolean("autoRefill", false);
 	}
 	public static void eraseTimer(Context activity){
 		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO,0);
