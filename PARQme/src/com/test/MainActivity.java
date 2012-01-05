@@ -707,9 +707,11 @@ public class MainActivity extends ActivityGroup implements LocationListener {
                                 SavedInfo.setLatLon(MainActivity.this, rateObj.getLat(), rateObj.getLon());
                                 updateDisplay(minIncrement);
                             } else {
+                            	removeDialog(DIALOG_GETTING_RATE);
                                 ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
                             }
                         } else {
+                        	removeDialog(DIALOG_GETTING_RATE);
                             ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
                         }
                     }
