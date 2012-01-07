@@ -24,6 +24,7 @@
 		8716B0E514B3D181004105AD /* ParqHelpViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8716B0E414B3D181004105AD /* ParqHelpViewController.m */; };
 		8716B0E814B3F19D004105AD /* ParqButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 8716B0E714B3F19D004105AD /* ParqButton.m */; };
 		8716B0EE14B3F9F3004105AD /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8716B0ED14B3F9F3004105AD /* QuartzCore.framework */; };
+		8716B11514B7D01B004105AD /* ParqLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8716B11414B7D01B004105AD /* ParqLoginViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -53,6 +54,8 @@
 		8716B0E614B3F19D004105AD /* ParqButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParqButton.h; sourceTree = "<group>"; };
 		8716B0E714B3F19D004105AD /* ParqButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ParqButton.m; sourceTree = "<group>"; };
 		8716B0ED14B3F9F3004105AD /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		8716B11314B7D01B004105AD /* ParqLoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParqLoginViewController.h; sourceTree = "<group>"; };
+		8716B11414B7D01B004105AD /* ParqLoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ParqLoginViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -104,6 +107,8 @@
 				8716B0D014B3C094004105AD /* first.png */,
 				8716B0D214B3C094004105AD /* first@2x.png */,
 				8716B0CA14B3C094004105AD /* MainStoryboard.storyboard */,
+				8716B11314B7D01B004105AD /* ParqLoginViewController.h */,
+				8716B11414B7D01B004105AD /* ParqLoginViewController.m */,
 				8716B0E614B3F19D004105AD /* ParqButton.h */,
 				8716B0E714B3F19D004105AD /* ParqButton.m */,
 				8716B0E014B3D121004105AD /* ParqAccountViewController.h */,
@@ -208,6 +213,7 @@
 				8716B0E214B3D121004105AD /* ParqAccountViewController.m in Sources */,
 				8716B0E514B3D181004105AD /* ParqHelpViewController.m in Sources */,
 				8716B0E814B3F19D004105AD /* ParqButton.m in Sources */,
+				8716B11514B7D01B004105AD /* ParqLoginViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -319,6 +325,7 @@
 				8716B0DF14B3C094004105AD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
