@@ -27,7 +27,9 @@ public class BatchCCProcessingDao extends AbstractParqDaoParent {
 			+ " AND p.payment_datetime > ? "
 			+ " AND p.payment_datetime < ? ";
 
-	private static final String sqlUpdatePaymentInfo = "UPDATE payment SET payment_ref_num = ? WHERE payment_id = ? ";
+	private static final String sqlUpdatePaymentInfo = "UPDATE payment " +
+			" SET payment_ref_num = ?, amount_paid_cents = ? " +
+			" WHERE payment_id = ? ";
 
 	/**
 	 * Get all the pending charges that still need to be proceeded through the
@@ -157,6 +159,8 @@ public class BatchCCProcessingDao extends AbstractParqDaoParent {
 					"Invalid batchUpdatePaymentInfo request. chargesToUpdate: "
 							+ chargesToUpdate);
 		}
+		
+		validateBatchPaymentUpdate(chargesToUpdate);
 
 		boolean allUpdateSuccessful = true;
 		PreparedStatement pstmt = null;
@@ -170,7 +174,8 @@ public class BatchCCProcessingDao extends AbstractParqDaoParent {
 
 				pstmt = con.prepareStatement(sqlUpdatePaymentInfo);
 				pstmt.setString(1, charge.getPaymentRefNumber());
-				pstmt.setLong(2, charge.getPaymentId());
+				pstmt.setInt(2, charge.getAmountPaid());
+				pstmt.setLong(3, charge.getPaymentId());
 				allUpdateSuccessful = allUpdateSuccessful
 						&& pstmt.executeUpdate() > 0;
 			}
@@ -184,5 +189,20 @@ public class BatchCCProcessingDao extends AbstractParqDaoParent {
 		}
 
 		return allUpdateSuccessful;
+	}
+
+	private void validateBatchPaymentUpdate(List<PendingCharge> chargesToUpdate) {
+		for (PendingCharge pc: chargesToUpdate) {
+			if (pc.getPaymentRefNumber() == null || pc.getPaymentRefNumber().isEmpty()) {
+				throw new RuntimeException("Update Charges must have a valid new payment reference number");
+			}
+			else if (pc.getPaymentId() <= 0 ) {
+				throw new RuntimeException("Update Charges must have a valid payment id");
+			}
+			else if (pc.getAmountPaid() < 0) {
+				throw new RuntimeException("Update Charges cannot have amount paid less then 0");
+			}
+		}
+		
 	}
 }

@@ -24,6 +24,8 @@ public class TestBatchCCProcessingDao extends TestCase {
 	private static final String fakeCCChargeToken = "FAKE_CHARGE";
 	private static final String updatedFakeCCChargeToken = "UPDATED_FAKE_CHARGE";
 	
+	private static int newPaymentAmount = 1885;
+	
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
 	 */
@@ -127,6 +129,7 @@ public class TestBatchCCProcessingDao extends TestCase {
 		
 		for (PendingCharge pc : chargeList) {
 			pc.setPaymentRefNumber(updatedFakeCCChargeToken);
+			pc.setAmountPaid(newPaymentAmount);
 		}
 		batchProcessingDao.batchUpdatePaymentInfo(chargeList);
 		
@@ -140,6 +143,7 @@ public class TestBatchCCProcessingDao extends TestCase {
 			updatedMapOfCharges.entrySet().iterator().next().getValue();
 		for (PendingCharge upc : updatedChargeList) {
 			assertEquals(updatedFakeCCChargeToken, upc.getPaymentRefNumber());
+			assertEquals(newPaymentAmount, upc.getAmountPaid());
 		}
 		
 		// check for partial update
