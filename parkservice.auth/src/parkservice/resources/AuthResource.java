@@ -77,12 +77,14 @@ public class AuthResource{
 			if(endTime==null){
 				//no endtime stored, user wasn't parked.  
 				x.setParkState(0);
-				x.setCreditCardStub(pacc.getCcStub());
+				if(pacc==null) x.setCreditCardStub("XXXX");
+				else x.setCreditCardStub(pacc.getCcStub());
 				return x;
 			}else if(endTime.compareTo(new Date())<0){
 				//if end time is before now
 				x.setParkState(0);
-				x.setCreditCardStub(pacc.getCcStub());
+				if(pacc==null) x.setCreditCardStub("XXXX");
+				else x.setCreditCardStub(pacc.getCcStub());
 				return x;
 			}else{
 				//if end time is after now, gather needed information and then return. 
@@ -107,7 +109,8 @@ public class AuthResource{
 					sync.setMinTime(pr.getMinParkMins());
 					sync.setSpotId(pi.getSpaceId());
 					x.setSync(sync);
-					x.setCreditCardStub(pacc.getCcStub());
+					if(pacc==null) x.setCreditCardStub("XXXX");
+					else x.setCreditCardStub(pacc.getCcStub());
 					x.setParkState(1);
 				}catch(Exception e){
 					
