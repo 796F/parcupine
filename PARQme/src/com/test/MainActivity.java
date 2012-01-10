@@ -33,8 +33,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
+//import com.google.zxing.integration.android.IntentIntegrator;
+//import com.google.zxing.integration.android.IntentResult;
 import com.objects.ParkInstanceObject;
 import com.objects.ParkSync;
 import com.objects.RateObject;
@@ -327,7 +327,10 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 
 	public void onScanClick(View view) {
         //start scan intent
-        IntentIntegrator.initiateScan(MainActivity.this);
+        //IntentIntegrator.initiateScan(MainActivity.this);
+		Intent intent = new Intent("com.google.zxing.client.android.MYSCAN");
+		intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
+		startActivityForResult(intent, 0);
 	}
 
     @Override
@@ -685,10 +688,11 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	//once we scan the qr code
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-		final IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
-		if (scanResult != null) {
+		if(requestCode==0){
+			
+			if(resultCode==RESULT_OK){
 			//call server using the qr code, to get a resulting spot's info.
-			final String contents = scanResult.getContents();
+			final String contents = intent.getStringExtra("SCAN_RESULT");
 			if (contents != null) {
 				final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 				//contents contains string "parqme.com/p/c36/p123456" or w/e...
@@ -728,6 +732,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
                     }
                 });
 			}
+		}
 		}
 	}
 
