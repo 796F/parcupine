@@ -77,6 +77,10 @@ public class LoginActivity extends Activity {
                     ThrowDialog.show(LoginActivity.this, ThrowDialog.COULD_NOT_AUTH);
                     return;
                 }
+                if(user.getCreditCardStub().equals("XXXX")){
+                	ThrowDialog.show(LoginActivity.this, ThrowDialog.NO_CREDIT_CARD);
+                	return;
+                }
                 if (user.getParkState()) {
                     SavedInfo.syncParkingSession(LoginActivity.this, user.getSync());
                 }

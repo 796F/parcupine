@@ -25,6 +25,7 @@ public class ThrowDialog {
 	public final static int NO_LOCATION=13;
 	public final static int NOT_PARKED= 14;
 	public final static int NO_SPOTS= 15;
+	public final static int NO_CREDIT_CARD=16;
 	public static void show(final Context c, int dialog){
 		AlertDialog.Builder alert = new AlertDialog.Builder(c);
 		AlertDialog a;
@@ -164,7 +165,7 @@ public class ThrowDialog {
 			a.show();
 			break;
 		case NO_NET:
-			alert.setMessage("Could not connect to\nthe Internet");
+			alert.setMessage("Could not connect to PARQ servers.");
 			alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
@@ -193,6 +194,11 @@ public class ThrowDialog {
 			break;
 		case NO_SPOTS:
 			alert.setMessage("There are no open spots nearby");
+			alert.setNegativeButton("Ok", null);
+			alert.show();
+			break;
+		case NO_CREDIT_CARD:
+			alert.setMessage("No Credit Card was found.");
 			alert.setNegativeButton("Ok", null);
 			alert.show();
 			break;
