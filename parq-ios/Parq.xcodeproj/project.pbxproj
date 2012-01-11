@@ -14,7 +14,7 @@
 		8716B0C514B3C094004105AD /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8716B0C414B3C094004105AD /* main.m */; };
 		8716B0C914B3C094004105AD /* ParqAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8716B0C814B3C094004105AD /* ParqAppDelegate.m */; };
 		8716B0CC14B3C094004105AD /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8716B0CA14B3C094004105AD /* MainStoryboard.storyboard */; };
-		8716B0CF14B3C094004105AD /* ParqParkViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8716B0CE14B3C094004105AD /* ParqParkViewController.m */; };
+		8716B0CF14B3C094004105AD /* ParqSpotViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8716B0CE14B3C094004105AD /* ParqSpotViewController.m */; };
 		8716B0D114B3C094004105AD /* first.png in Resources */ = {isa = PBXBuildFile; fileRef = 8716B0D014B3C094004105AD /* first.png */; };
 		8716B0D314B3C094004105AD /* first@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8716B0D214B3C094004105AD /* first@2x.png */; };
 		8716B0D614B3C094004105AD /* ParqMapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8716B0D514B3C094004105AD /* ParqMapViewController.m */; };
@@ -39,8 +39,8 @@
 		8716B0C714B3C094004105AD /* ParqAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParqAppDelegate.h; sourceTree = "<group>"; };
 		8716B0C814B3C094004105AD /* ParqAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ParqAppDelegate.m; sourceTree = "<group>"; };
 		8716B0CB14B3C094004105AD /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
-		8716B0CD14B3C094004105AD /* ParqParkViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParqParkViewController.h; sourceTree = "<group>"; };
-		8716B0CE14B3C094004105AD /* ParqParkViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ParqParkViewController.m; sourceTree = "<group>"; };
+		8716B0CD14B3C094004105AD /* ParqSpotViewController.h */ = {isa = PBXFileReference; path = ParqSpotViewController.h; sourceTree = "<group>"; };
+		8716B0CE14B3C094004105AD /* ParqSpotViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ParqSpotViewController.m; sourceTree = "<group>"; };
 		8716B0D014B3C094004105AD /* first.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = first.png; sourceTree = "<group>"; };
 		8716B0D214B3C094004105AD /* first@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "first@2x.png"; sourceTree = "<group>"; };
 		8716B0D414B3C094004105AD /* ParqMapViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParqMapViewController.h; sourceTree = "<group>"; };
@@ -76,7 +76,6 @@
 		8716B0A914B3C093004105AD = {
 			isa = PBXGroup;
 			children = (
-				8716B0ED14B3F9F3004105AD /* QuartzCore.framework */,
 				8716B0BE14B3C094004105AD /* Parq */,
 				8716B0B714B3C094004105AD /* Frameworks */,
 				8716B0B514B3C094004105AD /* Products */,
@@ -94,6 +93,7 @@
 		8716B0B714B3C094004105AD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8716B0ED14B3F9F3004105AD /* QuartzCore.framework */,
 				8716B0B814B3C094004105AD /* UIKit.framework */,
 				8716B0BA14B3C094004105AD /* Foundation.framework */,
 				8716B0BC14B3C094004105AD /* CoreGraphics.framework */,
@@ -115,8 +115,8 @@
 				8716B0E114B3D121004105AD /* ParqAccountViewController.m */,
 				8716B0C714B3C094004105AD /* ParqAppDelegate.h */,
 				8716B0C814B3C094004105AD /* ParqAppDelegate.m */,
-				8716B0CD14B3C094004105AD /* ParqParkViewController.h */,
-				8716B0CE14B3C094004105AD /* ParqParkViewController.m */,
+				8716B0CD14B3C094004105AD /* ParqSpotViewController.h */,
+				8716B0CE14B3C094004105AD /* ParqSpotViewController.m */,
 				8716B0E314B3D181004105AD /* ParqHelpViewController.h */,
 				8716B0E414B3D181004105AD /* ParqHelpViewController.m */,
 				8716B0D414B3C094004105AD /* ParqMapViewController.h */,
@@ -208,7 +208,7 @@
 			files = (
 				8716B0C514B3C094004105AD /* main.m in Sources */,
 				8716B0C914B3C094004105AD /* ParqAppDelegate.m in Sources */,
-				8716B0CF14B3C094004105AD /* ParqParkViewController.m in Sources */,
+				8716B0CF14B3C094004105AD /* ParqSpotViewController.m in Sources */,
 				8716B0D614B3C094004105AD /* ParqMapViewController.m in Sources */,
 				8716B0E214B3D121004105AD /* ParqAccountViewController.m in Sources */,
 				8716B0E514B3D181004105AD /* ParqHelpViewController.m in Sources */,
