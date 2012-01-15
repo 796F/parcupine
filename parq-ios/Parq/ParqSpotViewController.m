@@ -1,14 +1,14 @@
 //
-//  ParqParkViewController.m
+//  ParqSpotViewController.m
 //  Parq
 //
 //  Created by Mark Yen on 1/3/12.
 //  Copyright (c) 2012 Massachusetts Institute of Technology. All rights reserved.
 //
 
-#import "ParqParkViewController.h"
+#import "ParqSpotViewController.h"
 
-@implementation ParqParkViewController
+@implementation ParqSpotViewController
 @synthesize scrollView = _scrollView;
 @synthesize spotNumField = _spotNumField;
 

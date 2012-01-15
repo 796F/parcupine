@@ -1,5 +1,5 @@
 //
-//  ParqParkViewController.h
+//  ParqSpotViewController.h
 //  Parq
 //
 //  Created by Mark Yen on 1/3/12.
@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ParqParkViewController : UIViewController
+@interface ParqSpotViewController : UIViewController
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (weak, nonatomic) IBOutlet UITextField *spotNumField;
 
