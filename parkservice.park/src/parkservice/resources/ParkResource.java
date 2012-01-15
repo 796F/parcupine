@@ -140,10 +140,13 @@ public class ParkResource {
 						
 						long profileId = -1;
 						long paymentProfileId = -1;
+						long account_id = -1;
 						if(pad_list!=null && pad_list.size()>0){
 							PaymentAccount pa = pad_list.get(0);
 							profileId = Integer.parseInt(pa.getCustomerId()); //this is profileId
 							paymentProfileId = Integer.parseInt(pa.getPaymentMethodId()); //this is paymentProfileId
+							account_id = pa.getAccountId();
+							
 						}
 
 						if(paymentProfileId>0){
@@ -163,6 +166,7 @@ public class ParkResource {
 								p.setPaymentDateTime(start);
 								p.setPaymentType(PaymentType.CreditCard);
 								p.setPaymentRefNumber(Arrays.asList(response.getDirectResponse().split(",")).get(6));
+								p.setAccountId(account_id);
 								newPark.setPaymentInfo(p);
 
 								boolean result = false;
@@ -245,11 +249,12 @@ public class ParkResource {
 					}catch(Exception e){}
 					int profileId = -1;
 					int paymentProfileId = -1;
-
+					long account_id = -1;
 					if(pad_list!=null && pad_list.size()>0){
 						PaymentAccount pa = pad_list.get(0);
 						profileId = Integer.parseInt(pa.getCustomerId()); //this is profileId
 						paymentProfileId = Integer.parseInt(pa.getPaymentMethodId()); //this is paymentProfileId
+						account_id = pa.getAccountId();
 					}
 					if(paymentProfileId>0){
 						//charge user for refill
@@ -269,6 +274,7 @@ public class ParkResource {
 							p.setPaymentDateTime(oldEndTime);
 							p.setPaymentType(PaymentType.CreditCard);
 							p.setPaymentRefNumber(Arrays.asList(response.getDirectResponse().split(",")).get(6));
+							p.setAccountId(account_id);
 							newPark.setPaymentInfo(p);
 
 							boolean result = false; 
