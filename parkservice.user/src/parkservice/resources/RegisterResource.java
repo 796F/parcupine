@@ -154,6 +154,7 @@ public class RegisterResource {
 					newPA.setCustomerId(""+profileId);
 					newPA.setDefaultPaymentMethod(true);
 					newPA.setPaymentMethodId(""+paymentProfileId);
+					//newPA.setCardType(PaymentAccount.CardType.UNKNOWN);
 					newPA.setUserId(uid);
 				}else{
 					userDb.deleteUserById(uid);
@@ -267,7 +268,7 @@ public class RegisterResource {
 				}catch(Exception e){
 				}
 				//if it's deleted fine,
-				if(result){
+				if(result||pa.size()==0){
 					
 					long profileId = response.getCustomerProfileId();
 					List<Long> test = response.getCustomerPaymentProfileIdList().getLong();
@@ -277,6 +278,7 @@ public class RegisterResource {
 					newPa.setCustomerId(""+profileId);
 					newPa.setDefaultPaymentMethod(true);
 					newPa.setPaymentMethodId(""+paymentProfileId);
+					//newPA.setCardType(PaymentAccount.CardType.UNKNOWN);
 					newPa.setUserId(in.getUid());
 					//add the new
 					try{
