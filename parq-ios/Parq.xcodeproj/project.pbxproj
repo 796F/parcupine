@@ -134,10 +134,7 @@
 		8716B0A914B3C093004105AD = {
 			isa = PBXGroup;
 			children = (
-				FCF586F014C1F60800DF70D3 /* CFNetwork.framework */,
-				FCF586EE14C1F5FA00DF70D3 /* MobileCoreServices.framework */,
 				FCF586EC14C1F5E000DF70D3 /* libz.dylib */,
-				FCF586EA14C1F5CF00DF70D3 /* SystemConfiguration.framework */,
 				FCF586BB14C1F53600DF70D3 /* ASIHTTPRequest */,
 				8716B0BE14B3C094004105AD /* Parq */,
 				8716B0B714B3C094004105AD /* Frameworks */,
@@ -156,6 +153,9 @@
 		8716B0B714B3C094004105AD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				FCF586F014C1F60800DF70D3 /* CFNetwork.framework */,
+				FCF586EE14C1F5FA00DF70D3 /* MobileCoreServices.framework */,
+				FCF586EA14C1F5CF00DF70D3 /* SystemConfiguration.framework */,
 				8716B0ED14B3F9F3004105AD /* QuartzCore.framework */,
 				8716B0B814B3C094004105AD /* UIKit.framework */,
 				8716B0BA14B3C094004105AD /* Foundation.framework */,
