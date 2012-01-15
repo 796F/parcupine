@@ -162,6 +162,13 @@ public class ParqWebServiceImpl implements ParqWebService{
 	
 				pHistories.add(pHistory);
 			}
+			
+			Collections.sort(pHistories, new Comparator<ParkingHistory>() {
+				@Override
+				public int compare(ParkingHistory o1, ParkingHistory o2) {
+					return o1.getDate().compareTo(o2.getDate());
+				}
+			});
 		}
 		return pHistories;
 	}
@@ -291,6 +298,13 @@ public class ParqWebServiceImpl implements ParqWebService{
 			}
 		}
 		
+		Collections.sort(pStatus, new Comparator<ParkingSpaceStatus>() {
+			@Override
+			public int compare(ParkingSpaceStatus o1, ParkingSpaceStatus o2) {
+				return (int) (o1.getSpaceId() - o2.getSpaceId());
+			}
+		});
+		
 		return pStatus;
 	}
 	
@@ -354,6 +368,13 @@ public class ParqWebServiceImpl implements ParqWebService{
 				}
 			}
 		}
+		
+		Collections.sort(reports, new Comparator<ParkingReport>() {
+			@Override
+			public int compare(ParkingReport o1, ParkingReport o2) {
+				return o1.getPaymentDatetime().compareTo(o2.getPaymentDatetime());
+			}
+		});
 
 		return reports;
 	}
