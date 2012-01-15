@@ -42,7 +42,7 @@ public class ThrowDialog {
 			a.show();
 			break;
 		case COULD_NOT_AUTH:
-			alert.setMessage("Could not Login\nCheck your fields");
+			alert.setMessage("Could not Login.  Please check your fields");
 			alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
@@ -198,7 +198,7 @@ public class ThrowDialog {
 			alert.show();
 			break;
 		case NO_CREDIT_CARD:
-			alert.setMessage("No Credit Card was found.");
+			alert.setMessage("No Credit Card was found.\nAdd one in the Account tab.");
 			alert.setNegativeButton("Ok", null);
 			alert.show();
 			break;

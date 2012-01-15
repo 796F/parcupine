@@ -73,7 +73,12 @@ public class AccountActivity extends Activity {
 		emailDisplay.setText(SavedInfo.getEmail(AccountActivity.this));
 		nameDisplay = (TextView)findViewById(R.id.profile_name);
 		cardDisplay = (TextView)findViewById(R.id.profile_card_small);
-		cardDisplay.setText("XXXX XXXX XXXX "+SavedInfo.getCardStub(AccountActivity.this));
+		String displaystub = SavedInfo.getCardStub(AccountActivity.this);
+		if(displaystub.equals("XXXX")){
+			cardDisplay.setText("No Credit Card");
+		}else{
+			cardDisplay.setText("XXXX XXXX XXXX "+displaystub);
+		}
 		final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 		final DialogInterface.OnClickListener saveEditListener = new DialogInterface.OnClickListener(){
 
