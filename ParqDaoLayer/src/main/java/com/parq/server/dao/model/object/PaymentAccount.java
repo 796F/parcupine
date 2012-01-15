@@ -17,7 +17,7 @@ public class PaymentAccount implements Serializable {
 	private String customerId;
 	private String paymentMethodId;
 	private String ccStub;
-	private CardType cardType;
+	private CardType cardType = CardType.UNKNOWN;
 	boolean isDefaultPaymentMethod;
 
 	/**
@@ -154,5 +154,5 @@ public class PaymentAccount implements Serializable {
 		this.cardType = cardType;
 	}
 
-	public enum CardType { VISA, MASTER, DISC, AMAX }
+	public enum CardType { VISA, MASTER, DISC, AMAX, UNKNOWN }
 }
