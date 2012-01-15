@@ -43,6 +43,7 @@ public class TestPaymentAccountDao extends TestCase {
 		newPA.setDefaultPaymentMethod(true);
 		newPA.setPaymentMethodId(SupportScriptForDaoTesting.testPaymentMethodId);
 		newPA.setUserId(SupportScriptForDaoTesting.testUser.getUserID());
+		newPA.setCardType(SupportScriptForDaoTesting.ccCardType);
 		
 		boolean paCreationSuccessful = payAccDao.createNewPaymentMethod(newPA);
 		assertTrue(paCreationSuccessful);
@@ -58,6 +59,7 @@ public class TestPaymentAccountDao extends TestCase {
 		assertEquals(true, userNewPa.isDefaultPaymentMethod());
 		assertEquals(SupportScriptForDaoTesting.testPaymentMethodId, userNewPa.getPaymentMethodId());
 		assertEquals(SupportScriptForDaoTesting.testUser.getUserID(), userNewPa.getUserId());
+		assertEquals(SupportScriptForDaoTesting.ccCardType, userNewPa.getCardType());
 		assertTrue(userNewPa.getAccountId() > 0);
 		
 	}
@@ -79,6 +81,7 @@ public class TestPaymentAccountDao extends TestCase {
 			newPA.setDefaultPaymentMethod(true);
 			newPA.setPaymentMethodId(SupportScriptForDaoTesting.testPaymentMethodId);
 			newPA.setUserId(SupportScriptForDaoTesting.testUser.getUserID());
+			newPA.setCardType(SupportScriptForDaoTesting.ccCardType);
 			
 			boolean paCreationSuccessful = payAccDao.createNewPaymentMethod(newPA);
 			assertTrue(paCreationSuccessful);
@@ -114,6 +117,7 @@ public class TestPaymentAccountDao extends TestCase {
 			newPA.setDefaultPaymentMethod(true);
 			newPA.setPaymentMethodId(SupportScriptForDaoTesting.testPaymentMethodId);
 			newPA.setUserId(SupportScriptForDaoTesting.testUser.getUserID());
+			newPA.setCardType(SupportScriptForDaoTesting.ccCardType);
 			
 			boolean paCreationSuccessful = payAccDao.createNewPaymentMethod(newPA);
 			assertTrue(paCreationSuccessful);
@@ -138,6 +142,7 @@ public class TestPaymentAccountDao extends TestCase {
 			newPA.setDefaultPaymentMethod(true);
 			newPA.setPaymentMethodId(SupportScriptForDaoTesting.testPaymentMethodId);
 			newPA.setUserId(SupportScriptForDaoTesting.testUser.getUserID());
+			newPA.setCardType(SupportScriptForDaoTesting.ccCardType);
 			
 			boolean paCreationSuccessful = payAccDao.createNewPaymentMethod(newPA);
 			assertTrue(paCreationSuccessful);
@@ -172,6 +177,7 @@ public class TestPaymentAccountDao extends TestCase {
 			newPA.setDefaultPaymentMethod(true);
 			newPA.setPaymentMethodId(SupportScriptForDaoTesting.testPaymentMethodId);
 			newPA.setUserId(SupportScriptForDaoTesting.testUser.getUserID());
+			newPA.setCardType(SupportScriptForDaoTesting.ccCardType);
 			
 			boolean paCreationSuccessful = payAccDao.createNewPaymentMethod(newPA);
 			assertTrue(paCreationSuccessful);
@@ -202,6 +208,7 @@ public class TestPaymentAccountDao extends TestCase {
 			assertEquals(pa2.isDefaultPaymentMethod(), pa1.isDefaultPaymentMethod());
 			assertEquals(SupportScriptForDaoTesting.testPaymentMethodId, pa1.getPaymentMethodId());
 			assertEquals(SupportScriptForDaoTesting.testUser.getUserID(), pa1.getUserId());
+			assertEquals(SupportScriptForDaoTesting.ccCardType, pa1.getCardType());
 			assertTrue(pa1.getAccountId() > 0);
 		}
 	}

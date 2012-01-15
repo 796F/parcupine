@@ -46,9 +46,13 @@ public class UserPaymentReport implements Serializable {
 		private PaymentType paymentType;
 		private String paymentRefNumber;
 		private Date paymentDateTime;
-		private int amountPaid = -1;
+		private int AmountPaidCents = -1;
 		private String locationIdentifier;
 		private String locationName;
+		
+		private Date parkingBeganTime;
+		private Date parkingEndTime;
+		private String parkingRefNumber;
 
 		/**
 		 * @return the paymentId
@@ -129,7 +133,7 @@ public class UserPaymentReport implements Serializable {
 		 * @return the amountPaid
 		 */
 		public int getAmountPaidCents() {
-			return amountPaid;
+			return AmountPaidCents;
 		}
 
 		/**
@@ -137,7 +141,7 @@ public class UserPaymentReport implements Serializable {
 		 *            the amountPaid to set
 		 */
 		public void setAmountPaidCents(int amountPaid) {
-			this.amountPaid = amountPaid;
+			this.AmountPaidCents = amountPaid;
 		}
 
 		/**
@@ -168,6 +172,48 @@ public class UserPaymentReport implements Serializable {
 		 */
 		public void setLocationName(String locationName) {
 			this.locationName = locationName;
+		}
+
+		/**
+		 * @return the parkingBeganTime
+		 */
+		public Date getParkingBeganTime() {
+			return parkingBeganTime;
+		}
+
+		/**
+		 * @param parkingBeganTime the parkingBeganTime to set
+		 */
+		public void setParkingBeganTime(Date parkingBeganTime) {
+			this.parkingBeganTime = parkingBeganTime;
+		}
+
+		/**
+		 * @return the parkingEndTime
+		 */
+		public Date getParkingEndTime() {
+			return parkingEndTime;
+		}
+
+		/**
+		 * @param parkingEndTime the parkingEndTime to set
+		 */
+		public void setParkingEndTime(Date parkingEndTime) {
+			this.parkingEndTime = parkingEndTime;
+		}
+
+		/**
+		 * @return the parkingRefNumber
+		 */
+		public String getParkingRefNumber() {
+			return parkingRefNumber;
+		}
+
+		/**
+		 * @param parkingRefNumber the parkingRefNumber to set
+		 */
+		public void setParkingRefNumber(String parkingRefNumber) {
+			this.parkingRefNumber = parkingRefNumber;
 		}
 
 	}

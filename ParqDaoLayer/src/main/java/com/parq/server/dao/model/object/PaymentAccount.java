@@ -12,11 +12,12 @@ public class PaymentAccount implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -3629363474639731019L;
-	long accountId = -1;
-	long userId = -1;
-	String customerId;
-	String paymentMethodId;
-	String ccStub;
+	private long accountId = -1;
+	private long userId = -1;
+	private String customerId;
+	private String paymentMethodId;
+	private String ccStub;
+	private CardType cardType;
 	boolean isDefaultPaymentMethod;
 
 	/**
@@ -138,4 +139,20 @@ public class PaymentAccount implements Serializable {
 			return false;
 		return true;
 	}
+
+	/**
+	 * @return the cardType
+	 */
+	public CardType getCardType() {
+		return cardType;
+	}
+
+	/**
+	 * @param cardType the cardType to set
+	 */
+	public void setCardType(CardType cardType) {
+		this.cardType = cardType;
+	}
+
+	public enum CardType { VISA, MASTER, DISC, AMAX }
 }

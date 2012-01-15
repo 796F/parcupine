@@ -12,6 +12,7 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 
 import com.parq.server.dao.model.object.PaymentAccount;
+import com.parq.server.dao.model.object.PaymentAccount.CardType;
 
 /**
  * Dao class responsible for accessing and updating the PaymentAccount Table
@@ -28,12 +29,12 @@ public class PaymentAccountDao extends AbstractParqDaoParent {
 	private static Cache myCache;
 
 	private static final String sqlCreatePaymentAccount = 
-		"INSERT INTO paymentaccount (user_id, customer_id, payment_method_id, cc_stub, is_default_payment) " + 
-		"	VALUES (?, ?, ?, ?, ?)";
+		"INSERT INTO paymentaccount (user_id, customer_id, payment_method_id, cc_stub, is_default_payment, card_type) " + 
+		"	VALUES (?, ?, ?, ?, ?, ?)";
 	private static final String sqlDeletePaymentAccountById =
 		"UPDATE paymentaccount SET is_deleted = TRUE WHERE account_id = ?";
 	private static final String sqlGetAccountByUserId = 
-		"SELECT account_id, user_id, customer_id, payment_method_id, cc_stub, is_default_payment " +
+		"SELECT account_id, user_id, customer_id, payment_method_id, cc_stub, is_default_payment, card_type " +
 		"	FROM paymentaccount " +
 		"	WHERE user_id = ? " +
 		" 	AND is_deleted IS NOT TRUE"; 
@@ -84,6 +85,7 @@ public class PaymentAccountDao extends AbstractParqDaoParent {
 			pstmt.setString(3, request.getPaymentMethodId());
 			pstmt.setString(4, request.getCcStub());
 			pstmt.setBoolean(5, request.isDefaultPaymentMethod());
+			pstmt.setString(6, request.getCardType().name());
 			
 			newPaymentAccountCreated = pstmt.executeUpdate() == 1;
 	
@@ -238,6 +240,7 @@ public class PaymentAccountDao extends AbstractParqDaoParent {
 			String customerId = rs.getString("customer_id");
 			String paymentMethodId = rs.getString("payment_method_id");
 			String ccStub = rs.getString("cc_stub");
+			String cardType = rs.getString("card_type");
 			boolean isDefaultPaymentMethod = rs.getBoolean("is_default_payment");
 			
 			pa.setAccountId(accountId);
@@ -246,6 +249,9 @@ public class PaymentAccountDao extends AbstractParqDaoParent {
 			pa.setPaymentMethodId(paymentMethodId);
 			pa.setCcStub(ccStub);
 			pa.setDefaultPaymentMethod(isDefaultPaymentMethod);
+			if (cardType != null) {
+				pa.setCardType(CardType.valueOf(cardType));
+			}
 			
 			paymentAccounts.add(pa);
 		}

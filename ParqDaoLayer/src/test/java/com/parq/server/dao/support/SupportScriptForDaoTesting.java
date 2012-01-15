@@ -39,6 +39,8 @@ public final class SupportScriptForDaoTesting {
 	public static List<ParkingLocation> testParkingLocationList;
 	public static PaymentAccount testPaymentAccount;
 	
+	public static PaymentAccount.CardType ccCardType = PaymentAccount.CardType.VISA;
+	
 	private static boolean mainDataSetInserted = false;
 
 	public static void insertMainTestDataSet() {
@@ -152,6 +154,7 @@ public final class SupportScriptForDaoTesting {
 		testPaymentAccount.setDefaultPaymentMethod(true);
 		testPaymentAccount.setPaymentMethodId(testPaymentMethodId);
 		testPaymentAccount.setUserId(testUser.getUserID());
+		testPaymentAccount.setCardType(ccCardType);
 		
 		PaymentAccountDao payAccDao = new PaymentAccountDao();
 		// boolean paCreationSuccessful = 

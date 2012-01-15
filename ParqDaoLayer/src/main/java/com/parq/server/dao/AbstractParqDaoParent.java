@@ -19,7 +19,7 @@ import org.apache.tomcat.jdbc.pool.PoolProperties;
  */
 public abstract class AbstractParqDaoParent {
 
-	protected static final String propertyFile = "./ParqDao.properties";
+	protected static final String propertyFile = "ParqDao.properties";
 	protected static final String trueStr = "true";
 	protected static final String falseStr = "false";
 
@@ -62,9 +62,11 @@ public abstract class AbstractParqDaoParent {
 		if (!initizationComplete) {
 			InputStream is = null;
 			try {
+			
 				Properties prop = new Properties();
-				is = Thread.currentThread().getContextClassLoader()
-						.getResourceAsStream(propertyFile);
+				// is = Thread.currentThread().getContextClassLoader()
+				// .getResourceAsStream(propertyFile);
+				is = this.getClass().getClassLoader().getResourceAsStream(propertyFile);
 
 				if (is == null) {
 					System.err.println("Properties File: " + propertyFile

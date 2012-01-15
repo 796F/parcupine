@@ -50,6 +50,7 @@ public class ParkingLocationUsageReport implements Serializable{
 		private String parkingRefNumber;
 		private String locationIdentifier;
 		private String locationName;
+		private String userEmail;
 		
 		/**
 		 * @return the parkingInstId
@@ -170,6 +171,18 @@ public class ParkingLocationUsageReport implements Serializable{
 		 */
 		public void setLocationName(String locationName) {
 			this.locationName = locationName;
+		}
+		/**
+		 * @return the userEmail
+		 */
+		public String getUserEmail() {
+			return userEmail;
+		}
+		/**
+		 * @param userEmail the userEmail to set
+		 */
+		public void setUserEmail(String userEmail) {
+			this.userEmail = userEmail;
 		}
 	}
 }
