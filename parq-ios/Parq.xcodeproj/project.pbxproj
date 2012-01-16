@@ -25,6 +25,8 @@
 		8716B0E814B3F19D004105AD /* ParqButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 8716B0E714B3F19D004105AD /* ParqButton.m */; };
 		8716B0EE14B3F9F3004105AD /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8716B0ED14B3F9F3004105AD /* QuartzCore.framework */; };
 		8716B11514B7D01B004105AD /* ParqLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8716B11414B7D01B004105AD /* ParqLoginViewController.m */; };
+		87D2097B14C48E4D00E663D7 /* SFHFKeychainUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 87D2097A14C48E4D00E663D7 /* SFHFKeychainUtils.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		87D2097D14C49E7100E663D7 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87D2097C14C49E7100E663D7 /* Security.framework */; };
 		FC31A2F214BF4776009013E3 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = FC31A2F114BF4776009013E3 /* JSONKit.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		FCF586D214C1F55400DF70D3 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF586BD14C1F55400DF70D3 /* Reachability.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		FCF586D314C1F55400DF70D3 /* ASIAuthenticationDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF586BF14C1F55400DF70D3 /* ASIAuthenticationDialog.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -74,6 +76,9 @@
 		8716B0ED14B3F9F3004105AD /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		8716B11314B7D01B004105AD /* ParqLoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParqLoginViewController.h; sourceTree = "<group>"; };
 		8716B11414B7D01B004105AD /* ParqLoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ParqLoginViewController.m; sourceTree = "<group>"; };
+		87D2097914C48E4D00E663D7 /* SFHFKeychainUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFHFKeychainUtils.h; sourceTree = "<group>"; };
+		87D2097A14C48E4D00E663D7 /* SFHFKeychainUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFHFKeychainUtils.m; sourceTree = "<group>"; };
+		87D2097C14C49E7100E663D7 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		FC31A2F014BF4776009013E3 /* JSONKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONKit.h; sourceTree = "<group>"; };
 		FC31A2F114BF4776009013E3 /* JSONKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSONKit.m; sourceTree = "<group>"; };
 		FCF586BC14C1F55400DF70D3 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
@@ -117,6 +122,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				87D2097D14C49E7100E663D7 /* Security.framework in Frameworks */,
 				FCF586F114C1F60800DF70D3 /* CFNetwork.framework in Frameworks */,
 				FCF586EF14C1F5FA00DF70D3 /* MobileCoreServices.framework in Frameworks */,
 				FCF586ED14C1F5E000DF70D3 /* libz.dylib in Frameworks */,
@@ -134,8 +140,9 @@
 		8716B0A914B3C093004105AD = {
 			isa = PBXGroup;
 			children = (
-				FCF586EC14C1F5E000DF70D3 /* libz.dylib */,
 				FCF586BB14C1F53600DF70D3 /* ASIHTTPRequest */,
+				87D2097714C48AA000E663D7 /* JSONKit */,
+				87D2097814C48E4D00E663D7 /* SFHFKeychainUtils */,
 				8716B0BE14B3C094004105AD /* Parq */,
 				8716B0B714B3C094004105AD /* Frameworks */,
 				8716B0B514B3C094004105AD /* Products */,
@@ -153,13 +160,15 @@
 		8716B0B714B3C094004105AD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				FCF586EC14C1F5E000DF70D3 /* libz.dylib */,
 				FCF586F014C1F60800DF70D3 /* CFNetwork.framework */,
-				FCF586EE14C1F5FA00DF70D3 /* MobileCoreServices.framework */,
-				FCF586EA14C1F5CF00DF70D3 /* SystemConfiguration.framework */,
-				8716B0ED14B3F9F3004105AD /* QuartzCore.framework */,
-				8716B0B814B3C094004105AD /* UIKit.framework */,
-				8716B0BA14B3C094004105AD /* Foundation.framework */,
 				8716B0BC14B3C094004105AD /* CoreGraphics.framework */,
+				8716B0BA14B3C094004105AD /* Foundation.framework */,
+				FCF586EE14C1F5FA00DF70D3 /* MobileCoreServices.framework */,
+				8716B0ED14B3F9F3004105AD /* QuartzCore.framework */,
+				87D2097C14C49E7100E663D7 /* Security.framework */,
+				FCF586EA14C1F5CF00DF70D3 /* SystemConfiguration.framework */,
+				8716B0B814B3C094004105AD /* UIKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -169,8 +178,6 @@
 			children = (
 				FCF586E314C1F58900DF70D3 /* Network */,
 				FCF586DB14C1F55F00DF70D3 /* Objects */,
-				FC31A2F014BF4776009013E3 /* JSONKit.h */,
-				FC31A2F114BF4776009013E3 /* JSONKit.m */,
 				8716B0D014B3C094004105AD /* first.png */,
 				8716B0D214B3C094004105AD /* first@2x.png */,
 				8716B0CA14B3C094004105AD /* MainStoryboard.storyboard */,
@@ -204,6 +211,26 @@
 				8716B0C614B3C094004105AD /* Parq-Prefix.pch */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		87D2097714C48AA000E663D7 /* JSONKit */ = {
+			isa = PBXGroup;
+			children = (
+				FC31A2F014BF4776009013E3 /* JSONKit.h */,
+				FC31A2F114BF4776009013E3 /* JSONKit.m */,
+			);
+			name = JSONKit;
+			path = Parq;
+			sourceTree = "<group>";
+		};
+		87D2097814C48E4D00E663D7 /* SFHFKeychainUtils */ = {
+			isa = PBXGroup;
+			children = (
+				87D2097914C48E4D00E663D7 /* SFHFKeychainUtils.h */,
+				87D2097A14C48E4D00E663D7 /* SFHFKeychainUtils.m */,
+			);
+			name = SFHFKeychainUtils;
+			path = security;
 			sourceTree = "<group>";
 		};
 		FCF586BB14C1F53600DF70D3 /* ASIHTTPRequest */ = {
@@ -346,6 +373,7 @@
 				FCF586E114C1F57800DF70D3 /* RateObject.m in Sources */,
 				FCF586E814C1F5A000DF70D3 /* Parser.m in Sources */,
 				FCF586E914C1F5A000DF70D3 /* ServerCalls.m in Sources */,
+				87D2097B14C48E4D00E663D7 /* SFHFKeychainUtils.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

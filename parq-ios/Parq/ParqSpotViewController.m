@@ -61,6 +61,12 @@
     // Release any cached data, images, etc that aren't in use.
 }
 
+- (BOOL)isLoggedIn
+{
+  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+  return [defaults stringForKey:@"username"] != nil;
+}
+
 #pragma mark - View lifecycle
 
 - (void)viewDidLoad
@@ -87,11 +93,13 @@
 {
     [super viewDidAppear:animated];
 
-    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
-    UIViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
-    [vc setModalPresentationStyle:UIModalPresentationFullScreen];
+    if (![self isLoggedIn]) {
+      UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
+      UIViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
+      [vc setModalPresentationStyle:UIModalPresentationFullScreen];
 
-    [self presentModalViewController:vc animated:YES];
+      [self presentModalViewController:vc animated:YES];
+    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated

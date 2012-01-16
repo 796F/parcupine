@@ -7,9 +7,11 @@
 //
 
 #import "ParqLoginViewController.h"
-
+#import "SFHFKeychainUtils.h"
+#import "ServerCalls.h"
 
 @implementation ParqLoginViewController
+@synthesize emailControl, passwordControl;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -43,6 +45,8 @@
 
 - (void)viewDidUnload
 {
+  [self setEmailControl:nil];
+  [self setPasswordControl:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -113,6 +117,15 @@
 }
 */
 
+- (void)saveUserInfoWithEmail:(NSString*)email andPassword:(NSString*)password andUserObj:(UserObject*)user
+{
+  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+  [defaults setValue:email forKey:@"email"];
+  [defaults synchronize];
+  NSError *error = nil;
+  [SFHFKeychainUtils storeUsername:email andPassword:password forServiceName:@"com.parqme" updateExisting:YES error:&error];
+}
+
 #pragma mark - Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -120,7 +133,19 @@
     // Navigation logic may go here. Create and push another view controller.
     if (indexPath.section == 1) {
       if (indexPath.row == 0) {
-        [self dismissModalViewControllerAnimated:YES];
+        [tableView deselectRowAtIndexPath:indexPath animated:YES];
+        UserObject *user = [ServerCalls authEmail:emailControl.text Password:passwordControl.text];
+        if (user != nil) {
+          [self saveUserInfoWithEmail:emailControl.text andPassword:passwordControl.text andUserObj:user];
+          [self dismissModalViewControllerAnimated:YES];
+        } else {
+          UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Couldn't log in"
+                                                          message:@"Please check your email and password"
+                                                         delegate:nil 
+                                                cancelButtonTitle:@"OK"
+                                                otherButtonTitles:nil];
+          [alert show];
+        }
       }
     }
 }

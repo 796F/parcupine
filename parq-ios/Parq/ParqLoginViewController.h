@@ -10,4 +10,7 @@
 
 @interface ParqLoginViewController : UITableViewController
 
+@property (weak, nonatomic) IBOutlet UITextField *emailControl;
+@property (weak, nonatomic) IBOutlet UITextField *passwordControl;
+
 @end

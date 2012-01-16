@@ -302,6 +302,10 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                             <outlet property="delegate" destination="jHm-a8-M0u" id="fnC-fw-hcq"/>
                         </connections>
                     </tableView>
+                    <connections>
+                        <outlet property="emailControl" destination="OML-ob-9Op" id="6hU-VV-et9"/>
+                        <outlet property="passwordControl" destination="2dX-m6-E92" id="1CP-re-I6q"/>
+                    </connections>
                 </tableViewController>
             </objects>
             <point key="canvasLocation" x="-118" y="-492"/>
@@ -404,6 +408,10 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         </class>
         <class className="ParqLoginViewController" superclassName="UITableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/ParqLoginViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="emailControl" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="passwordControl" candidateClass="UITextField"/>
+            </relationships>
         </class>
         <class className="ParqMapViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/ParqMapViewController.h"/>
