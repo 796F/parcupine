@@ -44,23 +44,21 @@ public class RegisterResource {
 	@Context 
 	ContextResolver<JAXBContextResolver> providers;
 
-	private CustomerProfileType createUserProfile(long uid, String email, String desc){
+	private CustomerProfileType createUserProfile(String email){
 		CustomerProfileType xx = new CustomerProfileType();
-		xx.setDescription(desc);
 		xx.setEmail(email);
-		xx.setMerchantCustomerId(""+uid);
 		return xx;
 	}
 
 	private CreateCustomerProfileResponseType validateCard(CustomerProfileType customer, String ccNum, String csc, int month, int year, 
 			String fname, String lname, String zipcode, String address){
 		try{
-			
-			
+
+
 
 			ServiceSoap soap = SoapAPIUtilities.getServiceSoap();
 			CustomerPaymentProfileType new_payment_profile = new CustomerPaymentProfileType();
-			
+
 			PaymentType new_payment = new PaymentType();
 			CreditCardType new_card = new CreditCardType();
 			new_card.setCardNumber(ccNum);
@@ -77,9 +75,9 @@ public class RegisterResource {
 
 			new_payment.setCreditCard(new_card);
 			new_payment_profile.setPayment(new_payment);
-			
+
 			CustomerAddressType billToAddr = new CustomerAddressType();
-			
+
 			billToAddr.setAddress(address);
 			//billToAddr.setCity("Wilmington");
 			//billToAddr.setState("DE");
@@ -88,7 +86,7 @@ public class RegisterResource {
 			billToAddr.setFirstName(fname);
 			billToAddr.setLastName(lname);
 			new_payment_profile.setBillTo(billToAddr);
-			
+
 			ArrayOfCustomerPaymentProfileType pay_list = new ArrayOfCustomerPaymentProfileType();
 			pay_list.getCustomerPaymentProfileType().add(new_payment_profile);
 
@@ -108,80 +106,75 @@ public class RegisterResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public RegisterResponse register(JAXBElement<RegisterRequest> input){
 		RegisterRequest info = input.getValue();
-		User newUser = new User();
-		newUser.setEmail(info.getEmail());
-		newUser.setPassword(info.getPassword());
-		UserDao userDb = new UserDao();
-
-
 		RegisterResponse output = new RegisterResponse();
-		boolean result = false;
-		try{
-			//try to create user account, catching errors.  
-			result = userDb.createNewUser(newUser);
-		}catch(DuplicateEmailException dup){
-			output.setResp("USER_EXISTS");
-		}catch(IllegalStateException e){
-			output.setResp("DAO_ERROR");
-		}
-		String email = info.getEmail();
-		long uid = userDb.getUserByEmail(email).getUserID();
-		String description = "UID:" + uid +" Email:" +email;
-		CustomerProfileType newCustomer = createUserProfile(uid, info.getEmail(), description);
+		UserDao userDb = new UserDao();
+		User existing = null;
+		existing = userDb.getUserByEmail(info.getEmail());
+		if(existing==null){
+			List<String> nameSplit = Arrays.asList(info.getHolderName().split(" "));
+			String fname = null;
+			String lname = null;
+			if(nameSplit.size()>1){
+				fname = nameSplit.get(0);
+				lname = nameSplit.get(nameSplit.size()-1);
+				CustomerProfileType newCustomer = createUserProfile(info.getEmail());
+				CreateCustomerProfileResponseType response = validateCard(newCustomer, 
+						info.getCreditCard(), info.getCscNumber(), info.getExpMonth(), info.getExpYear(),
+						fname, lname, info.getZipcode(), info.getAddress());
 
-		List<String> nameSplit = Arrays.asList(info.getHolderName().split(" "));
-		String fname = null;
-		String lname = null;
-		if(nameSplit.size()>1){
-			fname = nameSplit.get(0);
-			lname = nameSplit.get(nameSplit.size()-1);
-		}
-		if(result && lname != null && fname != null){
-			CreateCustomerProfileResponseType response = validateCard(newCustomer, 
-					info.getCreditCard(), info.getCscNumber(), info.getExpMonth(), info.getExpYear(),
-					fname, lname, info.getZipcode(), info.getAddress());
+				if(response.getResultCode().value().equalsIgnoreCase("Ok")){
+					User newUser = new User();
+					String email = info.getEmail();
+					newUser.setEmail(email);
+					newUser.setPassword(info.getPassword());
 
+					boolean result = false;
+					try{
+						//try to create user account, catching errors.  
+						result = userDb.createNewUser(newUser);
+						if(result){
+							long uid = userDb.getUserByEmail(email).getUserID();
+							long profileId = response.getCustomerProfileId();
+							List<Long> test = response.getCustomerPaymentProfileIdList().getLong();
+							long paymentProfileId = test.get(0);
+							PaymentAccountDao pad = new PaymentAccountDao();
 
-			if(response.getResultCode().value().equalsIgnoreCase("Ok")){
-				long profileId = response.getCustomerProfileId();
-				List<Long> test = response.getCustomerPaymentProfileIdList().getLong();
-				long paymentProfileId = test.get(0);
-				PaymentAccountDao pad = new PaymentAccountDao();
+							PaymentAccount newPA = new PaymentAccount();
+							newPA.setCcStub(info.getCreditCard().substring(12, 16));
+							newPA.setCustomerId(""+profileId);
+							newPA.setDefaultPaymentMethod(true);
+							newPA.setPaymentMethodId(""+paymentProfileId);
+							//newPA.setCardType(PaymentAccount.CardType.UNKNOWN);
+							newPA.setUserId(uid);
 
-				PaymentAccount newPA = new PaymentAccount();
-				if(info.getCreditCard().length()==16){
-					newPA.setCcStub(info.getCreditCard().substring(12, 16));
-					newPA.setCustomerId(""+profileId);
-					newPA.setDefaultPaymentMethod(true);
-					newPA.setPaymentMethodId(""+paymentProfileId);
-					//newPA.setCardType(PaymentAccount.CardType.UNKNOWN);
-					newPA.setUserId(uid);
+							boolean paCreationSuccessful = pad.createNewPaymentMethod(newPA);
+							if(paCreationSuccessful){
+								output.setResp("OK");
+							}else{
+								//payment account creation error
+								output.setResp("PAY_ACC_ERROR");
+							}
+						}else{
+							output.setResp("CREATE_USER_ERROR");
+						}
+					}catch(DuplicateEmailException dup){
+						output.setResp("USER_EXISTS");
+					}catch(IllegalStateException e){
+						output.setResp("DAO_ERROR");
+					}
 				}else{
-					userDb.deleteUserById(uid);
+					//cc didn't verify
 					output.setResp("BAD_CC");
-				}
-				boolean paCreationSuccessful = pad.createNewPaymentMethod(newPA);
-				if(paCreationSuccessful){
-					output.setResp("OK");
-				}else{
-					//payment account creation error
-					userDb.deleteUserById(uid);
-					output.setResp("PAY_ACC_ERROR");
+
 				}
 			}else{
-				//cc didn't verify
-				userDb.deleteUserById(uid);
 				output.setResp("BAD_CC");
 			}
-
 		}else{
-			//result is false
-			output.setResp("SERVER_ERROR");
+			output.setResp("USER_EXISTS");
 		}
 		return output;
 	}
-
-
 	@POST
 	@Path("/update")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -193,22 +186,22 @@ public class RegisterResource {
 		User editedUser = new User();
 		AuthRequest userInfo = in.getUserInfo();
 		if(in.getUid()==innerAuthenticate(userInfo)){
-			
+
 			editedUser.setEmail(in.getEmail()); 
 			editedUser.setPassword(userInfo.getPassword()); 
-			
-//			if(in.getPassword()==null||in.getPassword().length()<6){
-//				editedUser.setPassword(userInfo.getPassword()); 
-//			}else {
-//				editedUser.setPassword(in.getPassword());
-//			}
-//			if(in.getPhone()==null || in.getPhone().length() < 10) {
-//				//use the old phone number provided (not implemented)
-//			}else{
-//				editedUser.setPhoneNumber(in.getPhone());
-//				
-//			}
-			
+
+			//			if(in.getPassword()==null||in.getPassword().length()<6){
+			//				editedUser.setPassword(userInfo.getPassword()); 
+			//			}else {
+			//				editedUser.setPassword(in.getPassword());
+			//			}
+			//			if(in.getPhone()==null || in.getPhone().length() < 10) {
+			//				//use the old phone number provided (not implemented)
+			//			}else{
+			//				editedUser.setPhoneNumber(in.getPhone());
+			//				
+			//			}
+
 			editedUser.setUserID(in.getUid());
 
 			boolean result = false;
@@ -231,7 +224,7 @@ public class RegisterResource {
 			output.setResp("BAD_AUTH");
 			return output;
 		}
-		
+
 	}
 	@POST
 	@Path("/changeCC")
@@ -251,7 +244,7 @@ public class RegisterResource {
 				lname = nameSplit.get(nameSplit.size()-1);
 			}
 			//create new payment info
-			CustomerProfileType newCustomer = createUserProfile(in.getUid(), userInfo.getEmail(), "new cc "+ in.getUid());
+			CustomerProfileType newCustomer = createUserProfile( userInfo.getEmail());
 			CreateCustomerProfileResponseType response = validateCard(newCustomer, 
 					in.getCreditCard(), in.getCscNumber(), in.getExpMonth(), in.getExpYear(),
 					fname, lname, in.getZipcode(), in.getAddress());
@@ -262,14 +255,14 @@ public class RegisterResource {
 				List<PaymentAccount> pa = pad.getAllPaymentMethodForUser(in.getUid());
 				//delete it
 				boolean result = false;
-				
+
 				try{
 					result = pad.deletePaymentMethod(pa.get(0).getAccountId());
 				}catch(Exception e){
 				}
 				//if it's deleted fine,
 				if(result||pa.size()==0){
-					
+
 					long profileId = response.getCustomerProfileId();
 					List<Long> test = response.getCustomerPaymentProfileIdList().getLong();
 					long paymentProfileId = test.get(0);
@@ -284,7 +277,7 @@ public class RegisterResource {
 					try{
 						result= pad.createNewPaymentMethod(newPa);
 					}catch(Exception e){}
-					
+
 					if(result){
 						output.setResp("OK");
 					}else{
@@ -293,8 +286,8 @@ public class RegisterResource {
 				}else{
 					output.setResp("delete cc failed");
 				}
-				
-				
+
+
 			}else{
 				output.setResp("BAD_CC");
 			}
@@ -303,13 +296,13 @@ public class RegisterResource {
 		}
 		return output;
 	}
-	
+
 	@GET
 	@Produces(MediaType.TEXT_PLAIN)
 	public String sayPlainTextHello() {
 		return "goin shopping with YOUR credit card";
 	}
-	
+
 	/**
 	 * returns User_ID, or -1 if bad
 	 * */
