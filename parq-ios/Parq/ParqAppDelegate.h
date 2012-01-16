@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ParqSpotViewController.h"
 
 @interface ParqAppDelegate : UIResponder <UIApplicationDelegate>
 

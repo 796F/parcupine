@@ -118,7 +118,11 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // Navigation logic may go here. Create and push another view controller.
-  [self performSegueWithIdentifier:@"loadTabBarController" sender:self];
+    if (indexPath.section == 1) {
+      if (indexPath.row == 0) {
+        [self dismissModalViewControllerAnimated:YES];
+      }
+    }
 }
 
 @end

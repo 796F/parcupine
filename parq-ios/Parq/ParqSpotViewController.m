@@ -86,6 +86,12 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
+    UIViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
+    [vc setModalPresentationStyle:UIModalPresentationFullScreen];
+
+    [self presentModalViewController:vc animated:YES];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
