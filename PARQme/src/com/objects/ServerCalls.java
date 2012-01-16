@@ -25,7 +25,7 @@ import android.os.AsyncTask;
 public class ServerCalls {
 
 	public static final JsonFactory JSON_FACTORY = new JsonFactory();
-	private static final String SERVER_HOSTNAME = "http://75.101.132.219:8080";
+	private static final String SERVER_HOSTNAME = "http://75.101.132.219:80";
 
 	/*returns if authentication passed.*/
 	public static void authUser(String email, String hash, AuthUserCallback callback){

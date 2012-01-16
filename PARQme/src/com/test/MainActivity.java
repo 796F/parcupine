@@ -316,10 +316,12 @@ public class MainActivity extends ActivityGroup implements LocationListener {
                         updateDisplay(minimalIncrement);
                         minutes.requestFocus();
                     } else {
-                        ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
+                    	//please check spot
+                        ThrowDialog.show(MainActivity.this, ThrowDialog.CHECK_SPOT);
                     }
                 } else {
-                    ThrowDialog.show(MainActivity.this, ThrowDialog.RESULT_ERROR);
+                	//null response, no network.  
+                    ThrowDialog.show(MainActivity.this, ThrowDialog.NO_NET);
                 }
             }
         });

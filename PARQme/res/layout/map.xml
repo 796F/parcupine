@@ -36,8 +36,9 @@
         android:hint="Address"
         android:layout_toLeftOf="@id/searchbutton"
         android:layout_marginTop="5dp"
-        android:layout_marginLeft="3dp">
-        <requestFocus />
+        android:layout_marginLeft="3dp"
+        android:maxLines="1">
+        
     </EditText>
     <com.google.android.maps.MapView
         android:id="@+id/mapview"

@@ -12,8 +12,10 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -24,6 +26,8 @@ import android.widget.ListView;
 import android.widget.SlidingDrawer;
 import android.widget.SlidingDrawer.OnDrawerCloseListener;
 import android.widget.SlidingDrawer.OnDrawerOpenListener;
+import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.google.android.maps.GeoPoint;
@@ -63,8 +67,8 @@ public class MapViewActivity extends MapActivity {
 	//map controlling elements
 	private LocationManager locMan;
 	private MapController mapCtrl;
-	
-	
+	private EditText address;
+	private Geocoder gc;
 	@Override
 	protected boolean isRouteDisplayed() {
 		return false;
@@ -74,7 +78,7 @@ public class MapViewActivity extends MapActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.map);
-		final Geocoder gc = new Geocoder(this);
+		 gc = new Geocoder(this);
 //		parkLoc = new ArrayList<OverlayItem>();
 //		parkLoc.add(new OverlayItem(new GeoPoint((int)(38.984924*1e6),(int)(-76.935486*1e6)), "Ritchie Parking Lot", "Second Line"));
 		locListener = new LocationListener(){
@@ -102,7 +106,20 @@ public class MapViewActivity extends MapActivity {
 		//hook elements
 		final MapView mapView = (MapView) findViewById(R.id.mapview);
 		mapView.setBuiltInZoomControls(false);
-		final EditText address = (EditText) findViewById(R.id.addressinput);
+		address = (EditText) findViewById(R.id.addressinput);
+		address.setImeOptions(EditorInfo.IME_ACTION_DONE);
+		address.setOnEditorActionListener(new OnEditorActionListener(){
+
+			@Override
+			public boolean onEditorAction(TextView v, int actionId,
+					KeyEvent event) {
+				if (actionId == EditorInfo.IME_ACTION_DONE) {
+	                searchAddress();
+	            }
+				return false;
+			}
+			
+		});
 		mapCtrl = mapView.getController();
 		locMan = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		
@@ -118,21 +135,7 @@ public class MapViewActivity extends MapActivity {
 		searchButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				String addressIn = address.getText().toString();
-				try {
-				    double a=0d, b=0d;
-					List<Address> locations =  gc.getFromLocationName(addressIn, 1);
-					if (!locations.isEmpty()) {
-					    final Address x = locations.get(0);
-						Toast.makeText(MapViewActivity.this, x.getLatitude()+":"+x.getLongitude(), Toast.LENGTH_LONG);
-						a = x.getLatitude();
-						b = x.getLongitude();
-						mapCtrl.animateTo(new GeoPoint((int)(a*1e6), (int)(b*1e6)));
-					}
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				searchAddress();
 			}
 		});
 		final Button locButton = (Button) findViewById(R.id.loc_button);
@@ -238,7 +241,23 @@ public class MapViewActivity extends MapActivity {
             }
         });
 	}
-
+	private void searchAddress(){
+		String addressIn = address.getText().toString();
+		try {
+		    double a=0d, b=0d;
+			List<Address> locations =  gc.getFromLocationName(addressIn, 1);
+			if (!locations.isEmpty()) {
+			    final Address x = locations.get(0);
+				Toast.makeText(MapViewActivity.this, x.getLatitude()+":"+x.getLongitude(), Toast.LENGTH_LONG);
+				a = x.getLatitude();
+				b = x.getLongitude();
+				mapCtrl.animateTo(new GeoPoint((int)(a*1e6), (int)(b*1e6)));
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	private void findMe() {
 		//load information from database, change overlay to show where spots are
         mapCtrl.animateTo(new GeoPoint((int)(userLat*1e6),(int)(userLon*1e6)));

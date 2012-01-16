@@ -26,6 +26,7 @@ public class ThrowDialog {
 	public final static int NOT_PARKED= 14;
 	public final static int NO_SPOTS= 15;
 	public final static int NO_CREDIT_CARD=16;
+	public final static int CHECK_SPOT = 17;
 	public static void show(final Context c, int dialog){
 		AlertDialog.Builder alert = new AlertDialog.Builder(c);
 		AlertDialog a;
@@ -202,6 +203,12 @@ public class ThrowDialog {
 			alert.setNegativeButton("Ok", null);
 			alert.show();
 			break;
+		case CHECK_SPOT:
+			alert.setMessage("Could not find this spot.  Please check your input.");
+			alert.setNegativeButton("Ok", null);
+			alert.show();
+			break;
+		
 		}
 	}
 

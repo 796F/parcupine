@@ -100,6 +100,12 @@ public class SavedInfo{
 		editor.commit();
 		
 	}
+	public static void setString(Context activity, String key, String value){
+		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
+		SharedPreferences.Editor editor = check.edit();
+		editor.putString(key, value);
+		editor.commit();
+	}
 	public static void setParkingReferenceNumber(Context activity, String parkReferenceNumber){
 
 		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
