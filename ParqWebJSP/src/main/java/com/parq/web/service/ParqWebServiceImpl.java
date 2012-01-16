@@ -404,6 +404,12 @@ public class ParqWebServiceImpl implements ParqWebService{
 			userCreationSuccessful = false;
 		}
 		
+		if (userCreationSuccessful) {
+			registration.setPasswordDoesNotMatch(false);
+			registration.setInvalidPassword(false);
+			registration.setEmailAlreadyExist(false);
+		}
+		
 		return userCreationSuccessful;
 	}
 }
