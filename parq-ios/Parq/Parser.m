@@ -8,8 +8,6 @@
 
 #import "Parser.h"
 #import "UserObject.h"
-#import "JSONKit.h"
-
 /* obj-c uses its annoying typing system replacing primitives.  
     null = NSNull
     bool = NSNumber
@@ -21,13 +19,8 @@
 @implementation Parser
 
 + (UserObject*) parseUserObjectString:(NSString*)jsonString{
-    NSDictionary* results = [jsonString objectFromJSONString];
-    NSString* ccStub = [results objectForKey:@"creditCardStub"];
-    NSNumber* parkState = [results objectForKey:@"parkState"];
-    NSNumber* uid = [results objectForKey:@"uid"];
     
-    if(uid.longValue > 0) return [[UserObject alloc] initWithUid:uid parkState:parkState creditCardStub:ccStub];
-    else return nil;
+    return nil;
 }
 
 @end

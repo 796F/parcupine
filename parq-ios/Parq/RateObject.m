@@ -27,29 +27,13 @@
     description=descIn;
     return self;
 }
+@synthesize lat;
+@synthesize lon;
+@synthesize spot;
+@synthesize minTime;
+@synthesize maxTime;
+@synthesize defaultRate;
+@synthesize minIncrement;
+@synthesize description;
 
--(NSNumber*) lat{
-    return lat;
-}
--(NSNumber*) lon{
-    return lon;
-}
--(NSNumber*) spot{
-    return spot;
-}
--(NSNumber*) minTime{
-    return minTime;
-}
--(NSNumber*) maxTime{
-    return maxTime;
-}
--(NSNumber*) defaultRate{
-    return defaultRate;
-}
--(NSNumber*) minIncrement{
-    return minIncrement;
-}
--(NSString*) description{
-    return description;
-}
 @end

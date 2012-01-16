@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "ParqSpotViewController.h"
-
+#import <RestKit/RestKit.h>
 @interface ParqAppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
