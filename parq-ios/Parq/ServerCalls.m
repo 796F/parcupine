@@ -7,10 +7,8 @@
 //
 
 #import "ServerCalls.h"
-#import "ASIHTTPRequest.h"
-#import "JSONKit.h"
-#import "UserObject.h"
 #import "Parser.h"
+#import "UserObject.h"
 
 @implementation ServerCalls
 
@@ -24,19 +22,20 @@
     NSDictionary* info = [NSDictionary dictionaryWithObjects:value forKeys:keys];
     NSError *error;
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
+    return nil;
+}
++ (RateObject*) getRateLat:(NSNumber*)latIn Lon:(NSNumber*)lonIn spotId:(NSString*)spotIdIn{
+    NSString* endpoint = @"http://75.101.132.219:8080/parkservice.rate/gps";
+    NSNumber* uid = [NSNumber numberWithLong:13];
+    NSArray* keys = [NSArray arrayWithObjects:@"email", @"password", nil];
+    NSArray* value = [NSArray arrayWithObjects:@"miguel@parqme.com", @"a", nil];
+    NSDictionary* info = [NSDictionary dictionaryWithObjects:value forKeys:keys];
     
-    ASIHTTPRequest* trequest = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:endpoint]];
-    [trequest appendPostData:jsonData];
-    [trequest addRequestHeader:@"Content-Type" value:@"application/json"];
-    [trequest setRequestMethod:@"POST"];
-    [trequest startSynchronous];
     
-    if(trequest.responseStatusCode==200){
-        NSString *response = [trequest responseString];
-        return [Parser parseUserObjectString:response];
-    }else{
-        return nil;
-    }
+}
++ (RateObject*) getRateLotId:(NSString*)LotIdIn spotId:(NSString*)spotIdIn{
+    NSString* endpoint = @"http://75.101.132.219:8080/parkservice.rate/qrcode";
+    
 }
 
 @end
