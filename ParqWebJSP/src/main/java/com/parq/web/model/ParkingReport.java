@@ -1,4 +1,4 @@
-package com.parq.web;
+package com.parq.web.model;
 
 public class ParkingReport {
 	private String parkingRefNum;
@@ -7,6 +7,8 @@ public class ParkingReport {
 	private double amountPaid;
 	private String parkingStartTime;
 	private String parkingEndTime;
+	private String locationIdentifier;
+	private String spaceIdentifier;
 	
 	
 	/**
@@ -80,6 +82,30 @@ public class ParkingReport {
 	 */
 	public void setParkingEndTime(String parkingEndTime) {
 		this.parkingEndTime = parkingEndTime;
+	}
+	/**
+	 * @return the locationIdentifier
+	 */
+	public String getLocationIdentifier() {
+		return locationIdentifier;
+	}
+	/**
+	 * @param locationIdentifier the locationIdentifier to set
+	 */
+	public void setLocationIdentifier(String locationIdentifier) {
+		this.locationIdentifier = locationIdentifier;
+	}
+	/**
+	 * @return the spaceIdentifier
+	 */
+	public String getSpaceIdentifier() {
+		return spaceIdentifier;
+	}
+	/**
+	 * @param spaceIdentifier the spaceIdentifier to set
+	 */
+	public void setSpaceIdentifier(String spaceIdentifier) {
+		this.spaceIdentifier = spaceIdentifier;
 	}
 	
 	

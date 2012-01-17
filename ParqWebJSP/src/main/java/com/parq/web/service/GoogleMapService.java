@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 
-import com.parq.web.MapLocation;
+import com.parq.web.model.MapLocation;
 
 public class GoogleMapService {
 	

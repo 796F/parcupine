@@ -59,9 +59,9 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 	
 	private static final String sqlUpdateParkingEndTime =
 		"UPDATE parkinginstance SET park_end_time = ? " +
-		" WHERE parkingrefnumber = ? " +
-		" ORDER BY parkinginst_id DESC " +
-		" LIMIT 1 ";
+		" WHERE parkingrefnumber = ? ";
+		// " ORDER BY parkinginst_id DESC " +
+		// " LIMIT 1 ";
 	
 	private static final String getParkingStatusBySpaceIdsCacheKey = "spaceId:";
 	private static final String getUserParkingStatusCacheKey = "userId:";

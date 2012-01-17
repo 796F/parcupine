@@ -1,11 +1,11 @@
-<%@ page import="com.parq.web.MapLocation"%>
-<%@ page import="com.parq.web.WebParkingLocation"%>
+<%@ page import="com.parq.web.model.MapLocation"%>
+<%@ page import="com.parq.web.model.WebParkingLocation"%>
 <%@ page import="java.util.List"%>
 <%@ page import="com.parq.web.service.ParqWebService"%>
 <%@ page import="com.parq.web.service.ParqWebServiceFactory"%>
 <%@ page import="com.parq.web.service.GoogleMapService"%>
 
-<jsp:useBean id="mapLocation" class="com.parq.web.MapLocation" scope="session" />
+<jsp:useBean id="mapLocation" class="com.parq.web.model.MapLocation" scope="session" />
 <jsp:setProperty name="mapLocation" property="*" />
 <%
 	// search the map service for the lat/long of the location

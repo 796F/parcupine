@@ -2,16 +2,16 @@ package com.parq.web.service;
 
 import java.util.List;
 
-import com.parq.web.MapLocation;
-import com.parq.web.ParkingHistory;
-import com.parq.web.WebParkingLocation;
-import com.parq.web.ParkingReport;
-import com.parq.web.ParkingSpaceStatus;
 import com.parq.web.PasswordChangeRequest;
 import com.parq.web.ReportDateRangeFilter;
-import com.parq.web.WebPaymentAccount;
-import com.parq.web.WebUser;
-import com.parq.web.UserRegistration;
+import com.parq.web.model.MapLocation;
+import com.parq.web.model.ParkingHistory;
+import com.parq.web.model.ParkingReport;
+import com.parq.web.model.ParkingSpaceStatus;
+import com.parq.web.model.UserRegistration;
+import com.parq.web.model.WebParkingLocation;
+import com.parq.web.model.WebPaymentAccount;
+import com.parq.web.model.WebUser;
 
 public interface ParqWebService {
 

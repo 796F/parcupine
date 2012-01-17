@@ -51,6 +51,7 @@ public class ParkingLocationUsageReport implements Serializable{
 		private String locationIdentifier;
 		private String locationName;
 		private String userEmail;
+		private String spaceIdentifier;
 		
 		/**
 		 * @return the parkingInstId
@@ -183,6 +184,18 @@ public class ParkingLocationUsageReport implements Serializable{
 		 */
 		public void setUserEmail(String userEmail) {
 			this.userEmail = userEmail;
+		}
+		/**
+		 * @return the spaceIdentifier
+		 */
+		public String getSpaceIdentifier() {
+			return spaceIdentifier;
+		}
+		/**
+		 * @param spaceIdentifier the spaceIdentifier to set
+		 */
+		public void setSpaceIdentifier(String spaceIdentifier) {
+			this.spaceIdentifier = spaceIdentifier;
 		}
 	}
 }

@@ -34,8 +34,8 @@
 							Engineering/Computer Science and Economics. In my spare time I
 							love developing new startup ideas and keeping up with the latest
 							trends (sometimes combining both of these). Outside of school and
-							innovating, I play squash and basketball. I am the founder of
-							Parq and am responsible for its expansion and vision.</p>
+							innovating, I play squash and basketball. Co-founder of
+							Parq and is responsible for the company's expansion and vision.</p>
 					</td>
 				</tr>
 				<tr>

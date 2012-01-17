@@ -1,5 +1,5 @@
-<%@ page import="com.parq.web.WebUser"%>
-<jsp:useBean id="user" class="com.parq.web.WebUser" scope="session" />
+<%@ page import="com.parq.web.model.WebUser"%>
+<jsp:useBean id="user" class="com.parq.web.model.WebUser" scope="session" />
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 

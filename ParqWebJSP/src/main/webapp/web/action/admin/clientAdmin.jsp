@@ -1,13 +1,13 @@
-<%@ page import="com.parq.web.WebUser"%>
+<%@ page import="com.parq.web.model.WebUser"%>
 <%@ page import="java.util.List"%>
 <%@ page import="com.parq.web.service.ParqWebService"%>
 <%@ page import="com.parq.web.service.ParqWebServiceFactory"%>
 <%@ page import="com.parq.web.ParkingSpacesFilter" %>
-<%@ page import="com.parq.web.ParkingSpaceStatus" %>
-<%@ page import="com.parq.web.ParkingReport" %>
+<%@ page import="com.parq.web.model.ParkingSpaceStatus" %>
+<%@ page import="com.parq.web.model.ParkingReport" %>
 <%@ page import="com.parq.web.ReportDateRangeFilter" %>
 
-<jsp:useBean id="user" class="com.parq.web.WebUser" scope="session" />
+<jsp:useBean id="user" class="com.parq.web.model.WebUser" scope="session" />
 <jsp:useBean id="pSpaceFilter" class="com.parq.web.ParkingSpacesFilter" scope="session" />
 <jsp:useBean id="reportDateRangeFilter" class="com.parq.web.ReportDateRangeFilter" scope="session" />
 
@@ -97,10 +97,11 @@
 		    <th>Space Name</th>
 		    <th>Parking Level</th>
 		    <th>Occupied?</th>
+		    <th>Until</th>
 		  </thead>
 		  <% if (status == null || status.isEmpty()) { %>
 		  <tr>
-		    <td colspan="5">
+		    <td colspan="6">
 		      <h6>No parking spaces on record</h6>
 		    </td>
 		  </tr>
@@ -120,8 +121,10 @@
 				    <td><%=spaceStatus.getParkingLevel() %></td>
 				    <% if(spaceStatus.isOccupied()) {%>
 				    	<td style="color: red; font-weight: bold">In Use</td>
+				    	<td><%=spaceStatus.getSpaceFreeOn() %></td>
 				    <% } else { %>
 				    	<td style="color: green; font-weight: bold">Available</td>
+				    	<td> --- </td>
 				    <% } %>
 				  </tr>
 				  <% } %>
@@ -175,6 +178,8 @@
 		<table class="zebra-striped">
 		  <thead>
 		    <th>Parking Ref #</th>
+		    <th>Location</th>
+		    <th>Space #</th>
 		    <th>Occupant</th>
 		    <th>Date</th>
 		    <th>From</th>
@@ -187,6 +192,8 @@
 		  		for (ParkingReport report :  reports) { %>
 				<tr>
 				  <td><%= report.getParkingRefNum() %></td>
+				  <td><%= report.getLocationIdentifier() %></td>
+				  <td><%= report.getSpaceIdentifier() %></td>
 				  <td><%= report.getUserEmail() %></td>
 				  <td><%= report.getPaymentDatetime() %></td>
 				  <%-- <td>$<%= report.getAmountPaid() %></td> --%>
@@ -196,7 +203,7 @@
 		  	 	<% } %>
 		  	<% } else {%>
 			  <tr>
-			    <td colspan="5">
+			    <td colspan="7">
 			      <h6>No parking reports on record</h6>
 			    </td>
 			  </tr>

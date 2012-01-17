@@ -1,4 +1,4 @@
-package com.parq.web;
+package com.parq.web.model;
 
 public class ParkingSpaceStatus {
 	private long spaceId;
@@ -7,6 +7,7 @@ public class ParkingSpaceStatus {
 	private String parkingLevel;
 	private boolean isOccupied;
 	private String spaceIdentifier;
+	private String spaceFreeOn;
 	
 	
 	/**
@@ -80,5 +81,17 @@ public class ParkingSpaceStatus {
 	 */
 	public void setSpaceIdentifier(String spaceIdentifier) {
 		this.spaceIdentifier = spaceIdentifier;
+	}
+	/**
+	 * @return the spaceFreeOn
+	 */
+	public String getSpaceFreeOn() {
+		return spaceFreeOn;
+	}
+	/**
+	 * @param spaceFreeOn the spaceFreeOn to set
+	 */
+	public void setSpaceFreeOn(String spaceFreeOn) {
+		this.spaceFreeOn = spaceFreeOn;
 	}
 }

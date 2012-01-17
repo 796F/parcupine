@@ -26,7 +26,8 @@ public class AdminReportDao extends AbstractParqDaoParent {
 	private static final String sqlParkingLocationUsageStastics =
 		"SELECT pi.parkinginst_id, pi.user_id, pi.space_id, pi.park_began_time, " +
 		"       pi.park_end_time, pi.is_paid_parking, pi.parkingrefnumber, " +
-		"		l.location_id, l.location_name, l.location_identifier, u.email " +
+		"		l.location_id, l.location_name, l.location_identifier, u.email," +
+		"		s.space_identifier " +
 		" FROM parkinginstance AS pi, parkingspace AS s, parkinglocation AS l, user AS u" +
 		" WHERE pi.space_id = s.space_id " +
 		" AND s.location_id = l.location_id " +
@@ -121,6 +122,7 @@ public class AdminReportDao extends AbstractParqDaoParent {
 			entry.setLocationIdentifier(rs.getString("location_identifier"));
 			entry.setLocationName(rs.getString("location_name"));
 			entry.setUserEmail(rs.getString("email"));
+			entry.setSpaceIdentifier(rs.getString("space_identifier"));
 			
 			report.addUsageReportEntry(entry);
 		}

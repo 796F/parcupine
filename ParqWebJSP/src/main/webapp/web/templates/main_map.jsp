@@ -1,11 +1,11 @@
 <%@ page import="java.util.List"%>
-<%@ page import="com.parq.web.MapLocation"%>
-<%@ page import="com.parq.web.WebParkingLocation"%>
+<%@ page import="com.parq.web.model.MapLocation"%>
+<%@ page import="com.parq.web.model.WebParkingLocation"%>
 <%@ page import="com.parq.web.service.ParqWebService"%>
 <%@ page import="com.parq.web.service.ParqWebServiceFactory"%>
 
 
-<jsp:useBean id="mapLocation" class="com.parq.web.MapLocation" scope="session" >
+<jsp:useBean id="mapLocation" class="com.parq.web.model.MapLocation" scope="session" >
     <%-- if the bean is has not been initialize, set the parkingLocation property of the bean --%>
     <%
 		ParqWebService service = ParqWebServiceFactory.getParqWebServiceInstance();

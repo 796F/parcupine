@@ -1,10 +1,10 @@
-<%@ page import="com.parq.web.WebUser"%>
+<%@ page import="com.parq.web.model.WebUser"%>
 <%@ page import="com.parq.web.service.ParqWebService"%>
 <%@ page import="com.parq.web.service.ParqWebServiceFactory"%>
 <%@ page import="com.parq.web.PasswordChangeRequest" %>
 
-<jsp:useBean id="user" class="com.parq.web.WebUser" scope="session" />
-<jsp:useBean id="changePasswordRequest" class="com.parq.web.PasswordChangeRequest" scope="session" />
+<jsp:useBean id="user" class="com.parq.web.model.WebUser" scope="session" />
+<jsp:useBean id="changePasswordRequest" class="com.parq.web.PasswordChangeRequest" scope="request" />
 
 <jsp:setProperty name="changePasswordRequest" property="*" />
 

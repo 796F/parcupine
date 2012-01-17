@@ -1,8 +1,8 @@
-<%@ page import="com.parq.web.WebUser"%>
+<%@ page import="com.parq.web.model.WebUser"%>
 <%@ page import="com.parq.web.PasswordChangeRequest" %>
 
-<jsp:useBean id="user" class="com.parq.web.WebUser" scope="session" />
-<jsp:useBean id="changePasswordRequest" class="com.parq.web.PasswordChangeRequest" scope="session" />
+<jsp:useBean id="user" class="com.parq.web.model.WebUser" scope="session" />
+<jsp:useBean id="changePasswordRequest" class="com.parq.web.PasswordChangeRequest" scope="request" />
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -27,7 +27,7 @@
 					<tr>
 						<td colspan="2">
 							<ul class="errorlist">
-								<li>The password you have enter is invalid. Password must be at least 6 character long, 
+								<li>The new password you have enter is invalid. Password must be at least 6 character long, 
 								and contain no special character beyond numbers and letters </li>
 							</ul>
 						</td>
@@ -44,7 +44,7 @@
 					<tr>
 						<td colspan="2">
 							<ul class="errorlist">
-								<li>The new password you enter did not match, please try again </li>
+								<li>The new passwords you enter did not match, please try again </li>
 							</ul>
 						</td>
 					</tr>

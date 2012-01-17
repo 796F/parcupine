@@ -45,7 +45,11 @@ PARQ = {
 	    });			
     },
     'set_map_height': function() {
-	$('#map_canvas').css('height',$(window).height()*.45);
+	    var mapHeight = $(window).height()*.45;
+	    if (mapHeight < 350) {
+	    	mapHeight = 350
+	    }
+		$('#map_canvas').css('height',mapHeight);
     },
     'init' :function() {
 	PARQ.set_map_height();

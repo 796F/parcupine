@@ -25,19 +25,33 @@ import com.parq.server.dao.model.object.PaymentAccount;
 import com.parq.server.dao.model.object.User;
 import com.parq.server.dao.model.object.UserPaymentReport;
 import com.parq.server.dao.model.object.UserPaymentReport.UserPaymentEntry;
-import com.parq.web.MapLocation;
-import com.parq.web.ParkingHistory;
-import com.parq.web.ParkingReport;
-import com.parq.web.ParkingSpaceStatus;
 import com.parq.web.PasswordChangeRequest;
 import com.parq.web.ReportDateRangeFilter;
-import com.parq.web.UserRegistration;
-import com.parq.web.WebParkingLocation;
-import com.parq.web.WebPaymentAccount;
-import com.parq.web.WebUser;
+import com.parq.web.model.MapLocation;
+import com.parq.web.model.ParkingHistory;
+import com.parq.web.model.ParkingReport;
+import com.parq.web.model.ParkingSpaceStatus;
+import com.parq.web.model.UserRegistration;
+import com.parq.web.model.WebParkingLocation;
+import com.parq.web.model.WebPaymentAccount;
+import com.parq.web.model.WebUser;
 
 public class ParqWebServiceImpl implements ParqWebService{
-
+	private static SimpleDateFormat dateFormatter;
+	private static SimpleDateFormat hourFormatter;
+	public ParqWebServiceImpl() {
+		
+		if (dateFormatter == null) {
+			dateFormatter =
+					new SimpleDateFormat("MMM dd yyyy");
+		}
+		if (hourFormatter == null) {
+			hourFormatter =
+					new SimpleDateFormat("hh:mm:ss a");
+		}
+	}
+	
+	
 	@Override
 	public WebUser validateUser(WebUser userToValidate) {
 		
@@ -146,11 +160,6 @@ public class ParqWebServiceImpl implements ParqWebService{
 		
 		UserPaymentReport report = reportDao.getConsolidatedUserParkingReport(
 				user.getId(), reportStartDate.getTime(), reportEndDate.getTime());
-		
-        SimpleDateFormat dateFormatter =
-                new SimpleDateFormat("MMM dd yyyy");
-        SimpleDateFormat hourFormatter =
-                new SimpleDateFormat("hh:mm:ss a");
 		
         if (report != null) {
 			for (UserPaymentEntry payEntry : report.getPaymentEntries()) {
@@ -298,6 +307,9 @@ public class ParqWebServiceImpl implements ParqWebService{
 						j--;
 					} else {
 						status.setOccupied(curTime <= pi.getParkingEndTime().getTime());
+						if (status.isOccupied()) {
+							status.setSpaceFreeOn(hourFormatter.format(pi.getParkingEndTime().getTime()));
+						}
 					}
 				}
 			}
@@ -347,12 +359,6 @@ public class ParqWebServiceImpl implements ParqWebService{
 			reportStartDate.set(Calendar.MONTH, month - 3);
 		}
 		
-		
-        SimpleDateFormat dateFormatter =
-                new SimpleDateFormat("MMM dd yyyy");
-        SimpleDateFormat hourFormatter =
-                new SimpleDateFormat("hh:mm:ss a");
-		
 		List<ParkingLocation> parkingLocations = clientDao
 				.getParkingLocationsAndSpacesByClientId(clientId);
 		if (parkingLocations != null && !parkingLocations.isEmpty()) {
@@ -367,6 +373,8 @@ public class ParqWebServiceImpl implements ParqWebService{
 							ur : usageReports.getUsageReportEntries()) {
 						ParkingReport pr = new ParkingReport();
 						pr.setParkingRefNum(ur.getParkingRefNumber());
+						pr.setLocationIdentifier(ur.getLocationIdentifier());
+						pr.setSpaceIdentifier(ur.getSpaceIdentifier());
 						pr.setPaymentDatetime(dateFormatter.format(ur.getParkingBeganTime()));
 						pr.setUserEmail(ur.getUserEmail());
 						pr.setParkingStartTime(hourFormatter.format(ur.getParkingBeganTime()));

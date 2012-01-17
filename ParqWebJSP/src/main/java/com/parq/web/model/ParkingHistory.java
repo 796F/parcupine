@@ -1,4 +1,4 @@
-package com.parq.web;
+package com.parq.web.model;
 
 public class ParkingHistory {
 	private String date;

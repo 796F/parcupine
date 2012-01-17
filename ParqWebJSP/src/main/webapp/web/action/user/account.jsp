@@ -1,12 +1,12 @@
-<%@ page import="com.parq.web.WebUser"%>
-<%@ page import="com.parq.web.WebPaymentAccount"%>
-<%@ page import="com.parq.web.ParkingHistory" %>
+<%@ page import="com.parq.web.model.WebUser"%>
+<%@ page import="com.parq.web.model.WebPaymentAccount"%>
+<%@ page import="com.parq.web.model.ParkingHistory" %>
 <%@ page import="java.util.List"%>
 <%@ page import="com.parq.web.service.ParqWebService"%>
 <%@ page import="com.parq.web.service.ParqWebServiceFactory"%>
 <%@ page import="com.parq.web.ReportDateRangeFilter" %>
 
-<jsp:useBean id="user" class="com.parq.web.WebUser" scope="session" />
+<jsp:useBean id="user" class="com.parq.web.model.WebUser" scope="session" />
 <jsp:useBean id="reportDateRangeFilter" class="com.parq.web.ReportDateRangeFilter" scope="session" />
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

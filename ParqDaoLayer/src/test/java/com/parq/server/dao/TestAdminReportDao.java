@@ -83,6 +83,8 @@ public class TestAdminReportDao extends TestCase {
 			assertTrue(usageEntry.getSpaceId() > 0);
 			assertTrue(usageEntry.getUserId() == SupportScriptForDaoTesting.testUser.getUserID());
 			assertEquals(SupportScriptForDaoTesting.testUser.getEmail(), usageEntry.getUserEmail());
+			assertNotNull(usageEntry.getSpaceIdentifier());
+			assertTrue(usageEntry.getSpaceIdentifier().length() > 0);
 		}
 	}
 	

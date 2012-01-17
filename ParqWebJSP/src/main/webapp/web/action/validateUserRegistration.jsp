@@ -1,8 +1,8 @@
-<%@ page import="com.parq.web.UserRegistration"%>
+<%@ page import="com.parq.web.model.UserRegistration"%>
 <%@ page import="com.parq.web.service.ParqWebService"%>
 <%@ page import="com.parq.web.service.ParqWebServiceFactory"%>
 
-<jsp:useBean id="userRegistration" class="com.parq.web.UserRegistration" scope="request" />
+<jsp:useBean id="userRegistration" class="com.parq.web.model.UserRegistration" scope="request" />
 <jsp:setProperty name="userRegistration" property="*" />
 
 <%

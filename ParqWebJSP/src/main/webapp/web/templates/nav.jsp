@@ -1,5 +1,5 @@
-<%@ page import="com.parq.web.WebUser"%>
-<jsp:useBean id="user" class="com.parq.web.WebUser" scope="session" />
+<%@ page import="com.parq.web.model.WebUser"%>
+<jsp:useBean id="user" class="com.parq.web.model.WebUser" scope="session" />
 
 <div class="topbar">
   <div class="fill">

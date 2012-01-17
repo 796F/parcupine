@@ -7,9 +7,9 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 
-import com.parq.web.MapLocation;
 import com.parq.web.ReportDateRangeFilter;
-import com.parq.web.WebUser;
+import com.parq.web.model.MapLocation;
+import com.parq.web.model.WebUser;
 
 public class TestAccount extends TestCase {
 
