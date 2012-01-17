@@ -27,6 +27,7 @@ public class ThrowDialog {
 	public final static int NO_SPOTS= 15;
 	public final static int NO_CREDIT_CARD=16;
 	public final static int CHECK_SPOT = 17;
+	public static final int NO_ACC_LOCATION = 18;
 	public static void show(final Context c, int dialog){
 		AlertDialog.Builder alert = new AlertDialog.Builder(c);
 		AlertDialog a;
@@ -186,7 +187,7 @@ public class ThrowDialog {
 				}
 			});
 			alert.setNegativeButton("Cancel", null);
-			//alert.show();
+			alert.show();
 			break;
 		case NOT_PARKED:
 			alert.setMessage("You are not currently parked");
@@ -208,7 +209,11 @@ public class ThrowDialog {
 			alert.setNegativeButton("Ok", null);
 			alert.show();
 			break;
-		
+		case NO_ACC_LOCATION:
+			alert.setMessage("Could not find this spot.  Please check your input.");
+			alert.setNegativeButton("Ok", null);
+			alert.show();
+			break;
 		}
 	}
 

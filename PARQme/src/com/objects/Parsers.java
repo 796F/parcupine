@@ -485,12 +485,15 @@ public class Parsers {
         while (t != null && t != JsonToken.END_OBJECT) {
             if (t == JsonToken.VALUE_STRING) {
                 curr = jp.getCurrentName();
-                if (PARAM_LAT.equals(curr)) {
+                if (PARAM_SPOT_NAME.equals(curr)) {
+                    spotName = jp.getText();
+                }
+            }else if(t == JsonToken.VALUE_NUMBER_FLOAT){
+            	curr = jp.getCurrentName();
+            	if (PARAM_LAT.equals(curr)) {
                     lat = jp.getDoubleValue();
                 } else if (PARAM_LON.equals(curr)) {
                     lon = jp.getDoubleValue();
-                } else if (PARAM_SPOT_NAME.equals(curr)) {
-                    spotName = jp.getText();
                 }
             }
             t = jp.nextToken();

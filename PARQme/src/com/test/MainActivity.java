@@ -106,8 +106,10 @@ import com.objects.ThrowDialog;
  *    partners
  * */
 
-public class MainActivity extends ActivityGroup implements LocationListener {
-
+public class MainActivity extends ActivityGroup  								{
+												//implements LocationListener
+	double DEBUGlat;
+	double DEBUGlon;
 	/*Textual Display objects declared here*/
 	private TextView rate;
 	private EditText hours;
@@ -145,27 +147,53 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 	/*final variables*/
 	public static final String SAVED_INFO = "ParqMeInfo";
     private static final int WARN_TIME = 30; //in seconds
-    private static final float LOCATION_ACCURACY = 20f;
+    private static final float LOCATION_ACCURACY = 50f;
 
     private static final int DIALOG_PARKING = 1;
     private static final int DIALOG_REFILLING = 2;
     private static final int DIALOG_UNPARKING = 3;
     private static final int DIALOG_GETTING_RATE = 4;
-
+    private static final int ACCURACY_WAIT = 5;
 	private LocationManager locationManager;
 	private Location lastLocation;
 	private boolean goodLocation = false;
-
+	private LocationListener locationListener;
 	private State state;
-
+	private boolean waitingGPS = false;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.flipper);
+		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        
+        locationListener = new LocationListener(){
 
+        	@Override
+        	public void onLocationChanged(Location location) {
+        		if (location != null && (lastLocation == null || location.getAccuracy() < lastLocation.getAccuracy())) {
+        			lastLocation = location;
+        			if (location.getAccuracy() <= LOCATION_ACCURACY) {
+        				stopGettingLocation();
+        				goodLocation = true;
+        				if(waitingGPS){
+            				removeDialog(ACCURACY_WAIT);  
+            				onSubmitClick(findViewById(R.layout.flipper));
+            				waitingGPS = false;
+        				}
+        			}
+        		}
+        	}
+			@Override
+			public void onProviderDisabled(String provider) {}
+			@Override
+			public void onProviderEnabled(String provider) {}
+
+			@Override
+			public void onStatusChanged(String provider, int status,
+					Bundle extras) {}
+        };
 		//Create refill dialog which has special components
 		alert = makeRefillDialog();
-
 		//hook elements
 		rate = (TextView) findViewById(R.id.rate);
 		colon = (TextView) findViewById(R.id.colon);
@@ -263,6 +291,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
         }
 		switchToParkingLayout();
 		state = State.UNPARKED;
+		
 	}
 
 	public void onSubmitClick(View view) {
@@ -276,55 +305,59 @@ public class MainActivity extends ActivityGroup implements LocationListener {
             // TODO: Show a loading dialog and don't do the rest of this stuff yet
             lat = 0f;
             lon = 0f;
+            waitingGPS = true;
+            showDialog(ACCURACY_WAIT);
         } else {
             lat = lastLocation.getLatitude();
             lon = lastLocation.getLongitude();
-        }
-        showDialog(DIALOG_GETTING_RATE);
-        ServerCalls.getRateGps(contents, lat, lon, check, new RateCallback() {
-            @Override
-            public void onGetRateComplete(RateResponse rateResponse) {
-                removeDialog(DIALOG_GETTING_RATE);
-                if (rateResponse != null) {
-                    rateObj = rateResponse.getRateObject();
+            
+            showDialog(DIALOG_GETTING_RATE);
+            ServerCalls.getRateGps(contents, lat, lon, check, new RateCallback() {
+                @Override
+                public void onGetRateComplete(RateResponse rateResponse) {
+                    removeDialog(DIALOG_GETTING_RATE);
+                    if (rateResponse != null) {
+                        rateObj = rateResponse.getRateObject();
 
-                    // if we get the object successfully
-                    if (rateResponse.getResp().equals("OK")) {
-                        vf.showNext();
-                        state = State.PARKING;
-                        SavedInfo.setSpotNumber(MainActivity.this, contents);
-                        // prepare time picker for this spot
-                        // parkTimePicker.setRange(mySpot.getMinIncrement(),
-                        // mySpot.getMaxTime());
-                        // parkTimePicker.setMinInc(mySpot.getMinIncrement());
+                        // if we get the object successfully
+                        if (rateResponse.getResp().equals("OK")) {
+                            vf.showNext();
+                            state = State.PARKING;
+                            SavedInfo.setSpotNumber(MainActivity.this, contents);
+                            // prepare time picker for this spot
+                            // parkTimePicker.setRange(mySpot.getMinIncrement(),
+                            // mySpot.getMaxTime());
+                            // parkTimePicker.setMinInc(mySpot.getMinIncrement());
 
-                        // initialize all variables to match spot
-                        final int minimalIncrement = rateObj.getMinIncrement();
-                        rate.setText(formatCents(rateObj.getDefaultRate()) + " per "
-                                + minimalIncrement + " minutes");
-                        lotDesc.setText(rateObj.getDescription());
-                        spot.setText("Spot #" + contents);
-                        if (rateObj.getMinIncrement() != 0) {
-                            increment.setText(rateObj.getMinIncrement() + " minute increments");
+                            // initialize all variables to match spot
+                            final int minimalIncrement = rateObj.getMinIncrement();
+                            rate.setText(formatCents(rateObj.getDefaultRate()) + " per "
+                                    + minimalIncrement + " minutes");
+                            lotDesc.setText(rateObj.getDescription());
+                            spot.setText("Spot #" + contents);
+                            if (rateObj.getMinIncrement() != 0) {
+                                increment.setText(rateObj.getMinIncrement() + " minute increments");
+                            }
+                            // store some used info
+                            SharedPreferences.Editor editor = check.edit();
+                            editor.putString("code", contents);
+                            editor.putFloat("lat", (float) rateObj.getLat());
+                            editor.putFloat("lon", (float) rateObj.getLon());
+                            editor.commit();
+                            updateDisplay(minimalIncrement);
+                            minutes.requestFocus();
+                        } else {
+                        	//please check spot
+                            ThrowDialog.show(MainActivity.this, ThrowDialog.CHECK_SPOT);
                         }
-                        // store some used info
-                        SharedPreferences.Editor editor = check.edit();
-                        editor.putString("code", contents);
-                        editor.putFloat("lat", (float) rateObj.getLat());
-                        editor.putFloat("lon", (float) rateObj.getLon());
-                        editor.commit();
-                        updateDisplay(minimalIncrement);
-                        minutes.requestFocus();
                     } else {
-                    	//please check spot
-                        ThrowDialog.show(MainActivity.this, ThrowDialog.CHECK_SPOT);
+                    	//null response, no network.  
+                        ThrowDialog.show(MainActivity.this, ThrowDialog.NO_NET);
                     }
-                } else {
-                	//null response, no network.  
-                    ThrowDialog.show(MainActivity.this, ThrowDialog.NO_NET);
                 }
-            }
-        });
+            });
+        }
+        
     }
 
 	public void onScanClick(View view) {
@@ -347,10 +380,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
 //        }else if(false){
 //        	state = State.REFILLING;
 //        }
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (state == State.UNPARKED) {
-            startGettingLocation();
-        }
+        startGettingLocation();        
     }
 
     private int getParkMins() {
@@ -507,23 +537,7 @@ public class MainActivity extends ActivityGroup implements LocationListener {
         minutes.requestFocus();
 	}
 
-	private static boolean isLocationProviderAvailable(LocationManager locationManager, String provider) {
-		return locationManager.getProvider(provider) != null && locationManager.isProviderEnabled(provider);
-	}
-
-	private void startGettingLocation() {
-		if (isLocationProviderAvailable(locationManager, LocationManager.GPS_PROVIDER)) {
-			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-		} else if (isLocationProviderAvailable(locationManager, LocationManager.NETWORK_PROVIDER)) {
-			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
-		} else {
-			ThrowDialog.show(this, ThrowDialog.NO_LOCATION);
-		}
-	}
-
-	private void stopGettingLocation() {
-		locationManager.removeUpdates(this);
-	}
+	
 
 	private AlertDialog makeRefillDialog(){
 		AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -927,28 +941,25 @@ public class MainActivity extends ActivityGroup implements LocationListener {
         }
     }
 
-	@Override
-	public void onLocationChanged(Location location) {
-		if (location != null && (lastLocation == null || location.getAccuracy() < lastLocation.getAccuracy())) {
-			lastLocation = location;
-			if (location.getAccuracy() <= LOCATION_ACCURACY) {
-				stopGettingLocation();
-				goodLocation = true;
-			}
+	
+	private static boolean isLocationProviderAvailable(LocationManager locationManager, String provider) {
+		return locationManager.getProvider(provider) != null && locationManager.isProviderEnabled(provider);
+	}
+
+	private void startGettingLocation() {
+		if (isLocationProviderAvailable(locationManager, LocationManager.GPS_PROVIDER)) {
+			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+		} else if (isLocationProviderAvailable(locationManager, LocationManager.NETWORK_PROVIDER)) {
+			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+		} else {
+			ThrowDialog.show(this, ThrowDialog.NO_LOCATION);
 		}
 	}
 
-	@Override
-	public void onProviderDisabled(String provider) {
+	private void stopGettingLocation() {
+		locationManager.removeUpdates(locationListener);
 	}
 
-	@Override
-	public void onProviderEnabled(String provider) {
-	}
-
-	@Override
-	public void onStatusChanged(String provider, int status, Bundle extras) {
-	}
 	
 	@Override
     public void onPause() {
@@ -1008,6 +1019,14 @@ public class MainActivity extends ActivityGroup implements LocationListener {
                 dialog.setIndeterminate(true);
                 dialog.setCancelable(false);
                 return dialog;
+            }
+            case ACCURACY_WAIT: {
+                final ProgressDialog dialog = new ProgressDialog(this);
+                dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                dialog.setMessage("Waiting for GPS Signal...\nHit Back to cancel.");
+                dialog.setIndeterminate(true);
+                dialog.setCancelable(true);
+            	return dialog;
             }
             default: {
                 return super.onCreateDialog(id);

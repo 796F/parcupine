@@ -78,9 +78,10 @@ public class MapViewActivity extends MapActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.map);
-		 gc = new Geocoder(this);
+		gc = new Geocoder(this);
 //		parkLoc = new ArrayList<OverlayItem>();
 //		parkLoc.add(new OverlayItem(new GeoPoint((int)(38.984924*1e6),(int)(-76.935486*1e6)), "Ritchie Parking Lot", "Second Line"));
+		locMan = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		locListener = new LocationListener(){
 				private static final float DEFAULT_ACCURACY = 100;
 				@Override
@@ -121,7 +122,6 @@ public class MapViewActivity extends MapActivity {
 			
 		});
 		mapCtrl = mapView.getController();
-		locMan = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		
 		//get reference to your map's overlays
 		final List<Overlay> mapOverlays = mapView.getOverlays();
