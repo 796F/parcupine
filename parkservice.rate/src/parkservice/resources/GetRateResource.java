@@ -108,7 +108,8 @@ public class GetRateResource {
 			double y = input.getLon();
 
 			GeolocationDao gdao = new GeolocationDao();
-			List<Geolocation> spots = gdao.findCloseByParkingLocation(x-0.0004, x+0.0004, y-0.0004, y+0.0004);
+			double distance = 0.002;
+			List<Geolocation> spots = gdao.findCloseByParkingLocation(x-distance, x+distance, y-distance, y+distance);
 			String ss = "";
 			for(Geolocation g: spots){
 					ss+="loc string " + g.getLocationIdentifier();
