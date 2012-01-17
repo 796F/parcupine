@@ -251,6 +251,7 @@ public class ParqWebServiceImpl implements ParqWebService{
 					status.setSpaceId(ps.getSpaceId());
 					status.setSpaceLocation(pl.getLocationIdentifier());
 					status.setSpaceName(ps.getSpaceName());
+					status.setSpaceIdentifier(ps.getSpaceIdentifier());
 					pStatus.add(status);
 				}
 			}

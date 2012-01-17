@@ -6,6 +6,7 @@ public class ParkingSpaceStatus {
 	private String spaceName;
 	private String parkingLevel;
 	private boolean isOccupied;
+	private String spaceIdentifier;
 	
 	
 	/**
@@ -67,5 +68,17 @@ public class ParkingSpaceStatus {
 	 */
 	public void setOccupied(boolean isOccupied) {
 		this.isOccupied = isOccupied;
+	}
+	/**
+	 * @return the spaceIdentifier
+	 */
+	public String getSpaceIdentifier() {
+		return spaceIdentifier;
+	}
+	/**
+	 * @param spaceIdentifier the spaceIdentifier to set
+	 */
+	public void setSpaceIdentifier(String spaceIdentifier) {
+		this.spaceIdentifier = spaceIdentifier;
 	}
 }
