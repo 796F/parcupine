@@ -114,7 +114,7 @@
 			  			// don't show this row
 			  		} else {%>
 				  <tr>
-				    <td><%=spaceStatus.getSpaceId() %></td>
+				    <td><%=spaceStatus.getSpaceIdentifier() %></td>
 				    <td><%=spaceStatus.getSpaceLocation() %></td>
 				    <td><%=spaceStatus.getSpaceName() %></td>
 				    <td><%=spaceStatus.getParkingLevel() %></td>
