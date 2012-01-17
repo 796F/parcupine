@@ -33,8 +33,8 @@ public class AdminDao extends AbstractParqDaoParent {
 	private static final String sqlGetAdminById = sqlGetAdminStatement + " AND a.admin_id = ? ";
 	private static final String sqlGetAdminByEmail = sqlGetAdminStatement + " AND a.email = ? ";
 	
-	private static final String sqlCreateAdmin = "INSERT INTO admin (email, password, django_user_id) " +
-			" VALUES (?, ?, ?)";
+	private static final String sqlCreateAdmin = "INSERT INTO admin (email, password) " +
+			" VALUES (?, ?)";
 	private static final String sqlCreateAdminClientRelationship = "INSERT INTO adminclientrelationship " +
 			"(admin_id, client_id, adminrole_id) VALUES(" +
 			"(SELECT admin_id FROM admin WHERE email = ?), ?, " +
@@ -43,11 +43,6 @@ public class AdminDao extends AbstractParqDaoParent {
 		+ " WHERE admin_id = ?";
 	private static final String sqlDeleteAdmin = "UPDATE admin SET is_deleted = TRUE, email = ? WHERE admin_id = ?";
 	
-	
-	private static final String sqlDjangoDeleteAdminAuthUser = 
-		"UPDATE auth_user SET is_active = false, username = ?, email = ? " +
-		" WHERE id = (SELECT django_user_id FROM admin WHERE admin_id = ?)";
-
 	private static final String emailCache = "getAdminByEmail:";
 	private static final String idCache = "getAdminById:";
 	
@@ -118,7 +113,10 @@ public class AdminDao extends AbstractParqDaoParent {
 		}
 
 		// put result into cache
-		myCache.put(new Element(cacheKey, admin));
+		if (admin != null) {
+			// only put none null value into cache
+			myCache.put(new Element(cacheKey, admin));
+		}
 		
 		return admin;
 	}
@@ -154,7 +152,10 @@ public class AdminDao extends AbstractParqDaoParent {
 		}
 
 		// put result into cache
-		myCache.put(new Element(cacheKey, admin));
+		if (admin != null) {
+			// only put none null value into cache
+			myCache.put(new Element(cacheKey, admin));
+		}
 		
 		return admin;
 	}
@@ -183,15 +184,11 @@ public class AdminDao extends AbstractParqDaoParent {
 			con = getConnection();
 			con.setAutoCommit(false);
 			// create the auth_user table entry first before creating the admin table entry
-			int djangoId = createDjangoadmin(admin, con);
-			// insert into the admin table 
-			if (djangoId > 0) {
-				pstmt = con.prepareStatement(sqlCreateAdmin);
-				pstmt.setString(1, admin.getEmail());
-				pstmt.setString(2, admin.getPassword());
-				pstmt.setInt(3, djangoId);
-				newAdminCreated = pstmt.executeUpdate() == 1;
-			}
+			pstmt = con.prepareStatement(sqlCreateAdmin);
+			pstmt.setString(1, admin.getEmail());
+			pstmt.setString(2, admin.getPassword());
+			newAdminCreated = pstmt.executeUpdate() == 1;
+
 			// create the admin client relationship
 			if (newAdminCreated) {
 				pstmt = con.prepareStatement(sqlCreateAdminClientRelationship);
@@ -246,10 +243,6 @@ public class AdminDao extends AbstractParqDaoParent {
 			pstmt.setString(2, admin.getPassword());
 			pstmt.setLong(3, admin.getAdminId());
 			updateSuccessful = pstmt.executeUpdate() > 0;
-			
-			if (updateSuccessful) {
-				updateSuccessful &= updateDjangoUser(admin, con);
-			}
 
 		} catch (SQLException sqle) {
 			System.out.println("SQL statement is invalid: " + pstmt);
@@ -288,9 +281,6 @@ public class AdminDao extends AbstractParqDaoParent {
 				pstmt.setLong(2, adminId);
 				deleteSuccessful = pstmt.executeUpdate() > 0;
 				
-				if (deleteSuccessful) {
-					deleteSuccessful &= deleteDjangoUser(adminId, deletedEmail, con);
-				}
 			} catch (SQLException sqle) {
 				System.out.println("SQL statement is invalid: " + pstmt);
 				sqle.printStackTrace();
@@ -299,49 +289,6 @@ public class AdminDao extends AbstractParqDaoParent {
 				closeConnection(con);
 			}
 		}
-		return deleteSuccessful;
-	}
-	
-	private int createDjangoadmin(Admin admin, Connection con) throws SQLException {
-		int DjangoAuthUserId = -1;
-		PreparedStatement pstmt = null;
-		// create the new auth_user
-		pstmt = con.prepareStatement(UserDao.sqlDjangoCreateAuthUser);
-		pstmt.setString(1, admin.getEmail());
-		pstmt.setString(2, admin.getEmail());
-		pstmt.setString(3, admin.getPassword());
-		boolean newUserCreated = pstmt.executeUpdate() == 1;
-		// get the new auth_user's id
-		if (newUserCreated) {
-			pstmt = con.prepareStatement(UserDao.sqlGetNewDjangoAuthUserId);
-			pstmt.setString(1, admin.getEmail());
-			ResultSet rs = pstmt.executeQuery();
-			if (rs != null && rs.isBeforeFirst()) {
-				rs.next();
-				DjangoAuthUserId = rs.getInt("id");
-			}
-			else {
-				throw new RuntimeException("Invalid id from auth_user table");
-			}
-		}
-		return DjangoAuthUserId;
-	}
-	
-	private boolean updateDjangoUser(Admin admin, Connection con) throws SQLException {
-		PreparedStatement pstmt = con.prepareStatement(UserDao.sqlDjangoUpdateAuthUser);
-		pstmt.setString(1, admin.getEmail());
-		pstmt.setString(2, admin.getEmail());
-		pstmt.setString(3, admin.getPassword());
-		boolean updateSuccessful = pstmt.executeUpdate() > 0;
-		return updateSuccessful;
-	}
-	
-	private boolean deleteDjangoUser(long id, String deletedEmail, Connection con) throws SQLException {
-		PreparedStatement pstmt = con.prepareStatement(sqlDjangoDeleteAdminAuthUser);
-		pstmt.setString(1, deletedEmail);
-		pstmt.setString(2, deletedEmail);
-		pstmt.setLong(3, id);
-		boolean deleteSuccessful = pstmt.executeUpdate() > 0;
 		return deleteSuccessful;
 	}
 	

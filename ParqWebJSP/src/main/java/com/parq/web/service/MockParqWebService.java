@@ -1,13 +1,16 @@
 package com.parq.web.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import com.parq.web.MapLocation;
 import com.parq.web.ParkingHistory;
 import com.parq.web.ParkingReport;
 import com.parq.web.ParkingSpaceStatus;
 import com.parq.web.PasswordChangeRequest;
 import com.parq.web.ReportDateRangeFilter;
+import com.parq.web.WebParkingLocation;
 import com.parq.web.WebPaymentAccount;
 import com.parq.web.WebUser;
 import com.parq.web.UserRegistration;
@@ -178,5 +181,10 @@ public class MockParqWebService implements ParqWebService{
 		registration.setEmailAlreadyExist(!registrationSuccessful);
 		
 		return registrationSuccessful;
+	}
+
+	@Override
+	public List<WebParkingLocation> findParkingLocations(MapLocation centerOfMap) {
+		return Collections.emptyList();
 	}
 }

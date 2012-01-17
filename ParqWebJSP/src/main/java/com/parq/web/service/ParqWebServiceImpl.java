@@ -10,11 +10,13 @@ import java.util.List;
 import com.parq.server.dao.AdminDao;
 import com.parq.server.dao.AdminReportDao;
 import com.parq.server.dao.ClientDao;
+import com.parq.server.dao.GeolocationDao;
 import com.parq.server.dao.ParkingStatusDao;
 import com.parq.server.dao.PaymentAccountDao;
 import com.parq.server.dao.UserDao;
 import com.parq.server.dao.exception.DuplicateEmailException;
 import com.parq.server.dao.model.object.Admin;
+import com.parq.server.dao.model.object.Geolocation;
 import com.parq.server.dao.model.object.ParkingInstance;
 import com.parq.server.dao.model.object.ParkingLocation;
 import com.parq.server.dao.model.object.ParkingLocationUsageReport;
@@ -23,12 +25,14 @@ import com.parq.server.dao.model.object.PaymentAccount;
 import com.parq.server.dao.model.object.User;
 import com.parq.server.dao.model.object.UserPaymentReport;
 import com.parq.server.dao.model.object.UserPaymentReport.UserPaymentEntry;
+import com.parq.web.MapLocation;
 import com.parq.web.ParkingHistory;
 import com.parq.web.ParkingReport;
 import com.parq.web.ParkingSpaceStatus;
 import com.parq.web.PasswordChangeRequest;
 import com.parq.web.ReportDateRangeFilter;
 import com.parq.web.UserRegistration;
+import com.parq.web.WebParkingLocation;
 import com.parq.web.WebPaymentAccount;
 import com.parq.web.WebUser;
 
@@ -345,6 +349,8 @@ public class ParqWebServiceImpl implements ParqWebService{
 		
         SimpleDateFormat dateFormatter =
                 new SimpleDateFormat("MMM dd yyyy");
+        SimpleDateFormat hourFormatter =
+                new SimpleDateFormat("hh:mm:ss a");
 		
 		List<ParkingLocation> parkingLocations = clientDao
 				.getParkingLocationsAndSpacesByClientId(clientId);
@@ -362,6 +368,8 @@ public class ParqWebServiceImpl implements ParqWebService{
 						pr.setParkingRefNum(ur.getParkingRefNumber());
 						pr.setPaymentDatetime(dateFormatter.format(ur.getParkingBeganTime()));
 						pr.setUserEmail(ur.getUserEmail());
+						pr.setParkingStartTime(hourFormatter.format(ur.getParkingBeganTime()));
+						pr.setParkingEndTime(hourFormatter.format(ur.getParkingEndTime()));
 						
 						reports.add(pr);
 					}
@@ -385,7 +393,7 @@ public class ParqWebServiceImpl implements ParqWebService{
 		if (!validatePassword(registration.getPassword1())) {
 			registration.setInvalidPassword(true);
 			return false;
-		} else if ( !registration.getPassword1().equals(registration.getPassword1())) {
+		} else if ( !registration.getPassword1().equals(registration.getPassword2())) {
 			registration.setPasswordDoesNotMatch(true);
 			return false;
 		}
@@ -408,8 +416,42 @@ public class ParqWebServiceImpl implements ParqWebService{
 			registration.setPasswordDoesNotMatch(false);
 			registration.setInvalidPassword(false);
 			registration.setEmailAlreadyExist(false);
+
 		}
-		
+
 		return userCreationSuccessful;
+	}
+
+	@Override
+	public List<WebParkingLocation> findParkingLocations(MapLocation centerOfMap) {
+		
+		List<WebParkingLocation> parkingLocations = new ArrayList<WebParkingLocation>();
+		
+		GeolocationDao geoDao = new GeolocationDao();
+		double precision = 0.05; // this is 5.5km search radius
+		double centerPointLat = centerOfMap.getLatitude();
+		double centerPointLong = centerOfMap.getLongitude();
+		
+		// round the lat and long to 3 decimal place, to improve the dao layer cache
+		// Efficiency
+		centerPointLat = ((int) (centerPointLat * 100)) / 100.00;
+		centerPointLong = ((int) (centerPointLong * 100)) / 100.00;
+		
+		
+		List<Geolocation> geoLocations = geoDao.findCloseByParkingLocation(
+				centerPointLat - precision, centerPointLat + precision, 
+				centerPointLong - precision, centerPointLong + precision);
+		
+		if (geoLocations != null) {
+			for (Geolocation geoLoc: geoLocations) {
+				WebParkingLocation parkLoc = new WebParkingLocation();
+				parkLoc.setLatitude(geoLoc.getLatitude());
+				parkLoc.setLongitude(geoLoc.getLongitude());
+				parkLoc.setLocationName(geoLoc.getLocationIdentifier());
+				
+				parkingLocations.add(parkLoc);
+			}
+		}
+		return parkingLocations;
 	}
 }

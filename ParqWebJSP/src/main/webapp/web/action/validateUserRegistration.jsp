@@ -2,7 +2,7 @@
 <%@ page import="com.parq.web.service.ParqWebService"%>
 <%@ page import="com.parq.web.service.ParqWebServiceFactory"%>
 
-<jsp:useBean id="userRegistration" class="com.parq.web.UserRegistration" scope="session" />
+<jsp:useBean id="userRegistration" class="com.parq.web.UserRegistration" scope="request" />
 <jsp:setProperty name="userRegistration" property="*" />
 
 <%
@@ -22,7 +22,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <jsp:include page="/web/templates/base_header.jsp" />
-</head>
 </head>
 <body>
 	<jsp:include page="/web/templates/base_body_start.jsp" />

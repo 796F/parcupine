@@ -2,7 +2,9 @@ package com.parq.web.service;
 
 import java.util.List;
 
+import com.parq.web.MapLocation;
 import com.parq.web.ParkingHistory;
+import com.parq.web.WebParkingLocation;
 import com.parq.web.ParkingReport;
 import com.parq.web.ParkingSpaceStatus;
 import com.parq.web.PasswordChangeRequest;
@@ -26,4 +28,6 @@ public interface ParqWebService {
 	List<ParkingReport> getParkingReportByClientId(long clientId, ReportDateRangeFilter dateFilter);
 	
 	boolean registerNewUser(UserRegistration registration);
+	
+	List<WebParkingLocation> findParkingLocations(MapLocation centerOfMap);
 }

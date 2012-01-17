@@ -34,16 +34,8 @@ public class UserDao extends AbstractParqDaoParent {
 	private static final String sqlDeleteUserById = "UPDATE user SET is_deleted = TRUE, email = ? WHERE user_id = ?";
 	private static final String sqlUpdateUser = "UPDATE user SET password = ?, email = ?, phone_number = ? "
 			+ " WHERE user_id = ?";
-	private static final String sqlCreateUser = "INSERT INTO user (password, email, phone_number, django_user_id) "
-			+ " VALUES (?, ?, ?, ?)";
-	
-	static final String sqlDjangoCreateAuthUser = "INSERT INTO auth_user (username, email, password) " +
-			" VALUES (?, ?, ?)";
-	static final String sqlDjangoUpdateAuthUser = "UPDATE auth_user SET username =?, email = ?, password = ?";
-	static final String sqlDjangoDeleteAuthUser = "UPDATE auth_user SET is_active = false, username = ?, email = ? " +
-			" WHERE id = (SELECT django_user_id FROM user WHERE user_id = ?)";
-	
-	static final String sqlGetNewDjangoAuthUserId = "SELECT MAX(id) AS id FROM auth_user WHERE email = ? ";
+	private static final String sqlCreateUser = "INSERT INTO user (password, email, phone_number) "
+			+ " VALUES (?, ?, ?)";
 	
 	private static final String emailCache = "getUserByEmail:";
 	private static final String idCache = "getUserById:";
@@ -118,7 +110,10 @@ public class UserDao extends AbstractParqDaoParent {
 		}
 
 		// put result into cache
-		myCache.put(new Element(cacheKey, user));
+		if (user != null) {
+			// only put none null value into cache
+			myCache.put(new Element(cacheKey, user));
+		}
 		
 		return user;
 	}
@@ -166,7 +161,10 @@ public class UserDao extends AbstractParqDaoParent {
 		}
 
 		// put result into cache
-		myCache.put(new Element(cacheKey, user));
+		if (user != null) {
+			// only put none null value into cache
+			myCache.put(new Element(cacheKey, user));
+		}
 		
 		return user;
 	}
@@ -202,10 +200,6 @@ public class UserDao extends AbstractParqDaoParent {
 				pstmt.setString(1, deletedEmail);
 				pstmt.setLong(2, id);
 				deleteSuccessful = pstmt.executeUpdate() > 0;
-				
-				if (deleteSuccessful) {
-					deleteSuccessful &= deleteDjangoUser(id, deletedEmail, con);
-				}
 	
 			} catch (SQLException sqle) {
 				System.out.println("SQL statement is invalid: " + pstmt);
@@ -257,10 +251,6 @@ public class UserDao extends AbstractParqDaoParent {
 			pstmt.setString(3, user.getPhoneNumber());
 			pstmt.setLong(4, user.getUserID());
 			updateSuccessful = pstmt.executeUpdate() > 0;
-			
-			if (updateSuccessful) {
-				updateSuccessful &= updateDjangoUser(user, con);
-			}
 
 		} catch (SQLException sqle) {
 			System.out.println("SQL statement is invalid: " + pstmt);
@@ -303,17 +293,11 @@ public class UserDao extends AbstractParqDaoParent {
 		boolean newUserCreated = false;
 		try {
 			con = getConnection();
-			// create the auth_user table entry first before creating the user table entry
-			int djangoId = createDjangoUser(user, con);
-			if (djangoId > 0) {
-				pstmt = con.prepareStatement(sqlCreateUser);
-				pstmt.setString(1, user.getPassword());
-				pstmt.setString(2, user.getEmail());
-				pstmt.setString(3, user.getPhoneNumber());
-				pstmt.setInt(4, djangoId);
-				newUserCreated = pstmt.executeUpdate() == 1;
-			}
-
+			pstmt = con.prepareStatement(sqlCreateUser);
+			pstmt.setString(1, user.getPassword());
+			pstmt.setString(2, user.getEmail());
+			pstmt.setString(3, user.getPhoneNumber());
+			newUserCreated = pstmt.executeUpdate() == 1;
 		} catch (SQLException sqle) {
 			System.out.println("SQL statement is invalid: " + pstmt);
 			sqle.printStackTrace();
@@ -350,55 +334,4 @@ public class UserDao extends AbstractParqDaoParent {
 		return true;
 	}
 	
-	/**
-	 * Secondary query to be with the createUser method to keep the Django auth_user table in sync
-	 */
-	private int createDjangoUser(User user, Connection con) throws SQLException {
-		int DjangoAuthUserId = -1;
-		PreparedStatement pstmt = null;
-		// create the new auth_user
-		pstmt = con.prepareStatement(sqlDjangoCreateAuthUser);
-		pstmt.setString(1, user.getEmail());
-		pstmt.setString(2, user.getEmail());
-		pstmt.setString(3, user.getPassword());
-		boolean newUserCreated = pstmt.executeUpdate() == 1;
-		// get the new auth_user's id
-		if (newUserCreated) {
-			pstmt = con.prepareStatement(sqlGetNewDjangoAuthUserId);
-			pstmt.setString(1, user.getEmail());
-			ResultSet rs = pstmt.executeQuery();
-			if (rs != null && rs.isBeforeFirst()) {
-				rs.next();
-				DjangoAuthUserId = rs.getInt("id");
-			}
-			else {
-				throw new RuntimeException("Invalid id from auth_user table");
-			}
-		}
-		return DjangoAuthUserId;
-	}
-
-	/**
-	 * Secondary query to be with the updateUser method to keep the Django auth_user table insync
-	 */
-	private boolean updateDjangoUser(User user, Connection con) throws SQLException {
-		PreparedStatement pstmt = con.prepareStatement(sqlDjangoUpdateAuthUser);
-		pstmt.setString(1, user.getEmail());
-		pstmt.setString(2, user.getEmail());
-		pstmt.setString(3, user.getPassword());
-		boolean updateSuccessful = pstmt.executeUpdate() > 0;
-		return updateSuccessful;
-	}
-	
-	/**
-	 * Secondary query to be with the deleteUser method to keep the Django auth_user table insync
-	 */
-	private boolean deleteDjangoUser(long id, String deletedEmail, Connection con) throws SQLException {
-		PreparedStatement pstmt = con.prepareStatement(sqlDjangoDeleteAuthUser);
-		pstmt.setString(1, deletedEmail);
-		pstmt.setString(2, deletedEmail);
-		pstmt.setLong(3, id);
-		boolean deleteSuccessful = pstmt.executeUpdate() > 0;
-		return deleteSuccessful;
-	}
 }

@@ -10,18 +10,9 @@
 <script type="text/javascript">
 	
 	<jsp:include page="/web/templates/main_map.jsp"/>
-	</script>
-<script type="text/javascript"
-	src="<%=request.getContextPath()%>/web/js/jquery.autocomplete-min.js"></script>
+</script>
 <link href="<%=request.getContextPath()%>/web/css/autocomplete.css"
 	type="text/css/" rel="stylesheet" />
-<script type="text/javascript">
-	$(document).ready(function() { 
-	   $('#search-location').autocomplete({
-	      'serviceUrl':'/actions/autocomplete_location/'
-	   });
-	});
-	</script>
 </head>
 <body>
 	<jsp:include page="/web/templates/base_body_start.jsp" />
@@ -30,12 +21,12 @@
 	<div id="parqform-container">
 		<div class="container">
 			<span></span>
-			<form id="parqform" action="/user/view/location" method="get">
+			<form id="parqform" action="<%=request.getContextPath()%>/web/action/findMapLocation.jsp" method="post">
 				<div class="pull-left span16">
 					<div class="pull-left span13">
-						<input type="text" id="search-location" name="location"	placeholder="Find a spot near..." disabled="disabled"/>
+						<input type="text" id="search-location" name="locationName"	placeholder="Find a spot near..."/>
 					</div>
-					<input type="submit" id="search-loction-button"	class="btn large pull-right span3" value="PARQ me!" disabled="disabled" />
+					<input type="submit" id="search-loction-button"	class="btn large pull-right span3" value="PARQ me!"/>
 				</div>
 				<p class="clear"></p>
 			</form>

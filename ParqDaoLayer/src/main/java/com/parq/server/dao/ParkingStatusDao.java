@@ -149,10 +149,44 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 			}
 		}
 		
+		results = fillInSpacesThatHaveNoStatus(spaceIds, results);
+		
 		return results;
 	}
 	
-	
+	// if a space is brandnew and have no parking status, then the space does not have
+	// and parkingInstance object. But still we need to create a status for the object
+	private List<ParkingInstance> fillInSpacesThatHaveNoStatus(long[] spaceIds,
+			List<ParkingInstance> results) {
+		
+		if (spaceIds.length == results.size()) {
+			return results;
+		}
+		List<ParkingInstance> statusToAdd = new ArrayList<ParkingInstance>(); 
+		for (long spaceId : spaceIds) {
+			boolean spaceFound = false;
+			for (ParkingInstance pi : results) {
+				if (pi.getSpaceId() == spaceId) {
+					spaceFound = true;
+				}
+			}
+			if (!spaceFound) {
+				ParkingInstance newEmptyInstance = new ParkingInstance();
+				newEmptyInstance.setSpaceId(spaceId);
+				newEmptyInstance.setPaidParking(false);
+				newEmptyInstance.setParkingBeganTime(new Date(0));
+				newEmptyInstance.setParkingEndTime(new Date(1));
+				newEmptyInstance.setParkingInstId(-1);
+				newEmptyInstance.setParkingRefNumber("");
+				newEmptyInstance.setPaymentInfo(new Payment());
+				newEmptyInstance.setUserId(-1);
+			}
+		}
+		results.addAll(statusToAdd);
+		
+		return results;
+	}
+
 	private String createCacheKey(String cacheKey, long id) {
 		return cacheKey + id;
 	}

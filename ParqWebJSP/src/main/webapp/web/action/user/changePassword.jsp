@@ -18,7 +18,7 @@
 
 	<div class="well span8 container modal-body">
 		<FORM METHOD=POST
-			ACTION="<%=request.getContextPath()%>/web/action/validatePasswordChange.jsp">
+			ACTION="<%=request.getContextPath()%>/web/action/user/validatePasswordChange.jsp">
 			<h2>Password</h2>
 			<table>
 				<tbody xmlns="http://www.w3.org/1999/xhtml">

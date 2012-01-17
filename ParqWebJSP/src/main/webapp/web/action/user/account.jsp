@@ -48,7 +48,7 @@
     <div class="pill-content">
       <div class="<%=accOvrActive%>" id="account-overview">
 	<h2><%=user.getUsername()%></h2>
-	<a class="changePassword" href="<%=request.getContextPath()%>/web/action/changePassword.jsp">change password</a>
+	<a class="changePassword" href="<%=request.getContextPath()%>/web/action/user/changePassword.jsp">change password</a>
 	<hr />
 	<h3>Payment Methods
 	  <%-- Functionality remove for now due to lack of time to implement credit card validation --%> 
@@ -106,19 +106,19 @@
 				    	%>
 				    	<select name="dateRangeFilter">
 					      <option value="<%=ReportDateRangeFilter.DateRange.NONE.toString()%>" 
-					      		<%if (noneSelected) {%> selected <%}%>>
+					      		<%if (noneSelected) {%> selected="selected" <%}%>>
 					      		None
 					      </option>
 					      <option value="<%=ReportDateRangeFilter.DateRange.THIS_MONTH.toString()%>"
-					      		<%if (thisMonthSelected) {%> selected <%}%>>
+					      		<%if (thisMonthSelected) {%> selected="selected" <%}%>>
 					      		This Month
 					      </option>
 					      <option value="<%=ReportDateRangeFilter.DateRange.LAST_MONTH.toString()%>"
-					      		<%if (lastMonthSelect) {%> selected <%}%>>
+					      		<%if (lastMonthSelect) {%> selected="selected" <%}%>>
 					      		Last Month
 					      </option>
 					      <option value="<%=ReportDateRangeFilter.DateRange.LAST_THREE_MONTH.toString()%>"
-					      		<%if (lastThreeMonthSelect) {%> selected <%}%>>
+					      		<%if (lastThreeMonthSelect) {%> selected="selected" <%}%>>
 					      		Last Three Month
 					      </option>
 				    	</select>

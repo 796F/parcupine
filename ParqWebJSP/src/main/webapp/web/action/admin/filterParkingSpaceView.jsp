@@ -3,5 +3,5 @@
 <jsp:setProperty name="pSpaceFilter" property="*" />
 
 <html>
-	<jsp:forward page="/web/action/clientAdmin.jsp" />
+	<jsp:forward page="/web/action/admin/clientAdmin.jsp" />
 </html>

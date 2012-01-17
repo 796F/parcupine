@@ -15,7 +15,7 @@
 	if (changeSuccessful == false) {
 %>
 <html>
-<jsp:forward page="/web/action/changePassword.jsp" />
+<jsp:forward page="/web/action/user/changePassword.jsp" />
 </html>
 <%
 	} else {
@@ -25,7 +25,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <jsp:include page="/web/templates/base_header.jsp" />
-</head>
 </head>
 <body>
 	<jsp:include page="/web/templates/base_body_start.jsp" />

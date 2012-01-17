@@ -5,6 +5,8 @@ public class ParkingReport {
 	private String userEmail;
 	private String paymentDatetime;
 	private double amountPaid;
+	private String parkingStartTime;
+	private String parkingEndTime;
 	
 	
 	/**
@@ -54,6 +56,30 @@ public class ParkingReport {
 	 */
 	public void setAmountPaid(double amountPaid) {
 		this.amountPaid = amountPaid;
+	}
+	/**
+	 * @return the parkingStartTime
+	 */
+	public String getParkingStartTime() {
+		return parkingStartTime;
+	}
+	/**
+	 * @param parkingStartTime the parkingStartTime to set
+	 */
+	public void setParkingStartTime(String parkingStartTime) {
+		this.parkingStartTime = parkingStartTime;
+	}
+	/**
+	 * @return the parkingEndTime
+	 */
+	public String getParkingEndTime() {
+		return parkingEndTime;
+	}
+	/**
+	 * @param parkingEndTime the parkingEndTime to set
+	 */
+	public void setParkingEndTime(String parkingEndTime) {
+		this.parkingEndTime = parkingEndTime;
 	}
 	
 	

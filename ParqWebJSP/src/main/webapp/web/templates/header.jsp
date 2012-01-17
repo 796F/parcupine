@@ -25,9 +25,9 @@
 	      <li><%= userNameDisplay %></li>
 	      <li>
 			<% if (user.isAdminUser() == true){ %>
-				<a href="<%=request.getContextPath()%>/web/action/clientAdmin.jsp">Parking administration</a>
+				<a href="<%=request.getContextPath()%>/web/action/admin/clientAdmin.jsp">Parking administration</a>
 			<% } else {%>
-				<a href="<%=request.getContextPath()%>/web/action/account.jsp">Account settings</a>
+				<a href="<%=request.getContextPath()%>/web/action/user/account.jsp">Account settings</a>
 			<% } %>
 		      </li>      
 		      <li>

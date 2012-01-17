@@ -54,7 +54,7 @@
       <div class="<%=parkingSpace%>" id="parking-spaces">
 		<h2>My Parking Spaces</h2>
 	
-		<form action="<%=request.getContextPath()%>/web/action/filterParkingSpaceView.jsp" method="post">	 
+		<form action="<%=request.getContextPath()%>/web/action/admin/filterParkingSpaceView.jsp" method="post">	 
 		  <table>
 			  <tbody>
 			  	<tr>
@@ -118,7 +118,11 @@
 				    <td><%=spaceStatus.getSpaceLocation() %></td>
 				    <td><%=spaceStatus.getSpaceName() %></td>
 				    <td><%=spaceStatus.getParkingLevel() %></td>
-				    <td><%=spaceStatus.isOccupied() %></td>
+				    <% if(spaceStatus.isOccupied()) {%>
+				    	<td style="color: red; font-weight: bold">In Use</td>
+				    <% } else { %>
+				    	<td style="color: green; font-weight: bold">Available</td>
+				    <% } %>
 				  </tr>
 				  <% } %>
 			  <% } %>
@@ -170,9 +174,11 @@
 		
 		<table class="zebra-striped">
 		  <thead>
-		    <th>Park Ref #</th>
+		    <th>Parking Ref #</th>
 		    <th>Occupant</th>
 		    <th>Date</th>
+		    <th>From</th>
+		    <th>To</th>
 		    <%-- <th>Amount Paid</th> --%>
 		  </thead>
 		  <%
@@ -184,6 +190,8 @@
 				  <td><%= report.getUserEmail() %></td>
 				  <td><%= report.getPaymentDatetime() %></td>
 				  <%-- <td>$<%= report.getAmountPaid() %></td> --%>
+				  <td><%= report.getParkingStartTime() %></td>
+				  <td><%= report.getParkingEndTime() %></td>
 				</tr>	
 		  	 	<% } %>
 		  	<% } else {%>

@@ -5,7 +5,6 @@
 <jsp:include page="/web/templates/base_header.jsp" />
 </head>
 
-</head>
 <body>
 	<jsp:include page="/web/templates/base_body_start.jsp" />
 	<div class="container" id="faq">

@@ -4,31 +4,14 @@ CREATE DATABASE parq;
 
 USE parq;
 
--- This auth_user table is django framework specific
-CREATE TABLE auth_user
-(id INT NOT NULL AUTO_INCREMENT,  
- username TEXT(64),  
- first_name TEXT(64),
- last_name TEXT(64),
- email TEXT(64),
- password TEXT(64),
- is_staff BOOLEAN DEFAULT FALSE, 
- is_active BOOLEAN DEFAULT TRUE,
- is_superuser BOOLEAN DEFAULT FALSE,
- last_login DATETIME,
- date_joined DATETIME,
- PRIMARY KEY (id));
-
 CREATE TABLE user
 (user_id BIGINT NOT NULL AUTO_INCREMENT,  
  password TEXT(64) NOT NULL, 
  email TEXT(64) NOT NULL,
  phone_number TEXT(64),
- django_user_id INT, -- this is a django framework specific field
  is_deleted BOOLEAN DEFAULT FALSE,
  lastupdatedatetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
- PRIMARY KEY (user_id),
- FOREIGN KEY (django_user_id) references auth_user(id)); -- this is a django framework specific field
+ PRIMARY KEY (user_id));
  
 CREATE TABLE paymentaccount
 (account_id BIGINT NOT NULL AUTO_INCREMENT,  
@@ -55,11 +38,9 @@ CREATE TABLE admin
 (admin_id BIGINT NOT NULL AUTO_INCREMENT,
  password TEXT(64) NOT NULL,
  email TEXT(64) NOT NULL,
- django_user_id INT, -- this is a django framework specific field
  is_deleted BOOLEAN DEFAULT FALSE,
  lastupdatedatetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
- PRIMARY KEY (admin_id),
- FOREIGN KEY (django_user_id) references auth_user(id)); -- this is a django framework specific field
+ PRIMARY KEY (admin_id));
  
 CREATE TABLE client
 (client_id BIGINT NOT NULL AUTO_INCREMENT,

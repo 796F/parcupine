@@ -16,9 +16,9 @@
 	  <% if(user.isAuthenticated()) { %>
 		  <li>
 		  <% if (user.isAdminUser()){ %>
-		  		<a href="<%=request.getContextPath()%>/web/action/clientAdmin.jsp">Parking Administration</a>
+		  		<a href="<%=request.getContextPath()%>/web/action/admin/clientAdmin.jsp">Parking Administration</a>
 		  <% } else { %>
-		  	<a href="<%=request.getContextPath()%>/web/action/account.jsp">Account Settings</a>
+		  	<a href="<%=request.getContextPath()%>/web/action/user/account.jsp">Account Settings</a>
 		  <% } %>
 		  </li>	    
 	  <% } %>

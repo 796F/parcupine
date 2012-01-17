@@ -32,6 +32,15 @@ public class ParqMockObjectCreationDao extends DaoForTestingPurposes {
 		" VALUE (?, ?, (SELECT location_id FROM parkinglocation WHERE location_identifier = ?), " +  
 		" (SELECT space_id FROM parkingspace WHERE space_identifier = ?), ?)";
 
+	private static final String createNewAdmin = 
+		"INSERT INTO admin (email, password) VALUES (?, ?)";
+	private static final String asscoiateAdminWithClient = 
+		"INSERT INTO adminclientrelationship " +
+		"	(admin_id, client_id, adminrole_id) VALUES(" +
+		"	(SELECT admin_id FROM admin WHERE email = ?), " +
+		"	(SELECT client_id FROM client WHERE name = ?), " +
+		"	(SELECT adminrole_id FROM adminrole WHERE role_name = ?)) ";
+	
 	
 	public boolean createNewClient(String clientName, String clientAddress,
 			String clientDesc) {
@@ -70,5 +79,14 @@ public class ParqMockObjectCreationDao extends DaoForTestingPurposes {
 		return executeSqlStatement(insertSpaceParkingRate, new Object[] {
 				parkingRateInCents, priority, locationIdentifier,
 				spaceIdentifier, parkingMinuteIncrement });
+	}
+	
+	public boolean createAdmin(String adminEmail, String adminPassword, String adminRoleName, String clientName) {
+		boolean success = executeSqlStatement(createNewAdmin, 
+				new Object[] {adminEmail, adminPassword});
+		success = executeSqlStatement(asscoiateAdminWithClient, 
+				new Object[] {adminEmail, clientName, adminRoleName}) && success;
+		
+		return success;
 	}
 }

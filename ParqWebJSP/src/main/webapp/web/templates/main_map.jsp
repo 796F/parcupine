@@ -1,5 +1,19 @@
 <%@ page import="java.util.List"%>
-<%@ page import="com.parq.web.Location"%>
+<%@ page import="com.parq.web.MapLocation"%>
+<%@ page import="com.parq.web.WebParkingLocation"%>
+<%@ page import="com.parq.web.service.ParqWebService"%>
+<%@ page import="com.parq.web.service.ParqWebServiceFactory"%>
+
+
+<jsp:useBean id="mapLocation" class="com.parq.web.MapLocation" scope="session" >
+    <%-- if the bean is has not been initialize, set the parkingLocation property of the bean --%>
+    <%
+		ParqWebService service = ParqWebServiceFactory.getParqWebServiceInstance();
+		List<WebParkingLocation> parkingLocations = service.findParkingLocations(new MapLocation());
+    %>
+    <jsp:setProperty name="mapLocation" property="parkingLocations" value="<%=parkingLocations%>" />
+</jsp:useBean>
+
 
 //This code is from the Google Maps API Examples Page
 function initialize() {
@@ -8,31 +22,19 @@ function initialize() {
 	mapTypeId: google.maps.MapTypeId.ROADMAP
     };
     var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-    var avglat=0;
-    var avglong=0;
     var loc;
-    <% 
-    	if (session.getAttribute("locations") != null) {
-    		List<Location> locations = 
-    			(List<Location>) session.getAttribute("locations");
-    		for (com.parq.web.Location location : locations) {
-    %> 	
-		    avglat = avglat + <%= location.latitude %>;
-		    avglong = avglong + <%= location.longitude %>;
-		    loc = new google.maps.LatLng(<%= location.latitude %>,<%= location.longitude %>);
+    <%   	
+    	List<WebParkingLocation> pLocations =  mapLocation.getParkingLocations();
+    		for (WebParkingLocation pLocation : pLocations) {
+	%> 	
+		    loc = new google.maps.LatLng(<%= pLocation.getLatitude() %>, <%= pLocation.getLongitude() %>);
 		    new google.maps.Marker({
 			    position:loc,
 				map:map,
 				});
-		    avglat = avglat/<%= locations.size() %>;
-		    avglong = avglong/<%= locations.size() %>;
-    <% } } %>
-    // center on dc if no location is found
-    if (avglat == 0 && avglong == 0 ) {
-    	avglat = 38.892319;
-    	avglong = -77.031305;
-    }    
-    var center = new google.maps.LatLng(avglat,avglong);
+				
+    <%  }  %>
+    var center = new google.maps.LatLng(<%= mapLocation.getLatitude()%>, <%= mapLocation.getLongitude()%>);
     map.setCenter(center); 
 }
 
