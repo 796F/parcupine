@@ -65,7 +65,6 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 	
 	private static final String getParkingStatusBySpaceIdsCacheKey = "spaceId:";
 	private static final String getUserParkingStatusCacheKey = "userId:";
-	private static final String getSpaceIdByUserId = "spaceIdToUserId:";
 	
 	public ParkingStatusDao() {
 		super();
@@ -223,9 +222,6 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 
 		//put result into cache
 		if (userParkingStatus != null) {
-			// first create a spaceId to userId cache entry
-			myCache.put(new Element(createCacheKey(getSpaceIdByUserId,
-					userParkingStatus.getSpaceId()), userId));
 			// then create a userId to parking instance cache entry
 			myCache.put(new Element(createCacheKey(
 					getUserParkingStatusCacheKey, userId), userParkingStatus));
@@ -291,6 +287,7 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 			throw new IllegalStateException("Parking Space Id is invalid: " + parkingSpaceId);
 		}
 		revokeSpaceCacheById(parkingSpaceId);
+		revokeUserCacheById(parkingInst.getUserId());
 		
 		// generate a unique parking reference number
 		String parkingRefNum = parkingInst.getUserId() + ":" + parkingInst.getSpaceId() + ":" + (System.currentTimeMillis() / 1000);
@@ -334,7 +331,7 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 		
 		return parkingInstanceCreated;
 	}
-	
+
 	public boolean refillParkingForParkingSpace(long spaceId, Date newParkingEndTime, Payment payment) {
 		
 		if (spaceId < 1 || newParkingEndTime == null) {
@@ -350,6 +347,7 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 		}
 		ParkingInstance curParkingInst = curParkInstList.get(0);
 		revokeSpaceCacheById(spaceId);
+		revokeUserCacheById(curParkingInst.getUserId());
 		
 		PreparedStatement pstmt = null;
 		Connection con = null;
@@ -399,7 +397,9 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 							+ spaceId + ", parkingRefNum: "
 							+ parkingRefNum);
 		}
+		List<ParkingInstance> curParkInstList = getParkingStatusBySpaceIds(new long[]{spaceId});
 		revokeSpaceCacheById(spaceId);
+		revokeUserCacheById(curParkInstList.get(0).getUserId());
 		
 		PreparedStatement pstmt = null;
 		Connection con = null;
@@ -433,20 +433,14 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 		if (spaceId < 1) {
 			return;
 		}
-		
-		// revoke the spaceId to Parking Instance cache
-		ParkingInstance parkingInst = getCachedParkingInstanceBySpaceId(spaceId);
-		if (parkingInst != null) {
-			revokeCache(myCache, createCacheKey(getParkingStatusBySpaceIdsCacheKey, spaceId));
+		revokeCache(myCache, createCacheKey(getParkingStatusBySpaceIdsCacheKey, spaceId));
+	}
+	
+	private void revokeUserCacheById(long userId) {
+		if (userId < 1) {
+			return;
 		}
-
-		// revoke the userId to Parking Instance cache
-		long userId = getCachedSpaceIdToUserId(spaceId);
-		if (userId > 0) {
-			revokeCache(myCache, createCacheKey(getUserParkingStatusCacheKey, userId));
-			// remove the spaceId to userId relationship
-			revokeCache(myCache, createCacheKey(getSpaceIdByUserId, spaceId));
-		}
+		revokeCache(myCache, createCacheKey(getUserParkingStatusCacheKey, userId));
 	}
 
 	private ParkingInstance getCachedParkingInstanceBySpaceId(long spaceId) {
@@ -462,23 +456,12 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 	
 	private ParkingInstance getCacheParkingInstanceByUserId(long userId) {
 		String cacheKey = createCacheKey(getUserParkingStatusCacheKey, userId);
-
 		ParkingInstance userParkingStatus = null;
+		
 		Element cacheEntry = myCache.get(cacheKey); 
 		if (cacheEntry  != null) {
 			userParkingStatus = (ParkingInstance) cacheEntry.getValue();
 		}
 		return userParkingStatus;
-	}
-	
-	private long getCachedSpaceIdToUserId(long spaceId) {
-		String cacheKey = createCacheKey(getSpaceIdByUserId, spaceId);
-		
-		long userId = -1;
-		Element cacheEntry = myCache.get(cacheKey); 
-		if (cacheEntry != null && cacheEntry.getValue() != null) {
-			userId = (Long) cacheEntry.getValue();
-		}
-		return userId;
 	}
 }
