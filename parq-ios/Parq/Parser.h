@@ -8,9 +8,9 @@
 
 #import <Foundation/Foundation.h>
 #import "UserObject.h"
-
+#import "ResponseCode.h"
 @interface Parser : NSObject
 
 + (UserObject*) parseUserObjectString:(NSString*)jsonString;
-
++ (BOOL) parseResponseCode:(NSString*) jsonString;
 @end

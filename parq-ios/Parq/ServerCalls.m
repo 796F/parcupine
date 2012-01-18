@@ -15,17 +15,17 @@
 
 //[NSNumber numberWithInteger:919]; cannot put normal int into NSArray.
 
+
+
 + (UserObject*) authEmail:(NSString*)emailIn Password:(NSString*)passwordIn{
     
-    NSString* endpoint = @"http://75.101.132.219:8080/parkservice.auth/";
     NSArray* keys = [NSArray arrayWithObjects:@"email", @"password", nil];
     NSArray* value = [NSArray arrayWithObjects:emailIn, passwordIn, nil];
     NSDictionary* info = [NSDictionary dictionaryWithObjects:value forKeys:keys];
     NSError *error;
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
     
-    RKClient* client = [RKClient clientWithBaseURL:@"http://75.101.132.219:80"];
-    
+   
     
     RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.auth" delegate:self];
     [request setMethod:RKRequestMethodPOST];
@@ -37,14 +37,29 @@
     return [Parser parseUserObjectString:[result bodyAsString]];
 }
 
--(void) request:(RKRequest*) request didLoadResponse:(RKResponse*) response {
-    NSLog(@"HEELELELELELEO");
++ (BOOL) registerEmail:(NSString*) emailIn 
+              Password:(NSString*) passwordIn 
+            CreditCard:(NSString*) creditCardIn 
+             cscNumber:(NSString*)cscIn
+            HolderName:(NSString*)nameIn 
+        BillingAddress:(NSString*) addressIn
+              ExpMonth:(NSNumber*) expMonthIn
+               ExpYear:(NSNumber*) expYearIn
+               Zipcode:(NSString*) zipcodeIn{
+    NSArray* keys = [NSArray arrayWithObjects:@"email", @"password",@"creditCard",@"cscNumber",@"address",@"holderName",@"expMonth", @"expYear", @"zipcode", nil];
+    NSArray* values = [NSArray arrayWithObjects:emailIn, passwordIn, creditCardIn, cscIn, addressIn,nameIn,expMonthIn, expYearIn, zipcodeIn, nil];
+    NSDictionary* info = [NSDictionary dictionaryWithObjects:values forKeys:keys];
+    NSError *error;
+    NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
+    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.user/register" delegate:self];
+    [request setMethod:RKRequestMethodPOST];
+    [request setHTTPBody:jsonData];
+    [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
+    
+    RKResponse* result = [request sendSynchronously];
+    NSLog(@"\n\n%@\n\n", [result bodyAsString] );
+    return [Parser parseResponseCode:[result bodyAsString]];
 }
-
--(void) request:(RKRequest*) request didFailLoadWithError:(NSError *)error {
-    RKLogInfo(@"stringgggg %@", [error localizedDescription]   );
-}
-
 + (RateObject*) getRateLat:(NSNumber*)latIn Lon:(NSNumber*)lonIn spotId:(NSString*)spotIdIn{
     NSString* endpoint = @"http://75.101.132.219:8080/parkservice.rate/gps";
     NSNumber* uid = [NSNumber numberWithLong:13];

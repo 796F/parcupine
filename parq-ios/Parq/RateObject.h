@@ -19,12 +19,12 @@
     NSString* description;
 }
 -(id)initWithLat:(NSNumber*)latIn Lon:(NSNumber*)lonIn Spot:(NSNumber*)spotIn Min:(NSNumber*)minIn Max:(NSNumber*)maxIn DefRate:(NSNumber*)defRateIn minInc:(NSNumber*)minIncIn desc: (NSString*) descIn;
-@property (retain) NSNumber* lat;
-@property (retain) NSNumber* lon;
-@property (retain) NSNumber* spot;
-@property (retain) NSNumber* minTime;
-@property (retain) NSNumber* maxTime;
-@property (retain) NSNumber* defaultRate;
-@property (retain) NSNumber* minIncrement;
-@property (retain) NSString* description;
+@property (nonatomic, retain) NSNumber* lat;
+@property (nonatomic, retain) NSNumber* lon;
+@property (nonatomic, retain) NSNumber* spot;
+@property (nonatomic, retain) NSNumber* minTime;
+@property (nonatomic, retain) NSNumber* maxTime;
+@property (nonatomic, retain) NSNumber* defaultRate;
+@property (nonatomic, retain) NSNumber* minIncrement;
+@property (nonatomic, retain) NSString* description;
 @end

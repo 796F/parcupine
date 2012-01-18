@@ -29,5 +29,10 @@
     else return nil;
     
 }
++ (BOOL) parseResponseCode:(NSString*) jsonString{
+    NSDictionary* results = [jsonString objectFromJSONString];
+    NSString* responseCode = [results objectForKey:@"resp"];
+    return [responseCode isEqualToString:@"OK"];
+}
 
 @end
