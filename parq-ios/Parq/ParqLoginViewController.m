@@ -133,8 +133,8 @@
 {
     // Navigation logic may go here. Create and push another view controller.
     if (indexPath.section == 1) {
+      [tableView deselectRowAtIndexPath:indexPath animated:YES];
       if (indexPath.row == 0) {
-        [tableView deselectRowAtIndexPath:indexPath animated:YES];
         UserObject *user = [ServerCalls authEmail:emailControl.text Password:passwordControl.text];
         if (user != nil) {
           [self saveUserInfoWithEmail:emailControl.text andPassword:passwordControl.text andUserObj:user];
@@ -147,6 +147,12 @@
                                                 otherButtonTitles:nil];
           [alert show];
         }
+      } else if (indexPath.row == 1) {
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
+        UIViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"RegisterController"];
+        [vc setModalPresentationStyle:UIModalPresentationFullScreen];
+        
+        [self presentModalViewController:vc animated:YES];
       }
     }
 }
