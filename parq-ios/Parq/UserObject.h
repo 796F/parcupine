@@ -7,14 +7,15 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <RestKit/RestKit.h>
+
 @interface UserObject : NSObject{
     NSNumber* uid;
     NSNumber* parkState;
     NSString * creditCardStub;
 }
-- (id) initWithUid:(NSNumber*)uid parkState:(NSNumber*)parkState creditCardStub:(NSString*)stub;
-- (NSNumber*) uid;
-- (NSNumber*) parkState;
-- (NSString*) creditCardStub;
-- (void) setCCStub:(NSString*)input;
+@property (nonatomic, retain) NSNumber* uid;
+@property (nonatomic, retain) NSNumber* parkState;
+@property (nonatomic, retain) NSString * creditCardStub;
+- (UserObject*) initWithUid:(NSNumber*)uidIn parkState:(NSNumber*)parkStateIn creditCardStub:(NSString*)stub;
 @end

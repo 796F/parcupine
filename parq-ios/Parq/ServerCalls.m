@@ -9,6 +9,7 @@
 #import "ServerCalls.h"
 #import "Parser.h"
 #import "UserObject.h"
+#import <RestKit/RestKit.h>
 
 @implementation ServerCalls
 
@@ -22,8 +23,28 @@
     NSDictionary* info = [NSDictionary dictionaryWithObjects:value forKeys:keys];
     NSError *error;
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
-    return nil;
+    
+    RKClient* client = [RKClient clientWithBaseURL:@"http://75.101.132.219:80"];
+    
+    
+    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.auth" delegate:self];
+    [request setMethod:RKRequestMethodPOST];
+    [request setHTTPBody:jsonData];
+    [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
+    
+    RKResponse* result = [request sendSynchronously];
+    NSLog(@"\n\n%@\n\n", [result bodyAsString] );
+    return [Parser parseUserObjectString:[result bodyAsString]];
 }
+
+-(void) request:(RKRequest*) request didLoadResponse:(RKResponse*) response {
+    NSLog(@"HEELELELELELEO");
+}
+
+-(void) request:(RKRequest*) request didFailLoadWithError:(NSError *)error {
+    RKLogInfo(@"stringgggg %@", [error localizedDescription]   );
+}
+
 + (RateObject*) getRateLat:(NSNumber*)latIn Lon:(NSNumber*)lonIn spotId:(NSString*)spotIdIn{
     NSString* endpoint = @"http://75.101.132.219:8080/parkservice.rate/gps";
     NSNumber* uid = [NSNumber numberWithLong:13];
