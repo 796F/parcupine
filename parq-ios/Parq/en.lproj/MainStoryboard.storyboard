@@ -158,9 +158,46 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                         <color key="backgroundColor" cocoaTouchSystemColor="darkTextColor"/>
                     </view>
                     <navigationItem key="navigationItem" title="Park" id="Cw1-9g-XvW"/>
+                    <connections>
+                        <segue destination="ChN-dX-qQv" kind="push" identifier="ParkSegue" id="PbP-Ct-Qal"/>
+                    </connections>
                 </viewController>
             </objects>
             <point key="canvasLocation" x="1581" y="-987"/>
+        </scene>
+        <scene sceneID="Lvf-Sj-x6v">
+            <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Apu-iy-TIw" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <viewController id="ChN-dX-qQv" sceneMemberID="viewController">
+                    <view key="view" autoresizesSubviews="NO" contentMode="scaleToFill" id="GaL-lp-RbR">
+                        <rect key="frame" x="0.0" y="64" width="320" height="367"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" editable="NO" textAlignment="center" id="Bdw-cw-OA1" customClass="ParqTimeBox">
+                                <rect key="frame" x="53" y="43" width="100" height="100"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="72"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" editable="NO" textAlignment="center" id="dpG-4z-Qop" customClass="ParqTimeBox">
+                                <rect key="frame" x="181" y="43" width="100" height="100"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="72"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Time Remaining" id="ODt-IL-dcM">
+                        <barButtonItem key="backBarButtonItem" title="Unpark" id="W51-ZE-trm"/>
+                    </navigationItem>
+                </viewController>
+            </objects>
+            <point key="canvasLocation" x="2160" y="-987"/>
         </scene>
         <scene sceneID="ZoN-Wc-96f">
             <objects>
@@ -429,6 +466,9 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                 <relationship kind="outlet" name="scrollView" candidateClass="UIScrollView"/>
                 <relationship kind="outlet" name="spotNumField" candidateClass="UITextField"/>
             </relationships>
+        </class>
+        <class className="ParqTimeBox" superclassName="UITextView">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ParqTimeBox.h"/>
         </class>
     </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
