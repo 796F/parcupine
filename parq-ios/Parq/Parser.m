@@ -5,17 +5,17 @@
 //  Created by Michael Xia on 1/12/12.
 //  Copyright (c) 2012 Iudex Projects. All rights reserved.
 //
+/* obj-c uses its annoying typing system replacing primitives.  
+ null = NSNull
+ bool = NSNumber
+ int/long = NSNumber
+ String = NSString
+ Array = NSArray
+ Object = NSDictionary   */
 
 #import "Parser.h"
-#import "UserObject.h"
 #import "JSONKit.h"
-/* obj-c uses its annoying typing system replacing primitives.  
-    null = NSNull
-    bool = NSNumber
-    int/long = NSNumber
-    String = NSString
-    Array = NSArray
-    Object = NSDictionary   */
+
 
 @implementation Parser
 
@@ -51,5 +51,14 @@
         return nil;
     }
 }
+
++ (ParkResponse*) parseParkingResponse:(NSString*) jsonString{
+    NSDictionary* results = [jsonString objectFromJSONString];
+    NSString* responseCode = [results objectForKey:@"resp"];
+    return [[ParkResponse alloc] initWithResp:responseCode 
+                                      EndTime:[results objectForKey:@"endTime"] 
+                                   ParkRefNum:[results objectForKey:@"parkingReferenceNumber"]];
+}
+
 
 @end

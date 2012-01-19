@@ -10,11 +10,12 @@
 #import "UserObject.h"
 #import "ResponseCode.h"
 #import "RateObject.h"
-
+#import "ParkResponse.h"
 @interface Parser : NSObject
 
 + (UserObject*) parseUserObjectString:(NSString*)jsonString;
 + (BOOL) parseResponseCode:(NSString*) jsonString;
 + (RateObject *) parseRateObject:(NSString*) jsonString;
++ (ParkResponse*) parseParkingResponse:(NSString*) jsonString;
 
 @end
