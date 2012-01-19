@@ -43,6 +43,15 @@
     for(dunno in results)
         break;
     
+    //LOGGING CODE STARTS
+    NSLog(@"\nLOG>>> returned dictionary %@", info.description);
+    NSLog(@"\nEXTRACTED DATA");
+    NSLog(@"\nLOG>>> %@", dunno.data);
+    NSLog(@"\nLOG>>> %@", dunno.description);
+    NSLog(@"\nLOG>>> %@", dunno.typeName);
+    NSLog(@"\nLOG>>> %@", dunno.typeName );
+    //LOGGING CODE ENDS
+    
     label.text = dunno.data;
 
     //once we display the result string, dismiss the scanner.  
