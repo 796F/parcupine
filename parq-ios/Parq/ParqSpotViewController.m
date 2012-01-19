@@ -64,7 +64,7 @@
 - (BOOL)isLoggedIn
 {
   NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-  return [defaults stringForKey:@"username"] != nil;
+  return [defaults stringForKey:@"email"] != nil;
 }
 
 #pragma mark - View lifecycle
