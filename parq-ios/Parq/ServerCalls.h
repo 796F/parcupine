@@ -45,6 +45,6 @@
 +(BOOL) editUserEmail:(NSString*)emailIn Password:(NSString*)passwordIn PhoneNumber:(NSString*)phoneIn;
 
 +(BOOL) changeCreditCardWithName:(NSString*)holderName CreditCard:(NSString*)creditCard csc:(NSString*)cscNumber BillingAddress:(NSString*)address Zipcode:(NSString*)zipcode ExpYear:(NSNumber*)expYear ExpMonth:(NSNumber*)expMonth;
-//find spots
 
++(NSMutableArray* ) findSpotsWithLat:(NSNumber*)latIn Lon:(NSNumber*)lonIn;
 @end

@@ -15,6 +15,7 @@
 
 #import "Parser.h"
 #import "JSONKit.h"
+#import "SingleSpot.h"
 
 
 @implementation Parser
@@ -58,6 +59,18 @@
     return [[ParkResponse alloc] initWithResp:responseCode 
                                       EndTime:[results objectForKey:@"endTime"] 
                                    ParkRefNum:[results objectForKey:@"parkingReferenceNumber"]];
+}
+
++ (NSMutableArray*) parseLocationList:(NSString*)jsonString{    
+    NSDictionary * deserializedData = [jsonString objectFromJSONString];
+    NSMutableArray* arrayOfSpots = [[NSMutableArray alloc] initWithCapacity:[deserializedData count]];
+    for (NSDictionary * dataDict in deserializedData) {
+        NSString * spot = [dataDict objectForKey:@"spot"];
+        NSNumber* lat = [dataDict objectForKey:@"lat"];
+        NSNumber* lon = [dataDict objectForKey:@"lon"];
+        [arrayOfSpots addObject:[[SingleSpot alloc] initWithLat:lat Lon:lon Desc:spot]];
+    }
+    return arrayOfSpots;
 }
 
 

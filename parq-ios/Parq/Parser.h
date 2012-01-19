@@ -17,5 +17,5 @@
 + (BOOL) parseResponseCode:(NSString*) jsonString;
 + (RateObject *) parseRateObject:(NSString*) jsonString;
 + (ParkResponse*) parseParkingResponse:(NSString*) jsonString;
-
++ (NSMutableArray*) parseLocationList:(NSString*)jsonString;
 @end
