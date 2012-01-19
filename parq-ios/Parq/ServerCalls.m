@@ -24,9 +24,6 @@
     NSDictionary* info = [NSDictionary dictionaryWithObjects:value forKeys:keys];
     NSError *error;
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
-    
-   
-    
     RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.auth" delegate:self];
     [request setMethod:RKRequestMethodPOST];
     [request setHTTPBody:jsonData];
@@ -55,23 +52,54 @@
     [request setMethod:RKRequestMethodPOST];
     [request setHTTPBody:jsonData];
     [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
-    
     RKResponse* result = [request sendSynchronously];
     NSLog(@"\n\n%@\n\n", [result bodyAsString] );
     return [Parser parseResponseCode:[result bodyAsString]];
 }
 + (RateObject*) getRateLat:(NSNumber*)latIn Lon:(NSNumber*)lonIn spotId:(NSString*)spotIdIn{
-    NSString* endpoint = @"http://75.101.132.219:8080/parkservice.rate/gps";
-    NSNumber* uid = [NSNumber numberWithLong:13];
-    NSArray* keys = [NSArray arrayWithObjects:@"email", @"password", nil];
-    NSArray* value = [NSArray arrayWithObjects:@"miguel@parqme.com", @"a", nil];
-    NSDictionary* info = [NSDictionary dictionaryWithObjects:value forKeys:keys];
+    NSArray* authKeys = [NSArray arrayWithObjects:@"email" ,@"password", nil];
+    //build userInfo from memory, saved on login.  
+    NSArray* authValues = [NSArray arrayWithObjects:@"miguel@parqme.com", @"a", nil];
+    NSDictionary* userInfo = [NSDictionary dictionaryWithObjects:authValues forKeys:authKeys];
     
+    NSArray* keys = [NSArray arrayWithObjects:@"uid", @"lat", @"lon",@"spot",@"userInfo", nil];
+    //get uid from memory, saved on login.  
+    NSNumber* uid = [NSNumber numberWithLong:13];
+    //we're passed in the rest of the info    
+    NSArray* values = [NSArray arrayWithObjects:uid, latIn, lonIn,spotIdIn, userInfo, nil];
+    NSDictionary* info = [NSDictionary dictionaryWithObjects:values forKeys:keys];
+    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.rate/gps" delegate:self];
+    NSError *error;
+    NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
+    
+    [request setMethod:RKRequestMethodPOST];
+    [request setHTTPBody:jsonData];
+    [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
+    RKResponse* result = [request sendSynchronously];
+    NSLog(@"\n\n%@\n\n", [result bodyAsString] );
+    return [Parser parseRateObject:[result bodyAsString]];
     
 }
 + (RateObject*) getRateLotId:(NSString*)LotIdIn spotId:(NSString*)spotIdIn{
-    NSString* endpoint = @"http://75.101.132.219:8080/parkservice.rate/qrcode";
-    
+    NSArray* authKeys = [NSArray arrayWithObjects:@"email" ,@"password", nil];
+    //build userInfo from memory, saved on login.  
+    NSArray* authValues = [NSArray arrayWithObjects:@"miguel@parqme.com", @"a", nil];
+    NSDictionary* userInfo = [NSDictionary dictionaryWithObjects:authValues forKeys:authKeys];
+    NSArray* keys = [NSArray arrayWithObjects:@"uid", @"lot",@"spot",@"userInfo", nil];
+    //get uid from memory, saved on login.  
+    NSNumber* uid = [NSNumber numberWithLong:13];
+    //we're passed in the rest of the info    
+    NSArray* values = [NSArray arrayWithObjects:uid, LotIdIn ,spotIdIn, userInfo, nil];
+    NSDictionary* info = [NSDictionary dictionaryWithObjects:values forKeys:keys];
+    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.rate/qrcode" delegate:self];
+    NSError *error;
+    NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
+    [request setMethod:RKRequestMethodPOST];
+    [request setHTTPBody:jsonData];
+    [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
+    RKResponse* result = [request sendSynchronously];
+    NSLog(@"\n\n%@\n\n", [result bodyAsString] );
+    return [Parser parseRateObject:[result bodyAsString]];
 }
 
 @end

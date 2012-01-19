@@ -34,5 +34,22 @@
     NSString* responseCode = [results objectForKey:@"resp"];
     return [responseCode isEqualToString:@"OK"];
 }
++ (RateObject *) parseRateObject:(NSString*) jsonString{
+    NSDictionary* results = [jsonString objectFromJSONString];
+    NSString* responseCode = [results objectForKey:@"resp"];
+    if([responseCode isEqualToString:@"OK"]){
+        NSDictionary* rateObj = [results objectForKey:@"rateObject"];
+        return [[RateObject alloc] initWithLat:[rateObj objectForKey:@"lat"] 
+                                           Lon:[rateObj objectForKey:@"lon"] 
+                                          Spot:[rateObj objectForKey:@"spotId"] 
+                                           Min:[rateObj objectForKey:@"minTime"] 
+                                           Max:[rateObj objectForKey:@"maxTime"] 
+                                       DefRate:[rateObj objectForKey:@"defaultRate"] 
+                                        minInc:[rateObj objectForKey:@"minIncrement"] 
+                                          desc:[rateObj objectForKey:@"location"]];
+    }else{
+        return nil;
+    }
+}
 
 @end

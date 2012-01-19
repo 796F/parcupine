@@ -9,8 +9,12 @@
 #import <Foundation/Foundation.h>
 #import "UserObject.h"
 #import "ResponseCode.h"
+#import "RateObject.h"
+
 @interface Parser : NSObject
 
 + (UserObject*) parseUserObjectString:(NSString*)jsonString;
 + (BOOL) parseResponseCode:(NSString*) jsonString;
++ (RateObject *) parseRateObject:(NSString*) jsonString;
+
 @end
