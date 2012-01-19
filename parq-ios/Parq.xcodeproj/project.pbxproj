@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8703F50614C8C45B003DAE14 /* ParkResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 8703F50514C8C45B003DAE14 /* ParkResponse.m */; };
+		8703F50914C8C469003DAE14 /* SingleSpot.m in Sources */ = {isa = PBXBuildFile; fileRef = 8703F50814C8C469003DAE14 /* SingleSpot.m */; };
 		8716B0B914B3C094004105AD /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8716B0B814B3C094004105AD /* UIKit.framework */; };
 		8716B0BB14B3C094004105AD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8716B0BA14B3C094004105AD /* Foundation.framework */; };
 		8716B0BD14B3C094004105AD /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8716B0BC14B3C094004105AD /* CoreGraphics.framework */; };
@@ -79,6 +81,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8703F50414C8C45B003DAE14 /* ParkResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParkResponse.h; sourceTree = "<group>"; };
+		8703F50514C8C45B003DAE14 /* ParkResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ParkResponse.m; sourceTree = "<group>"; };
+		8703F50714C8C469003DAE14 /* SingleSpot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SingleSpot.h; sourceTree = "<group>"; };
+		8703F50814C8C469003DAE14 /* SingleSpot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SingleSpot.m; sourceTree = "<group>"; };
 		8716B0B414B3C094004105AD /* Parq.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Parq.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8716B0B814B3C094004105AD /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		8716B0BA14B3C094004105AD /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -262,10 +268,14 @@
 		FCF586DB14C1F55F00DF70D3 /* Objects */ = {
 			isa = PBXGroup;
 			children = (
-				FCF586DC14C1F57800DF70D3 /* UserObject.h */,
-				FCF586DD14C1F57800DF70D3 /* UserObject.m */,
+				8703F50414C8C45B003DAE14 /* ParkResponse.h */,
+				8703F50514C8C45B003DAE14 /* ParkResponse.m */,
 				FCF586DE14C1F57800DF70D3 /* RateObject.h */,
 				FCF586DF14C1F57800DF70D3 /* RateObject.m */,
+				8703F50714C8C469003DAE14 /* SingleSpot.h */,
+				8703F50814C8C469003DAE14 /* SingleSpot.m */,
+				FCF586DC14C1F57800DF70D3 /* UserObject.h */,
+				FCF586DD14C1F57800DF70D3 /* UserObject.m */,
 			);
 			name = Objects;
 			sourceTree = "<group>";
@@ -400,6 +410,8 @@
 				FCF586E914C1F5A000DF70D3 /* ServerCalls.m in Sources */,
 				87D2097B14C48E4D00E663D7 /* SFHFKeychainUtils.m in Sources */,
 				8732B78514C63BEB00405F0B /* ParqTimeBox.m in Sources */,
+				8703F50614C8C45B003DAE14 /* ParkResponse.m in Sources */,
+				8703F50914C8C469003DAE14 /* SingleSpot.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
