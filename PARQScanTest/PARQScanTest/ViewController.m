@@ -26,6 +26,15 @@
     [self presentModalViewController:reader animated:YES];
     
 }
+
+-(IBAction)secondButton{
+    ZBarReaderController * reader = [ZBarReaderController new];
+    reader.readerDelegate = self;
+    reader.sourceType =  UIImagePickerControllerSourceTypePhotoLibrary;
+    [reader.scanner setSymbology:ZBAR_QRCODE config:ZBAR_CFG_ENABLE to:0];
+    [self presentModalViewController:reader animated:YES];
+    
+}
 //this method is essentially onActivityResult()
 -(void) imagePickerController:(UIImagePickerController *)reader didFinishPickingMediaWithInfo:(NSDictionary *)info{
     

@@ -13,4 +13,5 @@
 }
 
 -(IBAction)button;
+-(IBAction)secondButton;
 @end
