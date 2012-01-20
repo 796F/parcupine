@@ -233,13 +233,6 @@
 		8716B0A914B3C093004105AD = {
 			isa = PBXGroup;
 			children = (
-				FC83A92414C9EEBC0096DCD1 /* CoreLocation.framework */,
-				FC83A92214C9E90F0096DCD1 /* libiconv.dylib */,
-				FC83A92014C9E9010096DCD1 /* CoreVideo.framework */,
-				FC83A91E14C9E8F70096DCD1 /* CoreMedia.framework */,
-				FC83A91C14C9E8EC0096DCD1 /* AVFoundation.framework */,
-				FCD5839914C8F8BA0097A842 /* MapKit.framework */,
-				87D2097814C48E4D00E663D7 /* SFHFKeychainUtils */,
 				FC09C3E014C4979A00DD0CBD /* Libraries */,
 				8716B0BE14B3C094004105AD /* Parq */,
 				8716B0B714B3C094004105AD /* Frameworks */,
@@ -258,10 +251,15 @@
 		8716B0B714B3C094004105AD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				FC83A91C14C9E8EC0096DCD1 /* AVFoundation.framework */,
 				FCF586F014C1F60800DF70D3 /* CFNetwork.framework */,
 				FC09C3F514C4981400DD0CBD /* CoreData.framework */,
 				8716B0BC14B3C094004105AD /* CoreGraphics.framework */,
+				FC83A92414C9EEBC0096DCD1 /* CoreLocation.framework */,
+				FC83A91E14C9E8F70096DCD1 /* CoreMedia.framework */,
+				FC83A92014C9E9010096DCD1 /* CoreVideo.framework */,
 				8716B0BA14B3C094004105AD /* Foundation.framework */,
+				FCD5839914C8F8BA0097A842 /* MapKit.framework */,
 				FCF586EE14C1F5FA00DF70D3 /* MobileCoreServices.framework */,
 				8716B0ED14B3F9F3004105AD /* QuartzCore.framework */,
 				87D2097C14C49E7100E663D7 /* Security.framework */,
@@ -274,7 +272,6 @@
 		8716B0BE14B3C094004105AD /* Parq */ = {
 			isa = PBXGroup;
 			children = (
-				FC172A5714C9C6C60094A313 /* ZBarSDK */,
 				8703F54D14C9FB46003DAE14 /* Model */,
 				FCF586E314C1F58900DF70D3 /* Network */,
 				FCF586DB14C1F55F00DF70D3 /* Objects */,
@@ -330,6 +327,9 @@
 			isa = PBXGroup;
 			children = (
 				FCD0035914C49E8700A310C1 /* RestKit.xcodeproj */,
+				87D2097814C48E4D00E663D7 /* SFHFKeychainUtils */,
+				FC172A5714C9C6C60094A313 /* ZBarSDK */,
+				FC83A92214C9E90F0096DCD1 /* libiconv.dylib */,
 				FCD0037114C49F4600A310C1 /* libxml2.dylib */,
 				FCF586EC14C1F5E000DF70D3 /* libz.dylib */,
 			);
@@ -343,7 +343,8 @@
 				FC172A6F14C9C6C60094A313 /* libzbar.a */,
 				FC172A7014C9C6C60094A313 /* Resources */,
 			);
-			path = ZBarSDK;
+			name = ZBarSDK;
+			path = Parq/ZBarSDK;
 			sourceTree = "<group>";
 		};
 		FC172A5814C9C6C60094A313 /* Headers */ = {
