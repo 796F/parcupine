@@ -12,6 +12,60 @@
 @synthesize scrollView = _scrollView;
 @synthesize spotNumField = _spotNumField;
 
+
+-(IBAction)parqButton{
+    //submit gps coordinates and spot to server.   
+    RateObject* rateObj = [ServerCalls getRateLat:self.userLat Lon:self.userLon spotId:_spotNumField.text];
+    //check response from server before allowing next view.  
+
+}
+-(IBAction)scanButton{
+    //launch scanner and grab results.  
+    //create new view for scanning
+    ZBarReaderViewController * reader = [ZBarReaderViewController new];
+    
+    //set the delegate to receive results
+    reader.readerDelegate = self;
+    
+    //configure reader for type of barcode
+    [reader.scanner setSymbology:ZBAR_QRCODE config:ZBAR_CFG_ENABLE to:0];
+    
+    //present the scanner
+    [self presentModalViewController:reader animated:YES];
+    //check resposne from serve before showing next view.  
+}
+
+//this method is essentially onActivityResult()
+-(void) imagePickerController:(UIImagePickerController *)reader didFinishPickingMediaWithInfo:(NSDictionary *)info{
+    id<NSFastEnumeration> results = [info objectForKey:ZBarReaderControllerResults];
+    ZBarSymbol* dunno;
+    //apparently, this scanner can return multiple results.  i know lol.  
+    for(dunno in results)
+        break; //this just grabs the first one, sigh weird stuff.  
+
+    NSArray* splitUrl = [dunno.data componentsSeparatedByString:@"/"];
+    NSString* lotId = [splitUrl objectAtIndex:3];
+    NSString* spotId = [splitUrl objectAtIndex:4];
+    RateObject* rateObj = [ServerCalls getRateLotId:lotId spotId:spotId];
+    //TODO: launch next screen using this rate object.      
+    
+    
+    //LOGGING CODE STARTS
+    NSLog(@"\nLOG>>> returned dictionary %@", info.description);
+    NSLog(@"\nEXTRACTED DATA");
+    NSLog(@"\nLOG>>> %@", dunno.data);
+    NSLog(@"\nLOG>>> %@", dunno.description);
+    NSLog(@"\nLOG>>> %@", dunno.typeName);
+    NSLog(@"\nLOG>>> %@", dunno.typeName );
+    //LOGGING CODE ENDS
+    
+    
+    //once we display the result string, dismiss the scanner.  
+    [reader dismissModalViewControllerAnimated:YES];
+    
+}
+
+
 // Call this method somewhere in your view controller setup code.
 - (void)registerForKeyboardNotifications
 {
