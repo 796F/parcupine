@@ -9,13 +9,14 @@
 #import <UIKit/UIKit.h>
 #import "ZBarSDK.h"
 #import "ServerCalls.h"
+#import <MapKit/MapKit.h>
                                                        //added protocol for zbar
-@interface ParqSpotViewController : UIViewController <ZBarReaderDelegate>
+@interface ParqSpotViewController : UIViewController <ZBarReaderDelegate, CLLocationManagerDelegate>
 
 //instance variables for gps.  
-@property (nonatomic, retain) NSNumber* userLat;
-@property (nonatomic, retain) NSNumber* userLon;
-
+@property double userLat;
+@property double userLon;
+@property (nonatomic, retain) CLLocationManager* locationManager;
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (weak, nonatomic) IBOutlet UITextField *spotNumField;
 

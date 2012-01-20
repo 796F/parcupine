@@ -21,6 +21,7 @@
 @implementation Parser
 
 + (UserObject*) parseUserObjectString:(NSString*)jsonString{
+    NSLog(@"RESPONSE >>> %@", jsonString);
     NSDictionary* results = [jsonString objectFromJSONString];
     NSString* ccStub = [results objectForKey:@"creditCardStub"];
     NSNumber* parkState = [results objectForKey:@"parkState"];
@@ -31,11 +32,13 @@
     
 }
 + (BOOL) parseResponseCode:(NSString*) jsonString{
+        NSLog(@"RESPONSE >>> %@", jsonString);
     NSDictionary* results = [jsonString objectFromJSONString];
     NSString* responseCode = [results objectForKey:@"resp"];
     return [responseCode isEqualToString:@"OK"];
 }
 + (RateObject *) parseRateObject:(NSString*) jsonString{
+        NSLog(@"RESPONSE >>> %@", jsonString);
     NSDictionary* results = [jsonString objectFromJSONString];
     NSString* responseCode = [results objectForKey:@"resp"];
     if([responseCode isEqualToString:@"OK"]){
@@ -54,6 +57,7 @@
 }
 
 + (ParkResponse*) parseParkingResponse:(NSString*) jsonString{
+        NSLog(@"RESPONSE >>> %@", jsonString);
     NSDictionary* results = [jsonString objectFromJSONString];
     NSString* responseCode = [results objectForKey:@"resp"];
     return [[ParkResponse alloc] initWithResp:responseCode 
@@ -61,7 +65,8 @@
                                    ParkRefNum:[results objectForKey:@"parkingReferenceNumber"]];
 }
 
-+ (NSMutableArray*) parseLocationList:(NSString*)jsonString{    
++ (NSMutableArray*) parseLocationList:(NSString*)jsonString{   
+        NSLog(@"RESPONSE >>> %@", jsonString);
     NSDictionary * deserializedData = [jsonString objectFromJSONString];
     NSMutableArray* arrayOfSpots = [[NSMutableArray alloc] initWithCapacity:[deserializedData count]];
     for (NSDictionary * dataDict in deserializedData) {

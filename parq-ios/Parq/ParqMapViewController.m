@@ -45,6 +45,8 @@
 
 }
 
+
+//if this isn't close enough, we can use better location update.  
 - (void)startSignificantChangeUpdates
 {
     // Create the location manager if this object does not
@@ -75,6 +77,22 @@
     // else skip the event and process the next one.
 }
 
+-(void)startStandardUpdates
+{
+    // Create the location manager if this object does not
+    // already have one.
+    if (nil == locationManager)
+        locationManager = [[CLLocationManager alloc] init];
+    
+    locationManager.delegate = self;
+    locationManager.desiredAccuracy = kCLLocationAccuracyKilometer;
+    
+    // Set a movement threshold for new events.
+    locationManager.distanceFilter = 200;
+    
+    [locationManager startUpdatingLocation];
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -87,7 +105,7 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
-    [self startSignificantChangeUpdates];
+    [self startStandardUpdates];
 }
 
 - (void)viewDidUnload

@@ -10,13 +10,14 @@
 
 @implementation ParqSpotViewController
 @synthesize scrollView = _scrollView;
+@synthesize locationManager;
 @synthesize spotNumField = _spotNumField;
 @synthesize userLat;
 @synthesize userLon;
 
 -(IBAction)parqButton{
     //submit gps coordinates and spot to server.   
-    RateObject* rateObj = [ServerCalls getRateLat:self.userLat Lon:self.userLon spotId:_spotNumField.text];
+    RateObject* rateObj = [ServerCalls getRateLat:[NSNumber numberWithDouble:self.userLat] Lon:[NSNumber numberWithDouble:self.userLon] spotId:_spotNumField.text];
     //check response from server before allowing next view.  
     
 }
@@ -66,6 +67,31 @@
     
 }
 
+- (void)startSignificantChangeUpdates
+{
+    // Create the location manager if this object does not
+    // already have one.
+    if (nil == locationManager)
+        locationManager = [[CLLocationManager alloc] init];
+    
+    locationManager.delegate = self;
+    [locationManager startMonitoringSignificantLocationChanges];
+}
+
+- (void)locationManager:(CLLocationManager *)manager
+    didUpdateToLocation:(CLLocation *)newLocation
+           fromLocation:(CLLocation *)oldLocation
+{
+    // If it's a relatively recent event, turn off updates to save power
+    NSDate* eventDate = newLocation.timestamp;
+    NSTimeInterval howRecent = [eventDate timeIntervalSinceNow];
+    if (abs(howRecent) < 15.0)
+    {
+        userLat = newLocation.coordinate.latitude;
+        userLon = newLocation.coordinate.longitude;
+        
+    }
+}
 
 // Call this method somewhere in your view controller setup code.
 - (void)registerForKeyboardNotifications
@@ -128,6 +154,7 @@
 {
     [super viewDidLoad];
     [self registerForKeyboardNotifications];
+    [self startSignificantChangeUpdates];   //start getting gps coords
 }
 
 - (void)viewDidUnload

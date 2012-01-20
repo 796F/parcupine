@@ -16,7 +16,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     //this single client is used by all calls.  it will ping server in background to maintain reachability.  
-    RKClient* client = [RKClient clientWithBaseURL:@"http://75.101.132.219:80/"];
+    [RKClient clientWithBaseURL:@"http://75.101.132.219:80/"];
     return YES;
 }
 							
