@@ -11,13 +11,14 @@
 @implementation ParqSpotViewController
 @synthesize scrollView = _scrollView;
 @synthesize spotNumField = _spotNumField;
-
+@synthesize userLat;
+@synthesize userLon;
 
 -(IBAction)parqButton{
     //submit gps coordinates and spot to server.   
     RateObject* rateObj = [ServerCalls getRateLat:self.userLat Lon:self.userLon spotId:_spotNumField.text];
     //check response from server before allowing next view.  
-
+    
 }
 -(IBAction)scanButton{
     //launch scanner and grab results.  

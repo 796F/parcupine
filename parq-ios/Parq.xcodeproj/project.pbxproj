@@ -40,6 +40,7 @@
 		FC83A91F14C9E8F70096DCD1 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC83A91E14C9E8F70096DCD1 /* CoreMedia.framework */; };
 		FC83A92114C9E9010096DCD1 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC83A92014C9E9010096DCD1 /* CoreVideo.framework */; };
 		FC83A92314C9E90F0096DCD1 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FC83A92214C9E90F0096DCD1 /* libiconv.dylib */; };
+		FC83A92514C9EEBC0096DCD1 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC83A92414C9EEBC0096DCD1 /* CoreLocation.framework */; };
 		FCD0036E14C49F0C00A310C1 /* libRestKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FCD0036414C49E8700A310C1 /* libRestKit.a */; };
 		FCD0037214C49F4600A310C1 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FCD0037114C49F4600A310C1 /* libxml2.dylib */; };
 		FCD5839A14C8F8BA0097A842 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCD5839914C8F8BA0097A842 /* MapKit.framework */; };
@@ -158,6 +159,7 @@
 		FC83A91E14C9E8F70096DCD1 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		FC83A92014C9E9010096DCD1 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		FC83A92214C9E90F0096DCD1 /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
+		FC83A92414C9EEBC0096DCD1 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		FCD0035914C49E8700A310C1 /* RestKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RestKit.xcodeproj; path = RestKit/RestKit.xcodeproj; sourceTree = "<group>"; };
 		FCD0037114C49F4600A310C1 /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
 		FCD5839914C8F8BA0097A842 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
@@ -180,6 +182,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FC83A92514C9EEBC0096DCD1 /* CoreLocation.framework in Frameworks */,
 				FC83A92314C9E90F0096DCD1 /* libiconv.dylib in Frameworks */,
 				FC83A92114C9E9010096DCD1 /* CoreVideo.framework in Frameworks */,
 				FC83A91F14C9E8F70096DCD1 /* CoreMedia.framework in Frameworks */,
@@ -206,6 +209,7 @@
 		8716B0A914B3C093004105AD = {
 			isa = PBXGroup;
 			children = (
+				FC83A92414C9EEBC0096DCD1 /* CoreLocation.framework */,
 				FC83A92214C9E90F0096DCD1 /* libiconv.dylib */,
 				FC83A92014C9E9010096DCD1 /* CoreVideo.framework */,
 				FC83A91E14C9E8F70096DCD1 /* CoreMedia.framework */,
