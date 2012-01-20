@@ -7,7 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <MapKit/MapKit.h>
 
-@interface ParqMapViewController : UIViewController
+@interface ParqMapViewController : UIViewController <MKMapViewDelegate>{
+    IBOutlet UITextField *addressField;
+    IBOutlet MKMapView *mapView;
+}
+
+- (IBAction)goAddress;
+-(IBAction)goUser;
 
 @end
