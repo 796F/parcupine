@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		8703F50614C8C45B003DAE14 /* ParkResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 8703F50514C8C45B003DAE14 /* ParkResponse.m */; };
 		8703F50914C8C469003DAE14 /* SingleSpot.m in Sources */ = {isa = PBXBuildFile; fileRef = 8703F50814C8C469003DAE14 /* SingleSpot.m */; };
+		8703F51814C8E8E7003DAE14 /* ParqModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 8703F51614C8E8E7003DAE14 /* ParqModel.xcdatamodeld */; };
+		8703F52114C90A68003DAE14 /* Rate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8703F52014C90A68003DAE14 /* Rate.m */; };
+		8703F55014C9FF82003DAE14 /* Park.m in Sources */ = {isa = PBXBuildFile; fileRef = 8703F54F14C9FF82003DAE14 /* Park.m */; };
+		8703F55314CA00A2003DAE14 /* Spot.m in Sources */ = {isa = PBXBuildFile; fileRef = 8703F55214CA00A2003DAE14 /* Spot.m */; };
 		8716B0B914B3C094004105AD /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8716B0B814B3C094004105AD /* UIKit.framework */; };
 		8716B0BB14B3C094004105AD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8716B0BA14B3C094004105AD /* Foundation.framework */; };
 		8716B0BD14B3C094004105AD /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8716B0BC14B3C094004105AD /* CoreGraphics.framework */; };
@@ -96,6 +100,13 @@
 		8703F50514C8C45B003DAE14 /* ParkResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ParkResponse.m; sourceTree = "<group>"; };
 		8703F50714C8C469003DAE14 /* SingleSpot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SingleSpot.h; sourceTree = "<group>"; };
 		8703F50814C8C469003DAE14 /* SingleSpot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SingleSpot.m; sourceTree = "<group>"; };
+		8703F51714C8E8E7003DAE14 /* ParqModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ParqModel.xcdatamodel; sourceTree = "<group>"; };
+		8703F51F14C90A68003DAE14 /* Rate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Rate.h; sourceTree = "<group>"; };
+		8703F52014C90A68003DAE14 /* Rate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Rate.m; sourceTree = "<group>"; };
+		8703F54E14C9FF82003DAE14 /* Park.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Park.h; sourceTree = "<group>"; };
+		8703F54F14C9FF82003DAE14 /* Park.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Park.m; sourceTree = "<group>"; };
+		8703F55114CA00A2003DAE14 /* Spot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Spot.h; sourceTree = "<group>"; };
+		8703F55214CA00A2003DAE14 /* Spot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Spot.m; sourceTree = "<group>"; };
 		8716B0B414B3C094004105AD /* Parq.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Parq.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8716B0B814B3C094004105AD /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		8716B0BA14B3C094004105AD /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -206,6 +217,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8703F54D14C9FB46003DAE14 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				8703F54E14C9FF82003DAE14 /* Park.h */,
+				8703F55114CA00A2003DAE14 /* Spot.h */,
+				8703F55214CA00A2003DAE14 /* Spot.m */,
+				8703F54F14C9FF82003DAE14 /* Park.m */,
+				8703F51F14C90A68003DAE14 /* Rate.h */,
+				8703F52014C90A68003DAE14 /* Rate.m */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
 		8716B0A914B3C093004105AD = {
 			isa = PBXGroup;
 			children = (
@@ -251,6 +275,7 @@
 			isa = PBXGroup;
 			children = (
 				FC172A5714C9C6C60094A313 /* ZBarSDK */,
+				8703F54D14C9FB46003DAE14 /* Model */,
 				FCF586E314C1F58900DF70D3 /* Network */,
 				FCF586DB14C1F55F00DF70D3 /* Objects */,
 				8716B0D014B3C094004105AD /* first.png */,
@@ -286,6 +311,7 @@
 				8716B0C114B3C094004105AD /* InfoPlist.strings */,
 				8716B0C414B3C094004105AD /* main.m */,
 				8716B0C614B3C094004105AD /* Parq-Prefix.pch */,
+				8703F51614C8E8E7003DAE14 /* ParqModel.xcdatamodeld */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -536,6 +562,10 @@
 				8732B78514C63BEB00405F0B /* ParqTimeBox.m in Sources */,
 				8703F50614C8C45B003DAE14 /* ParkResponse.m in Sources */,
 				8703F50914C8C469003DAE14 /* SingleSpot.m in Sources */,
+				8703F51814C8E8E7003DAE14 /* ParqModel.xcdatamodeld in Sources */,
+				8703F52114C90A68003DAE14 /* Rate.m in Sources */,
+				8703F55014C9FF82003DAE14 /* Park.m in Sources */,
+				8703F55314CA00A2003DAE14 /* Spot.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -678,6 +708,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		8703F51614C8E8E7003DAE14 /* ParqModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				8703F51714C8E8E7003DAE14 /* ParqModel.xcdatamodel */,
+			);
+			currentVersion = 8703F51714C8E8E7003DAE14 /* ParqModel.xcdatamodel */;
+			path = ParqModel.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 8716B0AB14B3C093004105AD /* Project object */;
 }
