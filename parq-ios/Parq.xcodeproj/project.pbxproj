@@ -33,6 +33,7 @@
 		FC09C3F614C4981400DD0CBD /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC09C3F514C4981400DD0CBD /* CoreData.framework */; };
 		FCD0036E14C49F0C00A310C1 /* libRestKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FCD0036414C49E8700A310C1 /* libRestKit.a */; };
 		FCD0037214C49F4600A310C1 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FCD0037114C49F4600A310C1 /* libxml2.dylib */; };
+		FCD5839A14C8F8BA0097A842 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCD5839914C8F8BA0097A842 /* MapKit.framework */; };
 		FCF586E014C1F57800DF70D3 /* UserObject.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF586DD14C1F57800DF70D3 /* UserObject.m */; };
 		FCF586E114C1F57800DF70D3 /* RateObject.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF586DF14C1F57800DF70D3 /* RateObject.m */; };
 		FCF586E814C1F5A000DF70D3 /* Parser.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF586E514C1F5A000DF70D3 /* Parser.m */; };
@@ -121,6 +122,7 @@
 		FC09C3F514C4981400DD0CBD /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		FCD0035914C49E8700A310C1 /* RestKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RestKit.xcodeproj; path = RestKit/RestKit.xcodeproj; sourceTree = "<group>"; };
 		FCD0037114C49F4600A310C1 /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
+		FCD5839914C8F8BA0097A842 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		FCF586DC14C1F57800DF70D3 /* UserObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserObject.h; sourceTree = "<group>"; };
 		FCF586DD14C1F57800DF70D3 /* UserObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserObject.m; sourceTree = "<group>"; };
 		FCF586DE14C1F57800DF70D3 /* RateObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RateObject.h; sourceTree = "<group>"; };
@@ -140,6 +142,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FCD5839A14C8F8BA0097A842 /* MapKit.framework in Frameworks */,
 				87D2097D14C49E7100E663D7 /* Security.framework in Frameworks */,
 				FCD0037214C49F4600A310C1 /* libxml2.dylib in Frameworks */,
 				FCD0036E14C49F0C00A310C1 /* libRestKit.a in Frameworks */,
@@ -160,6 +163,7 @@
 		8716B0A914B3C093004105AD = {
 			isa = PBXGroup;
 			children = (
+				FCD5839914C8F8BA0097A842 /* MapKit.framework */,
 				87D2097814C48E4D00E663D7 /* SFHFKeychainUtils */,
 				FC09C3E014C4979A00DD0CBD /* Libraries */,
 				8716B0BE14B3C094004105AD /* Parq */,
