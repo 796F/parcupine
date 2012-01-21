@@ -7,6 +7,7 @@
 //
 
 #import "ParqSpotViewController.h"
+#define LOCATION_ACCURACY 30.0  //this double is meters, we should be fine within 30 meters.  
 
 @implementation ParqSpotViewController
 @synthesize scrollView = _scrollView;
@@ -14,13 +15,18 @@
 @synthesize spotNumField = _spotNumField;
 @synthesize userLat;
 @synthesize userLon;
+@synthesize goodLocation;
 
 -(IBAction)parqButton{
     //submit gps coordinates and spot to server.   
-    RateObject* rateObj = [ServerCalls getRateLat:[NSNumber numberWithDouble:self.userLat] Lon:[NSNumber numberWithDouble:self.userLon] spotId:_spotNumField.text];
-    //check response from server before allowing next view.  
-    
+    if(goodLocation){
+        RateObject* rateObj = [ServerCalls getRateLat:[NSNumber numberWithDouble:self.userLat] Lon: [NSNumber numberWithDouble:self.userLon] spotId:_spotNumField.text];
+        //check response from server before allowing next view.  
+    }else{
+        //SHOW "GETTING GPS LOCATION" dialog like android app.  
+    }
 }
+
 -(IBAction)scanButton{
     //launch scanner and grab results.  
     //create new view for scanning
@@ -51,37 +57,43 @@
     NSString* lotId = [splitUrl objectAtIndex:3];
     NSString* spotId = [splitUrl objectAtIndex:4];
     RateObject* rateObj = [ServerCalls getRateLotId:lotId spotId:spotId];
-    //TODO: launch next screen using this rate object.      
-    
+      
+    if(rateObj!=nil){
+        //stop getting gps, user successfully scanned a qr code.  
+        [locationManager stopUpdatingLocation];
+        //TODO: launch next screen using this rate object.
+    }
     //once we display the result string, dismiss the scanner.  
     [reader dismissModalViewControllerAnimated:YES];
     
-}
-
-- (void)startSignificantChangeUpdates
-{
-    // Create the location manager if this object does not
-    // already have one.
-    if (nil == locationManager)
-        locationManager = [[CLLocationManager alloc] init];
-    
-    locationManager.delegate = self;
-    [locationManager startMonitoringSignificantLocationChanges];
 }
 
 - (void)locationManager:(CLLocationManager *)manager
     didUpdateToLocation:(CLLocation *)newLocation
            fromLocation:(CLLocation *)oldLocation
 {
-    // If it's a relatively recent event, turn off updates to save power
-    NSDate* eventDate = newLocation.timestamp;
-    NSTimeInterval howRecent = [eventDate timeIntervalSinceNow];
-    if (abs(howRecent) < 15.0)
-    {
-        userLat = newLocation.coordinate.latitude;
-        userLon = newLocation.coordinate.longitude;
-        
+    //if accuracy isn't close enough, don't allow park, keep getting location.  display dialog. 
+    //these numbers represent radius, so higher = less accurate.  
+    
+    double newAccuracy = (newLocation.verticalAccuracy)+(newLocation.horizontalAccuracy);
+    //these numbers are in meters.  
+    if (newAccuracy < LOCATION_ACCURACY){
+        //if accuracy is acceptable, location is good.  
+        goodLocation = YES;
+        [locationManager stopUpdatingLocation];
     }
+    userLat = newLocation.coordinate.latitude;
+    userLon = newLocation.coordinate.longitude;
+    
+}
+
+-(void)startGettingLocation{
+    if (nil == locationManager)
+        locationManager = [[CLLocationManager alloc] init];
+    locationManager.delegate = self;
+    //setting accuracy to be 10 meters.  more powerful but uses battery more.  
+    locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters;
+    [locationManager startUpdatingLocation];
 }
 
 // Call this method somewhere in your view controller setup code.
@@ -145,7 +157,8 @@
 {
     [super viewDidLoad];
     [self registerForKeyboardNotifications];
-    [self startSignificantChangeUpdates];   //start getting gps coords
+    [self startGettingLocation];   //start getting gps coords
+    goodLocation=NO;  //when view first loads, set location to false.  
 }
 
 - (void)viewDidUnload
@@ -173,6 +186,11 @@
 
       [self presentModalViewController:vc animated:YES];
     }
+    if(!goodLocation){
+        //if gps didn't get a good location
+        [self startGettingLocation];
+    }
+    
 }
 
 - (void)viewWillDisappear:(BOOL)animated

@@ -19,6 +19,7 @@
 @property (nonatomic, retain) CLLocationManager* locationManager;
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (weak, nonatomic) IBOutlet UITextField *spotNumField;
+@property BOOL goodLocation;
 
 -(IBAction)parqButton;
 -(IBAction)scanButton;
