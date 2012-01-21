@@ -29,6 +29,10 @@
     //set the delegate to receive results
     reader.readerDelegate = self;
     reader.supportedOrientationsMask = ZBarOrientationMaskAll;
+    //disable all barcode types
+    [reader.scanner setSymbology:ZBAR_NONE config:ZBAR_CFG_ENABLE to:0];
+    //re-enable qrcode, so we only scan for qr codes.  
+    [reader.scanner setSymbology:ZBAR_QRCODE config:ZBAR_CFG_ENABLE to:1];
     
     //present the scanner
     [self presentModalViewController:reader animated:YES];
