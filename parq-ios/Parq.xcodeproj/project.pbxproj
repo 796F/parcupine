@@ -48,10 +48,10 @@
 		FCD0036E14C49F0C00A310C1 /* libRestKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FCD0036414C49E8700A310C1 /* libRestKit.a */; };
 		FCD0037214C49F4600A310C1 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FCD0037114C49F4600A310C1 /* libxml2.dylib */; };
 		FCD5839A14C8F8BA0097A842 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCD5839914C8F8BA0097A842 /* MapKit.framework */; };
-		FCF4B1CE14CB6EC100991A20 /* BSAddressComponent.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF4B1C714CB6EC100991A20 /* BSAddressComponent.m */; };
-		FCF4B1CF14CB6EC100991A20 /* BSForwardGeocoder.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF4B1C914CB6EC100991A20 /* BSForwardGeocoder.m */; };
-		FCF4B1D014CB6EC100991A20 /* BSGoogleV3KmlParser.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF4B1CB14CB6EC100991A20 /* BSGoogleV3KmlParser.m */; };
-		FCF4B1D114CB6EC100991A20 /* BSKmlResult.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF4B1CD14CB6EC100991A20 /* BSKmlResult.m */; };
+		FCF4B1CE14CB6EC100991A20 /* BSAddressComponent.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF4B1C714CB6EC100991A20 /* BSAddressComponent.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		FCF4B1CF14CB6EC100991A20 /* BSForwardGeocoder.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF4B1C914CB6EC100991A20 /* BSForwardGeocoder.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		FCF4B1D014CB6EC100991A20 /* BSGoogleV3KmlParser.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF4B1CB14CB6EC100991A20 /* BSGoogleV3KmlParser.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		FCF4B1D114CB6EC100991A20 /* BSKmlResult.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF4B1CD14CB6EC100991A20 /* BSKmlResult.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		FCF586E014C1F57800DF70D3 /* UserObject.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF586DD14C1F57800DF70D3 /* UserObject.m */; };
 		FCF586E114C1F57800DF70D3 /* RateObject.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF586DF14C1F57800DF70D3 /* RateObject.m */; };
 		FCF586E814C1F5A000DF70D3 /* Parser.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF586E514C1F5A000DF70D3 /* Parser.m */; };
