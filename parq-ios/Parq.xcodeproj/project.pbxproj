@@ -48,6 +48,10 @@
 		FCD0036E14C49F0C00A310C1 /* libRestKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FCD0036414C49E8700A310C1 /* libRestKit.a */; };
 		FCD0037214C49F4600A310C1 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FCD0037114C49F4600A310C1 /* libxml2.dylib */; };
 		FCD5839A14C8F8BA0097A842 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCD5839914C8F8BA0097A842 /* MapKit.framework */; };
+		FCF4B1CE14CB6EC100991A20 /* BSAddressComponent.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF4B1C714CB6EC100991A20 /* BSAddressComponent.m */; };
+		FCF4B1CF14CB6EC100991A20 /* BSForwardGeocoder.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF4B1C914CB6EC100991A20 /* BSForwardGeocoder.m */; };
+		FCF4B1D014CB6EC100991A20 /* BSGoogleV3KmlParser.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF4B1CB14CB6EC100991A20 /* BSGoogleV3KmlParser.m */; };
+		FCF4B1D114CB6EC100991A20 /* BSKmlResult.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF4B1CD14CB6EC100991A20 /* BSKmlResult.m */; };
 		FCF586E014C1F57800DF70D3 /* UserObject.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF586DD14C1F57800DF70D3 /* UserObject.m */; };
 		FCF586E114C1F57800DF70D3 /* RateObject.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF586DF14C1F57800DF70D3 /* RateObject.m */; };
 		FCF586E814C1F5A000DF70D3 /* Parser.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF586E514C1F5A000DF70D3 /* Parser.m */; };
@@ -174,6 +178,14 @@
 		FCD0035914C49E8700A310C1 /* RestKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RestKit.xcodeproj; path = RestKit/RestKit.xcodeproj; sourceTree = "<group>"; };
 		FCD0037114C49F4600A310C1 /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
 		FCD5839914C8F8BA0097A842 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		FCF4B1C614CB6EC100991A20 /* BSAddressComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BSAddressComponent.h; sourceTree = "<group>"; };
+		FCF4B1C714CB6EC100991A20 /* BSAddressComponent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BSAddressComponent.m; sourceTree = "<group>"; };
+		FCF4B1C814CB6EC100991A20 /* BSForwardGeocoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BSForwardGeocoder.h; sourceTree = "<group>"; };
+		FCF4B1C914CB6EC100991A20 /* BSForwardGeocoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BSForwardGeocoder.m; sourceTree = "<group>"; };
+		FCF4B1CA14CB6EC100991A20 /* BSGoogleV3KmlParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BSGoogleV3KmlParser.h; sourceTree = "<group>"; };
+		FCF4B1CB14CB6EC100991A20 /* BSGoogleV3KmlParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BSGoogleV3KmlParser.m; sourceTree = "<group>"; };
+		FCF4B1CC14CB6EC100991A20 /* BSKmlResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BSKmlResult.h; sourceTree = "<group>"; };
+		FCF4B1CD14CB6EC100991A20 /* BSKmlResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BSKmlResult.m; sourceTree = "<group>"; };
 		FCF586DC14C1F57800DF70D3 /* UserObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserObject.h; sourceTree = "<group>"; };
 		FCF586DD14C1F57800DF70D3 /* UserObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserObject.m; sourceTree = "<group>"; };
 		FCF586DE14C1F57800DF70D3 /* RateObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RateObject.h; sourceTree = "<group>"; };
@@ -326,6 +338,7 @@
 		FC09C3E014C4979A00DD0CBD /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				FCF4B1C514CB6EAA00991A20 /* BSForwardGeocoder */,
 				FCD0035914C49E8700A310C1 /* RestKit.xcodeproj */,
 				87D2097814C48E4D00E663D7 /* SFHFKeychainUtils */,
 				FC172A5714C9C6C60094A313 /* ZBarSDK */,
@@ -410,6 +423,21 @@
 				FCD0036A14C49E8700A310C1 /* RestKitFrameworkTests.octest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		FCF4B1C514CB6EAA00991A20 /* BSForwardGeocoder */ = {
+			isa = PBXGroup;
+			children = (
+				FCF4B1C614CB6EC100991A20 /* BSAddressComponent.h */,
+				FCF4B1C714CB6EC100991A20 /* BSAddressComponent.m */,
+				FCF4B1C814CB6EC100991A20 /* BSForwardGeocoder.h */,
+				FCF4B1C914CB6EC100991A20 /* BSForwardGeocoder.m */,
+				FCF4B1CA14CB6EC100991A20 /* BSGoogleV3KmlParser.h */,
+				FCF4B1CB14CB6EC100991A20 /* BSGoogleV3KmlParser.m */,
+				FCF4B1CC14CB6EC100991A20 /* BSKmlResult.h */,
+				FCF4B1CD14CB6EC100991A20 /* BSKmlResult.m */,
+			);
+			name = BSForwardGeocoder;
 			sourceTree = "<group>";
 		};
 		FCF586DB14C1F55F00DF70D3 /* Objects */ = {
@@ -567,6 +595,10 @@
 				8703F52114C90A68003DAE14 /* Rate.m in Sources */,
 				8703F55014C9FF82003DAE14 /* Park.m in Sources */,
 				8703F55314CA00A2003DAE14 /* Spot.m in Sources */,
+				FCF4B1CE14CB6EC100991A20 /* BSAddressComponent.m in Sources */,
+				FCF4B1CF14CB6EC100991A20 /* BSForwardGeocoder.m in Sources */,
+				FCF4B1D014CB6EC100991A20 /* BSGoogleV3KmlParser.m in Sources */,
+				FCF4B1D114CB6EC100991A20 /* BSKmlResult.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

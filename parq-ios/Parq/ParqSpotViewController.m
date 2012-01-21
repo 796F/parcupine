@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Massachusetts Institute of Technology. All rights reserved.
 //
 
-#import "ParqSpotViewController.h"
+#import "ParqMapViewController.h"
 #define LOCATION_ACCURACY 30.0  //this double is meters, we should be fine within 30 meters.  
 
 @implementation ParqSpotViewController
@@ -89,7 +89,7 @@
 
 -(void)startGettingLocation{
     if (nil == locationManager)
-        locationManager = [[CLLocationManager alloc] init];
+        locationManager = [[CLLocationManager alloc] init];  //if doesn't exist make new.  
     locationManager.delegate = self;
     //setting accuracy to be 10 meters.  more powerful but uses battery more.  
     locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters;

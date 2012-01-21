@@ -10,6 +10,7 @@
 #import "ZBarSDK.h"
 #import "ServerCalls.h"
 #import <MapKit/MapKit.h>
+#import "ParqSpotViewController.h"
                                                        //added protocol for zbar
 @interface ParqSpotViewController : UIViewController <ZBarReaderDelegate, CLLocationManagerDelegate>
 
