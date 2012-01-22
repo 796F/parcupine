@@ -13,6 +13,7 @@
 		8703F52114C90A68003DAE14 /* Rate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8703F52014C90A68003DAE14 /* Rate.m */; };
 		8703F55014C9FF82003DAE14 /* Park.m in Sources */ = {isa = PBXBuildFile; fileRef = 8703F54F14C9FF82003DAE14 /* Park.m */; };
 		8703F55314CA00A2003DAE14 /* Spot.m in Sources */ = {isa = PBXBuildFile; fileRef = 8703F55214CA00A2003DAE14 /* Spot.m */; };
+		8703F58214CC6DE4003DAE14 /* MapPin.m in Sources */ = {isa = PBXBuildFile; fileRef = 8703F58114CC6DE4003DAE14 /* MapPin.m */; };
 		8716B0B914B3C094004105AD /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8716B0B814B3C094004105AD /* UIKit.framework */; };
 		8716B0BB14B3C094004105AD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8716B0BA14B3C094004105AD /* Foundation.framework */; };
 		8716B0BD14B3C094004105AD /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8716B0BC14B3C094004105AD /* CoreGraphics.framework */; };
@@ -111,6 +112,8 @@
 		8703F54F14C9FF82003DAE14 /* Park.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Park.m; sourceTree = "<group>"; };
 		8703F55114CA00A2003DAE14 /* Spot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Spot.h; sourceTree = "<group>"; };
 		8703F55214CA00A2003DAE14 /* Spot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Spot.m; sourceTree = "<group>"; };
+		8703F58014CC6DE4003DAE14 /* MapPin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapPin.h; sourceTree = "<group>"; };
+		8703F58114CC6DE4003DAE14 /* MapPin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MapPin.m; sourceTree = "<group>"; };
 		8716B0B414B3C094004105AD /* Parq.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Parq.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8716B0B814B3C094004105AD /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		8716B0BA14B3C094004105AD /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -290,6 +293,8 @@
 				8716B0D014B3C094004105AD /* first.png */,
 				8716B0D214B3C094004105AD /* first@2x.png */,
 				8716B0CA14B3C094004105AD /* MainStoryboard.storyboard */,
+				8703F58014CC6DE4003DAE14 /* MapPin.h */,
+				8703F58114CC6DE4003DAE14 /* MapPin.m */,
 				8732B78314C63BEB00405F0B /* ParqTimeBox.h */,
 				8732B78414C63BEB00405F0B /* ParqTimeBox.m */,
 				8716B11314B7D01B004105AD /* ParqLoginViewController.h */,
@@ -599,6 +604,7 @@
 				FCF4B1CF14CB6EC100991A20 /* BSForwardGeocoder.m in Sources */,
 				FCF4B1D014CB6EC100991A20 /* BSGoogleV3KmlParser.m in Sources */,
 				FCF4B1D114CB6EC100991A20 /* BSKmlResult.m in Sources */,
+				8703F58214CC6DE4003DAE14 /* MapPin.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
