@@ -14,6 +14,8 @@
 #import "BSForwardGeocoder.h"
 #import "BSAddressComponent.h"
 
+#import "MapPin.h"
+
 @interface ParqMapViewController : UIViewController <MKMapViewDelegate,CLLocationManagerDelegate>{
     IBOutlet UITextField *addressField;
     IBOutlet MKMapView *mapView;

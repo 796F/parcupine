@@ -77,7 +77,8 @@
     MKCoordinateRegion adjustedRegion = [mapView regionThatFits:viewRegion]; //is this a check?               
     
     [mapView setRegion:adjustedRegion animated:YES];  //this is animateTo or w/e.  
-    
+    MapPin * userPin = [[MapPin alloc] initWithCoordinate:zoomLocation Title:@"Your Location" subTitle:nil];
+    [mapView addAnnotation:userPin];
 }
 
 - (void)locationManager:(CLLocationManager *)manager
@@ -117,7 +118,14 @@
     
 }
 
-
+-(MKAnnotationView*) mapView:(MKMapView *)mapView viewForAnnotation:(id<MKAnnotation>)annotation{
+    MKPinAnnotationView* pinView = [[MKPinAnnotationView alloc]initWithAnnotation:annotation reuseIdentifier:@"userloc"];
+    pinView.pinColor = MKPinAnnotationColorRed;
+    pinView.animatesDrop = YES;
+    pinView.canShowCallout = YES;
+    pinView.calloutOffset = CGPointMake(-5, 5);
+    return pinView;
+}
 #pragma mark - View lifecycle
 
 - (void)viewDidLoad
