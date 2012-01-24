@@ -10,4 +10,16 @@
 
 @implementation ParkSync
 
+@synthesize defaultRate;
+@synthesize  desc;
+@synthesize endTime;
+@synthesize lat;
+@synthesize lon;
+@synthesize maxTime;
+@synthesize minInc;
+@synthesize minTime;
+@synthesize parkingReferenceNumber;
+@synthesize spotId;
+@synthesize spotNumber;
+
 @end

@@ -27,13 +27,13 @@
 +(NSNumber*) getLat;
 +(NSNumber*) getLon;
 +(void) setParkingReferenceNumber:(NSString*) parkRefNumIn;
-+(NSString*) getParkId;
++(NSString*) getParkRefNum;
 +(void) unpark;
 +(void) park:(ParkInstanceObject*)parkInstObjIn Rate:(RateObject*) rateObjIn;
 +(RateObject*) getRate;
-+(void) logIn:(BOOL) parkState Email:(NSString*)emailIn UID:(NSNumber*) userId ccStub:(NSString*)ccStubIn;
++(void) logIn:(NSNumber*) parkState Email:(NSString*)emailIn UID:(NSNumber*) userId ccStub:(NSString*)ccStubIn;
 +(void) logOut;
-+(void) syncParkingSession;
++(void) syncParkingSession:(ParkSync*)sync;
 +(NSString*) getSpotNumber;
 +(NSNumber*) getSpotId;
 +(void) setSpotNumber:(NSString*)spotNumIn;

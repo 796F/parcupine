@@ -10,4 +10,17 @@
 
 @interface ParkSync : NSObject
 
+@property (nonatomic, retain) NSNumber* defaultRate;
+@property (nonatomic, retain) NSNumber* lat;
+@property (nonatomic, retain) NSNumber* lon;
+@property (nonatomic, retain) NSNumber* endTime;
+@property (nonatomic, retain) NSNumber* minTime;
+@property (nonatomic, retain) NSNumber* maxTime;
+@property (nonatomic, retain) NSNumber* spotId;
+@property (nonatomic, retain) NSNumber* minInc;
+@property (nonatomic, retain) NSString* desc;
+@property (nonatomic, retain) NSString* spotNumber;
+@property (nonatomic, retain) NSString* parkingReferenceNumber;
+
+
 @end

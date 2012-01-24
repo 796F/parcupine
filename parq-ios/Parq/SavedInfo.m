@@ -95,8 +95,11 @@
     return [savedStock objectForKey:@"PARKID"];
 }
 +(void) unpark{
-    //erase PARKID, endTime, lat, lon, spot, minTime, maxTime, defaultRate, minIncrement, description, spotNumber, code
-    //from plist.  ERASE.  
+    NSArray* keys = [NSArray arrayWithObjects:@"endTime", @"lat", @"lon", @"spot", @"minTime", @"maxTime", @"defaultRate", @"minIncrement", @"description", @"spotNumber", @"code", nil];
+    NSString* path = [self getPlistPath];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile: path];
+    [data removeObjectsForKeys:keys];
+    [data writeToFile:path atomically:YES];
 }
 +(void) park:(ParkInstanceObject*)parkInstObjIn Rate:(RateObject*) rateObjIn{
     NSString* path = [self getPlistPath];
@@ -114,8 +117,9 @@
     [data writeToFile: path atomically:YES];
 }
 +(RateObject*) getRate{
-    //initialize rate object using info stored.  
-    //remember to alloc.  
+    NSString* path = [self getPlistPath];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile: path];
+    return [[RateObject alloc] initWithLat:[data objectForKey:@"lat"] Lon:[data objectForKey:@"lon"] Spot:[data objectForKey:@"spot"] Min:[data objectForKey:@"minTime"] Max:[data objectForKey:@"maxTime"] DefRate:[data objectForKey:@"defaultRate"] minInc:[data objectForKey:@"minIncrement"] desc:[data objectForKey:@"description"]];
 }
 +(void) logIn:(NSNumber*) parkState Email:(NSString*)emailIn UID:(NSNumber*) userId ccStub:(NSString*)ccStubIn{
     NSString* path = [self getPlistPath];
@@ -127,10 +131,26 @@
     [data writeToFile: path atomically:YES];
 }
 +(void) logOut{
-    //CLEAR OUT ALL INFORMATION.
+    NSString* path = [self getPlistPath];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile: path];
+    [data removeAllObjects];
+    [data writeToFile:path atomically:YES];
 }
-+(void) syncParkingSession{
-    //STICK ALL INFO FROM SYNC OBJECT INTO PLIST.
++(void) syncParkingSession:(ParkSync*)sync{
+    NSString* path = [self getPlistPath];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile: path];
+    [data setObject:sync.defaultRate forKey:@"defaultRate"];        
+    [data setObject:sync.desc forKey:@"description"];        
+    [data setObject:sync.endTime forKey:@"endTime"];        
+    [data setObject:sync.lat forKey:@"lat"];           
+    [data setObject:sync.lon forKey:@"lon"];       
+    [data setObject:sync.maxTime forKey:@"maxTime"];       
+    [data setObject:sync.minTime forKey:@"minTime"];       
+    [data setObject:sync.minInc forKey:@"minIncrement"];       
+    [data setObject:sync.parkingReferenceNumber forKey:@"PARKID"];       
+    [data setObject:sync.spotId forKey:@"spot"];       
+    [data setObject:sync.spotNumber forKey:@"spotNumber"];    
+    [data writeToFile: path atomically:YES];
 }
 +(NSString*) getSpotNumber{
     NSMutableDictionary* savedStock = [[NSMutableDictionary alloc] initWithContentsOfFile:[self getPlistPath]];
@@ -150,7 +170,6 @@
     NSString* path = [self getPlistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile: path];
     if([[data objectForKey:@"vibrateEnable"] boolValue]){
-        //if vibrate is enabled, set false.    
         [data setObject:[NSNumber numberWithBool:NO] forKey:@"vibrateEnable"];
     }else{
         [data setObject:[NSNumber numberWithBool:YES] forKey:@"vibrateEnable"];
@@ -161,7 +180,6 @@
     NSString* path = [self getPlistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile: path];
     if([[data objectForKey:@"ringEnable"] boolValue]){
-        //if vibrate is enabled, set false.    
         [data setObject:[NSNumber numberWithBool:NO] forKey:@"ringEnable"];
     }else{
         [data setObject:[NSNumber numberWithBool:YES] forKey:@"ringEnable"];
@@ -173,7 +191,6 @@
     NSString* path = [self getPlistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile: path];
     if([[data objectForKey:@"autoRefill"] boolValue]){
-        //if vibrate is enabled, set false.    
         [data setObject:[NSNumber numberWithBool:NO] forKey:@"autoRefill"];
     }else{
         [data setObject:[NSNumber numberWithBool:YES] forKey:@"autoRefill"];
@@ -184,7 +201,6 @@
     NSString* path = [self getPlistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile: path];
     if([[data objectForKey:@"remember"] boolValue]){
-        //if vibrate is enabled, set false.    
         [data setObject:[NSNumber numberWithBool:NO] forKey:@"remember"];
     }else{
         [data setObject:[NSNumber numberWithBool:YES] forKey:@"remember"];
