@@ -12,7 +12,7 @@
 #import "ResponseCode.h"
 #import "ParkResponse.h"
 #import <RestKit/RestKit.h>
-
+#import "ParkInstanceObject.h"
 
 @interface ServerCalls : NSObject <RKRequestDelegate>{
     
@@ -39,7 +39,10 @@
                       spotId:(NSString*)spotIdIn;
 + (ParkResponse*) parkUserWithSpotId:(NSNumber*) spotId Duration:(NSNumber*) durationMinutes ChargeAmount:(NSNumber*)chargeAmount PaymentType:(NSNumber*) paymentType;
 
+
 +(ParkResponse*) refillUserWithSpotId:(NSNumber*)spotId Duration:(NSNumber*) durationMinutes ChargeAmount:(NSNumber*)chargeAmount PaymentType:(NSNumber*)paymentType ParkRefNum:(NSString*) parkingReferenceNumber;
+
++(ParkInstanceObject*) parkUserWithRateObj:(RateObject*)rateObjIn duration:(NSNumber*)durationIn;
 +(BOOL) unparkUserWithSpotId:(NSNumber*)spotId ParkRefNum:(NSString*) parkingReferenceNumberIn;
 
 +(BOOL) editUserEmail:(NSString*)emailIn Password:(NSString*)passwordIn PhoneNumber:(NSString*)phoneIn;

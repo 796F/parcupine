@@ -16,4 +16,5 @@
 @property (nonatomic, retain) NSString* parkingReferenceNumber;
 @property (nonatomic, retain) NSNumber* endTime;
 
+-(ParkInstanceObject*) initWithNum:(NSString*)parkRefNum End:(NSNumber*)endTimeIn Sync:(ParkSync*)syncObj;
 @end

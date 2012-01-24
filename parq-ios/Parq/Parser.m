@@ -65,6 +65,19 @@
                                    ParkRefNum:[results objectForKey:@"parkingReferenceNumber"]];
 }
 
++(ParkSync*) parseSync:(NSString*)jsonString{
+    NSLog(@"RESPONSE >>> %@", jsonString);
+    NSDictionary* results = [jsonString objectFromJSONString];
+    return [[ParkSync alloc] initWithLat:[results objectForKey:@"lat"] Lon:[results objectForKey:@"lon"] EndTime:[results objectForKey:@"endTime"] MinTime:[results objectForKey:@"minTime"] MaxTime:[results objectForKey:@"maxTime"] DefRate:[results objectForKey:@"defaultRate"] SpotId:[results objectForKey:@"spot"] MinInc:[results objectForKey:@"minIncrement"] Desc:[results objectForKey:@"description"] SpotNum:[results objectForKey:@"spotNumber"] ParkRefNum:[results objectForKey:@"parkingReferenceNumber"]];
+}
++(ParkInstanceObject*) parseParkingInstance:(NSString*)jsonString{
+    NSLog(@"RESPONSE >>> %@", jsonString);
+    NSDictionary* results = [jsonString objectFromJSONString];    
+    ParkSync* parsedSyncObject = [Parser parseSync:[results objectForKey:@"sync"]];
+    return [[ParkInstanceObject alloc] initWithNum:[results objectForKey:@"parkingReferenceNumber"] End:[results objectForKey:@"endTime"] Sync:parsedSyncObject];
+    
+}
+
 + (NSMutableArray*) parseLocationList:(NSString*)jsonString{   
         NSLog(@"RESPONSE >>> %@", jsonString);
     NSDictionary * deserializedData = [jsonString objectFromJSONString];

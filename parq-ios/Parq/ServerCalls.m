@@ -105,6 +105,28 @@
     return [Parser parseRateObject:[result bodyAsString]];
 }
 
+
++(ParkInstanceObject*) parkUserWithRateObj:(RateObject*)rateObjIn duration:(NSNumber*)durationIn{
+    NSDictionary* userInfo = [ServerCalls getUserInfo];
+    NSArray* keys = [NSArray arrayWithObjects:@"uid",@"spotId", @"durationMinutes", @"chargeAmount", @"paymentType", @"userInfo",   nil];
+    NSNumber* uid = [ServerCalls getStoredUid];
+    NSNumber* mZero = [NSNumber numberWithInt:0];
+    NSNumber* chargeAmount = [NSNumber numberWithInt:(durationIn.intValue/rateObjIn.minIncrement.intValue)*rateObjIn.defaultRate.intValue];
+    //we're passed in the rest of the info    
+    NSArray* values = [NSArray arrayWithObjects:uid, rateObjIn.spot, durationIn, chargeAmount, mZero, userInfo, nil];
+    NSDictionary* info = [NSDictionary dictionaryWithObjects:values forKeys:keys];
+    
+    NSError *error;
+    NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
+    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.park/park" delegate:self];
+    [request setMethod:RKRequestMethodPOST];
+    [request setHTTPBody:jsonData];
+    [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
+    RKResponse* result = [request sendSynchronously];
+    NSLog(@"\n\n%@\n\n", [result bodyAsString] );
+    return [Parser parseParkingResponse:[result bodyAsString]];
+}
+
 + (ParkResponse*) parkUserWithSpotId:(NSNumber*) spotId Duration:(NSNumber*) durationMinutes ChargeAmount:(NSNumber*)chargeAmount PaymentType:(NSNumber*) paymentType{
     NSDictionary* userInfo = [ServerCalls getUserInfo];
     NSArray* keys = [NSArray arrayWithObjects:@"uid",@"spotId", @"durationMinutes", @"chargeAmount", @"paymentType", @"userInfo",   nil];

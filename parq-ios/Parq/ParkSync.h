@@ -21,6 +21,6 @@
 @property (nonatomic, retain) NSString* desc;
 @property (nonatomic, retain) NSString* spotNumber;
 @property (nonatomic, retain) NSString* parkingReferenceNumber;
-
+-(ParkSync*) initWithLat:(NSNumber*)lat Lon:(NSNumber*)lon EndTime:(NSNumber*)endTimeIn MinTime:(NSNumber*) minTimeIn MaxTime:(NSNumber*) maxTimeIn DefRate:(NSNumber*)defRateIn SpotId:(NSNumber*) spotIdIn MinInc:(NSNumber*) minIncIn Desc:(NSString*)descIn SpotNum:(NSString*) spotNumIn ParkRefNum:(NSString*) parkRefIn;
 
 @end

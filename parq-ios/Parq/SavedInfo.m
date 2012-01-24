@@ -87,12 +87,12 @@
 +(void) setParkingReferenceNumber:(NSString*) parkRefNumIn{
     NSString* path = [self getPlistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile: path];
-    [data setObject:parkRefNumIn forKey:@"PARKID"];        
+    [data setObject:parkRefNumIn forKey:@"parkRef"];        
     [data writeToFile: path atomically:YES];
 }
 +(NSString*) getParkRefNum{
     NSMutableDictionary* savedStock = [[NSMutableDictionary alloc] initWithContentsOfFile:[self getPlistPath]];
-    return [savedStock objectForKey:@"PARKID"];
+    return [savedStock objectForKey:@"parkRef"];
 }
 +(void) unpark{
     NSArray* keys = [NSArray arrayWithObjects:@"endTime", @"lat", @"lon", @"spot", @"minTime", @"maxTime", @"defaultRate", @"minIncrement", @"description", @"spotNumber", @"code", nil];
@@ -104,7 +104,7 @@
 +(void) park:(ParkInstanceObject*)parkInstObjIn Rate:(RateObject*) rateObjIn{
     NSString* path = [self getPlistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile: path];
-    [data setObject:parkInstObjIn.parkingReferenceNumber forKey:@"PARKID"];   
+    [data setObject:parkInstObjIn.parkingReferenceNumber forKey:@"parkRef"];   
     [data setObject:parkInstObjIn.endTime forKey:@"endTime"]; 
     [data setObject:rateObjIn.lat forKey:@"lat"]; 
     [data setObject:rateObjIn.lon forKey:@"lon"]; 
@@ -147,7 +147,7 @@
     [data setObject:sync.maxTime forKey:@"maxTime"];       
     [data setObject:sync.minTime forKey:@"minTime"];       
     [data setObject:sync.minInc forKey:@"minIncrement"];       
-    [data setObject:sync.parkingReferenceNumber forKey:@"PARKID"];       
+    [data setObject:sync.parkingReferenceNumber forKey:@"parkRef"];       
     [data setObject:sync.spotId forKey:@"spot"];       
     [data setObject:sync.spotNumber forKey:@"spotNumber"];    
     [data writeToFile: path atomically:YES];
