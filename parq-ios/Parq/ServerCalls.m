@@ -26,7 +26,7 @@
 
 +(NSNumber*) getStoredUid{
     //load from saved information.  
-    return [NSNumber numberWithLong:13];
+    return [NSNumber numberWithLong:1];
 }
 + (UserObject*) authEmail:(NSString*)emailIn Password:(NSString*)passwordIn{
     
