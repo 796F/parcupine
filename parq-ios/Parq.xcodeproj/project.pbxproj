@@ -49,6 +49,10 @@
 		FCD0036E14C49F0C00A310C1 /* libRestKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FCD0036414C49E8700A310C1 /* libRestKit.a */; };
 		FCD0037214C49F4600A310C1 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FCD0037114C49F4600A310C1 /* libxml2.dylib */; };
 		FCD5839A14C8F8BA0097A842 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCD5839914C8F8BA0097A842 /* MapKit.framework */; };
+		FCF019CD14CE1ECE00A2C160 /* SavedInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF019CC14CE1ECE00A2C160 /* SavedInfo.m */; };
+		FCF019CF14CE1F1100A2C160 /* ParqInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = FCF019CE14CE1F1100A2C160 /* ParqInfo.plist */; };
+		FCF019D214CE1F8600A2C160 /* ParkInstanceObject.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF019D114CE1F8600A2C160 /* ParkInstanceObject.m */; };
+		FCF019D514CE1FE600A2C160 /* ParkSync.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF019D414CE1FE600A2C160 /* ParkSync.m */; };
 		FCF4B1CE14CB6EC100991A20 /* BSAddressComponent.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF4B1C714CB6EC100991A20 /* BSAddressComponent.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		FCF4B1CF14CB6EC100991A20 /* BSForwardGeocoder.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF4B1C914CB6EC100991A20 /* BSForwardGeocoder.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		FCF4B1D014CB6EC100991A20 /* BSGoogleV3KmlParser.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF4B1CB14CB6EC100991A20 /* BSGoogleV3KmlParser.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -181,6 +185,13 @@
 		FCD0035914C49E8700A310C1 /* RestKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RestKit.xcodeproj; path = RestKit/RestKit.xcodeproj; sourceTree = "<group>"; };
 		FCD0037114C49F4600A310C1 /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
 		FCD5839914C8F8BA0097A842 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		FCF019CB14CE1ECE00A2C160 /* SavedInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SavedInfo.h; sourceTree = "<group>"; };
+		FCF019CC14CE1ECE00A2C160 /* SavedInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SavedInfo.m; sourceTree = "<group>"; };
+		FCF019CE14CE1F1100A2C160 /* ParqInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = ParqInfo.plist; sourceTree = "<group>"; };
+		FCF019D014CE1F8600A2C160 /* ParkInstanceObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParkInstanceObject.h; sourceTree = "<group>"; };
+		FCF019D114CE1F8600A2C160 /* ParkInstanceObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ParkInstanceObject.m; sourceTree = "<group>"; };
+		FCF019D314CE1FE600A2C160 /* ParkSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParkSync.h; sourceTree = "<group>"; };
+		FCF019D414CE1FE600A2C160 /* ParkSync.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ParkSync.m; sourceTree = "<group>"; };
 		FCF4B1C614CB6EC100991A20 /* BSAddressComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BSAddressComponent.h; sourceTree = "<group>"; };
 		FCF4B1C714CB6EC100991A20 /* BSAddressComponent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BSAddressComponent.m; sourceTree = "<group>"; };
 		FCF4B1C814CB6EC100991A20 /* BSForwardGeocoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BSForwardGeocoder.h; sourceTree = "<group>"; };
@@ -248,6 +259,7 @@
 		8716B0A914B3C093004105AD = {
 			isa = PBXGroup;
 			children = (
+				FCF019CE14CE1F1100A2C160 /* ParqInfo.plist */,
 				FC09C3E014C4979A00DD0CBD /* Libraries */,
 				8716B0BE14B3C094004105AD /* Parq */,
 				8716B0B714B3C094004105AD /* Frameworks */,
@@ -287,6 +299,8 @@
 		8716B0BE14B3C094004105AD /* Parq */ = {
 			isa = PBXGroup;
 			children = (
+				FCF019CB14CE1ECE00A2C160 /* SavedInfo.h */,
+				FCF019CC14CE1ECE00A2C160 /* SavedInfo.m */,
 				8703F54D14C9FB46003DAE14 /* Model */,
 				FCF586E314C1F58900DF70D3 /* Network */,
 				FCF586DB14C1F55F00DF70D3 /* Objects */,
@@ -456,6 +470,10 @@
 				8703F50814C8C469003DAE14 /* SingleSpot.m */,
 				FCF586DC14C1F57800DF70D3 /* UserObject.h */,
 				FCF586DD14C1F57800DF70D3 /* UserObject.m */,
+				FCF019D014CE1F8600A2C160 /* ParkInstanceObject.h */,
+				FCF019D114CE1F8600A2C160 /* ParkInstanceObject.m */,
+				FCF019D314CE1FE600A2C160 /* ParkSync.h */,
+				FCF019D414CE1FE600A2C160 /* ParkSync.m */,
 			);
 			name = Objects;
 			sourceTree = "<group>";
@@ -570,6 +588,7 @@
 				FC172A7714C9C6C60094A313 /* zbar-help.html in Resources */,
 				FC172A7814C9C6C60094A313 /* zbar-helpicons.png in Resources */,
 				FC172A7914C9C6C60094A313 /* zbar-samples.png in Resources */,
+				FCF019CF14CE1F1100A2C160 /* ParqInfo.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -605,6 +624,9 @@
 				FCF4B1D014CB6EC100991A20 /* BSGoogleV3KmlParser.m in Sources */,
 				FCF4B1D114CB6EC100991A20 /* BSKmlResult.m in Sources */,
 				8703F58214CC6DE4003DAE14 /* MapPin.m in Sources */,
+				FCF019CD14CE1ECE00A2C160 /* SavedInfo.m in Sources */,
+				FCF019D214CE1F8600A2C160 /* ParkInstanceObject.m in Sources */,
+				FCF019D514CE1FE600A2C160 /* ParkSync.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
