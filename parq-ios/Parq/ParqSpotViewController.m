@@ -21,7 +21,10 @@
     //submit gps coordinates and spot to server.   
     if(goodLocation){
         RateObject* rateObj = [ServerCalls getRateLat:[NSNumber numberWithDouble:self.userLat] Lon: [NSNumber numberWithDouble:self.userLon] spotId:_spotNumField.text];
-        //check response from server before allowing next view.  
+        //check response from server before allowing next view. 
+        if(rateObj !=nil){
+            //TODO NEXT VIEW.
+        }
     }else{
         //SHOW "GETTING GPS LOCATION" dialog like android app.  
     }
