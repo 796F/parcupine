@@ -7,17 +7,18 @@
 //
 
 #import "ParqParkViewController.h"
+#import "ServerCalls.h"
+#import "ParkResponse.h"
 
 @implementation ParqParkViewController
 @synthesize timePicker;
 @synthesize rate;
 @synthesize total;
-@synthesize rateCents;
-@synthesize minuteInterval;
-@synthesize lotName;
-@synthesize spotNum;
 @synthesize lotNameLabel;
 @synthesize spotNumLabel;
+@synthesize rateObj;
+
+const int CONFIRM_PAYMENT_ALERT = 1;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -28,10 +29,14 @@
     return self;
 }
 
+#pragma mark - Utility methods
+
 + (NSString*) centsToString:(int)cents
 {
     return [NSString stringWithFormat:@"$%d.%02d", cents/100, cents%100];
 }
+
+#pragma mark - User selection
 
 - (int)durationSelectedInMinutes
 {
@@ -40,25 +45,34 @@
 
 - (int)costSelectedInCents
 {
-    return [self durationSelectedInMinutes]*rateCents/minuteInterval;
+    return [self durationSelectedInMinutes]*rateObj.rateCents.intValue/rateObj.minuteInterval.intValue;
 }
 
+- (void)updateTotal {
+    total.text = [ParqParkViewController centsToString:[self costSelectedInCents]];
+}
+
+#pragma mark -
+
 - (IBAction)parkButton:(id)sender {
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Confirm payment" message:[NSString stringWithFormat:@"Parking for %d minutes will cost %@. Is this okay?",[self durationSelectedInMinutes],[ParqParkViewController centsToString:[self costSelectedInCents]]] delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Park", nil];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Confirm payment"
+                                                    message:[NSString stringWithFormat:@"Parking for %d minutes will cost %@. Is this okay?",[self durationSelectedInMinutes],[ParqParkViewController centsToString:[self costSelectedInCents]]]
+                                                   delegate:self
+                                          cancelButtonTitle:@"Cancel"
+                                          otherButtonTitles:@"Park", nil];
+    alert.tag = CONFIRM_PAYMENT_ALERT;
     [alert show];
 }
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    if (buttonIndex == alertView.firstOtherButtonIndex) {
-        [self performSegueWithIdentifier:@"showTimeRemaining" sender:self];
-    } else {
-        [alertView dismissWithClickedButtonIndex:buttonIndex animated:YES];
+    if (alertView.tag == CONFIRM_PAYMENT_ALERT) {
+        if (buttonIndex == alertView.firstOtherButtonIndex) {
+            [self performSegueWithIdentifier:@"showTimeRemaining" sender:self];
+        } else {
+            [alertView dismissWithClickedButtonIndex:buttonIndex animated:YES];
+        }
     }
-}
-
-- (void)updateTotal {
-    total.text = [ParqParkViewController centsToString:[self costSelectedInCents]];
 }
 
 - (void)didReceiveMemoryWarning
@@ -82,12 +96,12 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    timePicker.minuteInterval = minuteInterval;
-    rate.text = [NSString stringWithFormat:@"%@ per %d minutes", [ParqParkViewController centsToString:rateCents], minuteInterval];
-    lotNameLabel.text = lotName;
-    spotNumLabel.text = [NSString stringWithFormat:@"Spot #%d", spotNum];
+    timePicker.minuteInterval = rateObj.minuteInterval.intValue;
+    rate.text = [NSString stringWithFormat:@"%@ per %d minutes", [ParqParkViewController centsToString:rateObj.rateCents.intValue], rateObj.minuteInterval.intValue];
+    lotNameLabel.text = rateObj.lotName;
+    spotNumLabel.text = [NSString stringWithFormat:@"Spot #%d", rateObj.spotNumber.intValue];
     [timePicker addTarget:self action:@selector(updateTotal) forControlEvents:UIControlEventValueChanged];
-    timePicker.countDownDuration = minuteInterval;
+    timePicker.countDownDuration = rateObj.minuteInterval.doubleValue;
     [self updateTotal];
 }
 

@@ -10,6 +10,13 @@
 #import "ParqParkViewController.h"
 #define LOCATION_ACCURACY 30.0  //this double is meters, we should be fine within 30 meters.  
 
+@interface ParqSpotViewController ()
+@property (strong, nonatomic) CLLocationManager *locationManager;
+@property (nonatomic) double userLat;
+@property (nonatomic) double userLon;
+@property (nonatomic) BOOL goodLocation;
+@end
+
 @implementation ParqSpotViewController
 @synthesize scrollView = _scrollView;
 @synthesize locationManager;
@@ -59,10 +66,7 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     ParqParkViewController *vc = segue.destinationViewController;
-    vc.minuteInterval = [_rateObj.minIncrement integerValue];
-    vc.rateCents = [_rateObj.defaultRate integerValue];
-    vc.lotName = _rateObj.description;
-    vc.spotNum = [_spotNumField.text integerValue];
+    vc.rateObj = _rateObj;
 }
 
 //this method is essentially onActivityResult()

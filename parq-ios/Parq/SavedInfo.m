@@ -104,22 +104,19 @@
 +(void) park:(ParkInstanceObject*)parkInstObjIn Rate:(RateObject*) rateObjIn{
     NSString* path = [self getPlistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile: path];
-    [data setObject:parkInstObjIn.parkingReferenceNumber forKey:@"parkRef"];   
-    [data setObject:parkInstObjIn.endTime forKey:@"endTime"]; 
-    [data setObject:rateObjIn.lat forKey:@"lat"]; 
-    [data setObject:rateObjIn.lon forKey:@"lon"]; 
-    [data setObject:rateObjIn.spot forKey:@"spot"];
+    [data setObject:parkInstObjIn.parkingReferenceNumber forKey:@"parkRef"];
+    [data setObject:parkInstObjIn.endTime forKey:@"endTime"];
+    [data setObject:rateObjIn.spotNumber forKey:@"spot"];
     [data setObject:rateObjIn.minTime forKey:@"minTime"];
-    [data setObject:rateObjIn.maxTime forKey:@"maxTime"]; 
-    [data setObject:rateObjIn.defaultRate forKey:@"defaultRate"]; 
-    [data setObject:rateObjIn.minIncrement forKey:@"minIncrement"]; 
-    [data setObject:rateObjIn.description forKey:@"description"]; 
+    [data setObject:rateObjIn.rateCents forKey:@"defaultRate"];
+    [data setObject:rateObjIn.minuteInterval forKey:@"minIncrement"];
+    [data setObject:rateObjIn.description forKey:@"description"];
     [data writeToFile: path atomically:YES];
 }
 +(RateObject*) getRate{
     NSString* path = [self getPlistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile: path];
-    return [[RateObject alloc] initWithLat:[data objectForKey:@"lat"] Lon:[data objectForKey:@"lon"] Spot:[data objectForKey:@"spot"] Min:[data objectForKey:@"minTime"] Max:[data objectForKey:@"maxTime"] DefRate:[data objectForKey:@"defaultRate"] minInc:[data objectForKey:@"minIncrement"] desc:[data objectForKey:@"description"]];
+    return [[RateObject alloc] initWithLat:[data objectForKey:@"lat"] lon:[data objectForKey:@"lon"] spot:[data objectForKey:@"spot"] min:[data objectForKey:@"minTime"] max:[data objectForKey:@"maxTime"] defRate:[data objectForKey:@"defaultRate"] minInc:[data objectForKey:@"minIncrement"] desc:[data objectForKey:@"description"]];
 }
 +(void) logIn:(NSNumber*) parkState Email:(NSString*)emailIn UID:(NSNumber*) userId ccStub:(NSString*)ccStubIn{
     NSString* path = [self getPlistPath];

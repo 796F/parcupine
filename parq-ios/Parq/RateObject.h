@@ -8,23 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
-@interface RateObject : NSObject{
-    NSNumber* lat;
-    NSNumber* lon;
-    NSNumber* spot;
-    NSNumber* minTime;
-    NSNumber* maxTime;
-    NSNumber* defaultRate;
-    NSNumber* minIncrement;
-    NSString* description;
-}
--(id)initWithLat:(NSNumber*)latIn Lon:(NSNumber*)lonIn Spot:(NSNumber*)spotIn Min:(NSNumber*)minIn Max:(NSNumber*)maxIn DefRate:(NSNumber*)defRateIn minInc:(NSNumber*)minIncIn desc: (NSString*) descIn;
-@property (nonatomic, retain) NSNumber* lat;
-@property (nonatomic, retain) NSNumber* lon;
-@property (nonatomic, retain) NSNumber* spot;
+@interface RateObject : NSObject
+@property (nonatomic, retain) NSNumber* spotNumber;
 @property (nonatomic, retain) NSNumber* minTime;
-@property (nonatomic, retain) NSNumber* maxTime;
-@property (nonatomic, retain) NSNumber* defaultRate;
-@property (nonatomic, retain) NSNumber* minIncrement;
-@property (nonatomic, retain) NSString* description;
+@property (nonatomic, retain) NSNumber* rateCents;
+@property (nonatomic, retain) NSNumber* minuteInterval;
+@property (nonatomic, retain) NSString* lotName;
+
+-(id)initWithLat:(NSNumber*)latIn lon:(NSNumber*)lonIn spot:(NSNumber*)spotIn min:(NSNumber*)minIn max:(NSNumber*)maxIn defRate:(NSNumber*)defRateIn minInc:(NSNumber*)minIncIn desc: (NSString*) descIn;
 @end

@@ -112,9 +112,9 @@
     NSArray* keys = [NSArray arrayWithObjects:@"uid",@"spotId", @"durationMinutes", @"chargeAmount", @"paymentType", @"userInfo",   nil];
     NSNumber* uid = [ServerCalls getStoredUid];
     NSNumber* mZero = [NSNumber numberWithInt:0];
-    NSNumber* chargeAmount = [NSNumber numberWithInt:(durationIn.intValue/rateObjIn.minIncrement.intValue)*rateObjIn.defaultRate.intValue];
+    NSNumber* chargeAmount = [NSNumber numberWithInt:(durationIn.intValue/rateObjIn.minuteInterval.intValue)*rateObjIn.rateCents.intValue];
     //we're passed in the rest of the info    
-    NSArray* values = [NSArray arrayWithObjects:uid, rateObjIn.spot, durationIn, chargeAmount, mZero, userInfo, nil];
+    NSArray* values = [NSArray arrayWithObjects:uid, rateObjIn.spotNumber, durationIn, chargeAmount, mZero, userInfo, nil];
     NSDictionary* info = [NSDictionary dictionaryWithObjects:values forKeys:keys];
     
     NSError *error;

@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "RateObject.h"
 
 @interface ParqParkViewController : UIViewController <UIAlertViewDelegate>
 @property (weak, nonatomic) IBOutlet UIDatePicker *timePicker;
@@ -14,10 +15,5 @@
 @property (weak, nonatomic) IBOutlet UILabel *total;
 @property (weak, nonatomic) IBOutlet UILabel *lotNameLabel;
 @property (weak, nonatomic) IBOutlet UILabel *spotNumLabel;
-@property (nonatomic) int rateCents;
-@property (nonatomic) int minuteInterval;
-@property (strong, nonatomic) NSString *lotName;
-@property (nonatomic) int spotNum;
-
-- (void) updateTotal;
+@property (strong, nonatomic) RateObject *rateObj;
 @end
