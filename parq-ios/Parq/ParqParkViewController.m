@@ -78,8 +78,6 @@
                 alertView.tag = PARKING_ERROR_ALERT;
                 [alertView show];
             }
-        } else {
-            [alertView dismissWithClickedButtonIndex:buttonIndex animated:YES];
         }
     }
 }

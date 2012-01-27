@@ -35,7 +35,7 @@
     NSDictionary* info = [NSDictionary dictionaryWithObjects:value forKeys:keys];
     NSError *error;
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
-    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.auth" delegate:self];
+    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.auth" delegate:nil];
     [request setMethod:RKRequestMethodPOST];
     [request setHTTPBody:jsonData];
     [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
@@ -59,7 +59,7 @@
     NSDictionary* info = [NSDictionary dictionaryWithObjects:values forKeys:keys];
     NSError *error;
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
-    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.user/register" delegate:self];
+    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.user/register" delegate:nil];
     [request setMethod:RKRequestMethodPOST];
     [request setHTTPBody:jsonData];
     [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
@@ -72,10 +72,10 @@
     NSArray* keys = [NSArray arrayWithObjects:@"uid", @"lat", @"lon",@"spot",@"userInfo", nil];
     NSNumber* uid = [ServerCalls getStoredUid];
     //we're passed in the rest of the info    
-    NSArray* values = [NSArray arrayWithObjects:uid, latIn, lonIn,spotIdIn, userInfo, nil];
-//    NSArray* values = [NSArray arrayWithObjects:uid, [NSNumber numberWithDouble:42.358], [NSNumber numberWithDouble:-71.097983],spotIdIn, userInfo, nil];
+//    NSArray* values = [NSArray arrayWithObjects:uid, latIn, lonIn,spotIdIn, userInfo, nil];
+    NSArray* values = [NSArray arrayWithObjects:uid, [NSNumber numberWithDouble:42.358], [NSNumber numberWithDouble:-71.097983],spotIdIn, userInfo, nil];
     NSDictionary* info = [NSDictionary dictionaryWithObjects:values forKeys:keys];
-    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.rate/gps" delegate:self];
+    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.rate/gps" delegate:nil];
     NSError *error;
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
     
@@ -97,7 +97,7 @@
     
     NSError *error;
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
-    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.rate/qrcode" delegate:self];
+    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.rate/qrcode" delegate:nil];
     [request setMethod:RKRequestMethodPOST];
     [request setHTTPBody:jsonData];
     [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
@@ -118,7 +118,7 @@
     
     NSError *error;
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
-    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.park/park" delegate:self];
+    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.park/park" delegate:nil];
     [request setMethod:RKRequestMethodPOST];
     [request setHTTPBody:jsonData];
     [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
@@ -137,7 +137,7 @@
     
     NSError *error;
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
-    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.park/park" delegate:self];
+    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.park/park" delegate:nil];
     [request setMethod:RKRequestMethodPOST];
     [request setHTTPBody:jsonData];
     [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
@@ -154,7 +154,7 @@
     NSDictionary* info = [NSDictionary dictionaryWithObjects:values forKeys:keys];
     NSError *error;
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
-    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.park/refill" delegate:self];
+    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.park/refill" delegate:nil];
     [request setMethod:RKRequestMethodPOST];
     [request setHTTPBody:jsonData];
     [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
@@ -173,7 +173,7 @@
     NSDictionary* info = [NSDictionary dictionaryWithObjects:values forKeys:keys];
     NSError *error;
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
-    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.park/unpark" delegate:self];
+    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.park/unpark" delegate:nil];
     [request setMethod:RKRequestMethodPOST];
     [request setHTTPBody:jsonData];
     [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
@@ -192,7 +192,7 @@
     NSDictionary* info = [NSDictionary dictionaryWithObjects:values forKeys:keys];
     NSError *error;
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
-    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.user/update" delegate:self];
+    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.user/update" delegate:nil];
     [request setMethod:RKRequestMethodPOST];
     [request setHTTPBody:jsonData];
     [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
@@ -209,7 +209,7 @@
     NSDictionary* info = [NSDictionary dictionaryWithObjects:values forKeys:keys];
     NSError *error;
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
-    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.user/changeCC" delegate:self];
+    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.user/changeCC" delegate:nil];
     [request setMethod:RKRequestMethodPOST];
     [request setHTTPBody:jsonData];
     [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
@@ -227,7 +227,7 @@
     NSDictionary* info = [NSDictionary dictionaryWithObjects:values forKeys:keys];
     NSError *error;
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
-    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.maps/find" delegate:self];
+    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.maps/find" delegate:nil];
     [request setMethod:RKRequestMethodPOST];
     [request setHTTPBody:jsonData];
     [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
