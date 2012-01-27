@@ -107,14 +107,13 @@
 }
 
 
-+(ParkInstanceObject*) parkUserWithRateObj:(RateObject*)rateObjIn duration:(NSNumber*)durationIn{
++(ParkResponse*) parkUserWithRateObj:(RateObject*)rateObjIn duration:(int)durationIn cost:(int)costIn {
     NSDictionary* userInfo = [ServerCalls getUserInfo];
     NSArray* keys = [NSArray arrayWithObjects:@"uid",@"spotId", @"durationMinutes", @"chargeAmount", @"paymentType", @"userInfo",   nil];
     NSNumber* uid = [ServerCalls getStoredUid];
-    NSNumber* mZero = [NSNumber numberWithInt:0];
-    NSNumber* chargeAmount = [NSNumber numberWithInt:(durationIn.intValue/rateObjIn.minuteInterval.intValue)*rateObjIn.rateCents.intValue];
+    NSNumber* chargeAmount = [NSNumber numberWithInt:costIn];
     //we're passed in the rest of the info    
-    NSArray* values = [NSArray arrayWithObjects:uid, rateObjIn.spotNumber, durationIn, chargeAmount, mZero, userInfo, nil];
+    NSArray* values = [NSArray arrayWithObjects:uid, rateObjIn.spotNumber, [NSNumber numberWithInt:durationIn], chargeAmount, [NSNumber numberWithInt:0], userInfo, nil];
     NSDictionary* info = [NSDictionary dictionaryWithObjects:values forKeys:keys];
     
     NSError *error;

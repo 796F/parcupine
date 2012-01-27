@@ -29,6 +29,7 @@
 -(IBAction)parqButton{
     //submit gps coordinates and spot to server.   
     if(goodLocation){
+//    if (YES) {
         //check response from server before allowing next view. 
         _rateObj = [ServerCalls getRateLat:[NSNumber numberWithDouble:self.userLat] Lon: [NSNumber numberWithDouble:self.userLon] spotId:_spotNumField.text];
         if(_rateObj !=nil){
@@ -66,6 +67,7 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     ParqParkViewController *vc = segue.destinationViewController;
+    vc.spotNumber = _spotNumField.text.intValue;
     vc.rateObj = _rateObj;
 }
 
