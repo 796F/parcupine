@@ -73,6 +73,7 @@
     NSNumber* uid = [ServerCalls getStoredUid];
     //we're passed in the rest of the info    
     NSArray* values = [NSArray arrayWithObjects:uid, latIn, lonIn,spotIdIn, userInfo, nil];
+//    NSArray* values = [NSArray arrayWithObjects:uid, [NSNumber numberWithDouble:42.358], [NSNumber numberWithDouble:-71.097983],spotIdIn, userInfo, nil];
     NSDictionary* info = [NSDictionary dictionaryWithObjects:values forKeys:keys];
     RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.rate/gps" delegate:self];
     NSError *error;

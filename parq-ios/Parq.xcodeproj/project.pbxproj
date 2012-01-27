@@ -32,6 +32,7 @@
 		8716B0E814B3F19D004105AD /* ParqButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 8716B0E714B3F19D004105AD /* ParqButton.m */; };
 		8716B0EE14B3F9F3004105AD /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8716B0ED14B3F9F3004105AD /* QuartzCore.framework */; };
 		8716B11514B7D01B004105AD /* ParqLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8716B11414B7D01B004105AD /* ParqLoginViewController.m */; };
+		871AE1C114D0BD0A0041DFA1 /* ParqParkViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 871AE1C014D0BD090041DFA1 /* ParqParkViewController.m */; };
 		8732B78514C63BEB00405F0B /* ParqTimeBox.m in Sources */ = {isa = PBXBuildFile; fileRef = 8732B78414C63BEB00405F0B /* ParqTimeBox.m */; };
 		87D2097B14C48E4D00E663D7 /* SFHFKeychainUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 87D2097A14C48E4D00E663D7 /* SFHFKeychainUtils.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		87D2097D14C49E7100E663D7 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87D2097C14C49E7100E663D7 /* Security.framework */; };
@@ -146,6 +147,8 @@
 		8716B0ED14B3F9F3004105AD /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		8716B11314B7D01B004105AD /* ParqLoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParqLoginViewController.h; sourceTree = "<group>"; };
 		8716B11414B7D01B004105AD /* ParqLoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ParqLoginViewController.m; sourceTree = "<group>"; };
+		871AE1BF14D0BD090041DFA1 /* ParqParkViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParqParkViewController.h; sourceTree = "<group>"; };
+		871AE1C014D0BD090041DFA1 /* ParqParkViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ParqParkViewController.m; sourceTree = "<group>"; };
 		8732B78314C63BEB00405F0B /* ParqTimeBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParqTimeBox.h; sourceTree = "<group>"; };
 		8732B78414C63BEB00405F0B /* ParqTimeBox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ParqTimeBox.m; sourceTree = "<group>"; };
 		87D2097914C48E4D00E663D7 /* SFHFKeychainUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFHFKeychainUtils.h; sourceTree = "<group>"; };
@@ -319,6 +322,8 @@
 				8716B0E114B3D121004105AD /* ParqAccountViewController.m */,
 				8716B0C714B3C094004105AD /* ParqAppDelegate.h */,
 				8716B0C814B3C094004105AD /* ParqAppDelegate.m */,
+				871AE1BF14D0BD090041DFA1 /* ParqParkViewController.h */,
+				871AE1C014D0BD090041DFA1 /* ParqParkViewController.m */,
 				8716B0CD14B3C094004105AD /* ParqSpotViewController.h */,
 				8716B0CE14B3C094004105AD /* ParqSpotViewController.m */,
 				8716B0E314B3D181004105AD /* ParqHelpViewController.h */,
@@ -627,6 +632,7 @@
 				FCF019CD14CE1ECE00A2C160 /* SavedInfo.m in Sources */,
 				FCF019D214CE1F8600A2C160 /* ParkInstanceObject.m in Sources */,
 				FCF019D514CE1FE600A2C160 /* ParkSync.m in Sources */,
+				871AE1C114D0BD0A0041DFA1 /* ParqParkViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

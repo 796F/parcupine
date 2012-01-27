@@ -7,6 +7,7 @@
 //
 
 #import "ParqMapViewController.h"
+#import "ParqParkViewController.h"
 #define LOCATION_ACCURACY 30.0  //this double is meters, we should be fine within 30 meters.  
 
 @implementation ParqSpotViewController
@@ -16,14 +17,22 @@
 @synthesize userLat;
 @synthesize userLon;
 @synthesize goodLocation;
+@synthesize rateObj = _rateObj;
 
 -(IBAction)parqButton{
     //submit gps coordinates and spot to server.   
     if(goodLocation){
-        RateObject* rateObj = [ServerCalls getRateLat:[NSNumber numberWithDouble:self.userLat] Lon: [NSNumber numberWithDouble:self.userLon] spotId:_spotNumField.text];
         //check response from server before allowing next view. 
-        if(rateObj !=nil){
-            //TODO NEXT VIEW.
+        _rateObj = [ServerCalls getRateLat:[NSNumber numberWithDouble:self.userLat] Lon: [NSNumber numberWithDouble:self.userLon] spotId:_spotNumField.text];
+        if(_rateObj !=nil){
+            [self performSegueWithIdentifier:@"showParkTimePicker" sender:self];
+        } else {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Couldn't find spot"
+                                                            message:@"There may not be a spot near you"
+                                                           delegate:nil
+                                                  cancelButtonTitle:@"OK"
+                                                  otherButtonTitles:nil];
+            [alert show];
         }
     }else{
         //SHOW "GETTING GPS LOCATION" dialog like android app.  
@@ -46,6 +55,14 @@
     //present the scanner
     [self presentModalViewController:reader animated:YES];
     //check resposne from serve before showing next view.  
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    ParqParkViewController *vc = segue.destinationViewController;
+    vc.minuteInterval = [_rateObj.minIncrement integerValue];
+    vc.rateCents = [_rateObj.defaultRate integerValue];
+    vc.lotName = _rateObj.description;
+    vc.spotNum = [_spotNumField.text integerValue];
 }
 
 //this method is essentially onActivityResult()
