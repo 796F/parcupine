@@ -8,6 +8,7 @@
 
 #import "ParqMapViewController.h"
 #import "ParqParkViewController.h"
+#import "SavedInfo.h"
 #define LOCATION_ACCURACY 30.0  //this double is meters, we should be fine within 30 meters.  
 
 @interface ParqSpotViewController ()
@@ -173,8 +174,7 @@
 
 - (BOOL)isLoggedIn
 {
-  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-  return [defaults stringForKey:@"email"] != nil;
+    return [SavedInfo isLoggedIn];
 }
 
 #pragma mark - View lifecycle
@@ -183,8 +183,8 @@
 {
     [super viewDidLoad];
     [self registerForKeyboardNotifications];
-    [self startGettingLocation];   //start getting gps coords
     goodLocation=NO;  //when view first loads, set location to false.  
+    [self startGettingLocation];   //start getting gps coords
 }
 
 - (void)viewDidUnload

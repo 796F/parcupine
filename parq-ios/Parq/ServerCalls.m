@@ -44,7 +44,7 @@
     [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
     
     RKResponse* result = [request sendSynchronously];
-    NSLog(@"\n\n%@\n\n", [result bodyAsString] );
+    NSLog(@"\nREQUEST >>> %@", [info description]);
     return [Parser parseUserObjectString:[result bodyAsString]];
 }
 
@@ -67,7 +67,7 @@
     [request setHTTPBody:jsonData];
     [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
     RKResponse* result = [request sendSynchronously];
-    NSLog(@"\n\n%@\n\n", [result bodyAsString] );
+    NSLog(@"\nREQUEST >>> %@", [info description]);
     return [Parser parseResponseCode:[result bodyAsString]];
 }
 + (RateObject*) getRateLat:(NSNumber*)latIn Lon:(NSNumber*)lonIn spotId:(NSString*)spotIdIn{
@@ -86,7 +86,7 @@
     [request setHTTPBody:jsonData];
     [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
     RKResponse* result = [request sendSynchronously];
-    NSLog(@"\n\n%@\n\n", [result bodyAsString] );
+    NSLog(@"\nREQUEST >>> %@", [info description]);
     return [Parser parseRateObject:[result bodyAsString]];
     
 }
@@ -105,7 +105,7 @@
     [request setHTTPBody:jsonData];
     [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
     RKResponse* result = [request sendSynchronously];
-    NSLog(@"\n\n%@\n\n", [result bodyAsString] );
+    NSLog(@"\nREQUEST >>> %@", [info description]);
     return [Parser parseRateObject:[result bodyAsString]];
 }
 
@@ -126,7 +126,7 @@
     [request setHTTPBody:jsonData];
     [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
     RKResponse* result = [request sendSynchronously];
-    NSLog(@"\n\n%@\n\n", [result bodyAsString] );
+    NSLog(@"\nREQUEST >>> %@", [info description]);
     return [Parser parseParkingResponse:[result bodyAsString]];
 }
 
@@ -145,7 +145,7 @@
     [request setHTTPBody:jsonData];
     [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
     RKResponse* result = [request sendSynchronously];
-    NSLog(@"\n\n%@\n\n", [result bodyAsString] );
+    NSLog(@"\nREQUEST >>> %@", [info description]);
     return [Parser parseParkingResponse:[result bodyAsString]];
 }
 
@@ -162,7 +162,7 @@
     [request setHTTPBody:jsonData];
     [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
     RKResponse* result = [request sendSynchronously];
-    NSLog(@"\n\n%@\n\n", [result bodyAsString] );
+    NSLog(@"\nREQUEST >>> %@", [info description]);
     return [Parser parseParkingResponse:[result bodyAsString]];
 }
 
@@ -181,7 +181,7 @@
     [request setHTTPBody:jsonData];
     [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
     RKResponse* result = [request sendSynchronously];
-    NSLog(@"\n\n%@\n\n", [result bodyAsString] );
+    NSLog(@"\nREQUEST >>> %@", [info description]);
     return [Parser parseResponseCode:[result bodyAsString]];
 }
 
@@ -200,7 +200,7 @@
     [request setHTTPBody:jsonData];
     [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
     RKResponse* result = [request sendSynchronously];
-    NSLog(@"\n\n%@\n\n", [result bodyAsString] );
+    NSLog(@"\nREQUEST >>> %@", [info description]);
     return [Parser parseResponseCode:[result bodyAsString]];
 }
 
@@ -217,7 +217,7 @@
     [request setHTTPBody:jsonData];
     [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
     RKResponse* result = [request sendSynchronously];
-    NSLog(@"\n\n%@\n\n", [result bodyAsString] );
+    NSLog(@"\nREQUEST >>> %@", [info description]);
     return [Parser parseResponseCode:[result bodyAsString]];
 
 }
@@ -235,6 +235,7 @@
     [request setHTTPBody:jsonData];
     [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
     RKResponse* result = [request sendSynchronously];
+    NSLog(@"\nREQUEST >>> %@", [info description]);
     return [Parser parseLocationList:[result bodyAsString]];
 }
 

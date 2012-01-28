@@ -46,7 +46,9 @@
 }
 +(BOOL) isLoggedIn{
     NSMutableDictionary* savedStock = [[NSMutableDictionary alloc] initWithContentsOfFile:[self getPlistPath]];
-    return [[savedStock objectForKey:@"uid"] intValue]!=-1;
+    NSNumber* result = [savedStock objectForKey:@"uid"];
+    if(result ==nil) return NO;
+    return [result intValue]!=-1;
 }
 +(void) setEmail:(NSString*)emailIn{
     NSString* path = [self getPlistPath];
