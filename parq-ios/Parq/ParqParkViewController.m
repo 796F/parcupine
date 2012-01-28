@@ -9,6 +9,7 @@
 #import "ParqParkViewController.h"
 #import "ServerCalls.h"
 #import "ParkResponse.h"
+#import "ParqTimeRemainingViewController.h"
 
 @implementation ParqParkViewController
 @synthesize timePicker;
@@ -72,7 +73,13 @@
         if (buttonIndex == alertView.firstOtherButtonIndex) {
             ParkResponse *response = [ServerCalls parkUserWithRateObj:rateObj duration:[self durationSelectedInMinutes] cost:[self costSelectedInCents]];
             if ([response.resp isEqualToString:@"OK"]) {
-                [self performSegueWithIdentifier:@"showTimeRemaining" sender:self];
+                UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
+                ParqTimeRemainingViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"timeRemainingController"];
+                [vc setModalPresentationStyle:UIModalPresentationFullScreen];
+                vc.spotNumber = spotNumber;
+                vc.rateObj = rateObj;
+
+                [self presentModalViewController:vc animated:YES];
             } else {
                 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"There was an error while parking. Please try again." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
                 alertView.tag = PARKING_ERROR_ALERT;
