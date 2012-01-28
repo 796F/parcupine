@@ -9,7 +9,10 @@
 #import "SavedInfo.h"
 
 @implementation SavedInfo
-
++(NSNumber*) getUid{
+    NSMutableDictionary* savedStock = [[NSMutableDictionary alloc] initWithContentsOfFile:[self getPlistPath]];
+    return [savedStock objectForKey:@"uid"];
+}
 +(NSString*) getPlistPath{
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSError *error;

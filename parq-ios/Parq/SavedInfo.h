@@ -26,6 +26,7 @@
 +(NSString*) getCardStub;
 +(NSNumber*) getLat;
 +(NSNumber*) getLon;
++(NSNumber*) getUid;
 +(void) setParkingReferenceNumber:(NSString*) parkRefNumIn;
 +(NSString*) getParkRefNum;
 +(void) unpark;

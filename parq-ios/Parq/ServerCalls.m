@@ -10,23 +10,26 @@
 #import "Parser.h"
 #import "UserObject.h"
 #import <RestKit/RestKit.h>
+#import "SFHFKeychainUtils.h"
+#import "SavedInfo.h"
 
 @implementation ServerCalls
 
 //[NSNumber numberWithInteger:919]; cannot put normal int into NSArray.
 
 + (NSDictionary*) getUserInfo{
+    NSString* email = [SavedInfo getEmail];
+    NSError *error = nil;
+    NSString* password = [SFHFKeychainUtils getPasswordForUsername:email andServiceName:@"com.parqme" error:&error];
     NSArray* authKeys = [NSArray arrayWithObjects:@"email" ,@"password", nil];
-    //build userInfo from saved information.  
-    NSString* email = @"miguel@parqme.com";
-    NSString* password = @"a";
+    //build userInfo from saved information
     NSArray* authValues = [NSArray arrayWithObjects:email,password , nil];
     return [NSDictionary dictionaryWithObjects:authValues forKeys:authKeys];
 }
 
 +(NSNumber*) getStoredUid{
     //load from saved information.  
-    return [NSNumber numberWithLong:1];
+    return [SavedInfo getUid];
 }
 + (UserObject*) authEmail:(NSString*)emailIn Password:(NSString*)passwordIn{
     
