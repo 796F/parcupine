@@ -17,4 +17,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *spotNumLabel;
 @property (nonatomic) int spotNumber;
 @property (strong, nonatomic) RateObject *rateObj;
+- (void)timeUp;
+- (void)unpark;
 @end

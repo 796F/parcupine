@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="1.0" toolsVersion="1938" systemVersion="11C2002" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="4">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="1.0" toolsVersion="1938" systemVersion="11C74" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="4">
     <dependencies>
         <development defaultVersion="4200" identifier="xcode"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="933"/>
@@ -552,7 +552,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                         </subviews>
                         <color key="backgroundColor" cocoaTouchSystemColor="darkTextColor"/>
                     </view>
-                    <navigationItem key="navigationItem" title="Parking" id="Cw1-9g-XvW">
+                    <navigationItem key="navigationItem" title="Parking Duration" id="Cw1-9g-XvW">
                         <barButtonItem key="rightBarButtonItem" title="Park" id="rl6-Bq-2zp">
                             <connections>
                                 <action selector="parkButton:" destination="Yyt-w2-7iM" id="g5U-jb-ChP"/>
@@ -627,7 +627,11 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                 <items>
                                     <navigationItem title="Time Remaining" id="ODt-IL-dcM">
-                                        <barButtonItem key="leftBarButtonItem" title="Unpark" id="1Xe-xU-MY2"/>
+                                        <barButtonItem key="leftBarButtonItem" title="Unpark" id="1Xe-xU-MY2">
+                                            <connections>
+                                                <action selector="unparkButton:" destination="ChN-dX-qQv" id="NFb-tb-St7"/>
+                                            </connections>
+                                        </barButtonItem>
                                         <barButtonItem key="rightBarButtonItem" title="Refill" id="hPR-rD-gQw">
                                             <connections>
                                                 <action selector="refillButton:" destination="ChN-dX-qQv" id="KWa-vd-FW8"/>
@@ -640,6 +644,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <connections>
+                        <outlet property="colonLabel" destination="4CZ-To-rCT" id="Vd2-Pj-MgH"/>
                         <outlet property="hours" destination="Bdw-cw-OA1" id="oFp-V5-Grf"/>
                         <outlet property="lotNameLabel" destination="hST-Fn-gwf" id="qaf-1R-i5d"/>
                         <outlet property="minutes" destination="dpG-4z-Qop" id="nHb-wF-Z27"/>
@@ -1235,6 +1240,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         <class className="ParqTimeRemainingViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/ParqTimeRemainingViewController.h"/>
             <relationships>
+                <relationship kind="outlet" name="colonLabel" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="hours" candidateClass="ParqTimeBox"/>
                 <relationship kind="outlet" name="lotNameLabel" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="minutes" candidateClass="ParqTimeBox"/>

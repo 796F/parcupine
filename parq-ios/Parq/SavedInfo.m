@@ -95,7 +95,7 @@
     [data setObject:parkRefNumIn forKey:@"parkRef"];        
     [data writeToFile: path atomically:YES];
 }
-+(NSString*) getParkRefNum{
++(NSString*) parkRefNum{
     NSMutableDictionary* savedStock = [[NSMutableDictionary alloc] initWithContentsOfFile:[self getPlistPath]];
     return [savedStock objectForKey:@"parkRef"];
 }

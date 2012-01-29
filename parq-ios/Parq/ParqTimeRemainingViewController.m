@@ -17,26 +17,51 @@
 @implementation ParqTimeRemainingViewController
 @synthesize lotNameLabel;
 @synthesize spotNumLabel;
+@synthesize colonLabel;
 @synthesize hours;
 @synthesize minutes;
 @synthesize timer;
 @synthesize endTime;
+@synthesize delegate;
+
+- (IBAction)unparkButton:(id)sender {
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Unpark" message:@"Are you sure you want to unpark? If you need to repark you will have to pay again." delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Unpark", nil];
+    [alertView show];
+}
 
 - (IBAction)refillButton:(id)sender {
 }
 
-- (void)unparkButton {
-    NSLog(@"Unpark button pressed\n");
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (buttonIndex == alertView.firstOtherButtonIndex) {
+        [timer invalidate];
+        [delegate unpark];
+    }
+}
+
+- (void)flashColon {
+    colonLabel.hidden = !colonLabel.hidden;
 }
 
 - (void)updateTimer {
     NSTimeInterval secondsRemaining = [endTime timeIntervalSinceNow];
     if (secondsRemaining > 0) {
         int hoursRemaining = secondsRemaining/3600;
-        int minutesRemaining = (int)secondsRemaining%3600;
+        int minutesRemaining = ((int)secondsRemaining%3600)/60;
+        if (minutesRemaining < 59) {
+            minutesRemaining++;
+        } else {
+            minutesRemaining = 0;
+            hoursRemaining++;
+        }
 
         hours.text = [NSString stringWithFormat:@"%d", hoursRemaining];
-        minutes.text = [NSString stringWithFormat:@"%d", minutesRemaining];
+        minutes.text = [NSString stringWithFormat:@"%02d", minutesRemaining];
+
+        [self flashColon];
+    } else {
+        [timer invalidate];
+        [delegate timeUp];
     }
 }
 
@@ -73,7 +98,7 @@
     RateObject *rateObj = [SavedInfo rate];
     lotNameLabel.text = rateObj.lotName;
     NSNumber *spotNumber = [SavedInfo spotNumber];
-    spotNumLabel.text = [NSString stringWithFormat:@"Spot #%d", spotNumber];
+    spotNumLabel.text = [NSString stringWithFormat:@"Spot #%d", [spotNumber intValue]];
     UIBarButtonItem *unpark = self.navigationItem.backBarButtonItem;
     unpark.title = @"Unpark";
     unpark.target = self;
@@ -91,6 +116,7 @@
     [self setMinutes:nil];
     [self setLotNameLabel:nil];
     [self setSpotNumLabel:nil];
+    [self setColonLabel:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;

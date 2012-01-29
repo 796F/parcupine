@@ -29,7 +29,7 @@
 +(NSNumber*) getLon;
 +(NSNumber*) getUid;
 +(void) setParkingReferenceNumber:(NSString*) parkRefNumIn;
-+(NSString*) getParkRefNum;
++(NSString*) parkRefNum;
 +(void) unpark;
 +(void) park:(ParkResponse*)parkResponseIn rate:(RateObject*) rateObjIn spotNumber:(NSNumber*) spotNumberIn;
 +(RateObject*) rate;
