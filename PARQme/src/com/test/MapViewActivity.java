@@ -69,6 +69,9 @@ public class MapViewActivity extends MapActivity {
 	private MapController mapCtrl;
 	private EditText address;
 	private Geocoder gc;
+	private Drawable drawable;
+	private MapView mapView;
+	private List<Overlay> mapOverlays;
 	@Override
 	protected boolean isRouteDisplayed() {
 		return false;
@@ -79,33 +82,33 @@ public class MapViewActivity extends MapActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.map);
 		gc = new Geocoder(this);
-//		parkLoc = new ArrayList<OverlayItem>();
-//		parkLoc.add(new OverlayItem(new GeoPoint((int)(38.984924*1e6),(int)(-76.935486*1e6)), "Ritchie Parking Lot", "Second Line"));
+		//		parkLoc = new ArrayList<OverlayItem>();
+		//		parkLoc.add(new OverlayItem(new GeoPoint((int)(38.984924*1e6),(int)(-76.935486*1e6)), "Ritchie Parking Lot", "Second Line"));
 		locMan = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		locListener = new LocationListener(){
-				private static final float DEFAULT_ACCURACY = 100;
-				@Override
-				public void onLocationChanged(Location location) {
-					if (location.hasAccuracy() && location.getAccuracy() < DEFAULT_ACCURACY) {
-						userLat = location.getLatitude();
-						userLon = location.getLongitude();
-						((LocationManager) MapViewActivity.this
-								.getSystemService(Context.LOCATION_SERVICE))
-								.removeUpdates(this);
-					}
+			private static final float DEFAULT_ACCURACY = 100;
+			@Override
+			public void onLocationChanged(Location location) {
+				if (location.hasAccuracy() && location.getAccuracy() < DEFAULT_ACCURACY) {
+					userLat = location.getLatitude();
+					userLon = location.getLongitude();
+					((LocationManager) MapViewActivity.this
+							.getSystemService(Context.LOCATION_SERVICE))
+							.removeUpdates(this);
 				}
-				@Override
-				public void onProviderDisabled(String arg0) {
-				}
-				@Override
-				public void onProviderEnabled(String arg0) {
-				}
-				@Override
-				public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
-				}
+			}
+			@Override
+			public void onProviderDisabled(String arg0) {
+			}
+			@Override
+			public void onProviderEnabled(String arg0) {
+			}
+			@Override
+			public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
+			}
 		};
 		//hook elements
-		final MapView mapView = (MapView) findViewById(R.id.mapview);
+		mapView = (MapView) findViewById(R.id.mapview);
 		mapView.setBuiltInZoomControls(false);
 		address = (EditText) findViewById(R.id.addressinput);
 		address.setImeOptions(EditorInfo.IME_ACTION_DONE);
@@ -115,22 +118,22 @@ public class MapViewActivity extends MapActivity {
 			public boolean onEditorAction(TextView v, int actionId,
 					KeyEvent event) {
 				if (actionId == EditorInfo.IME_ACTION_DONE) {
-	                searchAddress();
-	            }
+					searchAddress();
+				}
 				return false;
 			}
-			
+
 		});
 		mapCtrl = mapView.getController();
-		
+
 		//get reference to your map's overlays
-		final List<Overlay> mapOverlays = mapView.getOverlays();
+		 mapOverlays = mapView.getOverlays();
 		//find a drawable you want, can declare multiple drawables
-		
-		final Drawable drawable = this.getResources().getDrawable(R.drawable.bluep);
+
+		drawable = this.getResources().getDrawable(R.drawable.bluep);
 		//then create an itemized overlay using said drawable, can make more itemizzedoverlays.
 		MapOverlays itemizedOverlay = new MapOverlays(drawable,mapView);
-		
+
 		final Button searchButton = (Button) findViewById(R.id.searchbutton);
 		searchButton.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -164,123 +167,164 @@ public class MapViewActivity extends MapActivity {
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, findValues);
 		findList.setAdapter(adapter);
-        findList.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                switch (position) {
-                    case 0: { // Find Me
-                        findMe();
-                        drawer.close();
-                        break;
-                    }
-                    case 1: { // Find My Car
-                    	if(SavedInfo.isParked(MapViewActivity.this)){
-                    		final double carLat = Double.valueOf(SavedInfo.getLat(MapViewActivity.this));
-                            final double carLon = Double.valueOf(SavedInfo.getLon(MapViewActivity.this));
-                            mapCtrl.animateTo(new GeoPoint((int) (carLat * 1e6), (int) (carLon * 1e6)));
-                            mapCtrl.setZoom(ZOOM_LEVEL);
-                            drawer.close();
-                    	}else{
-                    		ThrowDialog.show(MapViewActivity.this, ThrowDialog.NOT_PARKED);
-                    	}
-                        
-                        break;
-                    }
-                    case 2: { // Find a Spot
-                        SharedPreferences prefs = getSharedPreferences(MainActivity.SAVED_INFO, 0);
-                        List<Spot> spots = ServerCalls.findSpots(userLat, userLon, prefs);
-                        if(spots.size()>0){
-                            double lat;
-                            double lon;
-                            double latSum = 0d;
-                            double lonSum = 0d;
-                            double minLat = Double.MAX_VALUE;
-                            double maxLat = -Double.MAX_VALUE;
-                            double minLon = Double.MAX_VALUE;
-                            double maxLon = -Double.MAX_VALUE;
-                            MapOverlays itemizedOverlay;
-                            GeoPoint point;
-                            for (Spot spot : spots) {
-                                lat = spot.getLat();
-                                lon = spot.getLon();
-                                latSum += lat;
-                                lonSum += lon;
+		findList.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				switch (position) {
+				case 0: { // Find Me
+					findMe();
+					drawer.close();
+					break;
+				}
+				case 1: { // Find My Car
+					if(SavedInfo.isParked(MapViewActivity.this)){
+						final double carLat = Double.valueOf(SavedInfo.getLat(MapViewActivity.this));
+						final double carLon = Double.valueOf(SavedInfo.getLon(MapViewActivity.this));
+						mapCtrl.animateTo(new GeoPoint((int) (carLat * 1e6), (int) (carLon * 1e6)));
+						mapCtrl.setZoom(ZOOM_LEVEL);
+						drawer.close();
+					}else{
+						ThrowDialog.show(MapViewActivity.this, ThrowDialog.NOT_PARKED);
+					}
 
-                                if (lat < minLat) {
-                                    minLat = lat;
-                                } else if (lat > maxLat) {
-                                    maxLat = lat;
-                                }
-                                if (lon < minLon) {
-                                    minLon = lon;
-                                } else if (lon > maxLon) {
-                                    maxLon = lon;
-                                }
+					break;
+				}
+				case 2: { // Find a Spot
+					SharedPreferences prefs = getSharedPreferences(MainActivity.SAVED_INFO, 0);
+					List<Spot> spots = ServerCalls.findSpots(userLat, userLon, prefs);
+					if(spots.size()>0){
+						double lat;
+						double lon;
+						double latSum = 0d;
+						double lonSum = 0d;
+						double minLat = Double.MAX_VALUE;
+						double maxLat = -Double.MAX_VALUE;
+						double minLon = Double.MAX_VALUE;
+						double maxLon = -Double.MAX_VALUE;
+						MapOverlays itemizedOverlay;
+						GeoPoint point;
+						for (Spot spot : spots) {
+							lat = spot.getLat();
+							lon = spot.getLon();
+							latSum += lat;
+							lonSum += lon;
 
-                                itemizedOverlay = new MapOverlays(drawable, mapView);
-                                point = new GeoPoint((int) (lat * 1e6), (int) (lon * 1e6));
-                                itemizedOverlay.addOverlay(new OverlayItem(point, spot.getSpotName(),
-                                        null));
-                                mapOverlays.add(itemizedOverlay);
-                            }
-                            final int numSpots = spots.size();
-                            if (numSpots > 0) {
-                                mapCtrl.animateTo(new GeoPoint((int) (latSum / numSpots * 1e6),
-                                        (int) (lonSum / numSpots * 1e6)));
-                                mapCtrl.zoomToSpan((int) ((maxLat - minLat) * 1e6 + 1),
-                                        (int) ((maxLon - minLon) * 1e6 + 1));
-                            }
-                            drawer.close();
-                            break;
-                        }else{
-                        	ThrowDialog.show(MapViewActivity.this, ThrowDialog.NO_SPOTS);
-                        	break;
-                        }
-                    }
-                }
-            }
-        });
+							if (lat < minLat) {
+								minLat = lat;
+							} else if (lat > maxLat) {
+								maxLat = lat;
+							}
+							if (lon < minLon) {
+								minLon = lon;
+							} else if (lon > maxLon) {
+								maxLon = lon;
+							}
+
+							itemizedOverlay = new MapOverlays(drawable, mapView);
+							point = new GeoPoint((int) (lat * 1e6), (int) (lon * 1e6));
+							itemizedOverlay.addOverlay(new OverlayItem(point, spot.getSpotName(),
+									null));
+							mapOverlays.add(itemizedOverlay);
+						}
+						final int numSpots = spots.size();
+						if (numSpots > 0) {
+							mapCtrl.animateTo(new GeoPoint((int) (latSum / numSpots * 1e6),
+									(int) (lonSum / numSpots * 1e6)));
+							mapCtrl.zoomToSpan((int) ((maxLat - minLat) * 1e6 + 1),
+									(int) ((maxLon - minLon) * 1e6 + 1));
+						}
+						mapCtrl.setZoom(ZOOM_LEVEL);
+						drawer.close();
+						break;
+					}else{
+						ThrowDialog.show(MapViewActivity.this, ThrowDialog.NO_SPOTS);
+						break;
+					}
+				}
+				}
+			}
+		});
 	}
 	private void searchAddress(){
 		String addressIn = address.getText().toString();
 		try {
-		    double a=0d, b=0d;
+			double a=0d, b=0d;
 			List<Address> locations =  gc.getFromLocationName(addressIn, 1);
 			if (!locations.isEmpty()) {
-			    final Address x = locations.get(0);
+				final Address x = locations.get(0);
 				Toast.makeText(MapViewActivity.this, x.getLatitude()+":"+x.getLongitude(), Toast.LENGTH_LONG);
 				a = x.getLatitude();
 				b = x.getLongitude();
 				mapCtrl.animateTo(new GeoPoint((int)(a*1e6), (int)(b*1e6)));
+
+				mapCtrl.setZoom(ZOOM_LEVEL);
+				SharedPreferences prefs = getSharedPreferences(MainActivity.SAVED_INFO, 0);
+				List<Spot> spots = ServerCalls.findSpots(a, b, prefs);
+				if(spots.size()>0){
+					double lat;
+					double lon;
+					double latSum = 0d;
+					double lonSum = 0d;
+					double minLat = Double.MAX_VALUE;
+					double maxLat = -Double.MAX_VALUE;
+					double minLon = Double.MAX_VALUE;
+					double maxLon = -Double.MAX_VALUE;
+					MapOverlays itemizedOverlay;
+					GeoPoint point;
+					for (Spot spot : spots) {
+						lat = spot.getLat();
+						lon = spot.getLon();
+						latSum += lat;
+						lonSum += lon;
+
+						if (lat < minLat) {
+							minLat = lat;
+						} else if (lat > maxLat) {
+							maxLat = lat;
+						}
+						if (lon < minLon) {
+							minLon = lon;
+						} else if (lon > maxLon) {
+							maxLon = lon;
+						}
+
+						itemizedOverlay = new MapOverlays(drawable, mapView);
+						point = new GeoPoint((int) (lat * 1e6), (int) (lon * 1e6));
+						itemizedOverlay.addOverlay(new OverlayItem(point, spot.getSpotName(),
+								null));
+						mapOverlays.add(itemizedOverlay);
+					}
+
+				}
 			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		private void findMe() {
+			//load information from database, change overlay to show where spots are
+			mapCtrl.animateTo(new GeoPoint((int)(userLat*1e6),(int)(userLon*1e6)));
+			mapCtrl.setZoom(ZOOM_LEVEL);
+			//throw dialog, ask for "current location, address"
+			//if current location, zoom there.
+			//else zoom to address
+		}
+
+		@Override
+		protected void onResume() {
+			super.onResume();
+			locMan.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locListener);
+			locMan.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locListener);
+		}
+		@Override
+		public void onPause() {
+			locMan.removeUpdates(locListener);
+			super.onPause();
 		}
 	}
-	private void findMe() {
-		//load information from database, change overlay to show where spots are
-        mapCtrl.animateTo(new GeoPoint((int)(userLat*1e6),(int)(userLon*1e6)));
-        mapCtrl.setZoom(ZOOM_LEVEL);
-		//throw dialog, ask for "current location, address"
-		//if current location, zoom there.
-		//else zoom to address
-	}
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-		locMan.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locListener);
-		locMan.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locListener);
-	}
-	@Override
-    public void onPause() {
-        locMan.removeUpdates(locListener);
-        super.onPause();
-    }
-}
-
-/* Parking Lot Locations
+	/* Parking Lot Locations
 38.985175,-76.935099
 38.985533,-76.934713
 38.987885,-76.934316
@@ -296,4 +340,4 @@ public class MapViewActivity extends MapActivity {
 38.991979,-76.937728
 38.993113,-76.937857
 38.993147,-76.939219
-*/
+	 */

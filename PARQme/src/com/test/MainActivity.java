@@ -268,6 +268,8 @@ public class MainActivity extends ActivityGroup  								{
 			}
 		});
 
+		switchToParkingLayout();
+		state = State.UNPARKED;
         final long endTime = SavedInfo.getEndTime(check);
         final long now = System.currentTimeMillis();
         if (endTime > now) {
@@ -289,8 +291,6 @@ public class MainActivity extends ActivityGroup  								{
                 return;
             }
         }
-		switchToParkingLayout();
-		state = State.UNPARKED;
 		
 	}
 
@@ -571,7 +571,7 @@ public class MainActivity extends ActivityGroup  								{
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         final SharedPreferences check = getSharedPreferences(SAVED_INFO, 0);
-                        final String parkId = SavedInfo.getParkId(check);
+                        final String parkId = SavedInfo.getParkRefNum(check);
                         showDialog(DIALOG_UNPARKING);
                         ServerCalls.unpark(rateObj.getSpot(), parkId, check, new UnparkCallback() {
                             @Override
@@ -665,7 +665,7 @@ public class MainActivity extends ActivityGroup  								{
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             final SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
-                            final String parkId = SavedInfo.getParkId(check);
+                            final String parkId = SavedInfo.getParkRefNum(check);
                             showDialog(DIALOG_REFILLING);
                             ServerCalls.refill(refillMinutes, rateObj, parkId, check, new RefillCallback() {
                                 @Override
@@ -837,7 +837,7 @@ public class MainActivity extends ActivityGroup  								{
 				SharedPreferences check = getSharedPreferences(SAVED_INFO,0);
 				//if autorefill is on, refill the user minimalIncrement
 				if(SavedInfo.autoRefill(MainActivity.this)){
-					ServerCalls.refill(rateObj.getMinIncrement(), rateObj, SavedInfo.getParkId(check), check, new RefillCallback() {
+					ServerCalls.refill(rateObj.getMinIncrement(), rateObj, SavedInfo.getParkRefNum(check), check, new RefillCallback() {
                         @Override
                         public void onRefillComplete(ParkInstanceObject refillResp) {
                             if (refillResp != null && refillResp.getEndTime() > 0) {
