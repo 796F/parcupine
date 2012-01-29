@@ -7,6 +7,7 @@
 //
 
 #import "ParqAccountViewController.h"
+#import "SavedInfo.h"
 
 @implementation ParqAccountViewController
 
@@ -56,5 +57,68 @@
     // Return YES for supported orientations
   return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
 }
-
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{   
+    
+    UITableViewCell * cell = [tableView cellForRowAtIndexPath:indexPath];
+    
+    if(indexPath.section==0){
+        switch (indexPath.row) {
+            case 0:
+                //do nothing
+                break;
+            case 1:
+                //dialog lets edit email
+                break;
+            case 2:
+                //do nothing
+                break;
+            case 3:
+                //dialog lets edit creditcard
+                break;
+            default:
+                break;
+        }
+        //user info part
+    }else if(indexPath.section==1){
+        //warning/refill settings
+        switch (indexPath.row) {
+            case 0:
+                if(cell.accessoryType==UITableViewCellAccessoryCheckmark){
+                    cell.accessoryType = UITableViewCellAccessoryNone;
+                    cell.selected=NO;
+                    [SavedInfo toggleRefill];
+                }else{
+                    cell.accessoryType = UITableViewCellAccessoryCheckmark;
+                    cell.selected=NO;
+                    [SavedInfo toggleRefill];
+                }
+                break;
+            case 1:
+                if(cell.accessoryType==UITableViewCellAccessoryCheckmark){
+                    cell.accessoryType = UITableViewCellAccessoryNone;
+                    cell.selected=NO;
+                    [SavedInfo toggleVibrate];
+                }else{
+                    cell.accessoryType = UITableViewCellAccessoryCheckmark;
+                    cell.selected=NO;
+                    [SavedInfo toggleVibrate];
+                }
+                break;
+            case 2:
+                if(cell.accessoryType==UITableViewCellAccessoryCheckmark){
+                    cell.accessoryType = UITableViewCellAccessoryNone;
+                    cell.selected=NO;
+                    [SavedInfo toggleRing];
+                }else{
+                    cell.accessoryType = UITableViewCellAccessoryCheckmark;
+                    cell.selected=NO;
+                    [SavedInfo toggleRing];
+                }
+                break;
+            default:
+                break;
+        }
+    }
+}
 @end

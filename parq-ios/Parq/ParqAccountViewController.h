@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ParqAccountViewController : UIViewController
+@interface ParqAccountViewController : UITableViewController
 
 @end

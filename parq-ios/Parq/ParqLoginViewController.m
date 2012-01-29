@@ -9,7 +9,7 @@
 #import "ParqLoginViewController.h"
 #import "SFHFKeychainUtils.h"
 #import "ServerCalls.h"
-
+#import "SavedInfo.h"
 @implementation ParqLoginViewController
 @synthesize emailControl, passwordControl;
 
@@ -120,11 +120,9 @@
 
 - (void)saveUserInfoWithEmail:(NSString*)email andPassword:(NSString*)password andUserObj:(UserObject*)user
 {
-  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-  [defaults setValue:email forKey:@"email"];
-  [defaults synchronize];
   NSError *error = nil;
   [SFHFKeychainUtils storeUsername:email andPassword:password forServiceName:@"com.parqme" updateExisting:YES error:&error];
+    [SavedInfo logIn:user.parkState Email:email UID:user.uid ccStub:user.creditCardStub];
 }
 
 #pragma mark - Table view delegate

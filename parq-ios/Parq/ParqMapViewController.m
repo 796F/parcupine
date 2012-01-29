@@ -48,7 +48,7 @@
     }else{
         //EARLIER THAN IOS.5, must use third party geocoding lib.  
         if(BSGeocoder==nil)
-            BSGeocoder = [[BSForwardGeocoder alloc] initWithDelegate:self];
+            BSGeocoder = [[BSForwardGeocoder alloc] init];
         //REGION BIASING should be used, would make search faster/accurate.  
         [BSGeocoder forwardGeocodeWithQuery:addressField.text regionBiasing:nil success:^(NSArray *results) {
             BSKmlResult* place = [results objectAtIndex:0];
@@ -126,6 +126,7 @@
     pinView.calloutOffset = CGPointMake(-5, 5);
     return pinView;
 }
+
 #pragma mark - View lifecycle
 
 - (void)viewDidLoad

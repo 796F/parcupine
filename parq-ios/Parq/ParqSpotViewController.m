@@ -7,7 +7,16 @@
 //
 
 #import "ParqMapViewController.h"
+#import "ParqParkViewController.h"
+#import "SavedInfo.h"
 #define LOCATION_ACCURACY 30.0  //this double is meters, we should be fine within 30 meters.  
+
+@interface ParqSpotViewController ()
+@property (strong, nonatomic) CLLocationManager *locationManager;
+@property (nonatomic) double userLat;
+@property (nonatomic) double userLon;
+@property (nonatomic) BOOL goodLocation;
+@end
 
 @implementation ParqSpotViewController
 @synthesize scrollView = _scrollView;
@@ -16,12 +25,24 @@
 @synthesize userLat;
 @synthesize userLon;
 @synthesize goodLocation;
+@synthesize rateObj = _rateObj;
 
 -(IBAction)parqButton{
     //submit gps coordinates and spot to server.   
     if(goodLocation){
-        RateObject* rateObj = [ServerCalls getRateLat:[NSNumber numberWithDouble:self.userLat] Lon: [NSNumber numberWithDouble:self.userLon] spotId:_spotNumField.text];
-        //check response from server before allowing next view.  
+//    if (YES) {
+        //check response from server before allowing next view. 
+        _rateObj = [ServerCalls getRateLat:[NSNumber numberWithDouble:self.userLat] Lon: [NSNumber numberWithDouble:self.userLon] spotId:_spotNumField.text];
+        if(_rateObj !=nil){
+            [self performSegueWithIdentifier:@"showParkTimePicker" sender:self];
+        } else {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Couldn't find spot"
+                                                            message:@"There may not be a spot near you"
+                                                           delegate:nil
+                                                  cancelButtonTitle:@"OK"
+                                                  otherButtonTitles:nil];
+            [alert show];
+        }
     }else{
         //SHOW "GETTING GPS LOCATION" dialog like android app.  
     }
@@ -43,6 +64,12 @@
     //present the scanner
     [self presentModalViewController:reader animated:YES];
     //check resposne from serve before showing next view.  
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    ParqParkViewController *vc = segue.destinationViewController;
+    vc.spotNumber = _spotNumField.text.intValue;
+    vc.rateObj = _rateObj;
 }
 
 //this method is essentially onActivityResult()
@@ -147,8 +174,7 @@
 
 - (BOOL)isLoggedIn
 {
-  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-  return [defaults stringForKey:@"email"] != nil;
+    return [SavedInfo isLoggedIn];
 }
 
 #pragma mark - View lifecycle
@@ -157,8 +183,8 @@
 {
     [super viewDidLoad];
     [self registerForKeyboardNotifications];
-    [self startGettingLocation];   //start getting gps coords
     goodLocation=NO;  //when view first loads, set location to false.  
+    [self startGettingLocation];   //start getting gps coords
 }
 
 - (void)viewDidUnload

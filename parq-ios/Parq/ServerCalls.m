@@ -10,23 +10,26 @@
 #import "Parser.h"
 #import "UserObject.h"
 #import <RestKit/RestKit.h>
+#import "SFHFKeychainUtils.h"
+#import "SavedInfo.h"
 
 @implementation ServerCalls
 
 //[NSNumber numberWithInteger:919]; cannot put normal int into NSArray.
 
 + (NSDictionary*) getUserInfo{
+    NSString* email = [SavedInfo getEmail];
+    NSError *error = nil;
+    NSString* password = [SFHFKeychainUtils getPasswordForUsername:email andServiceName:@"com.parqme" error:&error];
     NSArray* authKeys = [NSArray arrayWithObjects:@"email" ,@"password", nil];
-    //build userInfo from saved information.  
-    NSString* email = @"miguel@parqme.com";
-    NSString* password = @"a";
+    //build userInfo from saved information
     NSArray* authValues = [NSArray arrayWithObjects:email,password , nil];
     return [NSDictionary dictionaryWithObjects:authValues forKeys:authKeys];
 }
 
 +(NSNumber*) getStoredUid{
     //load from saved information.  
-    return [NSNumber numberWithLong:13];
+    return [SavedInfo getUid];
 }
 + (UserObject*) authEmail:(NSString*)emailIn Password:(NSString*)passwordIn{
     
@@ -35,13 +38,13 @@
     NSDictionary* info = [NSDictionary dictionaryWithObjects:value forKeys:keys];
     NSError *error;
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
-    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.auth" delegate:self];
+    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.auth" delegate:nil];
     [request setMethod:RKRequestMethodPOST];
     [request setHTTPBody:jsonData];
     [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
     
     RKResponse* result = [request sendSynchronously];
-    NSLog(@"\n\n%@\n\n", [result bodyAsString] );
+    NSLog(@"\nREQUEST >>> %@", [info description]);
     return [Parser parseUserObjectString:[result bodyAsString]];
 }
 
@@ -59,12 +62,12 @@
     NSDictionary* info = [NSDictionary dictionaryWithObjects:values forKeys:keys];
     NSError *error;
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
-    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.user/register" delegate:self];
+    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.user/register" delegate:nil];
     [request setMethod:RKRequestMethodPOST];
     [request setHTTPBody:jsonData];
     [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
     RKResponse* result = [request sendSynchronously];
-    NSLog(@"\n\n%@\n\n", [result bodyAsString] );
+    NSLog(@"\nREQUEST >>> %@", [info description]);
     return [Parser parseResponseCode:[result bodyAsString]];
 }
 + (RateObject*) getRateLat:(NSNumber*)latIn Lon:(NSNumber*)lonIn spotId:(NSString*)spotIdIn{
@@ -73,8 +76,9 @@
     NSNumber* uid = [ServerCalls getStoredUid];
     //we're passed in the rest of the info    
     NSArray* values = [NSArray arrayWithObjects:uid, latIn, lonIn,spotIdIn, userInfo, nil];
+//    NSArray* values = [NSArray arrayWithObjects:uid, [NSNumber numberWithDouble:42.358], [NSNumber numberWithDouble:-71.097983],spotIdIn, userInfo, nil];
     NSDictionary* info = [NSDictionary dictionaryWithObjects:values forKeys:keys];
-    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.rate/gps" delegate:self];
+    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.rate/gps" delegate:nil];
     NSError *error;
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
     
@@ -82,7 +86,7 @@
     [request setHTTPBody:jsonData];
     [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
     RKResponse* result = [request sendSynchronously];
-    NSLog(@"\n\n%@\n\n", [result bodyAsString] );
+    NSLog(@"\nREQUEST >>> %@", [info description]);
     return [Parser parseRateObject:[result bodyAsString]];
     
 }
@@ -96,13 +100,34 @@
     
     NSError *error;
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
-    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.rate/qrcode" delegate:self];
+    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.rate/qrcode" delegate:nil];
     [request setMethod:RKRequestMethodPOST];
     [request setHTTPBody:jsonData];
     [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
     RKResponse* result = [request sendSynchronously];
-    NSLog(@"\n\n%@\n\n", [result bodyAsString] );
+    NSLog(@"\nREQUEST >>> %@", [info description]);
     return [Parser parseRateObject:[result bodyAsString]];
+}
+
+
++(ParkResponse*) parkUserWithRateObj:(RateObject*)rateObjIn duration:(int)durationIn cost:(int)costIn {
+    NSDictionary* userInfo = [ServerCalls getUserInfo];
+    NSArray* keys = [NSArray arrayWithObjects:@"uid",@"spotId", @"durationMinutes", @"chargeAmount", @"paymentType", @"userInfo",   nil];
+    NSNumber* uid = [ServerCalls getStoredUid];
+    NSNumber* chargeAmount = [NSNumber numberWithInt:costIn];
+    //we're passed in the rest of the info    
+    NSArray* values = [NSArray arrayWithObjects:uid, rateObjIn.spotNumber, [NSNumber numberWithInt:durationIn], chargeAmount, [NSNumber numberWithInt:0], userInfo, nil];
+    NSDictionary* info = [NSDictionary dictionaryWithObjects:values forKeys:keys];
+    
+    NSError *error;
+    NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
+    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.park/park" delegate:nil];
+    [request setMethod:RKRequestMethodPOST];
+    [request setHTTPBody:jsonData];
+    [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
+    RKResponse* result = [request sendSynchronously];
+    NSLog(@"\nREQUEST >>> %@", [info description]);
+    return [Parser parseParkingResponse:[result bodyAsString]];
 }
 
 + (ParkResponse*) parkUserWithSpotId:(NSNumber*) spotId Duration:(NSNumber*) durationMinutes ChargeAmount:(NSNumber*)chargeAmount PaymentType:(NSNumber*) paymentType{
@@ -115,12 +140,12 @@
     
     NSError *error;
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
-    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.park/park" delegate:self];
+    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.park/park" delegate:nil];
     [request setMethod:RKRequestMethodPOST];
     [request setHTTPBody:jsonData];
     [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
     RKResponse* result = [request sendSynchronously];
-    NSLog(@"\n\n%@\n\n", [result bodyAsString] );
+    NSLog(@"\nREQUEST >>> %@", [info description]);
     return [Parser parseParkingResponse:[result bodyAsString]];
 }
 
@@ -132,12 +157,12 @@
     NSDictionary* info = [NSDictionary dictionaryWithObjects:values forKeys:keys];
     NSError *error;
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
-    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.park/refill" delegate:self];
+    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.park/refill" delegate:nil];
     [request setMethod:RKRequestMethodPOST];
     [request setHTTPBody:jsonData];
     [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
     RKResponse* result = [request sendSynchronously];
-    NSLog(@"\n\n%@\n\n", [result bodyAsString] );
+    NSLog(@"\nREQUEST >>> %@", [info description]);
     return [Parser parseParkingResponse:[result bodyAsString]];
 }
 
@@ -151,12 +176,12 @@
     NSDictionary* info = [NSDictionary dictionaryWithObjects:values forKeys:keys];
     NSError *error;
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
-    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.park/unpark" delegate:self];
+    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.park/unpark" delegate:nil];
     [request setMethod:RKRequestMethodPOST];
     [request setHTTPBody:jsonData];
     [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
     RKResponse* result = [request sendSynchronously];
-    NSLog(@"\n\n%@\n\n", [result bodyAsString] );
+    NSLog(@"\nREQUEST >>> %@", [info description]);
     return [Parser parseResponseCode:[result bodyAsString]];
 }
 
@@ -170,12 +195,12 @@
     NSDictionary* info = [NSDictionary dictionaryWithObjects:values forKeys:keys];
     NSError *error;
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
-    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.user/update" delegate:self];
+    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.user/update" delegate:nil];
     [request setMethod:RKRequestMethodPOST];
     [request setHTTPBody:jsonData];
     [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
     RKResponse* result = [request sendSynchronously];
-    NSLog(@"\n\n%@\n\n", [result bodyAsString] );
+    NSLog(@"\nREQUEST >>> %@", [info description]);
     return [Parser parseResponseCode:[result bodyAsString]];
 }
 
@@ -187,12 +212,12 @@
     NSDictionary* info = [NSDictionary dictionaryWithObjects:values forKeys:keys];
     NSError *error;
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
-    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.user/changeCC" delegate:self];
+    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.user/changeCC" delegate:nil];
     [request setMethod:RKRequestMethodPOST];
     [request setHTTPBody:jsonData];
     [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
     RKResponse* result = [request sendSynchronously];
-    NSLog(@"\n\n%@\n\n", [result bodyAsString] );
+    NSLog(@"\nREQUEST >>> %@", [info description]);
     return [Parser parseResponseCode:[result bodyAsString]];
 
 }
@@ -205,11 +230,12 @@
     NSDictionary* info = [NSDictionary dictionaryWithObjects:values forKeys:keys];
     NSError *error;
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
-    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.maps/find" delegate:self];
+    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.maps/find" delegate:nil];
     [request setMethod:RKRequestMethodPOST];
     [request setHTTPBody:jsonData];
     [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
     RKResponse* result = [request sendSynchronously];
+    NSLog(@"\nREQUEST >>> %@", [info description]);
     return [Parser parseLocationList:[result bodyAsString]];
 }
 

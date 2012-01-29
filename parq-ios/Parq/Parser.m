@@ -44,11 +44,11 @@
     if([responseCode isEqualToString:@"OK"]){
         NSDictionary* rateObj = [results objectForKey:@"rateObject"];
         return [[RateObject alloc] initWithLat:[rateObj objectForKey:@"lat"] 
-                                           Lon:[rateObj objectForKey:@"lon"] 
-                                          Spot:[rateObj objectForKey:@"spotId"] 
-                                           Min:[rateObj objectForKey:@"minTime"] 
-                                           Max:[rateObj objectForKey:@"maxTime"] 
-                                       DefRate:[rateObj objectForKey:@"defaultRate"] 
+                                           lon:[rateObj objectForKey:@"lon"] 
+                                          spot:[rateObj objectForKey:@"spotId"] 
+                                           min:[rateObj objectForKey:@"minTime"] 
+                                           max:[rateObj objectForKey:@"maxTime"] 
+                                       defRate:[rateObj objectForKey:@"defaultRate"] 
                                         minInc:[rateObj objectForKey:@"minIncrement"] 
                                           desc:[rateObj objectForKey:@"location"]];
     }else{
@@ -63,6 +63,19 @@
     return [[ParkResponse alloc] initWithResp:responseCode 
                                       EndTime:[results objectForKey:@"endTime"] 
                                    ParkRefNum:[results objectForKey:@"parkingReferenceNumber"]];
+}
+
++(ParkSync*) parseSync:(NSString*)jsonString{
+    NSLog(@"RESPONSE >>> %@", jsonString);
+    NSDictionary* results = [jsonString objectFromJSONString];
+    return [[ParkSync alloc] initWithLat:[results objectForKey:@"lat"] Lon:[results objectForKey:@"lon"] EndTime:[results objectForKey:@"endTime"] MinTime:[results objectForKey:@"minTime"] MaxTime:[results objectForKey:@"maxTime"] DefRate:[results objectForKey:@"defaultRate"] SpotId:[results objectForKey:@"spot"] MinInc:[results objectForKey:@"minIncrement"] Desc:[results objectForKey:@"description"] SpotNum:[results objectForKey:@"spotNumber"] ParkRefNum:[results objectForKey:@"parkingReferenceNumber"]];
+}
++(ParkInstanceObject*) parseParkingInstance:(NSString*)jsonString{
+    NSLog(@"RESPONSE >>> %@", jsonString);
+    NSDictionary* results = [jsonString objectFromJSONString];    
+    ParkSync* parsedSyncObject = [Parser parseSync:[results objectForKey:@"sync"]];
+    return [[ParkInstanceObject alloc] initWithNum:[results objectForKey:@"parkingReferenceNumber"] End:[results objectForKey:@"endTime"] Sync:parsedSyncObject];
+    
 }
 
 + (NSMutableArray*) parseLocationList:(NSString*)jsonString{   
