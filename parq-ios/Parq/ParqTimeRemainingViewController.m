@@ -7,20 +7,37 @@
 //
 
 #import "ParqTimeRemainingViewController.h"
+#import "SavedInfo.h"
+
+@interface ParqTimeRemainingViewController ()
+@property (strong, nonatomic) NSTimer *timer;
+@property (strong, nonatomic) NSDate *endTime;
+@end
 
 @implementation ParqTimeRemainingViewController
 @synthesize lotNameLabel;
 @synthesize spotNumLabel;
 @synthesize hours;
 @synthesize minutes;
-@synthesize spotNumber;
-@synthesize rateObj;
+@synthesize timer;
+@synthesize endTime;
 
 - (IBAction)refillButton:(id)sender {
 }
 
-- (void)backButton {
-    NSLog(@"Back button pressed\n");
+- (void)unparkButton {
+    NSLog(@"Unpark button pressed\n");
+}
+
+- (void)updateTimer {
+    NSTimeInterval secondsRemaining = [endTime timeIntervalSinceNow];
+    if (secondsRemaining > 0) {
+        int hoursRemaining = secondsRemaining/3600;
+        int minutesRemaining = (int)secondsRemaining%3600;
+
+        hours.text = [NSString stringWithFormat:@"%d", hoursRemaining];
+        minutes.text = [NSString stringWithFormat:@"%d", minutesRemaining];
+    }
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -53,12 +70,17 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    RateObject *rateObj = [SavedInfo rate];
     lotNameLabel.text = rateObj.lotName;
+    NSNumber *spotNumber = [SavedInfo spotNumber];
     spotNumLabel.text = [NSString stringWithFormat:@"Spot #%d", spotNumber];
-    UIBarButtonItem *back = self.navigationItem.backBarButtonItem;
-    back.title = @"Unpark";
-    back.target = self;
-    back.action = @selector(backButton);
+    UIBarButtonItem *unpark = self.navigationItem.backBarButtonItem;
+    unpark.title = @"Unpark";
+    unpark.target = self;
+    unpark.action = @selector(unparkButton);
+
+    timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updateTimer) userInfo:nil repeats:YES];
+    endTime = [NSDate dateWithTimeIntervalSince1970:[[SavedInfo endTime] doubleValue]/1000];
 }
 
 - (void)viewDidUnload

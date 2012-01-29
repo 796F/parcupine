@@ -69,7 +69,7 @@
     [data setObject:[NSNumber numberWithBool:mBoolean ] forKey:title];        
     [data writeToFile: path atomically:YES];
 }
-+(NSNumber*) getEndTime{
++(NSNumber*) endTime{
     NSMutableDictionary* savedStock = [[NSMutableDictionary alloc] initWithContentsOfFile:[self getPlistPath]];
     return [savedStock objectForKey:@"endTime"];
 }
@@ -106,23 +106,25 @@
     [data removeObjectsForKeys:keys];
     [data writeToFile:path atomically:YES];
 }
-+(void) park:(ParkInstanceObject*)parkInstObjIn Rate:(RateObject*) rateObjIn{
++(void) park:(ParkResponse*)parkResponseIn rate:(RateObject*) rateObjIn spotNumber:(NSNumber*) spotNumberIn{
     NSString* path = [self getPlistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile: path];
-    [data setObject:parkInstObjIn.parkingReferenceNumber forKey:@"parkRef"];
-    [data setObject:parkInstObjIn.endTime forKey:@"endTime"];
+    [data setObject:parkResponseIn.parkingReferenceNumber forKey:@"parkRef"];
+    [data setObject:parkResponseIn.endTime forKey:@"endTime"];
     [data setObject:rateObjIn.spotNumber forKey:@"spot"];
     [data setObject:rateObjIn.minTime forKey:@"minTime"];
     [data setObject:rateObjIn.rateCents forKey:@"defaultRate"];
     [data setObject:rateObjIn.minuteInterval forKey:@"minIncrement"];
-    [data setObject:rateObjIn.description forKey:@"description"];
+    [data setObject:rateObjIn.lotName forKey:@"description"];
+    [data setObject:spotNumberIn forKey:@"spotNumber"];
     [data writeToFile: path atomically:YES];
 }
-+(RateObject*) getRate{
++(RateObject*) rate{
     NSString* path = [self getPlistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile: path];
     return [[RateObject alloc] initWithLat:[data objectForKey:@"lat"] lon:[data objectForKey:@"lon"] spot:[data objectForKey:@"spot"] min:[data objectForKey:@"minTime"] max:[data objectForKey:@"maxTime"] defRate:[data objectForKey:@"defaultRate"] minInc:[data objectForKey:@"minIncrement"] desc:[data objectForKey:@"description"]];
 }
+
 +(void) logIn:(NSNumber*) parkState Email:(NSString*)emailIn UID:(NSNumber*) userId ccStub:(NSString*)ccStubIn{
     NSString* path = [self getPlistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile: path];
@@ -154,7 +156,7 @@
     [data setObject:sync.spotNumber forKey:@"spotNumber"];    
     [data writeToFile: path atomically:YES];
 }
-+(NSString*) getSpotNumber{
++(NSNumber*) spotNumber{
     NSMutableDictionary* savedStock = [[NSMutableDictionary alloc] initWithContentsOfFile:[self getPlistPath]];
     return [savedStock objectForKey:@"spotNumber"];
 }

@@ -8,7 +8,8 @@
 
 #import <Foundation/Foundation.h>
 #import "RateObject.h"
-#import "ParkInstanceObject.h"
+#import "ParkResponse.h"
+#import "ParkSync.h"
 
 @interface SavedInfo : NSObject
 
@@ -21,7 +22,7 @@
 +(void) setEmail:(NSString*)emailIn;
 +(void) setLat:(NSNumber*)latIn Lon:(NSNumber*)lonIn;
 +(void) setGeneric:(NSString*) title boolInput:(BOOL)mBoolean;
-+(NSNumber*) getEndTime;
++(NSNumber*) endTime;
 +(NSString*) getEmail;
 +(NSString*) getCardStub;
 +(NSNumber*) getLat;
@@ -30,12 +31,12 @@
 +(void) setParkingReferenceNumber:(NSString*) parkRefNumIn;
 +(NSString*) getParkRefNum;
 +(void) unpark;
-+(void) park:(ParkInstanceObject*)parkInstObjIn Rate:(RateObject*) rateObjIn;
-+(RateObject*) getRate;
++(void) park:(ParkResponse*)parkResponseIn rate:(RateObject*) rateObjIn spotNumber:(NSNumber*) spotNumberIn;
++(RateObject*) rate;
 +(void) logIn:(NSNumber*) parkState Email:(NSString*)emailIn UID:(NSNumber*) userId ccStub:(NSString*)ccStubIn;
 +(void) logOut;
 +(void) syncParkingSession:(ParkSync*)sync;
-+(NSString*) getSpotNumber;
++(NSNumber*) spotNumber;
 +(NSNumber*) getSpotId;
 +(void) setSpotNumber:(NSString*)spotNumIn;
 +(void) toggleVibrate;

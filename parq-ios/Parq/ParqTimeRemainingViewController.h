@@ -15,6 +15,4 @@
 @property (weak, nonatomic) IBOutlet UILabel *spotNumLabel;
 @property (weak, nonatomic) IBOutlet ParqTimeBox *hours;
 @property (weak, nonatomic) IBOutlet ParqTimeBox *minutes;
-@property (nonatomic) int spotNumber;
-@property (strong, nonatomic) RateObject *rateObj;
 @end
