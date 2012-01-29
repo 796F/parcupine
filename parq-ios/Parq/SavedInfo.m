@@ -171,16 +171,32 @@
 +(void) toggleVibrate{
     NSString* path = [self getPlistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile: path];
+    if([data objectForKey:@"vibrateEnable"]==nil){
+        [data setObject:[NSNumber numberWithBool:YES] forKey:@"vibrateEnable"];
+        
+        [data writeToFile:path atomically:YES];
+        NSLog(@"\nnil found");
+        return;
+    }
+    
     if([[data objectForKey:@"vibrateEnable"] boolValue]){
         [data setObject:[NSNumber numberWithBool:NO] forKey:@"vibrateEnable"];
+        NSLog(@"\ndisabled now");
     }else{
         [data setObject:[NSNumber numberWithBool:YES] forKey:@"vibrateEnable"];
+        NSLog(@"\n enabled now");
     }
     [data writeToFile:path atomically:YES];
 }
 +(void) toggleRing{
     NSString* path = [self getPlistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile: path];
+    if([data objectForKey:@"ringEnable"]==nil){
+        [data setObject:[NSNumber numberWithBool:YES] forKey:@"ringEnable"];      
+        [data writeToFile:path atomically:YES];  
+        return;
+    }
+    
     if([[data objectForKey:@"ringEnable"] boolValue]){
         [data setObject:[NSNumber numberWithBool:NO] forKey:@"ringEnable"];
     }else{
@@ -192,6 +208,11 @@
 +(void) toggleRefill{
     NSString* path = [self getPlistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile: path];
+    if([data objectForKey:@"autoRefill"]==nil){
+        [data setObject:[NSNumber numberWithBool:YES] forKey:@"autoRefill"];  
+        [data writeToFile:path atomically:YES];
+        return;
+    }
     if([[data objectForKey:@"autoRefill"] boolValue]){
         [data setObject:[NSNumber numberWithBool:NO] forKey:@"autoRefill"];
     }else{
@@ -202,6 +223,11 @@
 +(void) toggleRemember{
     NSString* path = [self getPlistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile: path];
+    if([data objectForKey:@"remember"]==nil){
+        [data setObject:[NSNumber numberWithBool:YES] forKey:@"remember"]; 
+        [data writeToFile:path atomically:YES];  
+        return;
+    }
     if([[data objectForKey:@"remember"] boolValue]){
         [data setObject:[NSNumber numberWithBool:NO] forKey:@"remember"];
     }else{
