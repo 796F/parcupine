@@ -1,5 +1,9 @@
 package parkservice.resources;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -102,7 +106,7 @@ public class ParkResource {
 		long uid = in.getUid();
 		//does user supplied info authenticate?
 		if(uid == innerAuthenticate(in.getUserInfo())){
-			
+
 			ParkingStatusDao psd = new ParkingStatusDao();
 			ParkingInstance ps = null;
 			try{
@@ -110,9 +114,9 @@ public class ParkResource {
 			}catch (Exception e){}
 			//was user previously parked?
 			if(ps==null||ps.getParkingEndTime().compareTo(start)<0){
-				
+
 				long spot_id = in.getSpotId();
-				
+
 				//nowtime is after previous end time.  user was not parked.  
 				ParkingRateDao prd = new ParkingRateDao();
 				ParkingRate pr = null; 
@@ -123,7 +127,7 @@ public class ParkResource {
 					int durationMinutes = in.getDurationMinutes();
 					int payment_amount = in.getChargeAmount();
 					int payment_type = in.getPaymentType();
-					
+
 					int iterations = durationMinutes/(pr.getTimeIncrementsMins());
 					if(iterations*pr.getParkingRateCents()==payment_amount){
 						//if the price, duration, and rate supplied match up,
@@ -131,13 +135,13 @@ public class ParkResource {
 						long msec = 1000*durationMinutes*60;
 						end.setTime(start.getTime()+msec);
 
-						
+
 						PaymentAccountDao pad = new PaymentAccountDao();
 						List<PaymentAccount> pad_list = null;
 						try{
 							pad_list = pad.getAllPaymentMethodForUser(uid);
 						}catch(Exception e){}
-						
+
 						long profileId = -1;
 						long paymentProfileId = -1;
 						long account_id = -1;
@@ -146,7 +150,7 @@ public class ParkResource {
 							profileId = Integer.parseInt(pa.getCustomerId()); //this is profileId
 							paymentProfileId = Integer.parseInt(pa.getPaymentMethodId()); //this is paymentProfileId
 							account_id = pa.getAccountId();
-							
+
 						}
 
 						if(paymentProfileId>0){
@@ -179,6 +183,18 @@ public class ParkResource {
 									output.setParkingReferenceNumber(finalInstance.getParkingRefNumber());
 									output.setEndTime(end.getTime());
 									output.setResp("OK");
+
+
+									try{
+										File file = new File("/user_logs/ParkRequests.txt");
+							            file.createNewFile();
+							            FileOutputStream fout = new FileOutputStream(file, true);
+										fout.write(("Park() asked at "+new Date() + " INFO: spot id=" + spot_id + " uid=" + uid).getBytes());
+										fout.close();
+									}catch (Exception e){//Catch exception if any
+										System.err.println("Error: " + e.getMessage());
+									}
+									
 								}else{
 									output.setResp("DAO_ERROR");
 								}
@@ -188,9 +204,9 @@ public class ParkResource {
 						}else{
 							output.setResp("NO_PAYMENT_PROFILE");
 						}
-						
+
 					}
-					
+
 					//send back info for app to display new session.  
 
 				}else{
@@ -206,6 +222,7 @@ public class ParkResource {
 		}else{
 			output.setResp("BAD_AUTH, check login fields or uid");
 		}
+		
 		return output;
 	}
 
@@ -224,7 +241,7 @@ public class ParkResource {
 			ParkingInstance pi = null; try{
 				pi =psd.getUserParkingStatus(uid);
 			}catch(Exception e){}
-			
+
 			if(pi!=null && pi.getParkingRefNumber().equals(parkingReference)){
 				long spotid = in.getSpotId();
 				int durationMinutes = in.getDurationMinutes();
@@ -240,7 +257,7 @@ public class ParkResource {
 					Date newEndTime= new Date();
 					long msec = 1000*durationMinutes*60;
 					newEndTime.setTime(oldEndTime.getTime()+msec);
-					
+
 					//get user payment information.  
 					PaymentAccountDao pad = new PaymentAccountDao();
 					List<PaymentAccount> pad_list = null; 
@@ -324,12 +341,13 @@ public class ParkResource {
 			try{
 				result = psd.unparkBySpaceIdAndParkingRefNum(in.getSpotId(),in.getParkingReferenceNumber(), new Date());
 			}catch(Exception e){
-
+				output.setResp("EXCEPTION CAUGHT.  spotid:" + in.getSpotId() + " refNum" + in.getParkingReferenceNumber());
+				return output;
 			}
 			if(result){
 				output.setResp("OK");
 			}else{
-				output.setResp("DAO_ERROR");
+				output.setResp("dao FALSE.  spotid:" + in.getSpotId() + " refNum" + in.getParkingReferenceNumber());
 			}
 
 		}else{

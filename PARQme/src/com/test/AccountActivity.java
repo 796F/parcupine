@@ -280,9 +280,11 @@ public class AccountActivity extends Activity {
 						public void onClick(DialogInterface dialog, int id) {
 							final SharedPreferences check = getSharedPreferences(
 									SAVED_INFO, 0);
-							final String parkId = SavedInfo.getParkId(check);
+							final String parkId = SavedInfo.getParkRefNum(check);
 							showDialog(DIALOG_UNPARKING);
-							ServerCalls.unpark(111, parkId, check, new UnparkCallback() {
+							
+							
+							ServerCalls.unpark(SavedInfo.getSpotId(check), parkId, check, new UnparkCallback() {
 								@Override
 								public void onUnparkComplete(boolean success) {
 									removeDialog(DIALOG_UNPARKING);

@@ -2,6 +2,10 @@ package parkservice.resources;
 
 
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.util.Date;
 import java.util.List;
 
@@ -41,7 +45,7 @@ public class AuthResource{
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public AuthResponse login(JAXBElement<AuthRequest> input){
-		
+		Date nowTime = new Date();
 		
 		AuthRequest info = input.getValue();
 		AuthResponse x = new AuthResponse();
@@ -79,12 +83,44 @@ public class AuthResource{
 				x.setParkState(0);
 				if(pacc==null) x.setCreditCardStub("XXXX");
 				else x.setCreditCardStub(pacc.getCcStub());
+				
+				try{
+					// Create file 
+					File file = new File("/user_logs/AuthResource.txt");
+		            file.createNewFile();
+		            FileOutputStream fout = new FileOutputStream(file, true);
+					if(pi==null)
+						fout.write(("endTime == null where parking instance == null and the uid given was " + uid +"\n").getBytes());
+						
+					else
+						fout.write(("endTime == null where parking instance != null" +"\n").getBytes());
+					//Close the output stream
+					fout.close();
+				}catch (Exception e){//Catch exception if any
+					System.err.println("Error: " + e.getMessage());
+				}
+				
 				return x;
-			}else if(endTime.compareTo(new Date())<0){
+			}else if(endTime.compareTo(nowTime)<0){	//if(ps==null||ps.getParkingEndTime().compareTo(start)<0){
 				//if end time is before now
 				x.setParkState(0);
 				if(pacc==null) x.setCreditCardStub("XXXX");
 				else x.setCreditCardStub(pacc.getCcStub());
+				
+				try{
+					// Create file 
+					File file = new File("/user_logs/AuthResource.txt");
+		            file.createNewFile();
+		            FileOutputStream fout = new FileOutputStream(file, true);
+					fout.write(("endTime.compareTo(newDate())<0 with endTime = " + endTime.getTime() + " and new Date =" + nowTime.getTime()+"\n").getBytes());
+					
+					
+					//Close the output stream
+					fout.close();
+				}catch (Exception e){//Catch exception if any
+					System.err.println("Error: " + e.getMessage());
+				}
+				
 				return x;
 			}else{
 				//if end time is after now, gather needed information and then return. 

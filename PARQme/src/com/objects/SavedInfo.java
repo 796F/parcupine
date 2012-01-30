@@ -15,10 +15,6 @@ public class SavedInfo{
 	 * */
 	//TODO:  make sure all needed info is set via reset and stuff.
 	public static final String SAVED_INFO = "ParqMeInfo";
-	public static boolean isFirstTime(Context activity){
-		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO,0);
-		return check.getBoolean("firstTimeFlag", true);
-	}
 	public static boolean ringEnable(Context activity){
 		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO,0);
 		return check.getBoolean("ringEnable", false);
@@ -30,12 +26,6 @@ public class SavedInfo{
 	public static boolean autoRefill(Context activity){
 		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO,0);
 		return check.getBoolean("autoRefill", false);
-	}
-	public static void eraseTimer(Context activity){
-		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO,0);
-		SharedPreferences.Editor editor = check.edit();
-		editor.putLong("endTime", 0);
-		editor.commit();
 	}
 	//if parked return true, else false
 	public static boolean isParked(Context activity){
@@ -54,7 +44,6 @@ public class SavedInfo{
 		SharedPreferences.Editor editor = check.edit();
 		editor.putString("email", email);
 		editor.commit();
-		
 	}
 	public static void setLatLon(Context activity, double lat, double lon){
 		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
@@ -73,9 +62,6 @@ public class SavedInfo{
 	public static long getEndTime(SharedPreferences prefs){
 		return prefs.getLong("endTime", 0);
 	}
-	public static Date getEndTimeDate(SharedPreferences prefs) {
-		return new Date(getEndTime(prefs));
-	}
 	public static String getEmail(Context activity){
 		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
 		return check.getString("email", null);
@@ -93,19 +79,7 @@ public class SavedInfo{
 		return check.getString("lon", "0");
 	}
 	//set's code to a string
-	public static void setCode(Context activity, String code){
-		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
-		SharedPreferences.Editor editor = check.edit();
-		editor.putString("code", code);
-		editor.commit();
-		
-	}
-	public static void setString(Context activity, String key, String value){
-		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
-		SharedPreferences.Editor editor = check.edit();
-		editor.putString(key, value);
-		editor.commit();
-	}
+
 	public static void setParkingReferenceNumber(Context activity, String parkReferenceNumber){
 
 		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
@@ -113,7 +87,7 @@ public class SavedInfo{
 		editor.putString("PARKID", parkReferenceNumber);
 		editor.commit();
 	}
-	public static String getParkId(SharedPreferences prefs) {
+	public static String getParkRefNum(SharedPreferences prefs) {
 	    return prefs.getString("PARKID", "");
 	}
     public static void unpark(Context activity) {
@@ -129,6 +103,8 @@ public class SavedInfo{
         edit.remove("defaultRate");
         edit.remove("minIncrement");
         edit.remove("description");
+        edit.remove("spotNumber");
+        edit.remove("code");
         edit.commit();
     }
     public static void park(Context activity, ParkInstanceObject park, RateObject rate) {
@@ -189,7 +165,9 @@ public class SavedInfo{
 		return pref.getString("spotNumber", "xxxx");
 		
 	}
-	
+	public static long getSpotId(SharedPreferences pref){
+		return pref.getLong("spot", 0);
+	}
 	public static void setSpotNumber(Context activity, String spotNumber){
 		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
 		SharedPreferences.Editor editor = check.edit();
@@ -205,18 +183,6 @@ public class SavedInfo{
 		}else{
 			//if not parked, set as parked.
 			editor.putBoolean("vibrateEnable", true);
-		}
-		editor.commit();
-	}
-	public static void toggleWarn(Context activity){
-		SharedPreferences check = activity.getSharedPreferences(SAVED_INFO, 0);
-		SharedPreferences.Editor editor = check.edit();
-		if(check.getBoolean("warningEnable", false)){
-			//if parked, set as not parked
-			editor.putBoolean("warningEnable", false);
-		}else{
-			//if not parked, set as parked.
-			editor.putBoolean("warningEnable", true);
 		}
 		editor.commit();
 	}

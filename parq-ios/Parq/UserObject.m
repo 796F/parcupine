@@ -9,7 +9,8 @@
 #import "UserObject.h"
 
 @implementation UserObject
-- (id) initWithUid:(NSNumber*)uidIn 
+
+- (UserObject *) initWithUid:(NSNumber*)uidIn 
          parkState:(NSNumber*)parkStateIn 
     creditCardStub:(NSString*)stub {
     parkState=parkStateIn;
@@ -17,17 +18,9 @@
     creditCardStub = stub;
     return self;
 }
-- (NSNumber*) uid{
-    return uid;
-}
-- (NSNumber*) parkState{
-    return parkState;
-}
-- (NSString*) creditCardStub{
-    return creditCardStub;
-}
 
-- (void) setCCStub:(NSString*) input{
-    creditCardStub = input;
-}
+@synthesize parkState;
+@synthesize uid;
+@synthesize creditCardStub;
+
 @end

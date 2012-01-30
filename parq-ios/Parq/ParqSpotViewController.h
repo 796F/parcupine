@@ -7,9 +7,18 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ZBarSDK.h"
+#import "ServerCalls.h"
+#import <MapKit/MapKit.h>
+#import "ParqSpotViewController.h"
+//added protocol for zbar
+@interface ParqSpotViewController : UIViewController <ZBarReaderDelegate, CLLocationManagerDelegate>
 
-@interface ParqSpotViewController : UIViewController
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (weak, nonatomic) IBOutlet UITextField *spotNumField;
+@property (strong, nonatomic) RateObject *rateObj;
+
+-(IBAction)parqButton;
+-(IBAction)scanButton;
 
 @end
