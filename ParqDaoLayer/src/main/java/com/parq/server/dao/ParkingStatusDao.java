@@ -50,6 +50,10 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 		" ORDER BY pi.parkinginst_id DESC " + 
 		" LIMIT 1";
 	
+	private static final String sqlGetParkingSpaceIdByParkingReferenceNumber = 
+		"SELECT pi.space_id FROM parkinginstance as pi " +
+		" WHERE pi.parkingrefnumber = ? LIMIT 1";
+	
 	private static final String sqlInsertParkingInstance = 
 		"INSERT INTO parkinginstance (user_id, space_id, park_began_time, park_end_time, is_paid_parking, parkingrefnumber) " + 
 		" VALUES (?, ?, ?, ?, ?, ?)";
@@ -65,6 +69,7 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 	
 	private static final String getParkingStatusBySpaceIdsCacheKey = "spaceId:";
 	private static final String getUserParkingStatusCacheKey = "userId:";
+	private static final String getSpaceIdByParkingRefNumCacheKey = "refNum:";
 	
 	public ParkingStatusDao() {
 		super();
@@ -189,7 +194,11 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 	private String createCacheKey(String cacheKey, long id) {
 		return cacheKey + id;
 	}
-
+	
+	private String createCacheKey(String cacheKey, String refNum) {
+		return cacheKey + refNum;
+	}
+	
 	public ParkingInstance getUserParkingStatus(long userId) {
 		ParkingInstance userParkingStatus = getCacheParkingInstanceByUserId(userId);
 
@@ -410,7 +419,7 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 			pstmt.setTimestamp(1, new Timestamp(endTime.getTime()));
 			pstmt.setString(2, parkingRefNum);
 			// pstmt.setInt(3, spaceId);
-			if (pstmt.executeUpdate() == 1) {
+			if (pstmt.executeUpdate() >= 1) {
 				parkingEndTimeUpdated = true;
 			}
 			
@@ -423,6 +432,54 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 		}
 		
 		return parkingEndTimeUpdated;
+	}
+	
+	public long getSpaceIdByParkingRefNum(String parkingRefNum) {
+			
+		if (parkingRefNum == null || parkingRefNum.isEmpty()) {
+			throw new IllegalStateException(
+					"getSpaceIdByParkingRefNum(...) method parmeters is invalid, parkingRefNum: "
+							+ parkingRefNum);
+		}
+		long spaceId = -1;
+		
+		// check the cache first before hitting DB
+		String cacheKey = createCacheKey(getSpaceIdByParkingRefNumCacheKey, parkingRefNum);
+		Element cacheEntry = myCache.get(cacheKey); 
+		if (cacheEntry  != null) {
+			spaceId = (Long) cacheEntry.getValue();
+		}
+		// if the value is not in cache, hit the DB to retrive the value
+		else {
+			PreparedStatement pstmt = null;
+			Connection con = null;
+			try {
+				con = getConnection();
+				pstmt = con.prepareStatement(sqlGetParkingSpaceIdByParkingReferenceNumber);
+				pstmt.setString(1, parkingRefNum);
+				
+				ResultSet rs = pstmt.executeQuery();
+				if (rs != null && rs.isBeforeFirst()) {
+					rs.next();
+					spaceId = rs.getLong("space_id");
+				}
+				
+			} catch (SQLException sqle) {
+				System.out.println("SQL statement is invalid: " + pstmt);
+				sqle.printStackTrace();
+				throw new RuntimeException(sqle);
+			} finally {
+				closeConnection(con);
+			}
+			
+			
+			//put result into cache
+			if (spaceId > 0) {
+				myCache.put(new Element(createCacheKey(
+						getSpaceIdByParkingRefNumCacheKey, parkingRefNum), spaceId));
+			}
+		}
+		return spaceId;
 	}
 	
 	/**

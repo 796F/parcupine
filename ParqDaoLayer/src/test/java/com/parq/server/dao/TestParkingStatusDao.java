@@ -305,6 +305,30 @@ public class TestParkingStatusDao extends TestCase {
 		}
 	}
 
+	public void testGetSpaceIdByParkingRefNum() {
+		// update the parking endtime to current time minus 60 sec
+		ParkingInstance piStatus = statusDao
+				.getUserParkingStatus(SupportScriptForDaoTesting.testUser
+						.getUserID());
+		
+		long spaceId = statusDao.getSpaceIdByParkingRefNum(piStatus.getParkingRefNumber());
+		assertTrue(spaceId > 1);
+		assertEquals(piStatus.getSpaceId(), spaceId);
+		
+		// check cache
+		long sysTimeBefore = System.currentTimeMillis();
+		for (int i = 0; i < 1000; i++) {
+			spaceId = statusDao.getSpaceIdByParkingRefNum(piStatus.getParkingRefNumber());
+			assertTrue(spaceId > 1);			
+		}
+		long sysTimeAfter = System.currentTimeMillis();
+		// check that cache is hit, and run time for a 1000 call to cache is less then 2 sec
+		assertTrue(sysTimeAfter - sysTimeBefore < 2000);
+		
+		spaceId = statusDao.getSpaceIdByParkingRefNum("bad value");
+		assertTrue(spaceId < 1);
+	}
+	
 	public void testUnparkBySpaceIdAndParkingInstId() {
 		assertTrue(statusDao
 				.addNewParkingAndPayment(SupportScriptForDaoTesting.testParkingInstance));
@@ -315,8 +339,10 @@ public class TestParkingStatusDao extends TestCase {
 						.getUserID());
 		long curTime = System.currentTimeMillis() - (60 * 1000);
 
-		statusDao.unparkBySpaceIdAndParkingRefNum(oldPiStatus.getSpaceId(),
+		boolean unParkStatus = statusDao.unparkBySpaceIdAndParkingRefNum(oldPiStatus.getSpaceId(),
 				oldPiStatus.getParkingRefNumber(), new Date(curTime));
+		
+		assertTrue(unParkStatus);
 
 		ParkingInstance newPiStatus = statusDao
 				.getUserParkingStatus(SupportScriptForDaoTesting.testUser
