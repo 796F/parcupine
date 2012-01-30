@@ -18,4 +18,6 @@
 @property (weak, nonatomic) IBOutlet ParqTimeBox *hours;
 @property (weak, nonatomic) IBOutlet ParqTimeBox *minutes;
 @property (weak, nonatomic) ParqParkViewController *delegate;
+- (void)cancelRefill;
+- (void)saveRefillWithDuration:(int)durationIn cost:(int)costIn;
 @end

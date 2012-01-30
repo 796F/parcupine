@@ -119,6 +119,13 @@
     [data setObject:spotNumberIn forKey:@"spotNumber"];
     [data writeToFile: path atomically:YES];
 }
++ (void)refillWithParkResponse:(ParkResponse*)parkResponseIn {
+    NSString* path = [self getPlistPath];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile: path];
+    [data setObject:parkResponseIn.parkingReferenceNumber forKey:@"parkRef"];
+    [data setObject:parkResponseIn.endTime forKey:@"endTime"];
+    [data writeToFile: path atomically:YES];
+}
 +(RateObject*) rate{
     NSString* path = [self getPlistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile: path];
@@ -160,7 +167,7 @@
     NSMutableDictionary* savedStock = [[NSMutableDictionary alloc] initWithContentsOfFile:[self getPlistPath]];
     return [savedStock objectForKey:@"spotNumber"];
 }
-+(NSNumber*) getSpotId{
++(NSNumber*) spotId{
     NSMutableDictionary* savedStock = [[NSMutableDictionary alloc] initWithContentsOfFile:[self getPlistPath]];
     return [savedStock objectForKey:@"spot"];
 }

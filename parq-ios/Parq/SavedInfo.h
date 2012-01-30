@@ -32,12 +32,13 @@
 +(NSString*) parkRefNum;
 +(void) unpark;
 +(void) park:(ParkResponse*)parkResponseIn rate:(RateObject*) rateObjIn spotNumber:(NSNumber*) spotNumberIn;
++(void)refillWithParkResponse:(ParkResponse*)parkResponseIn;
 +(RateObject*) rate;
 +(void) logIn:(NSNumber*) parkState Email:(NSString*)emailIn UID:(NSNumber*) userId ccStub:(NSString*)ccStubIn;
 +(void) logOut;
 +(void) syncParkingSession:(ParkSync*)sync;
 +(NSNumber*) spotNumber;
-+(NSNumber*) getSpotId;
++(NSNumber*) spotId;
 +(void) setSpotNumber:(NSString*)spotNumIn;
 +(void) toggleVibrate;
 +(void) toggleRing;

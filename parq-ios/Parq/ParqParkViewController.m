@@ -12,10 +12,6 @@
 #import "ParqTimeRemainingViewController.h"
 #import "SavedInfo.h"
 
-@interface ParqParkViewController ()
-@property (strong, nonatomic) NSString *parkReference;
-@end
-
 @implementation ParqParkViewController
 @synthesize timePicker;
 @synthesize rate;
@@ -24,7 +20,6 @@
 @synthesize spotNumLabel;
 @synthesize spotNumber;
 @synthesize rateObj;
-@synthesize parkReference;
 
 #define CONFIRM_PAYMENT_ALERT 1
 
@@ -79,7 +74,6 @@
             ParkResponse *response = [ServerCalls parkUserWithRateObj:rateObj duration:[self durationSelectedInMinutes] cost:[self costSelectedInCents]];
             if ([response.resp isEqualToString:@"OK"]) {
                 [SavedInfo park:response rate:rateObj spotNumber:[NSNumber numberWithInt:spotNumber]];
-                parkReference = response.parkingReferenceNumber;
 
                 UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
                 ParqTimeRemainingViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"timeRemainingController"];
@@ -102,11 +96,11 @@
 }
 
 - (void)unpark {
-    if ([ServerCalls unparkUserWithSpotId:rateObj.spotNumber ParkRefNum:parkReference]) {
+    if ([ServerCalls unparkUserWithSpotId:rateObj.spotNumber ParkRefNum:[SavedInfo parkRefNum]]) {
         [SavedInfo unpark];
         [self dismissModalViewControllerAnimated:YES];
     } else {
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"There was an error while unparking. Please try again." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"There was an error while parking. Please try again." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alertView show];
     }
 }

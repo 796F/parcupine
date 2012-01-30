@@ -7,7 +7,9 @@
 //
 
 #import "ParqTimeRemainingViewController.h"
+#import "ParqRefillViewController.h"
 #import "SavedInfo.h"
+#import "ServerCalls.h"
 
 @interface ParqTimeRemainingViewController ()
 @property (strong, nonatomic) NSTimer *timer;
@@ -30,6 +32,12 @@
 }
 
 - (IBAction)refillButton:(id)sender {
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
+    ParqRefillViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"refillController"];
+    vc.delegate = self;
+    [vc setModalPresentationStyle:UIModalPresentationFullScreen];
+
+    [self presentModalViewController:vc animated:YES];
 }
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
@@ -62,6 +70,23 @@
     } else {
         [timer invalidate];
         [delegate timeUp];
+    }
+}
+
+- (void)cancelRefill {
+    [self dismissModalViewControllerAnimated:YES];
+}
+
+- (void)saveRefillWithDuration:(int)durationIn cost:(int)costIn {
+    ParkResponse *response = [ServerCalls refillUserWithSpotId:[SavedInfo spotId] Duration:[NSNumber numberWithInt:durationIn] ChargeAmount:[NSNumber numberWithInt:costIn] PaymentType:[NSNumber numberWithInt:0] ParkRefNum:[SavedInfo parkRefNum]];
+    if ([response.resp isEqualToString:@"OK"]) {
+        [SavedInfo refillWithParkResponse:response];
+        endTime = [NSDate dateWithTimeIntervalSince1970:[response.endTime doubleValue]/1000];
+
+        [self dismissModalViewControllerAnimated:YES];
+    } else {
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"There was an error while refilling. Please try again." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alertView show];
     }
 }
 
@@ -99,10 +124,6 @@
     lotNameLabel.text = rateObj.lotName;
     NSNumber *spotNumber = [SavedInfo spotNumber];
     spotNumLabel.text = [NSString stringWithFormat:@"Spot #%d", [spotNumber intValue]];
-    UIBarButtonItem *unpark = self.navigationItem.backBarButtonItem;
-    unpark.title = @"Unpark";
-    unpark.target = self;
-    unpark.action = @selector(unparkButton);
 
     timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updateTimer) userInfo:nil repeats:YES];
     endTime = [NSDate dateWithTimeIntervalSince1970:[[SavedInfo endTime] doubleValue]/1000];
