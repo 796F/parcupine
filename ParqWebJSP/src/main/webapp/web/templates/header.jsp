@@ -10,10 +10,10 @@
     <ul class="pull-left">
       <% if (user.isAuthenticated() == false) { %> 
       <li>
-		<a class="loginButton" href="<%=request.getContextPath()%>/web/action/login.jsp">Log in</a>
+		<a class="loginButton" href="https://www.parqme.com/web/action/login.jsp">Log in</a>
       </li>      
       <li>
-		<a class="signupButton" href="<%=request.getContextPath()%>/web/action/signup.jsp">Sign up</a>
+		<a class="signupButton" href="https://www.parqme.com/web/action/signup.jsp">Sign up</a>
       </li>
       <% }  else {
     	

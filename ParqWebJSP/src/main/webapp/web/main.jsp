@@ -5,8 +5,10 @@
 <head>
 <jsp:include page="/web/templates/base_header.jsp" />
 
+<!-- <script type="text/javascript"
+	src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>  -->
 <script type="text/javascript"
-	src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+	src="https://maps-api-ssl.google.com/maps/api/js?sensor=false"></script>
 <script type="text/javascript">
 	
 	<jsp:include page="/web/templates/main_map.jsp"/>
