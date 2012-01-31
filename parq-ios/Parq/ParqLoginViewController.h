@@ -12,5 +12,6 @@
 
 @property (weak, nonatomic) IBOutlet UITextField *emailControl;
 @property (weak, nonatomic) IBOutlet UITextField *passwordControl;
+- (void)cancel;
 
 @end

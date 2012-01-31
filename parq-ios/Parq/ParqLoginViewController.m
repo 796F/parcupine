@@ -13,6 +13,10 @@
 @implementation ParqLoginViewController
 @synthesize emailControl, passwordControl;
 
+- (void)cancel {
+    [self dismissModalViewControllerAnimated:YES];
+}
+
 - (id)initWithStyle:(UITableViewStyle)style
 {
     self = [super initWithStyle:style];
@@ -149,7 +153,7 @@
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
         UIViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"RegisterController"];
         [vc setModalPresentationStyle:UIModalPresentationFullScreen];
-        
+
         [self presentModalViewController:vc animated:YES];
       }
     }

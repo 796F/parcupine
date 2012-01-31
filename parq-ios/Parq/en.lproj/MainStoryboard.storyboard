@@ -84,7 +84,7 @@
         <scene sceneID="jFv-TB-XS8">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jOd-hY-jC7" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <tableViewController id="zUY-PV-Gkk" sceneMemberID="viewController">
+                <tableViewController id="zUY-PV-Gkk" customClass="ParqSignUpViewController1" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="eTQ-ZJ-O6j">
                         <rect key="frame" x="0.0" y="64" width="320" height="416"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -204,14 +204,25 @@
                             <outlet property="delegate" destination="zUY-PV-Gkk" id="tTP-ku-PPP"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Sign up" id="Pwj-pe-2iR">
-                        <barButtonItem key="leftBarButtonItem" title="Cancel" id="DZx-Fm-zhj"/>
-                        <barButtonItem key="rightBarButtonItem" title="Next" id="JYL-M7-4cS">
+                    <navigationItem key="navigationItem" title="Personal Details" id="Pwj-pe-2iR">
+                        <barButtonItem key="leftBarButtonItem" title="Cancel" id="DZx-Fm-zhj">
                             <connections>
-                                <segue destination="6Ya-KO-blX" kind="push" id="3oj-n2-vFk"/>
+                                <action selector="cancelButton:" destination="zUY-PV-Gkk" id="oz2-Ek-tR4"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" title="Next" id="PQL-6m-tlx">
+                            <connections>
+                                <action selector="nextButton:" destination="zUY-PV-Gkk" id="OPd-F9-QFj"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <outlet property="emailField" destination="7ZZ-LI-u7c" id="KMm-5s-Qig"/>
+                        <outlet property="nameField" destination="HT9-nO-e4q" id="Upc-YV-rNb"/>
+                        <outlet property="passwordField" destination="9zr-B9-CO7" id="vdX-18-XiC"/>
+                        <outlet property="verifyField" destination="nBQ-HM-Rtt" id="GBV-O6-gFi"/>
+                        <segue destination="6Ya-KO-blX" kind="push" identifier="showPaymentMethod" id="EOH-iB-X92"/>
+                    </connections>
                 </tableViewController>
             </objects>
             <point key="canvasLocation" x="959" y="-1698"/>
@@ -219,92 +230,16 @@
         <scene sceneID="a8h-GF-3QL">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FVS-ld-Mq2" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <tableViewController id="6Ya-KO-blX" sceneMemberID="viewController">
+                <tableViewController id="6Ya-KO-blX" customClass="ParqSignUpViewController2" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="nFK-Z4-CB0">
                         <rect key="frame" x="0.0" y="64" width="320" height="416"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <sections>
-                            <tableViewSection headerTitle="Payment Information" id="pzc-zN-GWt">
-                                <cells>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="checkmark" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="eis-oY-j9H">
-                                        <rect key="frame" x="0.0" y="46" width="320" height="45"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="10" y="1" width="280" height="43"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Visa" lineBreakMode="tailTruncation" minimumFontSize="10" id="6P5-DA-usF">
-                                                    <rect key="frame" x="12" y="11" width="42" height="21"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
-                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                        </view>
-                                    </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="mGc-i2-haq">
-                                        <rect key="frame" x="0.0" y="91" width="320" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="10" y="1" width="300" height="43"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="MasterCard" lineBreakMode="tailTruncation" minimumFontSize="10" id="Ib4-QI-OVP">
-                                                    <rect key="frame" x="12" y="11" width="97" height="21"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
-                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                        </view>
-                                    </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="jIJ-re-U6D">
-                                        <rect key="frame" x="0.0" y="135" width="320" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="10" y="1" width="300" height="43"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Amex" lineBreakMode="tailTruncation" minimumFontSize="10" id="XfW-ac-NIU">
-                                                    <rect key="frame" x="12" y="11" width="97" height="21"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
-                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                        </view>
-                                    </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="kBY-ea-o3j">
-                                        <rect key="frame" x="0.0" y="179" width="320" height="45"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="10" y="1" width="300" height="43"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Discover" lineBreakMode="tailTruncation" minimumFontSize="10" id="c8V-0g-xlI">
-                                                    <rect key="frame" x="12" y="11" width="97" height="21"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
-                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                        </view>
-                                    </tableViewCell>
-                                </cells>
-                            </tableViewSection>
                             <tableViewSection headerTitle="Card Details" id="h3e-eG-vpn">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="1VS-np-ZAG">
-                                        <rect key="frame" x="0.0" y="270" width="320" height="45"/>
+                                        <rect key="frame" x="0.0" y="46" width="320" height="45"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="10" y="1" width="300" height="43"/>
@@ -330,7 +265,7 @@
                                         <color key="backgroundColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="UEH-km-7h3">
-                                        <rect key="frame" x="0.0" y="315" width="320" height="45"/>
+                                        <rect key="frame" x="0.0" y="91" width="320" height="45"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="10" y="1" width="300" height="43"/>
@@ -359,7 +294,7 @@
                             <tableViewSection headerTitle="Expiration Date" id="chI-C0-MXJ">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="qbC-mO-DBM">
-                                        <rect key="frame" x="0.0" y="406" width="320" height="45"/>
+                                        <rect key="frame" x="0.0" y="182" width="320" height="45"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="10" y="1" width="300" height="43"/>
@@ -385,7 +320,7 @@
                                         <color key="backgroundColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="QhY-lo-Kqh">
-                                        <rect key="frame" x="0.0" y="451" width="320" height="45"/>
+                                        <rect key="frame" x="0.0" y="227" width="320" height="45"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="10" y="1" width="300" height="43"/>
@@ -414,7 +349,7 @@
                             <tableViewSection headerTitle="Billing Address" id="DYO-8A-zs2">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="S3i-bc-zDJ">
-                                        <rect key="frame" x="0.0" y="542" width="320" height="46"/>
+                                        <rect key="frame" x="0.0" y="318" width="320" height="46"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="10" y="1" width="300" height="43"/>
@@ -447,10 +382,15 @@
                             <outlet property="delegate" destination="6Ya-KO-blX" id="CjY-bS-eTq"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Sign up" id="c9M-Ez-g8b">
+                    <navigationItem key="navigationItem" title="Payment Method" id="c9M-Ez-g8b">
                         <barButtonItem key="backBarButtonItem" title="Back" id="FdB-7X-smH"/>
                         <barButtonItem key="rightBarButtonItem" title="Done" style="done" id="2ec-Kf-hWv"/>
                     </navigationItem>
+                    <connections>
+                        <outlet property="ccNumField" destination="Aqy-3U-gth" id="x1y-hQ-pRn"/>
+                        <outlet property="cscField" destination="Wuf-F2-OTF" id="b6g-DM-TYg"/>
+                        <outlet property="zipField" destination="DSk-sY-n0f" id="hJO-N4-n6r"/>
+                    </connections>
                 </tableViewController>
             </objects>
             <point key="canvasLocation" x="1533" y="-1699"/>
@@ -1249,6 +1189,23 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                 <relationship kind="outlet" name="spotNumLabel" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="timePicker" candidateClass="UIDatePicker"/>
                 <relationship kind="outlet" name="total" candidateClass="UILabel"/>
+            </relationships>
+        </class>
+        <class className="ParqSignUpViewController1" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ParqSignUpViewController1.h"/>
+            <relationships>
+                <relationship kind="outlet" name="emailField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="nameField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="passwordField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="verifyField" candidateClass="UITextField"/>
+            </relationships>
+        </class>
+        <class className="ParqSignUpViewController2" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ParqSignUpViewController2.h"/>
+            <relationships>
+                <relationship kind="outlet" name="ccNumField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="cscField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="zipField" candidateClass="UITextField"/>
             </relationships>
         </class>
         <class className="ParqSpotViewController" superclassName="UIViewController">
