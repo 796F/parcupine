@@ -7,6 +7,7 @@
 //
 
 #import "ParqSignUpViewController1.h"
+#import "ParqSignUpViewController2.h"
 
 
 @implementation ParqSignUpViewController1
@@ -14,6 +15,7 @@
 @synthesize emailField;
 @synthesize passwordField;
 @synthesize verifyField;
+@synthesize delegate;
 
 - (IBAction)nextButton:(id)sender {
     [self performSegueWithIdentifier:@"showPaymentMethod" sender:sender];
@@ -21,6 +23,31 @@
 
 - (IBAction)cancelButton:(id)sender {
     [self dismissModalViewControllerAnimated:YES];
+}
+
+/**
+ * Returns the error string, or nil if there is no error
+ */
+- (NSString*)validate {
+    return nil;
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    NSString *errorString = [self validate];
+    if (errorString.length == 0) {
+        ParqSignUpViewController2 *vc = [segue destinationViewController];
+        vc.name = nameField.text;
+        vc.email = emailField.text;
+        vc.password = passwordField.text;
+        vc.delegate = delegate;
+    } else {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Check your input"
+                                                        message:errorString
+                                                       delegate:nil 
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
+        [alert show];
+    }
 }
 
 - (id)initWithStyle:(UITableViewStyle)style

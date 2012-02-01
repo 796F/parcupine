@@ -384,11 +384,17 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Payment Method" id="c9M-Ez-g8b">
                         <barButtonItem key="backBarButtonItem" title="Back" id="FdB-7X-smH"/>
-                        <barButtonItem key="rightBarButtonItem" title="Done" style="done" id="2ec-Kf-hWv"/>
+                        <barButtonItem key="rightBarButtonItem" title="Done" style="done" id="2ec-Kf-hWv">
+                            <connections>
+                                <action selector="doneButton:" destination="6Ya-KO-blX" id="z8T-J6-js0"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="ccNumField" destination="Aqy-3U-gth" id="x1y-hQ-pRn"/>
                         <outlet property="cscField" destination="Wuf-F2-OTF" id="b6g-DM-TYg"/>
+                        <outlet property="expMonthLabel" destination="xO0-4Z-cxp" id="4Wq-CY-Jcy"/>
+                        <outlet property="expYearLabel" destination="bOn-E2-zg8" id="Shi-hO-SbK"/>
                         <outlet property="zipField" destination="DSk-sY-n0f" id="hJO-N4-n6r"/>
                     </connections>
                 </tableViewController>
@@ -1205,6 +1211,8 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
             <relationships>
                 <relationship kind="outlet" name="ccNumField" candidateClass="UITextField"/>
                 <relationship kind="outlet" name="cscField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="expMonthLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="expYearLabel" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="zipField" candidateClass="UITextField"/>
             </relationships>
         </class>

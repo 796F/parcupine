@@ -7,11 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ParqLoginViewController.h"
 
 @interface ParqSignUpViewController1 : UITableViewController
 @property (weak, nonatomic) IBOutlet UITextField *nameField;
 @property (weak, nonatomic) IBOutlet UITextField *emailField;
 @property (weak, nonatomic) IBOutlet UITextField *passwordField;
 @property (weak, nonatomic) IBOutlet UITextField *verifyField;
+@property (weak, nonatomic) ParqLoginViewController *delegate;
 
 @end

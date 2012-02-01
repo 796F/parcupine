@@ -10,11 +10,30 @@
 #import "SFHFKeychainUtils.h"
 #import "ServerCalls.h"
 #import "SavedInfo.h"
+#import "ParqSignUpViewController1.h"
 @implementation ParqLoginViewController
 @synthesize emailControl, passwordControl;
 
-- (void)cancel {
-    [self dismissModalViewControllerAnimated:YES];
+- (void)saveUserInfoWithEmail:(NSString*)email andPassword:(NSString*)password andUserObj:(UserObject*)user
+{
+    NSError *error = nil;
+    [SFHFKeychainUtils storeUsername:email andPassword:password forServiceName:@"com.parqme" updateExisting:YES error:&error];
+    [SavedInfo logIn:user.parkState Email:email UID:user.uid ccStub:user.creditCardStub];
+}
+
+- (void)logInAfterSigningUp:(NSString*)email password:(NSString*)password {
+    UserObject *user = [ServerCalls authEmail:emailControl.text Password:passwordControl.text];
+    if (user != nil) {
+        [self saveUserInfoWithEmail:emailControl.text andPassword:passwordControl.text andUserObj:user];
+        [self dismissModalViewControllerAnimated:YES];
+    } else {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Couldn't log in"
+                                                        message:@"Please check your email and password"
+                                                       delegate:nil 
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
+        [alert show];
+    }
 }
 
 - (id)initWithStyle:(UITableViewStyle)style
@@ -122,13 +141,6 @@
 }
 */
 
-- (void)saveUserInfoWithEmail:(NSString*)email andPassword:(NSString*)password andUserObj:(UserObject*)user
-{
-  NSError *error = nil;
-  [SFHFKeychainUtils storeUsername:email andPassword:password forServiceName:@"com.parqme" updateExisting:YES error:&error];
-    [SavedInfo logIn:user.parkState Email:email UID:user.uid ccStub:user.creditCardStub];
-}
-
 #pragma mark - Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -151,8 +163,10 @@
         }
       } else if (indexPath.row == 1) {
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
-        UIViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"RegisterController"];
+        UINavigationController *vc = [storyboard instantiateViewControllerWithIdentifier:@"RegisterController"];
         [vc setModalPresentationStyle:UIModalPresentationFullScreen];
+        ParqSignUpViewController1 *vcTop = [[vc viewControllers] objectAtIndex:0];
+        vcTop.delegate = self;
 
         [self presentModalViewController:vc animated:YES];
       }
