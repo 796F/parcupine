@@ -83,16 +83,23 @@
     NSArray* splitUrl = [firstResult.data componentsSeparatedByString:@"/"];
     NSString* lotId = [splitUrl objectAtIndex:3];
     NSString* spotId = [splitUrl objectAtIndex:4];
-    RateObject* rateObj = [ServerCalls getRateLotId:lotId spotId:spotId];
-      
-    if(rateObj!=nil){
+    _rateObj = [ServerCalls getRateLotId:lotId spotId:spotId];
+
+    //once we display the result string, dismiss the scanner.
+    [reader dismissModalViewControllerAnimated:YES];
+
+    if(_rateObj!=nil){
         //stop getting gps, user successfully scanned a qr code.  
         [locationManager stopUpdatingLocation];
-        //TODO: launch next screen using this rate object.
+        [self performSegueWithIdentifier:@"showParkTimePicker" sender:self];
+    } else {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Couldn't find spot"
+                                                        message:@"There was a problem looking up your QR code. Please try again."
+                                                       delegate:nil
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
+        [alert show];
     }
-    //once we display the result string, dismiss the scanner.  
-    [reader dismissModalViewControllerAnimated:YES];
-    
 }
 
 - (void)locationManager:(CLLocationManager *)manager
