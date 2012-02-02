@@ -9,23 +9,45 @@
 #import "ParqSignUpViewController2.h"
 #import "ServerCalls.h"
 
+@interface ExpMonthDelegate : NSObject <UIPickerViewDelegate, UIPickerViewDataSource>
+@property (weak, nonatomic) ParqSignUpViewController2 *delegate;
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView;
+- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component;
+- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component;
+- (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component;
+@end
+
+@interface ExpYearDelegate : NSObject <UIPickerViewDelegate, UIPickerViewDataSource>
+@property (weak, nonatomic) ParqSignUpViewController2 *delegate;
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView;
+- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component;
+- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component;
+- (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component;
+@end
+
 @interface ParqSignUpViewController2 ()
-@property (nonatomic) int expMonth;
-@property (nonatomic) int expYear;
+@property (strong, nonatomic) UIPickerView *expMonthPicker;
+@property (strong, nonatomic) UIPickerView *expYearPicker;
+@property (strong, nonatomic) ExpMonthDelegate *expMonthDelegate;
+@property (strong, nonatomic) ExpYearDelegate *expYearDelegate;
 @end
 
 @implementation ParqSignUpViewController2
 @synthesize ccNumField;
 @synthesize cscField;
 @synthesize zipField;
-@synthesize expMonthLabel;
-@synthesize expYearLabel;
+@synthesize expMonthField;
+@synthesize expYearField;
 @synthesize name;
 @synthesize email;
 @synthesize password;
 @synthesize expMonth;
 @synthesize expYear;
 @synthesize delegate;
+@synthesize expMonthPicker;
+@synthesize expYearPicker;
+@synthesize expMonthDelegate;
+@synthesize expYearDelegate;
 
 /**
  * Returns the error string, or nil if there is no error
@@ -87,6 +109,22 @@
  
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+
+    expMonthPicker = [[UIPickerView alloc] init];
+    expMonthDelegate = [[ExpMonthDelegate alloc] init];
+    expMonthDelegate.delegate = self;
+    expMonthPicker.delegate = expMonthDelegate;
+    expMonthPicker.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    expMonthPicker.showsSelectionIndicator = YES;
+    expMonthField.inputView = expMonthPicker;
+
+    expYearPicker = [[UIPickerView alloc] init];
+    expYearDelegate = [[ExpYearDelegate alloc] init];
+    expYearDelegate.delegate = self;
+    expYearPicker.delegate = expYearDelegate;
+    expYearPicker.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    expYearPicker.showsSelectionIndicator = YES;
+    expYearField.inputView = expYearPicker;
 }
 
 - (void)viewDidUnload
@@ -94,8 +132,8 @@
     [self setCcNumField:nil];
     [self setCscField:nil];
     [self setZipField:nil];
-    [self setExpMonthLabel:nil];
-    [self setExpYearLabel:nil];
+    [self setExpMonthField:nil];
+    [self setExpYearField:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -140,4 +178,77 @@
      */
 }
 
+@end
+
+@implementation ExpMonthDelegate
+@synthesize delegate;
++ (NSString *)monthFromRow:(int)row {
+//    switch (row) {
+//        case 0:
+//            return @"January";
+//        case 1:
+//            return @"February";
+//        case 2:
+//            return @"March";
+//        case 3:
+//            return @"April";
+//        case 4:
+//            return @"May";
+//        case 5:
+//            return @"June";
+//        case 6:
+//            return @"July";
+//        case 7:
+//            return @"August";
+//        case 8:
+//            return @"September";
+//        case 9:
+//            return @"October";
+//        case 10:
+//            return @"November";
+//        case 11:
+//            return @"December";
+//        default:
+//            return @"";
+//    }
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    return [[dateFormatter monthSymbols] objectAtIndex:row];
+}
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
+    return 1;
+}
+- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
+    return 12;
+}
+- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
+    return [ExpMonthDelegate monthFromRow:row];
+}
+- (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
+    delegate.expMonthField.text = [ExpMonthDelegate monthFromRow:row];
+    delegate.expMonth = row+1;
+}
+@end
+
+@implementation ExpYearDelegate
+@synthesize delegate;
++ (int)yearFromRow:(int)row {
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"yyyy"];
+    const int currentYear = [[dateFormatter stringFromDate:[NSDate date]] intValue];
+    return currentYear+row;
+}
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
+    return 1;
+}
+- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
+    return 50;
+}
+- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
+    return [NSString stringWithFormat:@"%d",[ExpYearDelegate yearFromRow:row]];
+}
+- (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
+    const int year = [ExpYearDelegate yearFromRow:row];
+    delegate.expYearField.text = [NSString stringWithFormat:@"%d",year];
+    delegate.expYear = year;
+}
 @end
