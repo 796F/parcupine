@@ -7,7 +7,16 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "EditEmailViewController.h"
 
-@interface ParqAccountViewController : UITableViewController
+@interface ParqAccountViewController : UITableViewController{
+    IBOutlet EditEmailViewController* editEmailView;
+    
+    NSString* currentEmail;
+    id reference;
+}
+
+
+-(IBAction)editEmailClicked:(id)sender;
 
 @end
