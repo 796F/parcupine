@@ -119,6 +119,10 @@
                 }
                 break;
         }
+    }else if(indexPath.section==2){
+        cell.selected = NO;
+        //log user out
+        NSLog(@"log me out!!"  );
     }
 }
 
@@ -127,8 +131,8 @@
     NSString* confirmNewEmail = viewController.confirmNewEmail.text;
     NSString* oldEmail = viewController.oldEmail.text;
     NSString* confirmOldEmail = [SavedInfo getEmail];
-    
-    if([newEmail compare:confirmNewEmail] && [oldEmail compare:confirmOldEmail] ){
+    BOOL comparison = [newEmail isEqualToString:confirmNewEmail] && [oldEmail isEqualToString:confirmOldEmail];
+    if( comparison ){
         BOOL result = [ServerCalls  editUserEmail:newEmail Password:@"" PhoneNumber:@""];
         if(result){
             emailDisplayLabel.text = newEmail;
