@@ -10,6 +10,7 @@
 #import "SavedInfo.h"
 #import "EditEmailViewController.h"
 #import "TDSemiModal.h"
+#import "ServerCalls.h"
 
 @implementation ParqAccountViewController
 
@@ -122,19 +123,36 @@
 }
 
 -(void)editEmailSetEmail:(EditEmailViewController*)viewController {
-	[self dismissSemiModalViewController:editEmailView];
-	currentEmail = viewController.editEmail.text;
+    NSString* newEmail = viewController.editEmail.text;
+    NSString* confirmNewEmail = viewController.confirmNewEmail.text;
+    NSString* oldEmail = viewController.oldEmail.text;
+    NSString* confirmOldEmail = [SavedInfo getEmail];
+    
+    if([newEmail compare:confirmNewEmail] && [oldEmail compare:confirmOldEmail] ){
+        BOOL result = [ServerCalls  editUserEmail:newEmail Password:@"" PhoneNumber:@""];
+        if(result){
+            emailDisplayLabel.text = newEmail;
+            [SavedInfo setEmail:newEmail];
+            [self dismissSemiModalViewController:editEmailView];
+        }else{
+            //popup "could not change.  check fields"
+        }
+    }else{
+            //popup "did not match, check your fields"
+    }
 }
 -(void)editEmailClearEmail:(EditEmailViewController*)viewController{   
     viewController.editEmail.text=@"";
     viewController.oldEmail.text=@"";
     viewController.confirmNewEmail.text=@"";
-    currentEmail = nil;
+    
 }
 
 -(void)editEmailCancel:(EditEmailViewController*)viewController{
+    viewController.editEmail.text=@"";
+    viewController.oldEmail.text=@"";
+    viewController.confirmNewEmail.text=@"";
 	[self dismissSemiModalViewController:editEmailView];
-    currentEmail = nil;
 }
 
 @end

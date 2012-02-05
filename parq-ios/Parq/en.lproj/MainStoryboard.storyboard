@@ -948,6 +948,10 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                         </connections>
                     </tableView>
                     <tabBarItem key="tabBarItem" title="Account" image="first" id="SZp-ri-t6V"/>
+                    <connections>
+                        <outlet property="cardDisplayLabel" destination="OtD-Z6-0eq" id="iuO-TB-2q1"/>
+                        <outlet property="emailDisplayLabel" destination="qMI-SZ-Ylq" id="NBg-3S-pnJ"/>
+                    </connections>
                 </tableViewController>
             </objects>
             <point key="canvasLocation" x="425" y="359"/>
@@ -1115,8 +1119,9 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         <class className="ParqAccountViewController" superclassName="UITableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/ParqAccountViewController.h"/>
             <relationships>
-                <relationship kind="action" name="editEmailClicked:"/>
+                <relationship kind="outlet" name="cardDisplayLabel" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="editEmailView" candidateClass="EditEmailViewController"/>
+                <relationship kind="outlet" name="emailDisplayLabel" candidateClass="UILabel"/>
             </relationships>
         </class>
         <class className="ParqButton" superclassName="UIButton">

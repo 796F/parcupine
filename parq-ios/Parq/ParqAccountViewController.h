@@ -11,12 +11,11 @@
 
 @interface ParqAccountViewController : UITableViewController{
     IBOutlet EditEmailViewController* editEmailView;
-    
-    NSString* currentEmail;
+    IBOutlet UILabel *emailDisplayLabel;
+    IBOutlet UILabel *cardDisplayLabel;
     id reference;
 }
 
 
--(IBAction)editEmailClicked:(id)sender;
 
 @end
