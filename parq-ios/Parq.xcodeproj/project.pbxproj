@@ -46,6 +46,10 @@
 		FC172A7714C9C6C60094A313 /* zbar-help.html in Resources */ = {isa = PBXBuildFile; fileRef = FC172A7214C9C6C60094A313 /* zbar-help.html */; };
 		FC172A7814C9C6C60094A313 /* zbar-helpicons.png in Resources */ = {isa = PBXBuildFile; fileRef = FC172A7314C9C6C60094A313 /* zbar-helpicons.png */; };
 		FC172A7914C9C6C60094A313 /* zbar-samples.png in Resources */ = {isa = PBXBuildFile; fileRef = FC172A7414C9C6C60094A313 /* zbar-samples.png */; };
+		FC42C3E714DDD6E7000F659D /* EditEmailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FC42C3E614DDD6E6000F659D /* EditEmailViewController.xib */; };
+		FC42C3EF14DDDE4E000F659D /* EditEmailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC42C3ED14DDDE4E000F659D /* EditEmailViewController.m */; };
+		FC42C3F714DDE1A9000F659D /* UIViewController+TDSemiModalExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = FC42C3F214DDE1A9000F659D /* UIViewController+TDSemiModalExtension.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		FC42C3F814DDE1A9000F659D /* TDSemiModalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC42C3F514DDE1A9000F659D /* TDSemiModalViewController.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		FC83A91D14C9E8EC0096DCD1 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC83A91C14C9E8EC0096DCD1 /* AVFoundation.framework */; };
 		FC83A91F14C9E8F70096DCD1 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC83A91E14C9E8F70096DCD1 /* CoreMedia.framework */; };
 		FC83A92114C9E9010096DCD1 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC83A92014C9E9010096DCD1 /* CoreVideo.framework */; };
@@ -192,6 +196,14 @@
 		FC172A7214C9C6C60094A313 /* zbar-help.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "zbar-help.html"; sourceTree = "<group>"; };
 		FC172A7314C9C6C60094A313 /* zbar-helpicons.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "zbar-helpicons.png"; sourceTree = "<group>"; };
 		FC172A7414C9C6C60094A313 /* zbar-samples.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "zbar-samples.png"; sourceTree = "<group>"; };
+		FC42C3E614DDD6E6000F659D /* EditEmailViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EditEmailViewController.xib; sourceTree = "<group>"; };
+		FC42C3EC14DDDE4D000F659D /* EditEmailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditEmailViewController.h; sourceTree = "<group>"; };
+		FC42C3ED14DDDE4E000F659D /* EditEmailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditEmailViewController.m; sourceTree = "<group>"; };
+		FC42C3F214DDE1A9000F659D /* UIViewController+TDSemiModalExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+TDSemiModalExtension.m"; sourceTree = "<group>"; };
+		FC42C3F314DDE1A9000F659D /* TDSemiModal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSemiModal.h; sourceTree = "<group>"; };
+		FC42C3F414DDE1A9000F659D /* TDSemiModalViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSemiModalViewController.h; sourceTree = "<group>"; };
+		FC42C3F514DDE1A9000F659D /* TDSemiModalViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDSemiModalViewController.m; sourceTree = "<group>"; };
+		FC42C3F614DDE1A9000F659D /* UIViewController+TDSemiModalExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+TDSemiModalExtension.h"; sourceTree = "<group>"; };
 		FC83A91C14C9E8EC0096DCD1 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		FC83A91E14C9E8F70096DCD1 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		FC83A92014C9E9010096DCD1 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
@@ -322,6 +334,9 @@
 				8716B0D014B3C094004105AD /* first.png */,
 				8716B0D214B3C094004105AD /* first@2x.png */,
 				8716B0CA14B3C094004105AD /* MainStoryboard.storyboard */,
+				FC42C3E614DDD6E6000F659D /* EditEmailViewController.xib */,
+				FC42C3EC14DDDE4D000F659D /* EditEmailViewController.h */,
+				FC42C3ED14DDDE4E000F659D /* EditEmailViewController.m */,
 				8703F58014CC6DE4003DAE14 /* MapPin.h */,
 				8703F58114CC6DE4003DAE14 /* MapPin.m */,
 				8732B78314C63BEB00405F0B /* ParqTimeBox.h */,
@@ -382,6 +397,7 @@
 		FC09C3E014C4979A00DD0CBD /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				FC42C3F114DDE0C7000F659D /* TDSemiModal */,
 				FCF4B1C514CB6EAA00991A20 /* BSForwardGeocoder */,
 				FCD0035914C49E8700A310C1 /* RestKit.xcodeproj */,
 				87D2097814C48E4D00E663D7 /* SFHFKeychainUtils */,
@@ -456,6 +472,18 @@
 				FC172A7414C9C6C60094A313 /* zbar-samples.png */,
 			);
 			path = Resources;
+			sourceTree = "<group>";
+		};
+		FC42C3F114DDE0C7000F659D /* TDSemiModal */ = {
+			isa = PBXGroup;
+			children = (
+				FC42C3F214DDE1A9000F659D /* UIViewController+TDSemiModalExtension.m */,
+				FC42C3F314DDE1A9000F659D /* TDSemiModal.h */,
+				FC42C3F414DDE1A9000F659D /* TDSemiModalViewController.h */,
+				FC42C3F514DDE1A9000F659D /* TDSemiModalViewController.m */,
+				FC42C3F614DDE1A9000F659D /* UIViewController+TDSemiModalExtension.h */,
+			);
+			name = TDSemiModal;
 			sourceTree = "<group>";
 		};
 		FCD0035A14C49E8700A310C1 /* Products */ = {
@@ -614,6 +642,7 @@
 				FC172A7814C9C6C60094A313 /* zbar-helpicons.png in Resources */,
 				FC172A7914C9C6C60094A313 /* zbar-samples.png in Resources */,
 				FCF019CF14CE1F1100A2C160 /* ParqInfo.plist in Resources */,
+				FC42C3E714DDD6E7000F659D /* EditEmailViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -657,6 +686,9 @@
 				87DA6A0114D54DC7003C5FC2 /* ParqRefillViewController.m in Sources */,
 				8735DA0214D773FE00957643 /* ParqSignUpViewController1.m in Sources */,
 				8735DA0514D7743A00957643 /* ParqSignUpViewController2.m in Sources */,
+				FC42C3EF14DDDE4E000F659D /* EditEmailViewController.m in Sources */,
+				FC42C3F714DDE1A9000F659D /* UIViewController+TDSemiModalExtension.m in Sources */,
+				FC42C3F814DDE1A9000F659D /* TDSemiModalViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

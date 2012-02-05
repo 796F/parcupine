@@ -184,16 +184,14 @@
         [data setObject:[NSNumber numberWithBool:YES] forKey:@"vibrateEnable"];
         
         [data writeToFile:path atomically:YES];
-        NSLog(@"\nnil found");
         return;
     }
     
     if([[data objectForKey:@"vibrateEnable"] boolValue]){
         [data setObject:[NSNumber numberWithBool:NO] forKey:@"vibrateEnable"];
-        NSLog(@"\ndisabled now");
+
     }else{
         [data setObject:[NSNumber numberWithBool:YES] forKey:@"vibrateEnable"];
-        NSLog(@"\n enabled now");
     }
     [data writeToFile:path atomically:YES];
 }

@@ -22,7 +22,7 @@
 @synthesize BSGeocoder;
 
 - (IBAction)goAddress{
-    if(true){  //IF IOS.5 OR LATER
+    if(NSClassFromString(@"CLGeocoder")){  //IF ios 5, CLGeocoder exists.  
         if(IOSGeocoder ==nil){
             IOSGeocoder = [[CLGeocoder alloc] init];
         }

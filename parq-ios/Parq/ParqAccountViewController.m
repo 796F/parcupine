@@ -8,6 +8,8 @@
 
 #import "ParqAccountViewController.h"
 #import "SavedInfo.h"
+#import "EditEmailViewController.h"
+#import "TDSemiModal.h"
 
 @implementation ParqAccountViewController
 
@@ -22,6 +24,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    editEmailView = [[EditEmailViewController alloc]initWithNibName:@"EditEmailViewController" bundle:nil];
+    editEmailView.delegate = self;
+    reference = self;
 	// Do any additional setup after loading the view, typically from a nib.
 }
 
@@ -64,19 +69,15 @@
     
     if(indexPath.section==0){
         switch (indexPath.row) {
-            case 0:
-                //do nothing
+            case 0:{ 
+                NSLog(@"change email");
+                cell.selected=NO;
+                [reference presentSemiModalViewController:editEmailView];
                 break;
+                }
             case 1:
-                //dialog lets edit email
-                break;
-            case 2:
-                //do nothing
-                break;
-            case 3:
-                //dialog lets edit creditcard
-                break;
-            default:
+                NSLog(@"change cc");
+                cell.selected=NO;
                 break;
         }
         //user info part
@@ -116,9 +117,24 @@
                     [SavedInfo toggleRing];
                 }
                 break;
-            default:
-                break;
         }
     }
 }
+
+-(void)editEmailSetEmail:(EditEmailViewController*)viewController {
+	[self dismissSemiModalViewController:editEmailView];
+	currentEmail = viewController.editEmail.text;
+}
+-(void)editEmailClearEmail:(EditEmailViewController*)viewController{   
+    viewController.editEmail.text=@"";
+    viewController.oldEmail.text=@"";
+    viewController.confirmNewEmail.text=@"";
+    currentEmail = nil;
+}
+
+-(void)editEmailCancel:(EditEmailViewController*)viewController{
+	[self dismissSemiModalViewController:editEmailView];
+    currentEmail = nil;
+}
+
 @end

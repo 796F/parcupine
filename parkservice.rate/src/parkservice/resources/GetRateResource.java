@@ -48,13 +48,17 @@ public class GetRateResource {
 		if(uid==innerAuthenticate(userInfo)){
 			//http://www.parqme.com/x86gg0/a80
 
+			RateResponse output = new RateResponse();
 			ParkingRateDao p = new ParkingRateDao();
 			//getbyname should use p.getParkingRateByName(x86gg0, a808);
 			ParkingRate pr = null;
 			try{
 				pr =p.getParkingRateByName(input.getLot(), input.getSpot());
 			}catch (Exception e){}
-			
+			if(pr==null){
+				output.setResp("NO_SPOT");
+				return output;
+			}
 			GeolocationDao gdao = new GeolocationDao();
 			ParkingSpaceDao psdao = new ParkingSpaceDao();
 			ParkingSpace pspace = null;
@@ -64,7 +68,6 @@ public class GetRateResource {
 				pspace =psdao.getParkingSpaceBySpaceIdentifier(input.getLot(), input.getSpot());
 			}catch (Exception e){}
 
-			RateResponse output = new RateResponse();
 			if(loc!=null && pspace!=null){
 				RateObject rate = new RateObject();
 				rate.setLat(loc.getLatitude());
