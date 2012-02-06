@@ -14,6 +14,17 @@
 @implementation ParqLoginViewController
 @synthesize emailControl, passwordControl;
 
+-(BOOL)textFieldShouldReturn:(UITextField*)textField{
+    NSInteger nextTag = textField.tag+1;
+    UIResponder* nextResponder = [textField.superview viewWithTag:nextTag];
+    if(nextResponder){
+        [nextResponder becomeFirstResponder];
+    }else{
+        [textField resignFirstResponder];
+    }
+    return NO;
+}
+
 - (void)saveUserInfoWithEmail:(NSString*)email andPassword:(NSString*)password andUserObj:(UserObject*)user
 {
     NSError *error = nil;
@@ -64,6 +75,7 @@
  
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    [passwordControl addTarget:self action:@selector(logUserIn:) forControlEvents:UIControlEventEditingDidEndOnExit];
 }
 
 - (void)viewDidUnload
@@ -140,7 +152,21 @@
     return YES;
 }
 */
+-(void)logUserIn{
+    UserObject *user = [ServerCalls authEmail:emailControl.text Password:passwordControl.text];
+    if (user != nil) {
+        [self saveUserInfoWithEmail:emailControl.text andPassword:passwordControl.text andUserObj:user];
+        [self dismissModalViewControllerAnimated:YES];
+    } else {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Couldn't log in"
+                                                        message:@"Please check your email and password"
+                                                       delegate:nil 
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
+        [alert show];
+    }
 
+}
 #pragma mark - Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -149,18 +175,7 @@
     if (indexPath.section == 1) {
       [tableView deselectRowAtIndexPath:indexPath animated:YES];
       if (indexPath.row == 0) {
-        UserObject *user = [ServerCalls authEmail:emailControl.text Password:passwordControl.text];
-        if (user != nil) {
-          [self saveUserInfoWithEmail:emailControl.text andPassword:passwordControl.text andUserObj:user];
-          [self dismissModalViewControllerAnimated:YES];
-        } else {
-          UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Couldn't log in"
-                                                          message:@"Please check your email and password"
-                                                         delegate:nil 
-                                                cancelButtonTitle:@"OK"
-                                                otherButtonTitles:nil];
-          [alert show];
-        }
+          [self logUserIn];
       } else if (indexPath.row == 1) {
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
         UINavigationController *vc = [storyboard instantiateViewControllerWithIdentifier:@"RegisterController"];

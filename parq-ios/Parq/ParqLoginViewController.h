@@ -13,4 +13,5 @@
 @property (weak, nonatomic) IBOutlet UITextField *emailControl;
 @property (weak, nonatomic) IBOutlet UITextField *passwordControl;
 - (void)logInAfterSigningUp:(NSString*)email password:(NSString*)password;
+-(void)logUserIn;
 @end
