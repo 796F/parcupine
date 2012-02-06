@@ -27,10 +27,10 @@
 @synthesize goodLocation;
 @synthesize rateObj = _rateObj;
 
--(IBAction)parqButton{
+-(void) gpsParkFunction{
     //submit gps coordinates and spot to server.   
     if(goodLocation){
-//    if (YES) {
+        //    if (YES) {
         //check response from server before allowing next view. 
         _rateObj = [ServerCalls getRateLat:[NSNumber numberWithDouble:self.userLat] Lon: [NSNumber numberWithDouble:self.userLon] spotId:_spotNumField.text];
         if(_rateObj !=nil){
@@ -46,8 +46,12 @@
     }else{
         //SHOW "GETTING GPS LOCATION" dialog like android app.  
     }
+
 }
 
+-(IBAction)parqButton{
+    [self gpsParkFunction];
+}
 -(IBAction)scanButton{
     //launch scanner and grab results.  
     //create new view for scanning
@@ -183,6 +187,9 @@
 {
     return [SavedInfo isLoggedIn];
 }
+-(IBAction)spotNumGo:(id)sender{
+        [self gpsParkFunction];
+}
 
 #pragma mark - View lifecycle
 
@@ -192,6 +199,7 @@
     [self registerForKeyboardNotifications];
     goodLocation=NO;  //when view first loads, set location to false.  
     [self startGettingLocation];   //start getting gps coords
+    [_spotNumField addTarget:self action:@selector(spotNumGo:) forControlEvents:UIControlEventEditingDidEndOnExit];
 }
 
 - (void)viewDidUnload

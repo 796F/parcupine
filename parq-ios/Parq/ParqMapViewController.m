@@ -21,7 +21,8 @@
 @synthesize IOSGeocoder;
 @synthesize BSGeocoder;
 
-- (IBAction)goAddress{
+-(void) goAddressFunction{
+    
     if(NSClassFromString(@"CLGeocoder")){  //IF ios 5, CLGeocoder exists.  
         if(IOSGeocoder ==nil){
             IOSGeocoder = [[CLGeocoder alloc] init];
@@ -65,6 +66,10 @@
         }];
         
     }
+}
+
+- (IBAction)goAddress{
+    [self goAddressFunction];
 }
 -(IBAction)goUser{
     //if the user is parked
@@ -126,6 +131,9 @@
     pinView.calloutOffset = CGPointMake(-5, 5);
     return pinView;
 }
+-(IBAction)addressFieldGo:(id)sender{
+    [self goAddressFunction];
+}
 
 #pragma mark - View lifecycle
 
@@ -134,6 +142,7 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     [self startGettingLocation];
+    [addressField addTarget:self action:@selector(addressFieldGo:) forControlEvents:UIControlEventEditingDidEndOnExit];
 }
 
 - (void)viewDidUnload

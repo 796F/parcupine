@@ -139,9 +139,21 @@
             [SavedInfo setEmail:newEmail];
             [self dismissSemiModalViewController:editEmailView];
         }else{
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error updating profile"
+                                                            message:@"Please try again later"
+                                                           delegate:nil
+                                                  cancelButtonTitle:@"OK"
+                                                  otherButtonTitles:nil];
+            [alert show];
             //popup "could not change.  check fields"
         }
     }else{
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Your fields did not match"
+                                                        message:@"Please check and try again"
+                                                       delegate:nil
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
+        [alert show];
             //popup "did not match, check your fields"
     }
 }

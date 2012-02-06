@@ -44,12 +44,32 @@
     // Release any cached data, images, etc that aren't in use.
 }
 
+-(BOOL)textFieldShouldReturn:(UITextField*)textField{
+    NSInteger nextTagNumber = textField.tag+1;
+    UIResponder* nextResponder = [textField.superview viewWithTag:nextTagNumber];
+    if(nextResponder){
+        [nextResponder becomeFirstResponder];
+
+    }else{
+        [textField resignFirstResponder];
+
+    }
+    return NO;
+}
+
+-(IBAction)submitEmailEdit :(id)sender{
+    if([self.delegate respondsToSelector:@selector(editEmailSetEmail:)]) {
+		[self.delegate editEmailSetEmail:self];
+	}
+    [self dismissSemiModalViewController:self];
+}
+
 #pragma mark - View lifecycle
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
+    [confirmNewEmail addTarget:self action:@selector(submitEmailEdit:) forControlEvents:UIControlEventEditingDidEndOnExit];
 }
 
 - (void)viewDidUnload
