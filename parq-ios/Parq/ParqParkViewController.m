@@ -57,6 +57,29 @@
 
 #pragma mark -
 
+
+-(void)scheduleAlertsWithDuration:(int)durationMinutes {
+    //clears old notifications
+    UIApplication* myApp = [UIApplication sharedApplication];
+    [myApp cancelAllLocalNotifications];
+    
+    UILocalNotification* scheduledAlert = [[UILocalNotification alloc] init];
+    scheduledAlert.applicationIconBadgeNumber=1;
+    //this method uses seconds.
+    scheduledAlert.fireDate = [NSDate dateWithTimeIntervalSinceNow:(durationMinutes-4)*60];
+    scheduledAlert.timeZone = [NSTimeZone defaultTimeZone];
+    scheduledAlert.alertBody = @"You are almost out of time!";
+    [myApp scheduleLocalNotification:scheduledAlert];
+    
+    UILocalNotification* endingAlert = [[UILocalNotification alloc] init];
+    endingAlert.applicationIconBadgeNumber=2;
+    endingAlert.fireDate = [NSDate dateWithTimeIntervalSinceNow:durationMinutes*60];
+    endingAlert.timeZone = [NSTimeZone defaultTimeZone];
+    endingAlert.alertBody = @"You have run out of time!";
+    [myApp scheduleLocalNotification:endingAlert];
+}
+
+
 - (IBAction)parkButton:(id)sender {
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Confirm payment"
                                                     message:[NSString stringWithFormat:@"Parking for %d minutes will cost %@. Is this okay?",[self durationSelectedInMinutes],[ParqParkViewController centsToString:[self costSelectedInCents]]]
@@ -79,8 +102,9 @@
                 ParqTimeRemainingViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"timeRemainingController"];
                 vc.delegate = self;
                 [vc setModalPresentationStyle:UIModalPresentationFullScreen];
-
+                [self scheduleAlertsWithDuration:[self durationSelectedInMinutes]];
                 [self presentModalViewController:vc animated:YES];
+                
             } else {
                 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"There was an error while parking. Please try again." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
                 [alertView show];
@@ -88,6 +112,8 @@
         }
     }
 }
+
+
 - (void)timeUp {
     [SavedInfo unpark];
     [self dismissModalViewControllerAnimated:YES];

@@ -191,6 +191,7 @@
         [self gpsParkFunction];
 }
 
+
 #pragma mark - View lifecycle
 
 - (void)viewDidLoad
@@ -219,7 +220,6 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-
     if (![self isLoggedIn]) {
       UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
       UIViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
@@ -232,8 +232,8 @@
         //if gps didn't get a good location
         [self startGettingLocation];
     }
-    
 }
+
 
 - (void)viewWillDisappear:(BOOL)animated
 {
