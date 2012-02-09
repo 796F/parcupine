@@ -58,7 +58,7 @@
 		  <table>
 			  <tbody>
 			  	<tr>
-				    <td><label style="white-space:nowrap;" for="parkingSpaceFilter">Show parking information for:</label></td>
+				    <td><label style="white-space:nowrap;" for="parkingSpaceFilter">Filter Parking Status By:</label></td>
 				    <td>
 				    	<%
 				    		boolean allSelect = pSpaceFilter.getParkingSpaceFilter().equals(ParkingSpacesFilter.Status.ALL.toString());
@@ -68,18 +68,45 @@
 				    	<select name="parkingSpaceFilter">
 					      <option value="<%=ParkingSpacesFilter.Status.ALL.toString()%>" 
 					      		<%if (allSelect) {%> selected <%}%>>
-					      		All
+					      		All Parking Spaces
 					      </option>
 					      <option value="<%=ParkingSpacesFilter.Status.FREE.toString()%>"
 					      		<%if (freeSelected) {%> selected <%}%>>
-					      		Not Occupied
+					      		Not Occupied Parking Spaces
 					      </option>
 					      <option value="<%=ParkingSpacesFilter.Status.OCCUPIED.toString()%>"
 					      		<%if (occupiedSelect) {%> selected <%}%>>
-					      		Occupied
+					      		Occupied Parking Spaces
 					      </option>
 				    	</select>
 				    </td>
+				    <td/>
+				    <td><label style="white-space:nowrap;" for="locationFilter">Show Parking Location For:</label></td>
+				    <td>
+				    	<%
+							ParqWebService service = ParqWebServiceFactory.getParqWebServiceInstance();
+							List<String> locationIdentifiers = service.getParkingLocationIdentifierListForClient(user.getId());
+						%>
+				    	<select name="locationFilter">
+				    		<option value="<%="NULL"%>" 
+					      		<%if (null == pSpaceFilter.getLocationFilter() 
+					      				|| "NULL".equalsIgnoreCase(pSpaceFilter.getLocationFilter())) {%> selected <%}%>>
+					      		All Parking Locations
+					      	</option>
+				    		<%
+				    			// show the options to filter by locations
+				    			for (String locId : locationIdentifiers) {
+				    				%>
+				    				<option value="<%=locId%>"
+					      				<%if (locId.equalsIgnoreCase(pSpaceFilter.getLocationFilter())) {%> selected <%}%>>
+					      				<%=locId%>
+					      			</option>
+				    				<%
+				    			}
+				    		%>
+				    	</select>
+				    </td>
+				    <td/>
 				  	<td><input type="submit" class="btn large" value="update" /></td>
 				</tr>
 			  </tbody>
@@ -87,8 +114,12 @@
 		</form>
 		
 		<%
-					ParqWebService service = ParqWebServiceFactory.getParqWebServiceInstance();
-					List<ParkingSpaceStatus> status = service.getParkingStatusByClientId(user.getId());
+			String locationIdentifier = pSpaceFilter.getLocationFilter();
+			if ("NULL".equalsIgnoreCase(locationIdentifier)) {
+				locationIdentifier = null;
+			}
+			
+			List<ParkingSpaceStatus> status = service.getParkingStatusByClient(user.getId(), locationIdentifier);
 		%>
 		<table class="zebra-striped">
 		  <thead>

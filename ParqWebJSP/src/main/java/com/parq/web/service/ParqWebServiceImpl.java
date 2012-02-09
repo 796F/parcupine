@@ -237,31 +237,59 @@ public class ParqWebServiceImpl implements ParqWebService{
 	}
 
 	@Override
-	public List<ParkingSpaceStatus> getParkingStatusByClientId(long clientId) {
+	public List<String> getParkingLocationIdentifierListForClient(long clientId) {
+		if (clientId < 0) {
+			return Collections.emptyList();
+		}
+		
+		List<ParkingLocation> parkingLocations = getParkingLocationsByClientId(clientId);
+		List<String> parkingLocationIdentifiers = new ArrayList<String>();
+		for (ParkingLocation pl: parkingLocations) {
+			parkingLocationIdentifiers.add(pl.getLocationIdentifier());
+		}
+		
+		return parkingLocationIdentifiers;
+	}
+	
+	private List<ParkingLocation> getParkingLocationsByClientId(long clientId) {
+		if (clientId < 0) {
+			return Collections.emptyList();
+		}
+		
+		ClientDao clientDao = new ClientDao();
+		// create a list of parking locations for this client
+		List<ParkingLocation> parkingLocations = clientDao.getParkingLocationsAndSpacesByClientId(clientId);
+		return parkingLocations;
+	}
+	
+	@Override
+	public List<ParkingSpaceStatus> getParkingStatusByClient(long clientId, String locationIdentifier) {
 		List<ParkingSpaceStatus> pStatus = new ArrayList<ParkingSpaceStatus>();
 		if (clientId < 0) {
 			return pStatus;
 		}
 		
-		ClientDao clientDao = new ClientDao();
-		ParkingStatusDao parkingStatusDao = new ParkingStatusDao();
-		
 		// create a list of spaceIds for this client
-		List<ParkingLocation> parkingLocations = clientDao.getParkingLocationsAndSpacesByClientId(clientId);
+		List<ParkingLocation> parkingLocations = getParkingLocationsByClientId(clientId);
 		List<Long> spaceIdList = new ArrayList<Long>();
+		
+		ParkingStatusDao parkingStatusDao = new ParkingStatusDao();
 		
 		if (parkingLocations != null) {
 			for (ParkingLocation pl : parkingLocations) {
-				for (ParkingSpace ps: pl.getSpaces()) {
-					spaceIdList.add(ps.getSpaceId());
-					
-					ParkingSpaceStatus status = new ParkingSpaceStatus();
-					status.setParkingLevel(ps.getParkingLevel());
-					status.setSpaceId(ps.getSpaceId());
-					status.setSpaceLocation(pl.getLocationIdentifier());
-					status.setSpaceName(ps.getSpaceName());
-					status.setSpaceIdentifier(ps.getSpaceIdentifier());
-					pStatus.add(status);
+				// filter the parking location to bring back, if the user provide a location identifier
+				if (locationIdentifier == null || pl.getLocationIdentifier().equalsIgnoreCase(locationIdentifier)) {
+					for (ParkingSpace ps: pl.getSpaces()) {
+						spaceIdList.add(ps.getSpaceId());
+						
+						ParkingSpaceStatus status = new ParkingSpaceStatus();
+						status.setParkingLevel(ps.getParkingLevel());
+						status.setSpaceId(ps.getSpaceId());
+						status.setSpaceLocation(pl.getLocationIdentifier());
+						status.setSpaceName(ps.getSpaceName());
+						status.setSpaceIdentifier(ps.getSpaceIdentifier());
+						pStatus.add(status);
+					}
 				}
 			}
 			// is there a better way to convert a list into a primitive array?
