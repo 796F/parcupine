@@ -69,6 +69,9 @@
     scheduledAlert.fireDate = [NSDate dateWithTimeIntervalSinceNow:(durationMinutes-4)*60];
     scheduledAlert.timeZone = [NSTimeZone defaultTimeZone];
     scheduledAlert.alertBody = @"You are almost out of time!";
+    if([SavedInfo ringEnable]){
+        scheduledAlert.soundName=@"alarm.mp3";
+    }
     [myApp scheduleLocalNotification:scheduledAlert];
     
     UILocalNotification* endingAlert = [[UILocalNotification alloc] init];
@@ -76,6 +79,9 @@
     endingAlert.fireDate = [NSDate dateWithTimeIntervalSinceNow:durationMinutes*60];
     endingAlert.timeZone = [NSTimeZone defaultTimeZone];
     endingAlert.alertBody = @"You have run out of time!";
+    if([SavedInfo ringEnable]){
+        endingAlert.soundName=@"alarm.mp3";
+    }
     [myApp scheduleLocalNotification:endingAlert];
 }
 
