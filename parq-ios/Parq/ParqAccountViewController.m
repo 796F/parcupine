@@ -42,10 +42,37 @@
 {
     [super viewWillAppear:animated];
 }
+-(void) syncOptions{
+    
+    UITableView* tableView = [self tableView];
+    NSIndexPath* path = [NSIndexPath indexPathForRow:2 inSection:1];
+    UITableViewCell* cell = [tableView cellForRowAtIndexPath:path];
+    if([SavedInfo ringEnable]){
+        cell.accessoryType = UITableViewCellAccessoryCheckmark;    
+    }else{
+        cell.accessoryType = UITableViewCellAccessoryNone;
+    }
+    path = [NSIndexPath indexPathForRow:1 inSection:1];
+    cell = [tableView cellForRowAtIndexPath:path];
+    if([SavedInfo vibrateEnable]){
+        cell.accessoryType = UITableViewCellAccessoryCheckmark;    
+    }else{
+        cell.accessoryType = UITableViewCellAccessoryNone;        
+    }
+    path = [NSIndexPath indexPathForRow:0 inSection:1];
+    cell = [tableView cellForRowAtIndexPath:path];
+    if([SavedInfo autoRefill]){
+        cell.accessoryType = UITableViewCellAccessoryCheckmark;            
+    }else{
+        cell.accessoryType = UITableViewCellAccessoryNone;
+    }
+}
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    [self syncOptions];
+    
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -67,7 +94,7 @@
 {   
     
     UITableViewCell * cell = [tableView cellForRowAtIndexPath:indexPath];
-    
+    NSLog(@"\nINDEXPATH=%@\n", indexPath.description );
     if(indexPath.section==0){
         switch (indexPath.row) {
             case 0:{ 
