@@ -11,6 +11,7 @@
 #import "EditEmailViewController.h"
 #import "TDSemiModal.h"
 #import "ServerCalls.h"
+#define UNPARK_AND_LOGOUT 1
 
 @implementation ParqAccountViewController
 
@@ -148,8 +149,38 @@
         }
     }else if(indexPath.section==2){
         cell.selected = NO;
-        //log user out
-        NSLog(@"log me out!!"  );
+        //if user is parked, shoot off dialog, wait for yes/no
+        if([SavedInfo isParked]){
+            UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:@"You are parked!" message:@"logging out will unpark you" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Yes", nil];
+            alertView.tag = UNPARK_AND_LOGOUT;
+            [alertView show];
+        }else{
+            [SavedInfo logOut];
+            [self performSegueWithIdentifier:@"resetAppState" sender:self];             
+            UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
+            UIViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
+            [vc setModalPresentationStyle:UIModalPresentationFullScreen];
+            [self presentModalViewController:vc animated:YES];
+        }
+       
+        //if yes, clear saved info, dismiss view, and pull up login window
+        
+        //if no just close.  
+    }
+}
+
+-(void) alertView:(UIAlertView*)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+    if(alertView.tag==UNPARK_AND_LOGOUT){
+        if(buttonIndex==0){
+            [SavedInfo logOut];
+            [self performSegueWithIdentifier:@"resetAppState" sender:self]; 
+            UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
+            UIViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
+            [vc setModalPresentationStyle:UIModalPresentationFullScreen];
+            [self presentModalViewController:vc animated:YES];
+        }else{
+            
+        }   
     }
 }
 
