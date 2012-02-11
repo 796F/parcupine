@@ -105,6 +105,8 @@
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile: path];
     [data removeObjectsForKeys:keys];
     [data writeToFile:path atomically:YES];
+    //when unparking, release any schedule notifications.  
+    [[UIApplication sharedApplication] cancelAllLocalNotifications];
 }
 +(void) park:(ParkResponse*)parkResponseIn rate:(RateObject*) rateObjIn spotNumber:(NSNumber*) spotNumberIn{
     NSString* path = [self getPlistPath];
@@ -146,6 +148,7 @@
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile: path];
     [data removeAllObjects];
     [data writeToFile:path atomically:YES];
+    [[UIApplication sharedApplication] cancelAllLocalNotifications];
 }
 +(void) syncParkingSession:(ParkSync*)sync{
     NSString* path = [self getPlistPath];
@@ -241,6 +244,17 @@
         [data setObject:[NSNumber numberWithBool:YES] forKey:@"remember"];
     }
     [data writeToFile:path atomically:YES];
+}
++(void) setEndTime:(NSNumber*)endTimeLong{
+    
+    NSString* path = [self getPlistPath];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile: path];
+    [data setObject:endTimeLong forKey:@"endTime"];
+    [data writeToFile:path atomically:YES];
+}
++(NSNumber*) getEndTime{
+    NSMutableDictionary* savedStock = [[NSMutableDictionary alloc] initWithContentsOfFile:[self getPlistPath]];
+    return [savedStock objectForKey:@"endTime"];
 }
 
 @end

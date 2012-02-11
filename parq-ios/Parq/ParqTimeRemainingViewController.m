@@ -31,8 +31,7 @@
     [alertView show];
 }
 -(IBAction)navRefillButton:(id)sender{
-    
-    NSLog(@"\n\n\nHELLO UNPARK PUSHED");
+    [self performSegueWithIdentifier:@"showRefillScreen" sender:self];
 }
 
 - (IBAction)unparkButton:(id)sender {
@@ -45,7 +44,6 @@
     ParqRefillViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"refillController"];
     vc.delegate = self;
     [vc setModalPresentationStyle:UIModalPresentationFullScreen];
-
     [self presentModalViewController:vc animated:YES];
 }
 
@@ -105,6 +103,11 @@
         [alertView show];
     }
 }
+-(void)setEndTime:(NSDate*)endTimeIn{
+    NSLog(@"\n\noldEndtime: %@", endTime.description);
+    NSLog(@"\n\nnewEndtime: %@", endTimeIn.description);
+    endTime = endTimeIn;
+}
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -157,6 +160,10 @@
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
+}
+
+-(void) viewDidAppear:(BOOL)animated{
+    endTime = [NSDate dateWithTimeIntervalSince1970:[[SavedInfo endTime] doubleValue]/1000];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation

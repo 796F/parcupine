@@ -75,7 +75,6 @@
 		FCF586EB14C1F5CF00DF70D3 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCF586EA14C1F5CF00DF70D3 /* SystemConfiguration.framework */; };
 		FCF586EF14C1F5FA00DF70D3 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCF586EE14C1F5FA00DF70D3 /* MobileCoreServices.framework */; };
 		FCF586F114C1F60800DF70D3 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCF586F014C1F60800DF70D3 /* CFNetwork.framework */; };
-		FCF6972314E607DE0002D185 /* NavigationControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF6972214E607DE0002D185 /* NavigationControllerTest.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -244,8 +243,6 @@
 		FCF586EC14C1F5E000DF70D3 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk/usr/lib/libz.dylib; sourceTree = "<absolute>"; };
 		FCF586EE14C1F5FA00DF70D3 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		FCF586F014C1F60800DF70D3 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
-		FCF6972114E607DE0002D185 /* NavigationControllerTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationControllerTest.h; sourceTree = "<group>"; };
-		FCF6972214E607DE0002D185 /* NavigationControllerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NavigationControllerTest.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -376,8 +373,6 @@
 				8716B0D714B3C094004105AD /* second.png */,
 				8716B0D914B3C094004105AD /* second@2x.png */,
 				8716B0BF14B3C094004105AD /* Supporting Files */,
-				FCF6972114E607DE0002D185 /* NavigationControllerTest.h */,
-				FCF6972214E607DE0002D185 /* NavigationControllerTest.m */,
 			);
 			path = Parq;
 			sourceTree = "<group>";
@@ -710,7 +705,6 @@
 				FC42C3EF14DDDE4E000F659D /* EditEmailViewController.m in Sources */,
 				FC42C3F714DDE1A9000F659D /* UIViewController+TDSemiModalExtension.m in Sources */,
 				FC42C3F814DDE1A9000F659D /* TDSemiModalViewController.m in Sources */,
-				FCF6972314E607DE0002D185 /* NavigationControllerTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

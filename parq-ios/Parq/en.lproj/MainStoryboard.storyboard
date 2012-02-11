@@ -628,7 +628,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" title="Refill" id="AxJ-ur-18W">
                             <connections>
-                                <action selector="navRefillButton:" destination="ChN-dX-qQv" id="6ub-XN-fIz"/>
+                                <action selector="navRefillButton:" destination="ChN-dX-qQv" id="vgz-5n-leD"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -638,7 +638,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                         <outlet property="lotNameLabel" destination="hST-Fn-gwf" id="qaf-1R-i5d"/>
                         <outlet property="minutes" destination="dpG-4z-Qop" id="nHb-wF-Z27"/>
                         <outlet property="spotNumLabel" destination="SkD-7L-U1Y" id="vXM-5E-jDa"/>
-                        <segue destination="Yyt-w2-7iM" kind="push" identifier="unparkSegue" id="ggc-ne-s7y"/>
+                        <segue destination="Le5-Ob-V2C" kind="push" identifier="showRefillScreen" id="JSx-64-GFQ"/>
                     </connections>
                 </viewController>
             </objects>
@@ -1063,37 +1063,18 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                 <placeholder placeholderIdentifier="IBFirstResponder" id="P5A-mG-dtv" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController storyboardIdentifier="refillController" id="Le5-Ob-V2C" customClass="ParqRefillViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="7Cp-SQ-C9c">
-                        <rect key="frame" x="0.0" y="20" width="320" height="460"/>
+                        <rect key="frame" x="0.0" y="64" width="320" height="367"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <navigationBar contentMode="scaleToFill" id="VXK-kf-u8A">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                                <color key="tintColor" red="0.27058823529999998" green="0.55294117649999996" blue="0.79607843140000001" alpha="1" colorSpace="calibratedRGB"/>
-                                <items>
-                                    <navigationItem title="Refill Time" id="UPr-qR-gmc">
-                                        <barButtonItem key="leftBarButtonItem" title="Cancel" id="eln-9N-u8T">
-                                            <connections>
-                                                <action selector="cancelButton:" destination="Le5-Ob-V2C" id="snL-Ue-pMT"/>
-                                            </connections>
-                                        </barButtonItem>
-                                        <barButtonItem key="rightBarButtonItem" title="Refill" style="done" id="YbZ-e7-rzd">
-                                            <connections>
-                                                <action selector="saveButton:" destination="Le5-Ob-V2C" id="df3-YN-jBy"/>
-                                            </connections>
-                                        </barButtonItem>
-                                    </navigationItem>
-                                </items>
-                            </navigationBar>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="$2 per 5 minutes" lineBreakMode="tailTruncation" minimumFontSize="10" id="fHC-Pz-Bpu">
-                                <rect key="frame" x="20" y="294" width="280" height="21"/>
+                                <rect key="frame" x="20" y="274" width="280" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="countDownTimer" minuteInterval="5" id="LRR-Eh-o5j">
-                                <rect key="frame" x="0.0" y="70" width="320" height="216"/>
+                                <rect key="frame" x="0.0" y="27" width="320" height="216"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                 <date key="date" timeIntervalSinceReferenceDate="347981115.69252199">
                                     <!--2012-01-11 13:25:15 +0000-->
@@ -1122,21 +1103,21 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                                 </timeZone>
                             </datePicker>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Total" lineBreakMode="tailTruncation" minimumFontSize="10" id="DGF-rw-Uh5">
-                                <rect key="frame" x="20" y="332" width="72" height="30"/>
+                                <rect key="frame" x="20" y="313" width="72" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="32"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="$6.00" textAlignment="right" lineBreakMode="tailTruncation" minimumFontSize="10" id="eUw-eU-31W">
-                                <rect key="frame" x="116" y="331" width="184" height="32"/>
+                                <rect key="frame" x="116" y="312" width="184" height="32"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="32"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="scaleToFill" id="pk8-dd-TW1">
-                                <rect key="frame" x="0.0" y="44" width="320" height="26"/>
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="26"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Nebraska Avenue" lineBreakMode="tailTruncation" minimumFontSize="10" id="6yE-sb-cQr">
@@ -1159,6 +1140,18 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                         </subviews>
                         <color key="backgroundColor" cocoaTouchSystemColor="darkTextColor"/>
                     </view>
+                    <navigationItem key="navigationItem" title="Refill Time" id="T2c-KY-l5i">
+                        <barButtonItem key="leftBarButtonItem" title="Cancel" id="4h5-zP-BtD">
+                            <connections>
+                                <action selector="navCancelButton:" destination="Le5-Ob-V2C" id="4Gd-Wo-hkM"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" title="Refill" id="VE5-PY-Kc6">
+                            <connections>
+                                <action selector="navRefillButton:" destination="Le5-Ob-V2C" id="2wX-UQ-Y6m"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="lotNameLabel" destination="6yE-sb-cQr" id="EdH-I3-0M5"/>
                         <outlet property="rate" destination="fHC-Pz-Bpu" id="hTN-iS-Ja2"/>
@@ -1233,6 +1226,8 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         <class className="ParqRefillViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/ParqRefillViewController.h"/>
             <relationships>
+                <relationship kind="action" name="navCancelButton:"/>
+                <relationship kind="action" name="navRefillButton:"/>
                 <relationship kind="outlet" name="lotNameLabel" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="rate" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="spotNumLabel" candidateClass="UILabel"/>
@@ -1293,7 +1288,4 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         <simulatedOrientationMetrics key="orientation"/>
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
-    <inferredMetricsTieBreakers>
-        <segue reference="aQi-kr-Uyk"/>
-    </inferredMetricsTieBreakers>
 </document>

@@ -17,4 +17,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *spotNumLabel;
 @property (weak, nonatomic) ParqTimeRemainingViewController *delegate;
 
+
+-(IBAction)navCancelButton:(id)sender;
+-(IBAction)navRefillButton:(id)sender;
+
 @end
