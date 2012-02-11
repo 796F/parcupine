@@ -14,6 +14,6 @@
 @property (weak, nonatomic) IBOutlet UITextField *emailField;
 @property (weak, nonatomic) IBOutlet UITextField *passwordField;
 @property (weak, nonatomic) IBOutlet UITextField *verifyField;
-@property (weak, nonatomic) ParqLoginViewController *delegate;
+@property (weak, nonatomic) ParqLoginViewController *parent;
 
 @end

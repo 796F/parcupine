@@ -22,4 +22,5 @@
 -(IBAction)parqButton;
 -(IBAction)scanButton;
 -(IBAction)backgroundTouched:(id)sender;
+-(void)logInFinished;
 @end

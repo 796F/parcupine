@@ -12,7 +12,7 @@
 #import "SavedInfo.h"
 #import "ParqSignUpViewController1.h"
 @implementation ParqLoginViewController
-@synthesize emailControl, passwordControl;
+@synthesize emailControl, passwordControl, parent;
 
 -(BOOL)textFieldShouldReturn:(UITextField*)textField{
     NSInteger nextTag = textField.tag+1;
@@ -33,10 +33,10 @@
 }
 
 - (void)logInAfterSigningUp:(NSString*)email password:(NSString*)password {
-    UserObject *user = [ServerCalls authEmail:emailControl.text Password:passwordControl.text];
+    UserObject *user = [ServerCalls authEmail:email Password:password];
     if (user != nil) {
-        [self saveUserInfoWithEmail:emailControl.text andPassword:passwordControl.text andUserObj:user];
-        [self dismissModalViewControllerAnimated:YES];
+        [self saveUserInfoWithEmail:email andPassword:password andUserObj:user];
+        [parent logInFinished];
     } else {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Couldn't log in"
                                                         message:@"Please check your email and password"
@@ -156,7 +156,7 @@
     UserObject *user = [ServerCalls authEmail:emailControl.text Password:passwordControl.text];
     if (user != nil) {
         [self saveUserInfoWithEmail:emailControl.text andPassword:passwordControl.text andUserObj:user];
-        [self dismissModalViewControllerAnimated:YES];
+        [parent logInFinished];
     } else {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Couldn't log in"
                                                         message:@"Please check your email and password"
@@ -181,7 +181,7 @@
         UINavigationController *vc = [storyboard instantiateViewControllerWithIdentifier:@"RegisterController"];
         [vc setModalPresentationStyle:UIModalPresentationFullScreen];
         ParqSignUpViewController1 *vcTop = [[vc viewControllers] objectAtIndex:0];
-        vcTop.delegate = self;
+        vcTop.parent = self;
 
         [self presentModalViewController:vc animated:YES];
       }

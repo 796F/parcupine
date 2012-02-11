@@ -8,6 +8,7 @@
 
 #import "ParqMapViewController.h"
 #import "ParqParkViewController.h"
+#import "ParqLoginViewController.h"
 #import "SavedInfo.h"
 #define LOCATION_ACCURACY 30.0  //this double is meters, we should be fine within 30 meters.  
 
@@ -135,7 +136,7 @@
         locationManager = [[CLLocationManager alloc] init];  //if doesn't exist make new.  
     locationManager.delegate = self;
     //setting accuracy to be 10 meters.  more powerful but uses battery more.  
-    locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters;
+    locationManager.desiredAccuracy = kCLLocationAgit ccuracyNearestTenMeters;
     [locationManager startUpdatingLocation];
 }
 
@@ -182,10 +183,9 @@
   self.scrollView.scrollIndicatorInsets = contentInsets;
 }
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Release any cached data, images, etc that aren't in use.
+- (void)logInFinished {
+    [self dismissModalViewControllerAnimated:YES];
+    [self startGettingLocation];
 }
 
 - (BOOL)isLoggedIn
@@ -196,6 +196,12 @@
         [self gpsParkFunction];
 }
 
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+    // Release any cached data, images, etc that aren't in use.
+}
+
 
 #pragma mark - View lifecycle
 
@@ -203,9 +209,8 @@
 {
     [super viewDidLoad];
     [self registerForKeyboardNotifications];
-    goodLocation=NO;  //when view first loads, set location to false.  
-    [self startGettingLocation];   //start getting gps coords
-    [self.spotNumField addTarget:self action:@selector(spotNumGo:) forControlEvents:UIControlEventEditingDidEndOnExit];
+    goodLocation=NO;  //when view first loads, set location to false.
+    [_spotNumField addTarget:self action:@selector(spotNumGo:) forControlEvents:UIControlEventEditingDidEndOnExit];
 }
 
 - (void)viewDidUnload
@@ -227,11 +232,12 @@
     [super viewDidAppear:animated];
     if (![self isLoggedIn]) {
       UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
-      UIViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
+      ParqLoginViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
+      vc.parent = self;
       [vc setModalPresentationStyle:UIModalPresentationFullScreen];
-    
         
       [self presentModalViewController:vc animated:YES];
+      return;
     }
     if(!goodLocation){
         //if gps didn't get a good location
