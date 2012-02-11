@@ -58,6 +58,7 @@
 #pragma mark -
 
 
+
 -(void)scheduleAlertsWithDuration:(int)durationMinutes {
     //clears old notifications
     UIApplication* myApp = [UIApplication sharedApplication];
@@ -104,15 +105,15 @@
             ParkResponse *response = [ServerCalls parkUserWithRateObj:rateObj duration:[self durationSelectedInMinutes] cost:[self costSelectedInCents]];
             if ([response.resp isEqualToString:@"OK"]) {
                 [SavedInfo park:response rate:rateObj spotNumber:[NSNumber numberWithInt:spotNumber]];
-                //[self performSegueWithIdentifier:@"showRemainTime" sender:self]; 
+                [self performSegueWithIdentifier:@"showRemainTime" sender:self]; 
                 
-                UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
-                ParqTimeRemainingViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"timeRemainingController"];
-                vc.delegate = self;
-                [vc setModalPresentationStyle:UIModalPresentationFullScreen];
-                [self scheduleAlertsWithDuration:[self durationSelectedInMinutes]];
-                [self presentModalViewController:vc animated:YES];
-                
+//                UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
+//                ParqTimeRemainingViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"timeRemainingController"];
+//                vc.delegate = self;
+//                [vc setModalPresentationStyle:UIModalPresentationFullScreen];
+//                [self scheduleAlertsWithDuration:[self durationSelectedInMinutes]];
+//                [self presentModalViewController:vc animated:YES];
+//                
                 
             } else {
                 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"There was an error while parking. Please try again." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];

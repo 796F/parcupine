@@ -56,6 +56,7 @@
 		FC83A92114C9E9010096DCD1 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC83A92014C9E9010096DCD1 /* CoreVideo.framework */; };
 		FC83A92314C9E90F0096DCD1 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FC83A92214C9E90F0096DCD1 /* libiconv.dylib */; };
 		FC83A92514C9EEBC0096DCD1 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC83A92414C9EEBC0096DCD1 /* CoreLocation.framework */; };
+		FC8E3B7B14E4BC0A00D6CBC8 /* alarm.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = FC8E3B7A14E4BC0A00D6CBC8 /* alarm.mp3 */; };
 		FCD0036E14C49F0C00A310C1 /* libRestKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FCD0036414C49E8700A310C1 /* libRestKit.a */; };
 		FCD0037214C49F4600A310C1 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FCD0037114C49F4600A310C1 /* libxml2.dylib */; };
 		FCD5839A14C8F8BA0097A842 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCD5839914C8F8BA0097A842 /* MapKit.framework */; };
@@ -74,6 +75,7 @@
 		FCF586EB14C1F5CF00DF70D3 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCF586EA14C1F5CF00DF70D3 /* SystemConfiguration.framework */; };
 		FCF586EF14C1F5FA00DF70D3 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCF586EE14C1F5FA00DF70D3 /* MobileCoreServices.framework */; };
 		FCF586F114C1F60800DF70D3 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCF586F014C1F60800DF70D3 /* CFNetwork.framework */; };
+		FCF6972314E607DE0002D185 /* NavigationControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF6972214E607DE0002D185 /* NavigationControllerTest.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -211,6 +213,7 @@
 		FC83A92014C9E9010096DCD1 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		FC83A92214C9E90F0096DCD1 /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
 		FC83A92414C9EEBC0096DCD1 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		FC8E3B7A14E4BC0A00D6CBC8 /* alarm.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = alarm.mp3; sourceTree = "<group>"; };
 		FCD0035914C49E8700A310C1 /* RestKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RestKit.xcodeproj; path = RestKit/RestKit.xcodeproj; sourceTree = "<group>"; };
 		FCD0037114C49F4600A310C1 /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
 		FCD5839914C8F8BA0097A842 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
@@ -241,6 +244,8 @@
 		FCF586EC14C1F5E000DF70D3 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk/usr/lib/libz.dylib; sourceTree = "<absolute>"; };
 		FCF586EE14C1F5FA00DF70D3 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		FCF586F014C1F60800DF70D3 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		FCF6972114E607DE0002D185 /* NavigationControllerTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationControllerTest.h; sourceTree = "<group>"; };
+		FCF6972214E607DE0002D185 /* NavigationControllerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NavigationControllerTest.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -371,6 +376,8 @@
 				8716B0D714B3C094004105AD /* second.png */,
 				8716B0D914B3C094004105AD /* second@2x.png */,
 				8716B0BF14B3C094004105AD /* Supporting Files */,
+				FCF6972114E607DE0002D185 /* NavigationControllerTest.h */,
+				FCF6972214E607DE0002D185 /* NavigationControllerTest.m */,
 			);
 			path = Parq;
 			sourceTree = "<group>";
@@ -526,6 +533,7 @@
 		FCF586DB14C1F55F00DF70D3 /* Objects */ = {
 			isa = PBXGroup;
 			children = (
+				FC8E3B7A14E4BC0A00D6CBC8 /* alarm.mp3 */,
 				8703F50414C8C45B003DAE14 /* ParkResponse.h */,
 				8703F50514C8C45B003DAE14 /* ParkResponse.m */,
 				FCF586DE14C1F57800DF70D3 /* RateObject.h */,
@@ -655,6 +663,7 @@
 				FCF019CF14CE1F1100A2C160 /* ParqInfo.plist in Resources */,
 				FC42C3E714DDD6E7000F659D /* EditEmailViewController.xib in Resources */,
 				FC02A05B14DF1A4300034D3E /* backgroundlayer.png in Resources */,
+				FC8E3B7B14E4BC0A00D6CBC8 /* alarm.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -701,6 +710,7 @@
 				FC42C3EF14DDDE4E000F659D /* EditEmailViewController.m in Sources */,
 				FC42C3F714DDE1A9000F659D /* UIViewController+TDSemiModalExtension.m in Sources */,
 				FC42C3F814DDE1A9000F659D /* TDSemiModalViewController.m in Sources */,
+				FCF6972314E607DE0002D185 /* NavigationControllerTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

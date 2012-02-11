@@ -25,6 +25,22 @@
                                                 <rect key="frame" x="0.0" y="-45" width="320" height="460"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             </imageView>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="1ve-s4-u1X">
+                                                <rect key="frame" x="0.0" y="0.0" width="320" height="368"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <color key="backgroundColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="0.0" colorSpace="calibratedRGB"/>
+                                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                                <state key="normal">
+                                                    <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="0.0" colorSpace="calibratedRGB"/>
+                                                    <color key="titleShadowColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="0.0" colorSpace="calibratedRGB"/>
+                                                </state>
+                                                <state key="highlighted">
+                                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="backgroundTouched:" destination="LD8-Gi-2WR" eventType="touchDown" id="9wG-1Q-2sW"/>
+                                                </connections>
+                                            </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="xzv-eZ-jHz" customClass="ParqButton">
                                                 <rect key="frame" x="75" y="43" width="170" height="81"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -581,16 +597,9 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="scaleToFill" id="kCp-kD-NJe">
-                                <rect key="frame" x="0.0" y="44" width="320" height="26"/>
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="26"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
-                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Nebraska Avenue" lineBreakMode="tailTruncation" minimumFontSize="10" id="hST-Fn-gwf">
-                                        <rect key="frame" x="9" y="2" width="199" height="21"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
-                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Spot #15" textAlignment="right" lineBreakMode="tailTruncation" minimumFontSize="10" id="SkD-7L-U1Y">
                                         <rect key="frame" x="216" y="2" width="95" height="21"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -601,35 +610,35 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                                 </subviews>
                                 <color key="backgroundColor" red="0.27843137254901962" green="0.34509803921568627" blue="0.36862745098039218" alpha="1" colorSpace="calibratedRGB"/>
                             </view>
-                            <navigationBar contentMode="scaleToFill" id="vvG-bh-MKa">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                                <color key="tintColor" red="0.27058823529999998" green="0.55294117649999996" blue="0.79607843140000001" alpha="1" colorSpace="calibratedRGB"/>
-                                <items>
-                                    <navigationItem title="Time Remaining" id="ODt-IL-dcM">
-                                        <barButtonItem key="leftBarButtonItem" title="Unpark" id="1Xe-xU-MY2">
-                                            <connections>
-                                                <action selector="unparkButton:" destination="ChN-dX-qQv" id="NFb-tb-St7"/>
-                                            </connections>
-                                        </barButtonItem>
-                                        <barButtonItem key="rightBarButtonItem" title="Refill" id="hPR-rD-gQw">
-                                            <connections>
-                                                <action selector="refillButton:" destination="ChN-dX-qQv" id="KWa-vd-FW8"/>
-                                            </connections>
-                                        </barButtonItem>
-                                    </navigationItem>
-                                </items>
-                            </navigationBar>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Nebraska Avenue" lineBreakMode="tailTruncation" minimumFontSize="10" id="hST-Fn-gwf">
+                                <rect key="frame" x="9" y="3" width="199" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <navigationItem key="navigationItem" id="Qti-vv-99Z"/>
+                    <navigationItem key="navigationItem" title="Time Remaining" id="Qti-vv-99Z">
+                        <barButtonItem key="leftBarButtonItem" title="Unpark" id="2Ag-Gc-bTM">
+                            <connections>
+                                <action selector="navUnparkButton:" destination="ChN-dX-qQv" id="KNf-C5-6ak"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" title="Refill" id="AxJ-ur-18W">
+                            <connections>
+                                <action selector="navRefillButton:" destination="ChN-dX-qQv" id="6ub-XN-fIz"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="colonLabel" destination="4CZ-To-rCT" id="Vd2-Pj-MgH"/>
                         <outlet property="hours" destination="Bdw-cw-OA1" id="oFp-V5-Grf"/>
                         <outlet property="lotNameLabel" destination="hST-Fn-gwf" id="qaf-1R-i5d"/>
                         <outlet property="minutes" destination="dpG-4z-Qop" id="nHb-wF-Z27"/>
                         <outlet property="spotNumLabel" destination="SkD-7L-U1Y" id="vXM-5E-jDa"/>
+                        <segue destination="Yyt-w2-7iM" kind="push" identifier="unparkSegue" id="ggc-ne-s7y"/>
                     </connections>
                 </viewController>
             </objects>
@@ -1213,6 +1222,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         <class className="ParqParkViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/ParqParkViewController.h"/>
             <relationships>
+                <relationship kind="action" name="backButton:"/>
                 <relationship kind="outlet" name="lotNameLabel" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="rate" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="spotNumLabel" candidateClass="UILabel"/>
@@ -1252,6 +1262,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         <class className="ParqSpotViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/ParqSpotViewController.h"/>
             <relationships>
+                <relationship kind="action" name="backgroundTouched:"/>
                 <relationship kind="action" name="parqButton"/>
                 <relationship kind="action" name="scanButton"/>
                 <relationship kind="outlet" name="scrollView" candidateClass="UIScrollView"/>
@@ -1264,6 +1275,8 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         <class className="ParqTimeRemainingViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/ParqTimeRemainingViewController.h"/>
             <relationships>
+                <relationship kind="action" name="navRefillButton:"/>
+                <relationship kind="action" name="navUnparkButton:"/>
                 <relationship kind="outlet" name="colonLabel" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="hours" candidateClass="ParqTimeBox"/>
                 <relationship kind="outlet" name="lotNameLabel" candidateClass="UILabel"/>
@@ -1280,4 +1293,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         <simulatedOrientationMetrics key="orientation"/>
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
+    <inferredMetricsTieBreakers>
+        <segue reference="aQi-kr-Uyk"/>
+    </inferredMetricsTieBreakers>
 </document>

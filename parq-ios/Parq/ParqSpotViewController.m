@@ -34,6 +34,7 @@
         //check response from server before allowing next view. 
         _rateObj = [ServerCalls getRateLat:[NSNumber numberWithDouble:self.userLat] Lon: [NSNumber numberWithDouble:self.userLon] spotId:_spotNumField.text];
         if(_rateObj !=nil){
+            [self.spotNumField resignFirstResponder];
             [self performSegueWithIdentifier:@"showParkTimePicker" sender:self];
         } else {
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Couldn't find spot"
@@ -47,6 +48,10 @@
         //SHOW "GETTING GPS LOCATION" dialog like android app.  
     }
 
+}
+
+-(IBAction)backgroundTouched:(id)sender{
+    [self.spotNumField resignFirstResponder];
 }
 
 -(IBAction)parqButton{
@@ -200,7 +205,7 @@
     [self registerForKeyboardNotifications];
     goodLocation=NO;  //when view first loads, set location to false.  
     [self startGettingLocation];   //start getting gps coords
-    [_spotNumField addTarget:self action:@selector(spotNumGo:) forControlEvents:UIControlEventEditingDidEndOnExit];
+    [self.spotNumField addTarget:self action:@selector(spotNumGo:) forControlEvents:UIControlEventEditingDidEndOnExit];
 }
 
 - (void)viewDidUnload

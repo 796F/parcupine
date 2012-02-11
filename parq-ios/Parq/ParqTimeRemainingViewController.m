@@ -26,6 +26,15 @@
 @synthesize endTime;
 @synthesize delegate;
 
+-(IBAction)navUnparkButton:(id)sender{
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Unpark" message:@"Are you sure you want to unpark? If you need to repark you will have to pay again." delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Unpark", nil];
+    [alertView show];
+}
+-(IBAction)navRefillButton:(id)sender{
+    
+    NSLog(@"\n\n\nHELLO UNPARK PUSHED");
+}
+
 - (IBAction)unparkButton:(id)sender {
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Unpark" message:@"Are you sure you want to unpark? If you need to repark you will have to pay again." delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Unpark", nil];
     [alertView show];
@@ -42,8 +51,15 @@
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (buttonIndex == alertView.firstOtherButtonIndex) {
-        [timer invalidate];
-        [delegate unpark];
+        if ([ServerCalls unparkUserWithSpotId:[SavedInfo spotId] ParkRefNum:[SavedInfo parkRefNum]]) {
+            [SavedInfo unpark];
+            [timer invalidate];
+            [self.navigationController popViewControllerAnimated:YES];
+        } else {
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"There was an error while parking. Please try again." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [alertView show];
+        }
+        
     }
 }
 
