@@ -136,7 +136,7 @@
         locationManager = [[CLLocationManager alloc] init];  //if doesn't exist make new.  
     locationManager.delegate = self;
     //setting accuracy to be 10 meters.  more powerful but uses battery more.  
-    locationManager.desiredAccuracy = kCLLocationAgit ccuracyNearestTenMeters;
+    locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters;
     [locationManager startUpdatingLocation];
 }
 

@@ -25,5 +25,4 @@
 
 - (void)cancelRefill;
 - (void)saveRefillWithDuration:(int)durationIn cost:(int)costIn;
--(void)setEndTime:(NSDate*)endTimeIn;
 @end
