@@ -19,7 +19,7 @@
 @property (weak, nonatomic) IBOutlet ParqTimeBox *hours;
 @property (weak, nonatomic) IBOutlet ParqTimeBox *minutes;
 @property (weak, nonatomic) ParqParkViewController *delegate;
-
+@property double warnTime;
 -(IBAction)navUnparkButton:(id)sender;
 -(IBAction)navRefillButton:(id)sender;
 

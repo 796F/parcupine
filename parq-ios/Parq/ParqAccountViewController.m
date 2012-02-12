@@ -11,6 +11,7 @@
 #import "EditEmailViewController.h"
 #import "TDSemiModal.h"
 #import "ServerCalls.h"
+#import "ParqLoginViewController.h"
 #define UNPARK_AND_LOGOUT 1
 
 @implementation ParqAccountViewController
@@ -156,11 +157,14 @@
             [alertView show];
         }else{
             [SavedInfo logOut];
-            [self performSegueWithIdentifier:@"resetAppState" sender:self];             
             UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
-            UIViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
+            ParqLoginViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
+            vc.parent = self;
             [vc setModalPresentationStyle:UIModalPresentationFullScreen];
+            
             [self presentModalViewController:vc animated:YES];
+            return;
+            
         }
        
         //if yes, clear saved info, dismiss view, and pull up login window

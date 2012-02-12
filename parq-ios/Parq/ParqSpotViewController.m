@@ -183,10 +183,6 @@
   self.scrollView.scrollIndicatorInsets = contentInsets;
 }
 
-- (void)logInFinished {
-    [self dismissModalViewControllerAnimated:YES];
-    [self startGettingLocation];
-}
 
 - (BOOL)isLoggedIn
 {

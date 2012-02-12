@@ -20,4 +20,6 @@
 
 - (void)timeUp;
 - (void)unpark;
++(void)scheduleAlertsWithEndLong:(NSNumber*)endTimeLong;
+
 @end

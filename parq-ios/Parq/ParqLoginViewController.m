@@ -36,7 +36,7 @@
     UserObject *user = [ServerCalls authEmail:email Password:password];
     if (user != nil) {
         [self saveUserInfoWithEmail:email andPassword:password andUserObj:user];
-        [parent logInFinished];
+        [self dismissModalViewControllerAnimated:YES];
     } else {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Couldn't log in"
                                                         message:@"Please check your email and password"
@@ -156,7 +156,7 @@
     UserObject *user = [ServerCalls authEmail:emailControl.text Password:passwordControl.text];
     if (user != nil) {
         [self saveUserInfoWithEmail:emailControl.text andPassword:passwordControl.text andUserObj:user];
-        [parent logInFinished];
+        [self dismissModalViewControllerAnimated:YES];
     } else {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Couldn't log in"
                                                         message:@"Please check your email and password"

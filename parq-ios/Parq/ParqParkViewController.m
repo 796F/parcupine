@@ -67,7 +67,7 @@
     UILocalNotification* scheduledAlert = [[UILocalNotification alloc] init];
     scheduledAlert.applicationIconBadgeNumber=1;
     //this method uses seconds.
-    scheduledAlert.fireDate = [NSDate dateWithTimeIntervalSinceNow:(durationMinutes-4)*60];
+    scheduledAlert.fireDate = [NSDate dateWithTimeIntervalSinceNow:(durationMinutes-5)*60];
     scheduledAlert.timeZone = [NSTimeZone defaultTimeZone];
     scheduledAlert.alertBody = @"You are almost out of time!";
     
@@ -83,7 +83,8 @@
         scheduledAlert.soundName = UILocalNotificationDefaultSoundName;
         endingAlert.soundName = UILocalNotificationDefaultSoundName;
     }
-    [myApp scheduleLocalNotification:endingAlert];[myApp scheduleLocalNotification:scheduledAlert];
+    [myApp scheduleLocalNotification:endingAlert];
+    [myApp scheduleLocalNotification:scheduledAlert];
     
 }
 
@@ -106,14 +107,7 @@
             if ([response.resp isEqualToString:@"OK"]) {
                 [SavedInfo park:response rate:rateObj spotNumber:[NSNumber numberWithInt:spotNumber]];
                 [self performSegueWithIdentifier:@"showRemainTime" sender:self]; 
-                
-//                UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
-//                ParqTimeRemainingViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"timeRemainingController"];
-//                vc.delegate = self;
-//                [vc setModalPresentationStyle:UIModalPresentationFullScreen];
-//                [self scheduleAlertsWithDuration:[self durationSelectedInMinutes]];
-//                [self presentModalViewController:vc animated:YES];
-//                
+                [self scheduleAlertsWithDuration:[self durationSelectedInMinutes]];
                 
             } else {
                 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"There was an error while parking. Please try again." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
