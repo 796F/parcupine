@@ -11,7 +11,7 @@
 //#define FIND_SPOT_ACCURACY 30.0  //varying accuracy no needed.  
 #define MAP_LOC_ACCURACY 30.0
 #import <CoreLocation/CoreLocation.h>
-
+#import "SavedInfo.h"
 @implementation ParqMapViewController
 
 @synthesize mapView;
@@ -21,6 +21,29 @@
 @synthesize IOSGeocoder;
 @synthesize BSGeocoder;
 
+-(IBAction)showActionSheet :(id)sender{
+    UIActionSheet *actionsheet = [[UIActionSheet alloc] 
+                                  initWithTitle:nil
+                                  delegate:self 
+                                  cancelButtonTitle:@"Cancel" 
+                                  destructiveButtonTitle:nil
+                                  otherButtonTitles: @"Find My Car",@"Park Near Me", nil
+								  ];
+	[actionsheet showInView:[self view]];
+}
+
+-(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if(buttonIndex==0){
+        //find my car
+        [self goLat:[[SavedInfo getLat] doubleValue] Lon:[[SavedInfo getLon] doubleValue] withTitle:@"Your Car"];
+    }else if(buttonIndex==1){
+
+ NSMutableArray* spots =[ServerCalls findSpotsWithLat:[NSNumber numberWithDouble: userLat] Lon:[NSNumber numberWithDouble: userLon]];
+        
+        
+    }
+}
 -(void) goAddressFunction{
     
     if(NSClassFromString(@"CLGeocoder")){  //IF ios 5, CLGeocoder exists.  
@@ -73,17 +96,23 @@
 }
 -(IBAction)goUser{
     //if the user is parked
+    [self goLat:userLat Lon:userLon withTitle:@"You are Here"];
+}
+
+-(void) goLat:(double)latitude Lon:(double)longitude withTitle:(NSString*)title{
     CLLocationCoordinate2D zoomLocation;  //this object is essentially geopoint
-    zoomLocation.latitude = userLat;
-    zoomLocation.longitude = userLon;
+    zoomLocation.latitude = latitude;
+    zoomLocation.longitude = longitude;
     
     MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(zoomLocation, 0.5*METERS_PER_MILE, 0.5*METERS_PER_MILE);  //this is essentially zoom level in android
     
-    MKCoordinateRegion adjustedRegion = [mapView regionThatFits:viewRegion]; //is this a check?               
+    MKCoordinateRegion adjustedRegion = [mapView regionThatFits:viewRegion];                
     
     [mapView setRegion:adjustedRegion animated:YES];  //this is animateTo or w/e.  
-    MapPin * userPin = [[MapPin alloc] initWithCoordinate:zoomLocation Title:@"Your Location" subTitle:nil];
+    MapPin * userPin = [[MapPin alloc] initWithCoordinate:zoomLocation Title:title subTitle:nil];
     [mapView addAnnotation:userPin];
+    
+    
 }
 
 - (void)locationManager:(CLLocationManager *)manager

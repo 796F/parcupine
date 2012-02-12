@@ -83,6 +83,7 @@
         [self flashColon];
     } else {
         [timer invalidate];
+        //delegate methods don't work with segue, fix or replace.  
         [delegate timeUp];
     }
 }

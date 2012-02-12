@@ -16,7 +16,7 @@
 
 #import "MapPin.h"
 
-@interface ParqMapViewController : UIViewController <MKMapViewDelegate,CLLocationManagerDelegate>{
+@interface ParqMapViewController : UIViewController <MKMapViewDelegate,CLLocationManagerDelegate, UIActionSheetDelegate>{
     IBOutlet UITextField *addressField;
     IBOutlet MKMapView *mapView;
     
@@ -29,5 +29,6 @@
 @property (nonatomic, retain) BSForwardGeocoder* BSGeocoder;
 -(IBAction)goAddress;
 -(IBAction)goUser;
-
+-(IBAction)showActionSheet :(id)sender;
+-(void) goLat:(double)latitude Lon:(double)longitude withTitle:(NSString*)title;
 @end
