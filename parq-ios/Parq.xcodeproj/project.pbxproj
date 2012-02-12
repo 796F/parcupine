@@ -37,10 +37,10 @@
 		8732B78514C63BEB00405F0B /* ParqTimeBox.m in Sources */ = {isa = PBXBuildFile; fileRef = 8732B78414C63BEB00405F0B /* ParqTimeBox.m */; };
 		8735DA0214D773FE00957643 /* ParqSignUpViewController1.m in Sources */ = {isa = PBXBuildFile; fileRef = 8735DA0114D773FE00957643 /* ParqSignUpViewController1.m */; };
 		8735DA0514D7743A00957643 /* ParqSignUpViewController2.m in Sources */ = {isa = PBXBuildFile; fileRef = 8735DA0414D7743A00957643 /* ParqSignUpViewController2.m */; };
+		879AD0E714E7A4C600C4F69B /* backgroundlayer.png in Resources */ = {isa = PBXBuildFile; fileRef = 879AD0E614E7A4C600C4F69B /* backgroundlayer.png */; };
 		87D2097B14C48E4D00E663D7 /* SFHFKeychainUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 87D2097A14C48E4D00E663D7 /* SFHFKeychainUtils.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		87D2097D14C49E7100E663D7 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87D2097C14C49E7100E663D7 /* Security.framework */; };
 		87DA6A0114D54DC7003C5FC2 /* ParqRefillViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 87DA6A0014D54DC6003C5FC2 /* ParqRefillViewController.m */; };
-		FC02A05B14DF1A4300034D3E /* backgroundlayer.png in Resources */ = {isa = PBXBuildFile; fileRef = FC02A05A14DF1A4300034D3E /* backgroundlayer.png */; };
 		FC09C3F614C4981400DD0CBD /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC09C3F514C4981400DD0CBD /* CoreData.framework */; };
 		FC172A7514C9C6C60094A313 /* libzbar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FC172A6F14C9C6C60094A313 /* libzbar.a */; };
 		FC172A7614C9C6C60094A313 /* zbar-back.png in Resources */ = {isa = PBXBuildFile; fileRef = FC172A7114C9C6C60094A313 /* zbar-back.png */; };
@@ -167,12 +167,12 @@
 		8735DA0114D773FE00957643 /* ParqSignUpViewController1.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ParqSignUpViewController1.m; sourceTree = "<group>"; };
 		8735DA0314D7743A00957643 /* ParqSignUpViewController2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParqSignUpViewController2.h; sourceTree = "<group>"; };
 		8735DA0414D7743A00957643 /* ParqSignUpViewController2.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ParqSignUpViewController2.m; sourceTree = "<group>"; };
+		879AD0E614E7A4C600C4F69B /* backgroundlayer.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = backgroundlayer.png; sourceTree = "<group>"; };
 		87D2097914C48E4D00E663D7 /* SFHFKeychainUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFHFKeychainUtils.h; sourceTree = "<group>"; };
 		87D2097A14C48E4D00E663D7 /* SFHFKeychainUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFHFKeychainUtils.m; sourceTree = "<group>"; };
 		87D2097C14C49E7100E663D7 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		87DA69FF14D54DC5003C5FC2 /* ParqRefillViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParqRefillViewController.h; sourceTree = "<group>"; };
 		87DA6A0014D54DC6003C5FC2 /* ParqRefillViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ParqRefillViewController.m; sourceTree = "<group>"; };
-		FC02A05A14DF1A4300034D3E /* backgroundlayer.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = backgroundlayer.png; sourceTree = "<group>"; };
 		FC09C3F514C4981400DD0CBD /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		FC172A5B14C9C6C60094A313 /* Decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Decoder.h; sourceTree = "<group>"; };
 		FC172A5C14C9C6C60094A313 /* Exception.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Exception.h; sourceTree = "<group>"; };
@@ -402,7 +402,7 @@
 		FC02A05914DF150100034D3E /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				FC02A05A14DF1A4300034D3E /* backgroundlayer.png */,
+				879AD0E614E7A4C600C4F69B /* backgroundlayer.png */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -657,8 +657,8 @@
 				FC172A7914C9C6C60094A313 /* zbar-samples.png in Resources */,
 				FCF019CF14CE1F1100A2C160 /* ParqInfo.plist in Resources */,
 				FC42C3E714DDD6E7000F659D /* EditEmailViewController.xib in Resources */,
-				FC02A05B14DF1A4300034D3E /* backgroundlayer.png in Resources */,
 				FC8E3B7B14E4BC0A00D6CBC8 /* alarm.mp3 in Resources */,
+				879AD0E714E7A4C600C4F69B /* backgroundlayer.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

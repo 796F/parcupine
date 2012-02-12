@@ -82,6 +82,7 @@
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
     [passwordControl addTarget:self action:@selector(logUserIn:) forControlEvents:UIControlEventEditingDidEndOnExit];
+    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"backgroundlayer.png"]];
 }
 
 - (void)viewDidUnload
