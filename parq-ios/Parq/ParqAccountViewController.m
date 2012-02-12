@@ -27,11 +27,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    emailDisplayLabel.text = [SavedInfo getEmail];
-    cardDisplayLabel.text = [@"\u2022\u2022\u2022\u2022 \u2022\u2022\u2022\u2022 \u2022\u2022\u2022\u2022 " stringByAppendingString:[SavedInfo getCardStub]];
-    editEmailView = [[EditEmailViewController alloc]initWithNibName:@"EditEmailViewController" bundle:nil];
-    editEmailView.delegate = self;
-	// Do any additional setup after loading the view, typically from a nib.
+    
 }
 
 - (void)viewDidUnload
@@ -75,7 +71,11 @@
 {
     [super viewDidAppear:animated];
     [self syncOptions];
-    
+    emailDisplayLabel.text = [SavedInfo getEmail];
+    cardDisplayLabel.text = [@"\u2022\u2022\u2022\u2022 \u2022\u2022\u2022\u2022 \u2022\u2022\u2022\u2022 " stringByAppendingString:[SavedInfo getCardStub]];
+    editEmailView = [[EditEmailViewController alloc]initWithNibName:@"EditEmailViewController" bundle:nil];
+    editEmailView.delegate = self;
+	// Do any additional setup after loading the view, typically from a nib.
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -104,6 +104,7 @@
                 NSLog(@"change email");
                 cell.selected=NO;
                 [self presentSemiModalViewController:editEmailView];
+                [editEmailView.editEmail becomeFirstResponder];
                 break;
                 }
             case 1:
@@ -167,22 +168,20 @@
             return;
             
         }
-       
-        //if yes, clear saved info, dismiss view, and pull up login window
-        
-        //if no just close.  
     }
 }
 
 -(void) alertView:(UIAlertView*)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
     if(alertView.tag==UNPARK_AND_LOGOUT){
-        if(buttonIndex==0){
-            [SavedInfo logOut];
-            [self performSegueWithIdentifier:@"resetAppState" sender:self]; 
-            UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
-            UIViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
-            [vc setModalPresentationStyle:UIModalPresentationFullScreen];
-            [self presentModalViewController:vc animated:YES];
+        if(buttonIndex==1){
+            if([ServerCalls unparkUserWithSpotId:[SavedInfo spotId] ParkRefNum:[SavedInfo parkRefNum]]){
+                [SavedInfo logOut];
+                UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
+                ParqLoginViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
+                vc.parent = self;
+                [vc setModalPresentationStyle:UIModalPresentationFullScreen];
+                [self presentModalViewController:vc animated:YES];
+            }
         }else{
             
         }   

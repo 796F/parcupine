@@ -11,8 +11,11 @@
 #import "ServerCalls.h"
 #import "SavedInfo.h"
 #import "ParqSignUpViewController1.h"
+
 @implementation ParqLoginViewController
-@synthesize emailControl, passwordControl, parent;
+@synthesize emailControl;
+@synthesize passwordControl;
+@synthesize parent;
 
 -(BOOL)textFieldShouldReturn:(UITextField*)textField{
     NSInteger nextTag = textField.tag+1;
@@ -152,6 +155,7 @@
     return YES;
 }
 */
+
 -(void)logUserIn{
     UserObject *user = [ServerCalls authEmail:emailControl.text Password:passwordControl.text];
     if (user != nil) {

@@ -23,7 +23,7 @@
 
 -(IBAction)showActionSheet :(id)sender{
     UIActionSheet *actionsheet = [[UIActionSheet alloc] 
-                                  initWithTitle:nil
+                                  initWithTitle:@"Options"
                                   delegate:self 
                                   cancelButtonTitle:@"Cancel" 
                                   destructiveButtonTitle:nil
@@ -37,11 +37,10 @@
     if(buttonIndex==0){
         //find my car
         [self goLat:[[SavedInfo getLat] doubleValue] Lon:[[SavedInfo getLon] doubleValue] withTitle:@"Your Car"];
+        
     }else if(buttonIndex==1){
-
- NSMutableArray* spots =[ServerCalls findSpotsWithLat:[NSNumber numberWithDouble: userLat] Lon:[NSNumber numberWithDouble: userLon]];
-        
-        
+        UIAlertView* comingSoon = [[UIAlertView alloc] initWithTitle:@"Sorry" message:@"Feature Coming Soon" delegate:self cancelButtonTitle:@"Cool" otherButtonTitles: nil];
+        [comingSoon show];
     }
 }
 -(void) goAddressFunction{
