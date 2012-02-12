@@ -29,7 +29,7 @@
                                   destructiveButtonTitle:nil
                                   otherButtonTitles: @"Find My Car",@"Park Near Me", nil
 								  ];
-	[actionsheet showInView:[self view]];
+	[actionsheet showFromTabBar:[[self tabBarController] tabBar]];
 }
 
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
