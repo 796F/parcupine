@@ -26,9 +26,10 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    emailDisplayLabel.text = [SavedInfo getEmail];
+    cardDisplayLabel.text = [@"\u2022\u2022\u2022\u2022 \u2022\u2022\u2022\u2022 \u2022\u2022\u2022\u2022 " stringByAppendingString:[SavedInfo getCardStub]];
     editEmailView = [[EditEmailViewController alloc]initWithNibName:@"EditEmailViewController" bundle:nil];
     editEmailView.delegate = self;
-    reference = self;
 	// Do any additional setup after loading the view, typically from a nib.
 }
 
@@ -101,7 +102,7 @@
             case 0:{ 
                 NSLog(@"change email");
                 cell.selected=NO;
-                [reference presentSemiModalViewController:editEmailView];
+                [self presentSemiModalViewController:editEmailView];
                 break;
                 }
             case 1:
