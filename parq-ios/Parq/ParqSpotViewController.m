@@ -119,9 +119,9 @@
     //if accuracy isn't close enough, don't allow park, keep getting location.  display dialog. 
     //these numbers represent radius, so higher = less accurate.  
     
-    double newAccuracy = (newLocation.verticalAccuracy)+(newLocation.horizontalAccuracy);
-    //these numbers are in meters.  
-    if (newAccuracy < LOCATION_ACCURACY){
+    double newAccuracy = MAX(newLocation.verticalAccuracy, newLocation.horizontalAccuracy);
+    //these numbers are in meters.
+    if (newAccuracy <= LOCATION_ACCURACY){
         //if accuracy is acceptable, location is good.  
         goodLocation = YES;
         [locationManager stopUpdatingLocation];
@@ -249,6 +249,7 @@
 - (void)viewWillDisappear:(BOOL)animated
 {
 	[super viewWillDisappear:animated];
+    [locationManager stopUpdatingLocation];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
