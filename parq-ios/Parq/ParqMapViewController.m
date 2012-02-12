@@ -38,7 +38,10 @@
         //find my car
         if ([SavedInfo isParked]) {
             [self goLat:[[SavedInfo getLat] doubleValue] Lon:[[SavedInfo getLon] doubleValue] withTitle:@"Your Car"];
-        }        
+        }else{
+            UIAlertView* comingSoon = [[UIAlertView alloc] initWithTitle:nil message:@"You're not Parked" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil];
+            [comingSoon show];  
+        }
     }else if(buttonIndex==1){
         UIAlertView* comingSoon = [[UIAlertView alloc] initWithTitle:@"Sorry" message:@"Feature Coming Soon" delegate:self cancelButtonTitle:@"Cool" otherButtonTitles: nil];
         [comingSoon show];      
