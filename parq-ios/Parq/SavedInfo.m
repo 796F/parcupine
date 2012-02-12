@@ -127,6 +127,9 @@
     [data setObject:parkResponseIn.parkingReferenceNumber forKey:@"parkRef"];
     [data setObject:parkResponseIn.endTime forKey:@"endTime"];
     [data writeToFile: path atomically:YES];
+    
+    [[UIApplication sharedApplication] cancelAllLocalNotifications];
+    
 }
 +(RateObject*) rate{
     NSString* path = [self getPlistPath];
