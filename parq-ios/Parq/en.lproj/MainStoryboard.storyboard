@@ -822,6 +822,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits" returnKeyType="go" secureTextEntry="YES"/>
                                                     <connections>
+                                                        <action selector="goPressed" destination="jHm-a8-M0u" eventType="editingDidEnd" id="EyA-XQ-zCO"/>
                                                         <outlet property="delegate" destination="jHm-a8-M0u" id="cb5-Q8-fWa"/>
                                                     </connections>
                                                 </textField>

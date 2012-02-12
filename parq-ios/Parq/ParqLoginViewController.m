@@ -34,6 +34,9 @@
     [SFHFKeychainUtils storeUsername:email andPassword:password forServiceName:@"com.parqme" updateExisting:YES error:&error];
     [SavedInfo logIn:user.parkState Email:email UID:user.uid ccStub:user.creditCardStub];
 }
+- (IBAction)goPressed {
+    [self logUserIn];
+}
 
 - (void)logInAfterSigningUp:(NSString*)email password:(NSString*)password {
     UserObject *user = [ServerCalls authEmail:email Password:password];
