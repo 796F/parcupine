@@ -13,7 +13,6 @@
     IBOutlet EditEmailViewController* editEmailView;
     IBOutlet UILabel *emailDisplayLabel;
     IBOutlet UILabel *cardDisplayLabel;
-    id reference;
 }
 
 
