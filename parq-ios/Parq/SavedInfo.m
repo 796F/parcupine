@@ -118,6 +118,8 @@
     [data setObject:rateObjIn.rateCents forKey:@"defaultRate"];
     [data setObject:rateObjIn.minuteInterval forKey:@"minIncrement"];
     [data setObject:rateObjIn.lotName forKey:@"description"];
+    [data setObject:rateObjIn.latitude forKey:@"lat"];
+    [data setObject:rateObjIn.longitude forKey:@"lon"];
     [data setObject:spotNumberIn forKey:@"spotNumber"];
     [data writeToFile: path atomically:YES];
 }

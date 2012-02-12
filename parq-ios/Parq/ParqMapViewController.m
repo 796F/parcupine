@@ -29,18 +29,19 @@
                                   destructiveButtonTitle:nil
                                   otherButtonTitles: @"Find My Car",@"Park Near Me", nil
 								  ];
-	[actionsheet showInView:[self view]];
+	[actionsheet showFromTabBar:[[self tabBarController] tabBar]];
 }
 
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if(buttonIndex==0){
         //find my car
-        [self goLat:[[SavedInfo getLat] doubleValue] Lon:[[SavedInfo getLon] doubleValue] withTitle:@"Your Car"];
-        
+        if ([SavedInfo isParked]) {
+            [self goLat:[[SavedInfo getLat] doubleValue] Lon:[[SavedInfo getLon] doubleValue] withTitle:@"Your Car"];
+        }        
     }else if(buttonIndex==1){
         UIAlertView* comingSoon = [[UIAlertView alloc] initWithTitle:@"Sorry" message:@"Feature Coming Soon" delegate:self cancelButtonTitle:@"Cool" otherButtonTitles: nil];
-        [comingSoon show];
+        [comingSoon show];      
     }
 }
 -(void) goAddressFunction{
