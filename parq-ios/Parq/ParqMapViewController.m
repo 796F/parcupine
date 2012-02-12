@@ -36,7 +36,9 @@
 {
     if(buttonIndex==0){
         //find my car
-        [self goLat:[[SavedInfo getLat] doubleValue] Lon:[[SavedInfo getLon] doubleValue] withTitle:@"Your Car"];
+        if ([SavedInfo isParked]) {
+            [self goLat:[[SavedInfo getLat] doubleValue] Lon:[[SavedInfo getLon] doubleValue] withTitle:@"Your Car"];
+        }
     }else if(buttonIndex==1){
 
  NSMutableArray* spots =[ServerCalls findSpotsWithLat:[NSNumber numberWithDouble: userLat] Lon:[NSNumber numberWithDouble: userLon]];

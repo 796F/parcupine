@@ -46,7 +46,12 @@
             [alert show];
         }
     }else{
-        //SHOW "GETTING GPS LOCATION" dialog like android app.  
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Couldn't get location"
+                                                        message:@"Please wait a few seconds for the GPS to get a lock, and try again."
+                                                       delegate:nil
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
+        [alert show];
     }
 
 }
