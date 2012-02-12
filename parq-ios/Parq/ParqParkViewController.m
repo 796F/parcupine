@@ -124,13 +124,6 @@
 }
 
 
-- (void)timeUp {
-    [SavedInfo unpark];
-    [self dismissModalViewControllerAnimated:YES];
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Out of time" message:@"The time on your parking space has expired. Please park again if you need more time." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-    [alertView show];
-}
-
 - (void)unpark {
     if ([ServerCalls unparkUserWithSpotId:rateObj.spotNumber ParkRefNum:[SavedInfo parkRefNum]]) {
         [SavedInfo unpark];
