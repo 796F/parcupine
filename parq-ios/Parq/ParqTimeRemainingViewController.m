@@ -84,7 +84,15 @@
     } else {
         [timer invalidate];
         //delegate methods don't work with segue, fix or replace.  
-        [delegate timeUp];
+        
+        if ([ServerCalls unparkUserWithSpotId:[SavedInfo spotId] ParkRefNum:[SavedInfo parkRefNum]]) {
+            [SavedInfo unpark];
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Out of time" message:@"The time on your parking space has expired. Please park again if you need more time." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [alertView show];
+            [self.navigationController popToRootViewControllerAnimated:YES];
+        } else {
+            
+        }
     }
 }
 
