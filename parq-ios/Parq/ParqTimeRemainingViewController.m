@@ -104,11 +104,6 @@
         [alertView show];
     }
 }
--(void)setEndTime:(NSDate*)endTimeIn{
-    NSLog(@"\n\noldEndtime: %@", endTime.description);
-    NSLog(@"\n\nnewEndtime: %@", endTimeIn.description);
-    endTime = endTimeIn;
-}
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {

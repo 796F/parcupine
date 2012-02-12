@@ -12,6 +12,7 @@
 @interface ParqSignUpViewController2 : UITableViewController
 @property (weak, nonatomic) IBOutlet UITextField *ccNumField;
 @property (weak, nonatomic) IBOutlet UITextField *cscField;
+@property (weak, nonatomic) IBOutlet UITextField *addressField;
 @property (weak, nonatomic) IBOutlet UITextField *zipField;
 @property (weak, nonatomic) IBOutlet UITextField *expMonthField;
 @property (weak, nonatomic) IBOutlet UITextField *expYearField;
@@ -20,6 +21,6 @@
 @property (strong, nonatomic) NSString *password;
 @property (nonatomic) int expMonth;
 @property (nonatomic) int expYear;
-@property (weak, nonatomic) ParqLoginViewController *delegate;
+@property (weak, nonatomic) ParqLoginViewController *parent;
 
 @end

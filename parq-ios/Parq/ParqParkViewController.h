@@ -18,8 +18,6 @@
 @property (nonatomic) int spotNumber;
 @property (strong, nonatomic) RateObject *rateObj;
 
--(IBAction)backButton  :(id)sender;
-
 - (void)timeUp;
 - (void)unpark;
 @end

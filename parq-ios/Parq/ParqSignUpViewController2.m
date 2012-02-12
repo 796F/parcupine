@@ -10,7 +10,7 @@
 #import "ServerCalls.h"
 
 @interface ExpMonthDelegate : NSObject <UIPickerViewDelegate, UIPickerViewDataSource>
-@property (weak, nonatomic) ParqSignUpViewController2 *delegate;
+@property (weak, nonatomic) ParqSignUpViewController2 *parent;
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView;
 - (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component;
 - (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component;
@@ -18,7 +18,7 @@
 @end
 
 @interface ExpYearDelegate : NSObject <UIPickerViewDelegate, UIPickerViewDataSource>
-@property (weak, nonatomic) ParqSignUpViewController2 *delegate;
+@property (weak, nonatomic) ParqSignUpViewController2 *parent;
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView;
 - (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component;
 - (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component;
@@ -35,6 +35,7 @@
 @implementation ParqSignUpViewController2
 @synthesize ccNumField;
 @synthesize cscField;
+@synthesize addressField;
 @synthesize zipField;
 @synthesize expMonthField;
 @synthesize expYearField;
@@ -43,7 +44,7 @@
 @synthesize password;
 @synthesize expMonth;
 @synthesize expYear;
-@synthesize delegate;
+@synthesize parent;
 @synthesize expMonthPicker;
 @synthesize expYearPicker;
 @synthesize expMonthDelegate;
@@ -59,10 +60,9 @@
 - (IBAction)doneButton:(id)sender {
     NSString *errorString = [self validate];
     if (errorString.length == 0) {
-        const BOOL success = [ServerCalls registerEmail:email Password:password CreditCard:ccNumField.text cscNumber:cscField.text HolderName:name BillingAddress:@"" ExpMonth:[NSString stringWithFormat:@"%d", expMonth] ExpYear:[NSString stringWithFormat:@"%d", expYear] Zipcode:zipField.text];
+        const BOOL success = [ServerCalls registerEmail:email Password:password CreditCard:ccNumField.text cscNumber:cscField.text HolderName:name BillingAddress:addressField.text ExpMonth:[NSString stringWithFormat:@"%d", expMonth] ExpYear:[NSString stringWithFormat:@"%d", expYear] Zipcode:zipField.text];
         if (success) {
-            [self dismissModalViewControllerAnimated:YES];
-            [delegate logInAfterSigningUp:email password:password];
+            [parent logInAfterSigningUp:email password:password];
         } else {
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Couldn't sign up"
                                                             message:@"Please try again."
@@ -112,7 +112,7 @@
 
     expMonthPicker = [[UIPickerView alloc] init];
     expMonthDelegate = [[ExpMonthDelegate alloc] init];
-    expMonthDelegate.delegate = self;
+    expMonthDelegate.parent = self;
     expMonthPicker.delegate = expMonthDelegate;
     expMonthPicker.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     expMonthPicker.showsSelectionIndicator = YES;
@@ -120,7 +120,7 @@
 
     expYearPicker = [[UIPickerView alloc] init];
     expYearDelegate = [[ExpYearDelegate alloc] init];
-    expYearDelegate.delegate = self;
+    expYearDelegate.parent = self;
     expYearPicker.delegate = expYearDelegate;
     expYearPicker.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     expYearPicker.showsSelectionIndicator = YES;
@@ -131,6 +131,7 @@
 {
     [self setCcNumField:nil];
     [self setCscField:nil];
+    [self setAddressField:nil];
     [self setZipField:nil];
     [self setExpMonthField:nil];
     [self setExpYearField:nil];
@@ -181,36 +182,8 @@
 @end
 
 @implementation ExpMonthDelegate
-@synthesize delegate;
+@synthesize parent;
 + (NSString *)monthFromRow:(int)row {
-//    switch (row) {
-//        case 0:
-//            return @"January";
-//        case 1:
-//            return @"February";
-//        case 2:
-//            return @"March";
-//        case 3:
-//            return @"April";
-//        case 4:
-//            return @"May";
-//        case 5:
-//            return @"June";
-//        case 6:
-//            return @"July";
-//        case 7:
-//            return @"August";
-//        case 8:
-//            return @"September";
-//        case 9:
-//            return @"October";
-//        case 10:
-//            return @"November";
-//        case 11:
-//            return @"December";
-//        default:
-//            return @"";
-//    }
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     return [[dateFormatter monthSymbols] objectAtIndex:row];
 }
@@ -224,13 +197,13 @@
     return [ExpMonthDelegate monthFromRow:row];
 }
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
-    delegate.expMonthField.text = [ExpMonthDelegate monthFromRow:row];
-    delegate.expMonth = row+1;
+    parent.expMonthField.text = [ExpMonthDelegate monthFromRow:row];
+    parent.expMonth = row+1;
 }
 @end
 
 @implementation ExpYearDelegate
-@synthesize delegate;
+@synthesize parent;
 + (int)yearFromRow:(int)row {
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDateFormat:@"yyyy"];
@@ -248,7 +221,7 @@
 }
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
     const int year = [ExpYearDelegate yearFromRow:row];
-    delegate.expYearField.text = [NSString stringWithFormat:@"%d",year];
-    delegate.expYear = year;
+    parent.expYearField.text = [NSString stringWithFormat:@"%d",year];
+    parent.expYear = year;
 }
 @end
