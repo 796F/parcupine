@@ -81,7 +81,7 @@
 				    	</select>
 				    </td>
 				    <td/>
-				    <td><label style="white-space:nowrap;" for="locationFilter">Show Parking Location For:</label></td>
+				    <td><label style="white-space:nowrap;" for="locationFilter">Show Location:</label></td>
 				    <td>
 				    	<%
 							ParqWebService service = ParqWebServiceFactory.getParqWebServiceInstance();

@@ -73,7 +73,13 @@
 					</td>
 					<td>
 						<h2>Mark Yen</h2>
-						<p>MIT CS Master student.</p>
+						<p>It can be argued that in the last half a decade, there have emerged a couple of true 
+						   pioneers in the field of mobile interaction. Mark Yen is not one of them. Sorry. 
+						   Mark is a masters student at MIT studying computer science. He has worked on a 
+						   number of mobile applications in the past, including mobile projects for Twitter, 
+						   VMware, and the city of Copenhagen. As chief architect of the Parq app, 
+						   Mark hopes to apply his passion for startups to never having to hunt for 
+						   quarters again, a cause near and dear to his heart.</p>
 					</td>
 				</tr>
 			</table>
