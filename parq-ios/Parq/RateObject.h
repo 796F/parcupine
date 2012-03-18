@@ -14,6 +14,8 @@
 @property (nonatomic, retain) NSNumber* rateCents;
 @property (nonatomic, retain) NSNumber* minuteInterval;
 @property (nonatomic, retain) NSString* lotName;
+@property (nonatomic, retain) NSNumber* latitude;
+@property (nonatomic, retain) NSNumber* longitude;
 
 -(id)initWithLat:(NSNumber*)latIn lon:(NSNumber*)lonIn spot:(NSNumber*)spotIn min:(NSNumber*)minIn max:(NSNumber*)maxIn defRate:(NSNumber*)defRateIn minInc:(NSNumber*)minIncIn desc: (NSString*) descIn;
 @end

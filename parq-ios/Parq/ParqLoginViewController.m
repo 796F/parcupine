@@ -11,8 +11,22 @@
 #import "ServerCalls.h"
 #import "SavedInfo.h"
 #import "ParqSignUpViewController1.h"
+
 @implementation ParqLoginViewController
-@synthesize emailControl, passwordControl;
+@synthesize emailControl;
+@synthesize passwordControl;
+@synthesize parent;
+
+-(BOOL)textFieldShouldReturn:(UITextField*)textField{
+    NSInteger nextTag = textField.tag+1;
+    UIResponder* nextResponder = [textField.superview viewWithTag:nextTag];
+    if(nextResponder){
+        [nextResponder becomeFirstResponder];
+    }else{
+        [textField resignFirstResponder];
+    }
+    return NO;
+}
 
 - (void)saveUserInfoWithEmail:(NSString*)email andPassword:(NSString*)password andUserObj:(UserObject*)user
 {
@@ -20,11 +34,14 @@
     [SFHFKeychainUtils storeUsername:email andPassword:password forServiceName:@"com.parqme" updateExisting:YES error:&error];
     [SavedInfo logIn:user.parkState Email:email UID:user.uid ccStub:user.creditCardStub];
 }
+- (IBAction)goPressed {
+    [self logUserIn];
+}
 
 - (void)logInAfterSigningUp:(NSString*)email password:(NSString*)password {
-    UserObject *user = [ServerCalls authEmail:emailControl.text Password:passwordControl.text];
+    UserObject *user = [ServerCalls authEmail:email Password:password];
     if (user != nil) {
-        [self saveUserInfoWithEmail:emailControl.text andPassword:passwordControl.text andUserObj:user];
+        [self saveUserInfoWithEmail:email andPassword:password andUserObj:user];
         [self dismissModalViewControllerAnimated:YES];
     } else {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Couldn't log in"
@@ -64,6 +81,8 @@
  
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    [passwordControl addTarget:self action:@selector(logUserIn:) forControlEvents:UIControlEventEditingDidEndOnExit];
+    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"backgroundlayer.png"]];
 }
 
 - (void)viewDidUnload
@@ -141,6 +160,21 @@
 }
 */
 
+-(void)logUserIn{
+    UserObject *user = [ServerCalls authEmail:emailControl.text Password:passwordControl.text];
+    if (user != nil) {
+        [self saveUserInfoWithEmail:emailControl.text andPassword:passwordControl.text andUserObj:user];
+        [self dismissModalViewControllerAnimated:YES];
+    } else {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Couldn't log in"
+                                                        message:@"Please check your email and password"
+                                                       delegate:nil 
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
+        [alert show];
+    }
+
+}
 #pragma mark - Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -149,24 +183,13 @@
     if (indexPath.section == 1) {
       [tableView deselectRowAtIndexPath:indexPath animated:YES];
       if (indexPath.row == 0) {
-        UserObject *user = [ServerCalls authEmail:emailControl.text Password:passwordControl.text];
-        if (user != nil) {
-          [self saveUserInfoWithEmail:emailControl.text andPassword:passwordControl.text andUserObj:user];
-          [self dismissModalViewControllerAnimated:YES];
-        } else {
-          UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Couldn't log in"
-                                                          message:@"Please check your email and password"
-                                                         delegate:nil 
-                                                cancelButtonTitle:@"OK"
-                                                otherButtonTitles:nil];
-          [alert show];
-        }
+          [self logUserIn];
       } else if (indexPath.row == 1) {
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
         UINavigationController *vc = [storyboard instantiateViewControllerWithIdentifier:@"RegisterController"];
         [vc setModalPresentationStyle:UIModalPresentationFullScreen];
         ParqSignUpViewController1 *vcTop = [[vc viewControllers] objectAtIndex:0];
-        vcTop.delegate = self;
+        vcTop.parent = self;
 
         [self presentModalViewController:vc animated:YES];
       }

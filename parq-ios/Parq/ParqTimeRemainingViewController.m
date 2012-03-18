@@ -10,7 +10,8 @@
 #import "ParqRefillViewController.h"
 #import "SavedInfo.h"
 #import "ServerCalls.h"
-
+#define LOW_TIME_REFILL 1
+#define USER_TIME_OUT 2
 @interface ParqTimeRemainingViewController ()
 @property (strong, nonatomic) NSTimer *timer;
 @property (strong, nonatomic) NSDate *endTime;
@@ -25,6 +26,14 @@
 @synthesize timer;
 @synthesize endTime;
 @synthesize delegate;
+@synthesize warnTime;
+-(IBAction)navUnparkButton:(id)sender{
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Unpark" message:@"Are you sure you want to unpark? If you need to repark you will have to pay again." delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Unpark", nil];
+    [alertView show];
+}
+-(IBAction)navRefillButton:(id)sender{
+    [self performSegueWithIdentifier:@"showRefillScreen" sender:self];
+}
 
 - (IBAction)unparkButton:(id)sender {
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Unpark" message:@"Are you sure you want to unpark? If you need to repark you will have to pay again." delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Unpark", nil];
@@ -36,14 +45,26 @@
     ParqRefillViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"refillController"];
     vc.delegate = self;
     [vc setModalPresentationStyle:UIModalPresentationFullScreen];
-
     [self presentModalViewController:vc animated:YES];
 }
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    if (buttonIndex == alertView.firstOtherButtonIndex) {
-        [timer invalidate];
-        [delegate unpark];
+    if(alertView.tag == LOW_TIME_REFILL){
+        [self performSegueWithIdentifier:@"showRefillScreen" sender:self];
+        
+    }else if(alertView.tag == USER_TIME_OUT){
+        [self.navigationController popToRootViewControllerAnimated:YES];
+        
+    }if (buttonIndex == alertView.firstOtherButtonIndex) {
+        if ([ServerCalls unparkUserWithSpotId:[SavedInfo spotId] ParkRefNum:[SavedInfo parkRefNum]]) {
+            [SavedInfo unpark];
+            [timer invalidate];
+            [self.navigationController popViewControllerAnimated:YES];
+        } else {
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"There was an error while parking. Please try again." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [alertView show];
+        }
+        
     }
 }
 
@@ -53,6 +74,7 @@
 
 - (void)updateTimer {
     NSTimeInterval secondsRemaining = [endTime timeIntervalSinceNow];
+    
     if (secondsRemaining > 0) {
         int hoursRemaining = secondsRemaining/3600;
         int minutesRemaining = ((int)secondsRemaining%3600)/60;
@@ -67,9 +89,23 @@
         minutes.text = [NSString stringWithFormat:@"%02d", minutesRemaining];
 
         [self flashColon];
-    } else {
+    }else if(secondsRemaining == self.warnTime){
+        UIAlertView* warningAlertView = [[UIAlertView alloc] initWithTitle:@"Warning!" message:@"You are low on time" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:@"Refill" , nil];
+        warningAlertView.tag = LOW_TIME_REFILL;
+        [warningAlertView show];
+        
+    }else {
         [timer invalidate];
-        [delegate timeUp];
+        //delegate methods don't work with segue, fix or replace.  
+        
+        if ([ServerCalls unparkUserWithSpotId:[SavedInfo spotId] ParkRefNum:[SavedInfo parkRefNum]]) {
+            [SavedInfo unpark];
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Out of time" message:@"The time on your parking space has expired. Please park again if you need more time." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            alertView.tag = USER_TIME_OUT;
+            [alertView show];
+        } else {
+            
+        }
     }
 }
 
@@ -141,6 +177,11 @@
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
+}
+
+-(void) viewDidAppear:(BOOL)animated{
+    endTime = [NSDate dateWithTimeIntervalSince1970:[[SavedInfo endTime] doubleValue]/1000];
+    warnTime = [endTime timeIntervalSinceDate:[NSDate dateWithTimeIntervalSince1970:[SavedInfo endTime].doubleValue/1000 - 300]];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation

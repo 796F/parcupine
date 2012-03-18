@@ -107,7 +107,7 @@ public class MockParqWebService implements ParqWebService{
 	}
 	
 	@Override
-	public List<ParkingSpaceStatus> getParkingStatusByClientId(long clientId) {
+	public List<ParkingSpaceStatus> getParkingStatusByClient(long clientId, String locationIdentifier) {
 		List<ParkingSpaceStatus> pStatus = new ArrayList<ParkingSpaceStatus>();
 		
 		ParkingSpaceStatus status1 = new ParkingSpaceStatus();
@@ -186,5 +186,11 @@ public class MockParqWebService implements ParqWebService{
 	@Override
 	public List<WebParkingLocation> findParkingLocations(MapLocation centerOfMap) {
 		return Collections.emptyList();
+	}
+
+	@Override
+	public List<String> getParkingLocationIdentifierListForClient(long clientId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

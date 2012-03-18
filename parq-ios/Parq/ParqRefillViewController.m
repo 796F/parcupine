@@ -8,6 +8,7 @@
 
 #import "ParqRefillViewController.h"
 #import "SavedInfo.h"
+#import "ServerCalls.h"
 
 @interface ParqRefillViewController ()
 @property (strong, nonatomic) RateObject *rateObj;
@@ -21,6 +22,40 @@
 @synthesize spotNumLabel;
 @synthesize delegate;
 @synthesize rateObj;
+
+-(void)scheduleAlertsWithEndLong:(NSNumber*)endTimeLong {
+    //clears old notifications
+    UIApplication* myApp = [UIApplication sharedApplication];
+    [myApp cancelAllLocalNotifications];
+    
+    UILocalNotification* scheduledAlert = [[UILocalNotification alloc] init];
+    scheduledAlert.applicationIconBadgeNumber=1;
+    //this method uses seconds.
+    scheduledAlert.fireDate = [NSDate dateWithTimeIntervalSince1970:(endTimeLong.doubleValue/1000)-(60*5)];
+    scheduledAlert.timeZone = [NSTimeZone defaultTimeZone];
+    scheduledAlert.alertBody = @"You are almost out of time!";
+    
+    UILocalNotification* endingAlert = [[UILocalNotification alloc] init];
+    endingAlert.applicationIconBadgeNumber=2;
+    endingAlert.fireDate = [NSDate dateWithTimeIntervalSinceNow:(endTimeLong.doubleValue/1000)];
+    endingAlert.timeZone = [NSTimeZone defaultTimeZone];
+    endingAlert.alertBody = @"You have run out of time!";
+    if([SavedInfo ringEnable]){
+        scheduledAlert.soundName=@"alarm.mp3";
+        endingAlert.soundName=@"alarm.mp3";
+    }else if([SavedInfo vibrateEnable]){
+        scheduledAlert.soundName = UILocalNotificationDefaultSoundName;
+        endingAlert.soundName = UILocalNotificationDefaultSoundName;
+    }
+    [myApp scheduleLocalNotification:endingAlert];[myApp scheduleLocalNotification:scheduledAlert];
+    
+}
+
+-(IBAction)navCancelButton:(id)sender{
+    //do nothing, return to previous screen.  
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -62,11 +97,32 @@
                                               cancelButtonTitle:@"Cancel"
                                               otherButtonTitles:@"Refill", nil];
     [alertView show];
+    
+}
+-(IBAction)navRefillButton:(id)sender{
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Confirm payment"
+                                                        message:[NSString stringWithFormat:@"Refilling for %d minutes will cost %@. Is this okay?",[self durationSelectedInMinutes],[ParqRefillViewController centsToString:[self costSelectedInCents]]]
+                                                       delegate:self
+                                              cancelButtonTitle:@"Cancel"
+                                              otherButtonTitles:@"Refill", nil];
+    [alertView show];
 }
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (buttonIndex == alertView.firstOtherButtonIndex) {
-        [delegate saveRefillWithDuration:[self durationSelectedInMinutes] cost:[self costSelectedInCents]];
+        //START NEW CODE
+        ParkResponse *response = [ServerCalls refillUserWithSpotId:[SavedInfo spotId] Duration:[NSNumber numberWithInt:[self durationSelectedInMinutes]] ChargeAmount:[NSNumber numberWithInt:[self costSelectedInCents]] PaymentType:[NSNumber numberWithInt:0] ParkRefNum:[SavedInfo parkRefNum]];
+        if ([response.resp isEqualToString:@"OK"]) {
+            [SavedInfo refillWithParkResponse:response];
+            [self.navigationController popViewControllerAnimated:YES];
+            [SavedInfo setEndTime:response.endTime];
+            [self scheduleAlertsWithEndLong:response.endTime];
+        } else {
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Wait!" message:@"The Merchant is Busy.  Try in a sec <3" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [alertView show];
+        }
+        
+        
     }
 }
 

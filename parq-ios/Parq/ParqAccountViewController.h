@@ -7,7 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "EditEmailViewController.h"
 
-@interface ParqAccountViewController : UITableViewController
+@interface ParqAccountViewController : UITableViewController{
+    IBOutlet EditEmailViewController* editEmailView;
+    IBOutlet UILabel *emailDisplayLabel;
+    IBOutlet UILabel *cardDisplayLabel;
+}
+
+
 
 @end

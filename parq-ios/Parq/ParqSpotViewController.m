@@ -8,6 +8,7 @@
 
 #import "ParqMapViewController.h"
 #import "ParqParkViewController.h"
+#import "ParqLoginViewController.h"
 #import "SavedInfo.h"
 #define LOCATION_ACCURACY 30.0  //this double is meters, we should be fine within 30 meters.  
 
@@ -27,13 +28,14 @@
 @synthesize goodLocation;
 @synthesize rateObj = _rateObj;
 
--(IBAction)parqButton{
+-(void) gpsParkFunction{
     //submit gps coordinates and spot to server.   
     if(goodLocation){
-//    if (YES) {
+        //    if (YES) {
         //check response from server before allowing next view. 
         _rateObj = [ServerCalls getRateLat:[NSNumber numberWithDouble:self.userLat] Lon: [NSNumber numberWithDouble:self.userLon] spotId:_spotNumField.text];
         if(_rateObj !=nil){
+            [self.spotNumField resignFirstResponder];
             [self performSegueWithIdentifier:@"showParkTimePicker" sender:self];
         } else {
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Couldn't find spot"
@@ -44,10 +46,23 @@
             [alert show];
         }
     }else{
-        //SHOW "GETTING GPS LOCATION" dialog like android app.  
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Couldn't get location"
+                                                        message:@"Please wait a few seconds for the GPS to get a lock, and try again."
+                                                       delegate:nil
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
+        [alert show];
     }
+
 }
 
+-(IBAction)backgroundTouched:(id)sender{
+    [self.spotNumField resignFirstResponder];
+}
+
+-(IBAction)parqButton{
+    [self gpsParkFunction];
+}
 -(IBAction)scanButton{
     //launch scanner and grab results.  
     //create new view for scanning
@@ -109,9 +124,9 @@
     //if accuracy isn't close enough, don't allow park, keep getting location.  display dialog. 
     //these numbers represent radius, so higher = less accurate.  
     
-    double newAccuracy = (newLocation.verticalAccuracy)+(newLocation.horizontalAccuracy);
-    //these numbers are in meters.  
-    if (newAccuracy < LOCATION_ACCURACY){
+    double newAccuracy = MAX(newLocation.verticalAccuracy, newLocation.horizontalAccuracy);
+    //these numbers are in meters.
+    if (newAccuracy <= LOCATION_ACCURACY){
         //if accuracy is acceptable, location is good.  
         goodLocation = YES;
         [locationManager stopUpdatingLocation];
@@ -173,16 +188,21 @@
   self.scrollView.scrollIndicatorInsets = contentInsets;
 }
 
+
+- (BOOL)isLoggedIn
+{
+    return [SavedInfo isLoggedIn];
+}
+-(IBAction)spotNumGo:(id)sender{
+        [self gpsParkFunction];
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Release any cached data, images, etc that aren't in use.
 }
 
-- (BOOL)isLoggedIn
-{
-    return [SavedInfo isLoggedIn];
-}
 
 #pragma mark - View lifecycle
 
@@ -190,8 +210,8 @@
 {
     [super viewDidLoad];
     [self registerForKeyboardNotifications];
-    goodLocation=NO;  //when view first loads, set location to false.  
-    [self startGettingLocation];   //start getting gps coords
+    goodLocation=NO;  //when view first loads, set location to false.
+    [_spotNumField addTarget:self action:@selector(spotNumGo:) forControlEvents:UIControlEventEditingDidEndOnExit];
 }
 
 - (void)viewDidUnload
@@ -211,24 +231,26 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-
     if (![self isLoggedIn]) {
       UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
-      UIViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
+      ParqLoginViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
+      vc.parent = self;
       [vc setModalPresentationStyle:UIModalPresentationFullScreen];
-
+        
       [self presentModalViewController:vc animated:YES];
+      return;
     }
     if(!goodLocation){
         //if gps didn't get a good location
         [self startGettingLocation];
     }
-    
 }
+
 
 - (void)viewWillDisappear:(BOOL)animated
 {
 	[super viewWillDisappear:animated];
+    [locationManager stopUpdatingLocation];
 }
 
 - (void)viewDidDisappear:(BOOL)animated

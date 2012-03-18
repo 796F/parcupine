@@ -44,5 +44,6 @@
 +(void) toggleRing;
 +(void) toggleRefill;
 +(void) toggleRemember;
-
++(void) setEndTime:(NSNumber*)endTimeLong;
++(NSNumber*) getEndTime;
 @end

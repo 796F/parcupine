@@ -18,7 +18,9 @@
 @property (weak, nonatomic) IBOutlet UITextField *spotNumField;
 @property (strong, nonatomic) RateObject *rateObj;
 
+
 -(IBAction)parqButton;
 -(IBAction)scanButton;
-
+-(IBAction)backgroundTouched:(id)sender;
+-(void)logInFinished;
 @end

@@ -23,11 +23,13 @@ public interface ParqWebService {
 	
 	boolean changePasswordForUser(WebUser user, PasswordChangeRequest passwordChange);
 	
-	List<ParkingSpaceStatus> getParkingStatusByClientId(long clientId);
+	List<ParkingSpaceStatus> getParkingStatusByClient(long clientId, String locationIdentifier);
 	
 	List<ParkingReport> getParkingReportByClientId(long clientId, ReportDateRangeFilter dateFilter);
 	
 	boolean registerNewUser(UserRegistration registration);
 	
 	List<WebParkingLocation> findParkingLocations(MapLocation centerOfMap);
+	
+	List<String> getParkingLocationIdentifierListForClient(long clientId);
 }

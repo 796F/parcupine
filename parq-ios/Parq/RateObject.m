@@ -14,6 +14,8 @@
 @synthesize rateCents;
 @synthesize minuteInterval;
 @synthesize lotName;
+@synthesize latitude;
+@synthesize longitude;
 
 -(id)initWithLat:(NSNumber*)latIn
              lon:(NSNumber*)lonIn
@@ -29,6 +31,8 @@
     rateCents = defRateIn;
     minuteInterval=minIncIn;
     lotName=descIn;
+    latitude=latIn;
+    longitude=lonIn;
     return self;
 }
 @end

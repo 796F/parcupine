@@ -15,7 +15,19 @@
 @synthesize emailField;
 @synthesize passwordField;
 @synthesize verifyField;
-@synthesize delegate;
+@synthesize parent;
+
+-(BOOL)textFieldShouldReturn:(UITextField*)textField{
+    NSInteger tagNumber = textField.tag +1;
+    UIResponder* nextResponder = [[textField.superview.superview viewWithTag:tagNumber] viewWithTag:tagNumber];
+    if(nextResponder){
+        [nextResponder becomeFirstResponder];
+    }else{
+        [textField resignFirstResponder];
+    }
+    return NO;
+    
+}
 
 - (IBAction)nextButton:(id)sender {
     [self performSegueWithIdentifier:@"showPaymentMethod" sender:sender];
@@ -39,7 +51,7 @@
         vc.name = nameField.text;
         vc.email = emailField.text;
         vc.password = passwordField.text;
-        vc.delegate = delegate;
+        vc.parent = parent;
     } else {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Check your input"
                                                         message:errorString

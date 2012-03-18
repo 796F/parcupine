@@ -105,6 +105,8 @@
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile: path];
     [data removeObjectsForKeys:keys];
     [data writeToFile:path atomically:YES];
+    //when unparking, release any schedule notifications.  
+    [[UIApplication sharedApplication] cancelAllLocalNotifications];
 }
 +(void) park:(ParkResponse*)parkResponseIn rate:(RateObject*) rateObjIn spotNumber:(NSNumber*) spotNumberIn{
     NSString* path = [self getPlistPath];
@@ -116,6 +118,8 @@
     [data setObject:rateObjIn.rateCents forKey:@"defaultRate"];
     [data setObject:rateObjIn.minuteInterval forKey:@"minIncrement"];
     [data setObject:rateObjIn.lotName forKey:@"description"];
+    [data setObject:rateObjIn.latitude forKey:@"lat"];
+    [data setObject:rateObjIn.longitude forKey:@"lon"];
     [data setObject:spotNumberIn forKey:@"spotNumber"];
     [data writeToFile: path atomically:YES];
 }
@@ -125,6 +129,9 @@
     [data setObject:parkResponseIn.parkingReferenceNumber forKey:@"parkRef"];
     [data setObject:parkResponseIn.endTime forKey:@"endTime"];
     [data writeToFile: path atomically:YES];
+    
+    [[UIApplication sharedApplication] cancelAllLocalNotifications];
+    
 }
 +(RateObject*) rate{
     NSString* path = [self getPlistPath];
@@ -146,6 +153,7 @@
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile: path];
     [data removeAllObjects];
     [data writeToFile:path atomically:YES];
+    [[UIApplication sharedApplication] cancelAllLocalNotifications];
 }
 +(void) syncParkingSession:(ParkSync*)sync{
     NSString* path = [self getPlistPath];
@@ -184,16 +192,14 @@
         [data setObject:[NSNumber numberWithBool:YES] forKey:@"vibrateEnable"];
         
         [data writeToFile:path atomically:YES];
-        NSLog(@"\nnil found");
         return;
     }
     
     if([[data objectForKey:@"vibrateEnable"] boolValue]){
         [data setObject:[NSNumber numberWithBool:NO] forKey:@"vibrateEnable"];
-        NSLog(@"\ndisabled now");
+
     }else{
         [data setObject:[NSNumber numberWithBool:YES] forKey:@"vibrateEnable"];
-        NSLog(@"\n enabled now");
     }
     [data writeToFile:path atomically:YES];
 }
@@ -243,6 +249,17 @@
         [data setObject:[NSNumber numberWithBool:YES] forKey:@"remember"];
     }
     [data writeToFile:path atomically:YES];
+}
++(void) setEndTime:(NSNumber*)endTimeLong{
+    
+    NSString* path = [self getPlistPath];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile: path];
+    [data setObject:endTimeLong forKey:@"endTime"];
+    [data writeToFile:path atomically:YES];
+}
++(NSNumber*) getEndTime{
+    NSMutableDictionary* savedStock = [[NSMutableDictionary alloc] initWithContentsOfFile:[self getPlistPath]];
+    return [savedStock objectForKey:@"endTime"];
 }
 
 @end

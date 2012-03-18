@@ -33,10 +33,13 @@
 		8716B0EE14B3F9F3004105AD /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8716B0ED14B3F9F3004105AD /* QuartzCore.framework */; };
 		8716B11514B7D01B004105AD /* ParqLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8716B11414B7D01B004105AD /* ParqLoginViewController.m */; };
 		871AE1C114D0BD0A0041DFA1 /* ParqParkViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 871AE1C014D0BD090041DFA1 /* ParqParkViewController.m */; };
+		87211D1F1513C18C0073DA8B /* icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 87211D1E1513C18C0073DA8B /* icon@2x.png */; };
+		87211D211513C1E40073DA8B /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 87211D201513C1E40073DA8B /* icon.png */; };
 		8730B83E14D3641C00F25261 /* ParqTimeRemainingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8730B83D14D3641B00F25261 /* ParqTimeRemainingViewController.m */; };
 		8732B78514C63BEB00405F0B /* ParqTimeBox.m in Sources */ = {isa = PBXBuildFile; fileRef = 8732B78414C63BEB00405F0B /* ParqTimeBox.m */; };
 		8735DA0214D773FE00957643 /* ParqSignUpViewController1.m in Sources */ = {isa = PBXBuildFile; fileRef = 8735DA0114D773FE00957643 /* ParqSignUpViewController1.m */; };
 		8735DA0514D7743A00957643 /* ParqSignUpViewController2.m in Sources */ = {isa = PBXBuildFile; fileRef = 8735DA0414D7743A00957643 /* ParqSignUpViewController2.m */; };
+		879AD0E714E7A4C600C4F69B /* backgroundlayer.png in Resources */ = {isa = PBXBuildFile; fileRef = 879AD0E614E7A4C600C4F69B /* backgroundlayer.png */; };
 		87D2097B14C48E4D00E663D7 /* SFHFKeychainUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 87D2097A14C48E4D00E663D7 /* SFHFKeychainUtils.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		87D2097D14C49E7100E663D7 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87D2097C14C49E7100E663D7 /* Security.framework */; };
 		87DA6A0114D54DC7003C5FC2 /* ParqRefillViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 87DA6A0014D54DC6003C5FC2 /* ParqRefillViewController.m */; };
@@ -46,11 +49,16 @@
 		FC172A7714C9C6C60094A313 /* zbar-help.html in Resources */ = {isa = PBXBuildFile; fileRef = FC172A7214C9C6C60094A313 /* zbar-help.html */; };
 		FC172A7814C9C6C60094A313 /* zbar-helpicons.png in Resources */ = {isa = PBXBuildFile; fileRef = FC172A7314C9C6C60094A313 /* zbar-helpicons.png */; };
 		FC172A7914C9C6C60094A313 /* zbar-samples.png in Resources */ = {isa = PBXBuildFile; fileRef = FC172A7414C9C6C60094A313 /* zbar-samples.png */; };
+		FC42C3E714DDD6E7000F659D /* EditEmailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FC42C3E614DDD6E6000F659D /* EditEmailViewController.xib */; };
+		FC42C3EF14DDDE4E000F659D /* EditEmailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC42C3ED14DDDE4E000F659D /* EditEmailViewController.m */; };
+		FC42C3F714DDE1A9000F659D /* UIViewController+TDSemiModalExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = FC42C3F214DDE1A9000F659D /* UIViewController+TDSemiModalExtension.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		FC42C3F814DDE1A9000F659D /* TDSemiModalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC42C3F514DDE1A9000F659D /* TDSemiModalViewController.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		FC83A91D14C9E8EC0096DCD1 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC83A91C14C9E8EC0096DCD1 /* AVFoundation.framework */; };
 		FC83A91F14C9E8F70096DCD1 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC83A91E14C9E8F70096DCD1 /* CoreMedia.framework */; };
 		FC83A92114C9E9010096DCD1 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC83A92014C9E9010096DCD1 /* CoreVideo.framework */; };
 		FC83A92314C9E90F0096DCD1 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FC83A92214C9E90F0096DCD1 /* libiconv.dylib */; };
 		FC83A92514C9EEBC0096DCD1 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC83A92414C9EEBC0096DCD1 /* CoreLocation.framework */; };
+		FC8E3B7B14E4BC0A00D6CBC8 /* alarm.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = FC8E3B7A14E4BC0A00D6CBC8 /* alarm.mp3 */; };
 		FCD0036E14C49F0C00A310C1 /* libRestKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FCD0036414C49E8700A310C1 /* libRestKit.a */; };
 		FCD0037214C49F4600A310C1 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FCD0037114C49F4600A310C1 /* libxml2.dylib */; };
 		FCD5839A14C8F8BA0097A842 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCD5839914C8F8BA0097A842 /* MapKit.framework */; };
@@ -153,6 +161,8 @@
 		8716B11414B7D01B004105AD /* ParqLoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ParqLoginViewController.m; sourceTree = "<group>"; };
 		871AE1BF14D0BD090041DFA1 /* ParqParkViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParqParkViewController.h; sourceTree = "<group>"; };
 		871AE1C014D0BD090041DFA1 /* ParqParkViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ParqParkViewController.m; sourceTree = "<group>"; };
+		87211D1E1513C18C0073DA8B /* icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "icon@2x.png"; path = "../icon@2x.png"; sourceTree = "<group>"; };
+		87211D201513C1E40073DA8B /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = icon.png; path = ../icon.png; sourceTree = "<group>"; };
 		8730B83C14D3641B00F25261 /* ParqTimeRemainingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParqTimeRemainingViewController.h; sourceTree = "<group>"; };
 		8730B83D14D3641B00F25261 /* ParqTimeRemainingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ParqTimeRemainingViewController.m; sourceTree = "<group>"; };
 		8732B78314C63BEB00405F0B /* ParqTimeBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParqTimeBox.h; sourceTree = "<group>"; };
@@ -161,6 +171,7 @@
 		8735DA0114D773FE00957643 /* ParqSignUpViewController1.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ParqSignUpViewController1.m; sourceTree = "<group>"; };
 		8735DA0314D7743A00957643 /* ParqSignUpViewController2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParqSignUpViewController2.h; sourceTree = "<group>"; };
 		8735DA0414D7743A00957643 /* ParqSignUpViewController2.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ParqSignUpViewController2.m; sourceTree = "<group>"; };
+		879AD0E614E7A4C600C4F69B /* backgroundlayer.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = backgroundlayer.png; sourceTree = "<group>"; };
 		87D2097914C48E4D00E663D7 /* SFHFKeychainUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFHFKeychainUtils.h; sourceTree = "<group>"; };
 		87D2097A14C48E4D00E663D7 /* SFHFKeychainUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFHFKeychainUtils.m; sourceTree = "<group>"; };
 		87D2097C14C49E7100E663D7 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
@@ -192,11 +203,20 @@
 		FC172A7214C9C6C60094A313 /* zbar-help.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "zbar-help.html"; sourceTree = "<group>"; };
 		FC172A7314C9C6C60094A313 /* zbar-helpicons.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "zbar-helpicons.png"; sourceTree = "<group>"; };
 		FC172A7414C9C6C60094A313 /* zbar-samples.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "zbar-samples.png"; sourceTree = "<group>"; };
+		FC42C3E614DDD6E6000F659D /* EditEmailViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EditEmailViewController.xib; sourceTree = "<group>"; };
+		FC42C3EC14DDDE4D000F659D /* EditEmailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditEmailViewController.h; sourceTree = "<group>"; };
+		FC42C3ED14DDDE4E000F659D /* EditEmailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditEmailViewController.m; sourceTree = "<group>"; };
+		FC42C3F214DDE1A9000F659D /* UIViewController+TDSemiModalExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+TDSemiModalExtension.m"; sourceTree = "<group>"; };
+		FC42C3F314DDE1A9000F659D /* TDSemiModal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSemiModal.h; sourceTree = "<group>"; };
+		FC42C3F414DDE1A9000F659D /* TDSemiModalViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSemiModalViewController.h; sourceTree = "<group>"; };
+		FC42C3F514DDE1A9000F659D /* TDSemiModalViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDSemiModalViewController.m; sourceTree = "<group>"; };
+		FC42C3F614DDE1A9000F659D /* UIViewController+TDSemiModalExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+TDSemiModalExtension.h"; sourceTree = "<group>"; };
 		FC83A91C14C9E8EC0096DCD1 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		FC83A91E14C9E8F70096DCD1 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		FC83A92014C9E9010096DCD1 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		FC83A92214C9E90F0096DCD1 /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
 		FC83A92414C9EEBC0096DCD1 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		FC8E3B7A14E4BC0A00D6CBC8 /* alarm.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = alarm.mp3; sourceTree = "<group>"; };
 		FCD0035914C49E8700A310C1 /* RestKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RestKit.xcodeproj; path = RestKit/RestKit.xcodeproj; sourceTree = "<group>"; };
 		FCD0037114C49F4600A310C1 /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
 		FCD5839914C8F8BA0097A842 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
@@ -275,6 +295,7 @@
 			isa = PBXGroup;
 			children = (
 				FCF019CE14CE1F1100A2C160 /* ParqInfo.plist */,
+				FC02A05914DF150100034D3E /* Resources */,
 				FC09C3E014C4979A00DD0CBD /* Libraries */,
 				8716B0BE14B3C094004105AD /* Parq */,
 				8716B0B714B3C094004105AD /* Frameworks */,
@@ -321,7 +342,12 @@
 				FCF586DB14C1F55F00DF70D3 /* Objects */,
 				8716B0D014B3C094004105AD /* first.png */,
 				8716B0D214B3C094004105AD /* first@2x.png */,
+				87211D201513C1E40073DA8B /* icon.png */,
+				87211D1E1513C18C0073DA8B /* icon@2x.png */,
 				8716B0CA14B3C094004105AD /* MainStoryboard.storyboard */,
+				FC42C3E614DDD6E6000F659D /* EditEmailViewController.xib */,
+				FC42C3EC14DDDE4D000F659D /* EditEmailViewController.h */,
+				FC42C3ED14DDDE4E000F659D /* EditEmailViewController.m */,
 				8703F58014CC6DE4003DAE14 /* MapPin.h */,
 				8703F58114CC6DE4003DAE14 /* MapPin.m */,
 				8732B78314C63BEB00405F0B /* ParqTimeBox.h */,
@@ -379,9 +405,18 @@
 			path = security;
 			sourceTree = "<group>";
 		};
+		FC02A05914DF150100034D3E /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				879AD0E614E7A4C600C4F69B /* backgroundlayer.png */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
 		FC09C3E014C4979A00DD0CBD /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				FC42C3F114DDE0C7000F659D /* TDSemiModal */,
 				FCF4B1C514CB6EAA00991A20 /* BSForwardGeocoder */,
 				FCD0035914C49E8700A310C1 /* RestKit.xcodeproj */,
 				87D2097814C48E4D00E663D7 /* SFHFKeychainUtils */,
@@ -458,6 +493,18 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		FC42C3F114DDE0C7000F659D /* TDSemiModal */ = {
+			isa = PBXGroup;
+			children = (
+				FC42C3F214DDE1A9000F659D /* UIViewController+TDSemiModalExtension.m */,
+				FC42C3F314DDE1A9000F659D /* TDSemiModal.h */,
+				FC42C3F414DDE1A9000F659D /* TDSemiModalViewController.h */,
+				FC42C3F514DDE1A9000F659D /* TDSemiModalViewController.m */,
+				FC42C3F614DDE1A9000F659D /* UIViewController+TDSemiModalExtension.h */,
+			);
+			name = TDSemiModal;
+			sourceTree = "<group>";
+		};
 		FCD0035A14C49E8700A310C1 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -487,6 +534,7 @@
 		FCF586DB14C1F55F00DF70D3 /* Objects */ = {
 			isa = PBXGroup;
 			children = (
+				FC8E3B7A14E4BC0A00D6CBC8 /* alarm.mp3 */,
 				8703F50414C8C45B003DAE14 /* ParkResponse.h */,
 				8703F50514C8C45B003DAE14 /* ParkResponse.m */,
 				FCF586DE14C1F57800DF70D3 /* RateObject.h */,
@@ -614,6 +662,11 @@
 				FC172A7814C9C6C60094A313 /* zbar-helpicons.png in Resources */,
 				FC172A7914C9C6C60094A313 /* zbar-samples.png in Resources */,
 				FCF019CF14CE1F1100A2C160 /* ParqInfo.plist in Resources */,
+				FC42C3E714DDD6E7000F659D /* EditEmailViewController.xib in Resources */,
+				FC8E3B7B14E4BC0A00D6CBC8 /* alarm.mp3 in Resources */,
+				879AD0E714E7A4C600C4F69B /* backgroundlayer.png in Resources */,
+				87211D1F1513C18C0073DA8B /* icon@2x.png in Resources */,
+				87211D211513C1E40073DA8B /* icon.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -657,6 +710,9 @@
 				87DA6A0114D54DC7003C5FC2 /* ParqRefillViewController.m in Sources */,
 				8735DA0214D773FE00957643 /* ParqSignUpViewController1.m in Sources */,
 				8735DA0514D7743A00957643 /* ParqSignUpViewController2.m in Sources */,
+				FC42C3EF14DDDE4E000F659D /* EditEmailViewController.m in Sources */,
+				FC42C3F714DDE1A9000F659D /* UIViewController+TDSemiModalExtension.m in Sources */,
+				FC42C3F814DDE1A9000F659D /* TDSemiModalViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

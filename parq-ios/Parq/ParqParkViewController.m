@@ -57,6 +57,38 @@
 
 #pragma mark -
 
+
+
+-(void)scheduleAlertsWithDuration:(int)durationMinutes {
+    //clears old notifications
+    UIApplication* myApp = [UIApplication sharedApplication];
+    [myApp cancelAllLocalNotifications];
+    
+    UILocalNotification* scheduledAlert = [[UILocalNotification alloc] init];
+    scheduledAlert.applicationIconBadgeNumber=1;
+    //this method uses seconds.
+    scheduledAlert.fireDate = [NSDate dateWithTimeIntervalSinceNow:(durationMinutes-5)*60];
+    scheduledAlert.timeZone = [NSTimeZone defaultTimeZone];
+    scheduledAlert.alertBody = @"You are almost out of time!";
+    
+    UILocalNotification* endingAlert = [[UILocalNotification alloc] init];
+    endingAlert.applicationIconBadgeNumber=2;
+    endingAlert.fireDate = [NSDate dateWithTimeIntervalSinceNow:durationMinutes*60];
+    endingAlert.timeZone = [NSTimeZone defaultTimeZone];
+    endingAlert.alertBody = @"You have run out of time!";
+    if([SavedInfo ringEnable]){
+        scheduledAlert.soundName=@"alarm.mp3";
+        endingAlert.soundName=@"alarm.mp3";
+    }else if([SavedInfo vibrateEnable]){
+        scheduledAlert.soundName = UILocalNotificationDefaultSoundName;
+        endingAlert.soundName = UILocalNotificationDefaultSoundName;
+    }
+    [myApp scheduleLocalNotification:endingAlert];
+    [myApp scheduleLocalNotification:scheduledAlert];
+    
+}
+
+
 - (IBAction)parkButton:(id)sender {
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Confirm payment"
                                                     message:[NSString stringWithFormat:@"Parking for %d minutes will cost %@. Is this okay?",[self durationSelectedInMinutes],[ParqParkViewController centsToString:[self costSelectedInCents]]]
@@ -74,13 +106,9 @@
             ParkResponse *response = [ServerCalls parkUserWithRateObj:rateObj duration:[self durationSelectedInMinutes] cost:[self costSelectedInCents]];
             if ([response.resp isEqualToString:@"OK"]) {
                 [SavedInfo park:response rate:rateObj spotNumber:[NSNumber numberWithInt:spotNumber]];
-
-                UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
-                ParqTimeRemainingViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"timeRemainingController"];
-                vc.delegate = self;
-                [vc setModalPresentationStyle:UIModalPresentationFullScreen];
-
-                [self presentModalViewController:vc animated:YES];
+                [self performSegueWithIdentifier:@"showRemainTime" sender:self]; 
+                [self scheduleAlertsWithDuration:[self durationSelectedInMinutes]];
+                
             } else {
                 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"There was an error while parking. Please try again." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
                 [alertView show];
@@ -88,12 +116,7 @@
         }
     }
 }
-- (void)timeUp {
-    [SavedInfo unpark];
-    [self dismissModalViewControllerAnimated:YES];
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Out of time" message:@"The time on your parking space has expired. Please park again if you need more time." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-    [alertView show];
-}
+
 
 - (void)unpark {
     if ([ServerCalls unparkUserWithSpotId:rateObj.spotNumber ParkRefNum:[SavedInfo parkRefNum]]) {
