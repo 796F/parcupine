@@ -4,12 +4,16 @@ import java.util.Date;
 import java.util.List;
 
 import com.parq.server.dao.ClientDao;
+import com.parq.server.dao.ParkingLocationDao;
 import com.parq.server.dao.PaymentAccountDao;
 import com.parq.server.dao.UserDao;
+import com.parq.server.dao.model.object.AdminRole;
+import com.parq.server.dao.model.object.Grid;
 import com.parq.server.dao.model.object.ParkingInstance;
 import com.parq.server.dao.model.object.ParkingLocation;
 import com.parq.server.dao.model.object.Payment;
 import com.parq.server.dao.model.object.PaymentAccount;
+import com.parq.server.dao.model.object.PaymentMethod;
 import com.parq.server.dao.model.object.User;
 import com.parq.server.dao.model.object.Payment.PaymentType;
 
@@ -32,6 +36,7 @@ public final class SupportScriptForDaoTesting {
 	public static final String userEmail = "TestUser@PaymentAccount.test";
 	public static final String userPassWord = "TestPassword";
 	public static final String userPhoneNum = "123-555-7890";
+	public static final PaymentMethod payMethod = PaymentMethod.PREFILL;
 	
 	public static User testUser;
 	public static ParkingInstance testParkingInstance;
@@ -47,21 +52,30 @@ public final class SupportScriptForDaoTesting {
 		if (!mainDataSetInserted){
 			deleteMainTestDataSet();
 			ParqMockObjectCreationDao testDao = new ParqMockObjectCreationDao();
+			ParkingLocationDao parkingLocationDao = new ParkingLocationDao();
+			ClientDao clientDao = new ClientDao();
 
 			// create 3 new test clients
-			testDao.createNewClient(clientNameMain, "test_address", "testclient");
-			testDao.createNewClient(fakeClient1, "test_address", "testclient");
-			testDao.createNewClient(fakeClient2, "test_address", "testclient");
+			testDao.createNewClient(clientNameMain, "test_address", "testclient", PaymentMethod.PREFILL.name());
+			testDao.createNewClient(fakeClient1, "test_address", "testclient", PaymentMethod.PREFILL.name());
+			testDao.createNewClient(fakeClient2, "test_address", "testclient", PaymentMethod.PREFILL.name());
 
+			// create a default grid for locations
+			parkingLocationDao.createGrid(1.1, 2.1);
+			
 			// insert 3 new parking locations
-			testDao.createNewParkingLocation(clientNameMain, parkingLocationNameMain, "TestParkingLocation");
-			testDao.createNewParkingLocation(fakeClient1, fakeParkingLocation1, "TestParkingLocation");
-			testDao.createNewParkingLocation(fakeClient1, fakeParkingLocation2, "TestParkingLocation");
-
-			// insert Geo-location coordinates for the 3 parking location
-			testDao.setGeoCoordinateForParkingLocation(parkingLocationNameMain, parkingLocationMainLatitude, parkingLocationMainLongtitude);
-			testDao.setGeoCoordinateForParkingLocation(fakeParkingLocation1, fakeParkingLocation1Latitude, fakeParkingLocation1Longtitude);
-			testDao.setGeoCoordinateForParkingLocation(fakeParkingLocation2, fakeParkingLocation2Latitude, fakeParkingLocation2Longtitude);
+			parkingLocationDao.createLocation(parkingLocationNameMain, 
+					clientDao.getClientByName(clientNameMain).getId(), 
+					parkingLocationDao.getAllGrids().get(0).getGridId(), "TestParkingLocation", 
+					parkingLocationMainLatitude, parkingLocationMainLongtitude);
+			parkingLocationDao.createLocation(fakeParkingLocation1, 
+					clientDao.getClientByName(fakeClient1).getId(), 
+					parkingLocationDao.getAllGrids().get(0).getGridId(), "TestParkingLocation", 
+					fakeParkingLocation1Latitude, fakeParkingLocation1Longtitude);
+			parkingLocationDao.createLocation(fakeParkingLocation2, 
+					clientDao.getClientByName(fakeClient1).getId(), 
+					parkingLocationDao.getAllGrids().get(0).getGridId(), "TestParkingLocation", 
+					fakeParkingLocation2Latitude, fakeParkingLocation2Longtitude);
 
 			// insert 10 test parking spaces
 			testDao.insertParkingSpace(parkingLocationNameMain, spaceNameMain, "1", "space name 1");
@@ -80,8 +94,8 @@ public final class SupportScriptForDaoTesting {
 					parkingLocationNameMain, 5);
 
 			// insert parking space based parking rate
-			testDao.setParkingSpaceRate(spaceRate, parkingSpaceParkingRatePriority, 
-					parkingLocationNameMain, spaceNameMain, 5);
+			testDao.setParkingSpaceRate(parkingLocationRate, parkingSpaceParkingRatePriority, 
+					parkingLocationNameMain, 5);
 			
 			mainDataSetInserted = true;
 		}
@@ -89,6 +103,31 @@ public final class SupportScriptForDaoTesting {
 	
 	protected static void deleteMainTestDataSet() {
 		DaoForTestingPurposes testDao = new DaoForTestingPurposes();
+		
+		// delete the test grid data
+		ParkingLocationDao plDao = new ParkingLocationDao();
+		List<Grid> parkingGrids = plDao.getAllGrids();
+		if (parkingGrids != null && !parkingGrids.isEmpty()) {
+			for (Grid g : parkingGrids) {
+				plDao.deleteGrid(g.getGridId());
+			}
+		}
+		
+		// delete the test locations
+		ParkingLocation delPL = plDao.getParkingLocationByLocationIdentifier(parkingLocationNameMain);
+		if (delPL != null) {
+			plDao.deleteParkingLocation(delPL.getLocationId());
+		}
+		if (delPL != null) {
+			delPL = plDao.getParkingLocationByLocationIdentifier(fakeParkingLocation1);
+			plDao.deleteParkingLocation(delPL.getLocationId());
+		}
+		if (delPL != null) {
+			delPL = plDao.getParkingLocationByLocationIdentifier(fakeParkingLocation2);
+			plDao.deleteParkingLocation(delPL.getLocationId());
+		}
+		
+		
 		for (String deleteScript : SupportScriptForDaoTesting.sqlDeleteStmtList) {
 			testDao.executeSqlStatement(deleteScript);
 		}
@@ -98,27 +137,18 @@ public final class SupportScriptForDaoTesting {
 	public static void createAdminUserTestData() {
 		DaoForTestingPurposes testDao = new DaoForTestingPurposes();
 		
-		testDao.executeSqlStatement("DELETE FROM adminclientrelationship WHERE client_id = (SELECT client_id FROM client WHERE name='" + adminClientName + "')");
-		testDao.executeSqlStatement("DELETE FROM adminrole WHERE role_name = '" + adminRoleName + "'");
 		testDao.executeSqlStatement("DELETE FROM admin WHERE email = '" + adminEMail + "'");
 		testDao.executeSqlStatement("DELETE FROM client WHERE name='" + adminClientName + "'");
 		
-		String sqlInsertAdmin = "INSERT INTO admin (password, email) " +
-			"VALUES ('" + adminPassword +"', '" + adminEMail + "')";
-		String sqlInsertRole =  "INSERT INTO adminrole (role_name) " +
-			"VALUES ('" + adminRoleName + "')";
-		String sqlInsertClient = "INSERT INTO client (name) VALUES ('" + adminClientName + "')";
-		String sqlInsertAdminClientRelationship = 
-			"INSERT INTO adminclientrelationship (admin_id, client_id, adminrole_id) " +
-			"VALUES (" +
-			"(SELECT admin_id FROM admin WHERE email = '" + adminEMail  + "'), " +
-			"(SELECT client_id FROM client WHERE name = '" + adminClientName + "'), " +
-			"(SELECT adminrole_id FROM adminrole WHERE role_name = '" + adminRoleName + "'))";
+		String sqlInsertClient = "INSERT INTO client (name, payment_method) VALUES ('" + 
+			adminClientName + "', '" + PaymentMethod.PREFILL.name() + "')";
+		String sqlInsertAdmin = "INSERT INTO admin (password, email, client_id, admin_role) " +
+			"VALUES ('" + adminPassword +"', '" + adminEMail + "', " + 
+			"(SELECT client_id FROM client WHERE name = '" + adminClientName + "'), '" +
+			AdminRole.admin.name() + "')";
 		
-		testDao.executeSqlStatement(sqlInsertAdmin);
-		testDao.executeSqlStatement(sqlInsertRole);
 		testDao.executeSqlStatement(sqlInsertClient);
-		testDao.executeSqlStatement(sqlInsertAdminClientRelationship);
+		testDao.executeSqlStatement(sqlInsertAdmin);
 	}
 	
 	public static void createUserTestData() {
@@ -130,6 +160,7 @@ public final class SupportScriptForDaoTesting {
 		newUser.setPassword(userPassWord);
 		newUser.setEmail(userEmail);
 		newUser.setPhoneNumber(userPhoneNum);
+		newUser.setAccountType(payMethod);
 		// boolean userCreationSuccessful = 
 		userDao.createNewUser(newUser);
 		
@@ -211,10 +242,9 @@ public final class SupportScriptForDaoTesting {
 	public static String spaceNameMain = "1412";
 	public static int clientRate = 115;
 	public static int parkingLocationRate = 226;
-	public static int spaceRate = 337;
 	
-	public static double parkingLocationMainLatitude = 0.00;
-	public static double parkingLocationMainLongtitude = 0.00;
+	public static double parkingLocationMainLatitude = 0.0000001;
+	public static double parkingLocationMainLongtitude = 0.0000001;
 	
 	// Scripts to create the new parking rate for testing 
 	private static String fakeClient1 = "fakeClient1";
@@ -272,13 +302,10 @@ public final class SupportScriptForDaoTesting {
 		" IN ('" + parkingLocationNameMain + "', '" + fakeParkingLocation1 + "', '" + 
 			fakeParkingLocation2 + "'))";
 	
-	private static String deleteAdminClientRelationship = 
-		"DELETE FROM adminclientrelationship";
+	private static String deletePaymentMethods = "DELETE FROM paymentmethod";
 
 	
-	public static String[] sqlDeleteStmtList = new String[] {
-		deleteAdminClientRelationship, deleteGeoLocations, deletePayments, 
-		deleteParkingInstances, deleteParkingRates,	deleteSpaces, 
-		deleteLocations, deleteClients };
+	public static String[] sqlDeleteStmtList = new String[] 
+		{ deletePayments };
 
 }

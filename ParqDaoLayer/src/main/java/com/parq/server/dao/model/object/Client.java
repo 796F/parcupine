@@ -15,6 +15,7 @@ public class Client implements Serializable{
 	private String name;
 	private String address;
 	private String clientDescription;
+	private PaymentMethod paymentMethod;
 	
 	
 	/**
@@ -64,6 +65,18 @@ public class Client implements Serializable{
 	 */
 	public void setClientDescription(String clientDescription) {
 		this.clientDescription = clientDescription;
+	}
+	/**
+	 * @param paymentMethod the paymentMethod to set
+	 */
+	public void setPaymentMethod(PaymentMethod paymentMethod) {
+		this.paymentMethod = paymentMethod;
+	}
+	/**
+	 * @return the paymentMethod
+	 */
+	public PaymentMethod getPaymentMethod() {
+		return paymentMethod;
 	}
 	
 	

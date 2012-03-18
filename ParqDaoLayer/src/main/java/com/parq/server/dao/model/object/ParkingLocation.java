@@ -9,14 +9,20 @@ import java.util.List;
  *
  */
 public class ParkingLocation implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -234300066035879276L;
 
+
+	/**
+	 * Auto generated serial id
+	 */
+	private static final long serialVersionUID = -6446814645979756594L;
+	
 	private long locationId = -1;
 	private String locationIdentifier;
 	private long clientId;
+	private double Latitude = -10000.00;
+	private double Longitude = -10000.00;
+	private int fillRate = 101;
+	
 	private List<ParkingSpace> spaces;
 	
 	
@@ -67,6 +73,48 @@ public class ParkingLocation implements Serializable {
 	 */
 	public List<ParkingSpace> getSpaces() {
 		return spaces;
+	}
+
+	/**
+	 * @return the latitude
+	 */
+	public double getLatitude() {
+		return Latitude;
+	}
+
+	/**
+	 * @param latitude the latitude to set
+	 */
+	public void setLatitude(double latitude) {
+		Latitude = latitude;
+	}
+
+	/**
+	 * @return the longitude
+	 */
+	public double getLongitude() {
+		return Longitude;
+	}
+
+	/**
+	 * @param longitude the longitude to set
+	 */
+	public void setLongitude(double longitude) {
+		Longitude = longitude;
+	}
+
+	/**
+	 * @param fillRate the fillRate to set
+	 */
+	public void setFillRate(int fillRate) {
+		this.fillRate = fillRate;
+	}
+
+	/**
+	 * @return the fillRate
+	 */
+	public int getFillRate() {
+		return fillRate;
 	}
 	
 }

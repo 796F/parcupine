@@ -1,5 +1,7 @@
 package com.parq.server.dao.admin.testing;
 
+import com.parq.server.dao.model.object.PaymentMethod;
+
 import junit.framework.TestCase;
 
 /**
@@ -40,7 +42,7 @@ public class ParqAdminManualDataCreation extends TestCase {
 		
 		ParqAdminDataCreationHelper helper = new ParqAdminDataCreationHelper();
 
-		helper.createNewClient(clientName, clientAddress, clientDesc);
+		helper.createNewClient(clientName, clientAddress, clientDesc, PaymentMethod.PREFILL.name());
 		helper.createNewParkingLocation(clientName, parkingLocationIdentifier, parkingLocationName);
 		helper.setGeoCoordinateForParkingLocation(parkingLocationIdentifier,
 				latitude, logitude);

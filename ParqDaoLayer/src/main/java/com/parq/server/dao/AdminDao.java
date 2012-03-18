@@ -11,7 +11,6 @@ import net.sf.ehcache.Element;
 import com.parq.server.dao.exception.DuplicateEmailException;
 import com.parq.server.dao.model.object.Admin;
 import com.parq.server.dao.model.object.AdminRole;
-import com.parq.server.dao.model.object.ClientRelationShip;
 
 /**
  * @author GZ
@@ -26,20 +25,16 @@ public class AdminDao extends AbstractParqDaoParent {
 	private static Cache myCache;
 
 	private static final String sqlGetAdminStatement = 
-		"SELECT a.admin_id, a.password, a.email, r.ac_rel_id, r.client_id, r.adminrole_id " +
-		" FROM admin AS a, adminclientrelationship AS r " +
-		" WHERE r.admin_id = a.admin_id " +
-		" AND a.is_deleted IS NOT TRUE ";
+		"SELECT a.admin_id, a.password, a.email, a.client_id, a.admin_role " +
+		" FROM admin AS a " +
+		" WHERE a.is_deleted IS NOT TRUE ";
 	private static final String sqlGetAdminById = sqlGetAdminStatement + " AND a.admin_id = ? ";
 	private static final String sqlGetAdminByEmail = sqlGetAdminStatement + " AND a.email = ? ";
 	
-	private static final String sqlCreateAdmin = "INSERT INTO admin (email, password) " +
-			" VALUES (?, ?)";
-	private static final String sqlCreateAdminClientRelationship = "INSERT INTO adminclientrelationship " +
-			"(admin_id, client_id, adminrole_id) VALUES(" +
-			"(SELECT admin_id FROM admin WHERE email = ?), ?, " +
-			"(SELECT adminrole_id FROM adminrole WHERE role_name = ?)) ";
-	private static final String sqlUpdateAdmin = "UPDATE admin SET email = ?, password = ? "
+	private static final String sqlCreateAdmin = "INSERT INTO admin (email, password, client_id, admin_role) " +
+			" VALUES (?, ?, ?, ?)";
+
+	private static final String sqlUpdateAdmin = "UPDATE admin SET email = ?, password = ?, admin_role = ? "
 		+ " WHERE admin_id = ?";
 	private static final String sqlDeleteAdmin = "UPDATE admin SET is_deleted = TRUE, email = ? WHERE admin_id = ?";
 	
@@ -71,13 +66,16 @@ public class AdminDao extends AbstractParqDaoParent {
 		admin.setAdminId(rs.getLong("admin_id"));
 		admin.setPassword(rs.getString("password"));
 		admin.setEmail(rs.getString("email"));
+		admin.setClientId(rs.getLong("client_id"));
 		
-		ClientRelationShip relationship = new ClientRelationShip();
-		admin.getClientRelationships().add(relationship);
-		relationship.setAdminId(rs.getLong("admin_id"));
-		relationship.setClientId(rs.getLong("client_id"));
-		relationship.setRelationShipId(rs.getLong("ac_rel_id"));
-		relationship.setRoleId(rs.getLong("adminrole_id"));
+		String role = rs.getString("admin_role");
+		if (role != null && !role.isEmpty()) {
+			admin.setAdminRole(AdminRole.valueOf(role));
+		}
+		else {
+			// set a default admin role
+			admin.setAdminRole(AdminRole.admin);
+		}
 		
 		return admin;
 	}
@@ -166,8 +164,8 @@ public class AdminDao extends AbstractParqDaoParent {
 	 * @param admin
 	 * @return
 	 */
-	public boolean createAdmin(Admin admin, long clientId, AdminRole role) {
-		if (admin == null || clientId <= 0 || role == null || admin.getEmail() == null 
+	public boolean createAdmin(Admin admin) {
+		if (admin == null || admin.getClientId() <= 0 || admin.getAdminRole() == null || admin.getEmail() == null 
 				|| admin.getPassword() == null) {
 			throw new IllegalStateException("Invalid admin create request");
 		}
@@ -182,29 +180,14 @@ public class AdminDao extends AbstractParqDaoParent {
 		boolean newAdminCreated = false;
 		try {
 			con = getConnection();
-			con.setAutoCommit(false);
-			// create the auth_user table entry first before creating the admin table entry
+			
 			pstmt = con.prepareStatement(sqlCreateAdmin);
 			pstmt.setString(1, admin.getEmail());
 			pstmt.setString(2, admin.getPassword());
+			pstmt.setLong(3, admin.getClientId());
+			pstmt.setString(4, admin.getAdminRole().name());
 			newAdminCreated = pstmt.executeUpdate() == 1;
 
-			// create the admin client relationship
-			if (newAdminCreated) {
-				pstmt = con.prepareStatement(sqlCreateAdminClientRelationship);
-				pstmt.setString(1, admin.getEmail());
-				pstmt.setLong(2, clientId);
-				pstmt.setString(3, role.name());
-				newAdminCreated = pstmt.executeUpdate() == 1;
-			} else {
-				newAdminCreated = false;
-				con.rollback();
-			}
-			
-			if (newAdminCreated) {
-				con.commit();
-			}
-			con.setAutoCommit(true);
 		} catch (SQLException sqle) {
 			System.out.println("SQL statement is invalid: " + pstmt);
 			sqle.printStackTrace();
@@ -241,7 +224,8 @@ public class AdminDao extends AbstractParqDaoParent {
 			pstmt = con.prepareStatement(sqlUpdateAdmin);
 			pstmt.setString(1, admin.getEmail());
 			pstmt.setString(2, admin.getPassword());
-			pstmt.setLong(3, admin.getAdminId());
+			pstmt.setString(3, admin.getAdminRole().name());
+			pstmt.setLong(4, admin.getAdminId());
 			updateSuccessful = pstmt.executeUpdate() > 0;
 
 		} catch (SQLException sqle) {

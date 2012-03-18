@@ -9,6 +9,7 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 
 import com.parq.server.dao.exception.DuplicateEmailException;
+import com.parq.server.dao.model.object.PaymentMethod;
 import com.parq.server.dao.model.object.User;
 
 /**
@@ -26,16 +27,21 @@ public class UserDao extends AbstractParqDaoParent {
 	private static final String cacheName = "UserCache";
 	private static Cache myCache;
 
-	private static final String sqlGetUserStatement = "SELECT user_id, password, email, phone_number FROM user ";
+	private static final String sqlGetUserStatement = "SELECT user_id, password, email, phone_number, account_type FROM user ";
 	private static final String isNotDeleted = " AND is_deleted IS NOT TRUE";
 	private static final String sqlGetUserById = sqlGetUserStatement + "WHERE user_id = ? " + isNotDeleted;
 	private static final String sqlGetUserByEmail = sqlGetUserStatement + "WHERE email = ? " + isNotDeleted;
 
 	private static final String sqlDeleteUserById = "UPDATE user SET is_deleted = TRUE, email = ? WHERE user_id = ?";
-	private static final String sqlUpdateUser = "UPDATE user SET password = ?, email = ?, phone_number = ? "
+	private static final String sqlDeleteUserPrepaidAccount = 
+		"UPDATE prepaidaccountbalance SET is_deleted = TRUE WHERE user_id = ?";
+	
+	private static final String sqlUpdateUser = "UPDATE user SET password = ?, email = ?, phone_number = ?, account_type = ? "
 			+ " WHERE user_id = ?";
-	private static final String sqlCreateUser = "INSERT INTO user (password, email, phone_number) "
-			+ " VALUES (?, ?, ?)";
+	private static final String sqlCreateUser = "INSERT INTO user (password, email, phone_number, account_type) "
+			+ " VALUES (?, ?, ?, ?)";
+	private static final String sqlCreateUserPrepaidAccount = 
+		"INSERT INTO prepaidaccountbalance (user_id, account_balance) VALUES (?, 0)";
 	
 	private static final String emailCache = "getUserByEmail:";
 	private static final String idCache = "getUserById:";
@@ -65,6 +71,7 @@ public class UserDao extends AbstractParqDaoParent {
 		user.setPassword(rs.getString("password"));
 		user.setEmail(rs.getString("email"));
 		user.setPhoneNumber(rs.getString("phone_number"));
+		user.setAccountType(PaymentMethod.valueOf(rs.getString("account_type")));
 		return user;
 	}
 
@@ -208,11 +215,32 @@ public class UserDao extends AbstractParqDaoParent {
 			} finally {
 				closeConnection(con);
 			}
+			
+			// when the user is deleted, the user prepaid account is also deleted
+			deleteSuccessful &= deleteUserPrepaidAccount(id);
 		}
-		
 		return deleteSuccessful;
 	}
 
+	private boolean deleteUserPrepaidAccount(long id) {
+		PreparedStatement pstmt = null;
+		Connection con = null;
+		boolean deleteSuccessful = false;
+		try {
+			con = getConnection();
+			pstmt = con.prepareStatement(sqlDeleteUserPrepaidAccount);
+			pstmt.setLong(1, id);
+			deleteSuccessful = pstmt.executeUpdate() > 0;
+
+		} catch (SQLException sqle) {
+			System.out.println("SQL statement is invalid: " + pstmt);
+			sqle.printStackTrace();
+			throw new RuntimeException(sqle);
+		} finally {
+			closeConnection(con);
+		}
+		return deleteSuccessful;
+	}
 
 	/**
 	 * Update the user information. Note all the field on the <code>User</code>
@@ -227,7 +255,8 @@ public class UserDao extends AbstractParqDaoParent {
 	 */
 	public synchronized boolean updateUser(User user) {
 
-		if (user == null || user.getEmail() == null || user.getUserID() <= 0) {
+		if (user == null || user.getEmail() == null || user.getUserID() <= 0 
+				|| user.getAccountType() == null) {
 			throw new IllegalStateException("Invalid user update request");
 		}
 		
@@ -249,7 +278,8 @@ public class UserDao extends AbstractParqDaoParent {
 			pstmt.setString(1, user.getPassword());
 			pstmt.setString(2, user.getEmail());
 			pstmt.setString(3, user.getPhoneNumber());
-			pstmt.setLong(4, user.getUserID());
+			pstmt.setString(4, user.getAccountType().name());
+			pstmt.setLong(5, user.getUserID());
 			updateSuccessful = pstmt.executeUpdate() > 0;
 
 		} catch (SQLException sqle) {
@@ -277,7 +307,7 @@ public class UserDao extends AbstractParqDaoParent {
 	 */
 	public synchronized boolean createNewUser(User user) {
 
-		if (user == null || user.getEmail() == null) {
+		if (user == null || user.getEmail() == null || user.getAccountType() == null) {
 			throw new IllegalStateException("Invalid user create request");
 		}
 		// test to make sure no duplicate email is used
@@ -297,6 +327,7 @@ public class UserDao extends AbstractParqDaoParent {
 			pstmt.setString(1, user.getPassword());
 			pstmt.setString(2, user.getEmail());
 			pstmt.setString(3, user.getPhoneNumber());
+			pstmt.setString(4, user.getAccountType().name());
 			newUserCreated = pstmt.executeUpdate() == 1;
 		} catch (SQLException sqle) {
 			System.out.println("SQL statement is invalid: " + pstmt);
@@ -306,7 +337,31 @@ public class UserDao extends AbstractParqDaoParent {
 			closeConnection(con);
 		}
 		
+		// create the prepaid account for the new user
+		User newlyCreatedUser = getUserByEmail(user.getEmail());
+		newUserCreated &= createPrePaidAccount(newlyCreatedUser.getUserID());
 		return newUserCreated;
+	}
+	
+	private boolean createPrePaidAccount(long userId) {
+		
+		PreparedStatement pstmt = null;
+		Connection con = null;
+		boolean userAccountCreated = false;
+		try {
+			con = getConnection();
+			pstmt = con.prepareStatement(sqlCreateUserPrepaidAccount);
+			pstmt.setLong(1, userId);
+			userAccountCreated = pstmt.executeUpdate() == 1;
+		} catch (SQLException sqle) {
+			System.out.println("SQL statement is invalid: " + pstmt);
+			sqle.printStackTrace();
+			throw new RuntimeException(sqle);
+		} finally {
+			closeConnection(con);
+		}
+		
+		return userAccountCreated;
 	}
 	
 	/**

@@ -16,6 +16,7 @@ public class User implements Serializable {
 	private String password;
 	private String email;
 	private String phoneNumber;
+	private PaymentMethod accountType;
 
 	/**
 	 * @return the userID
@@ -74,5 +75,19 @@ public class User implements Serializable {
 	 */
 	public String getPhoneNumber() {
 		return phoneNumber;
+	}
+
+	/**
+	 * @param accountType the accountType to set
+	 */
+	public void setAccountType(PaymentMethod accountType) {
+		this.accountType = accountType;
+	}
+
+	/**
+	 * @return the accountType
+	 */
+	public PaymentMethod getAccountType() {
+		return accountType;
 	}
 }

@@ -35,6 +35,21 @@ public class TestAdminReportDao extends TestCase {
 		SupportScriptForDaoTesting.setupParkingPaymentData();
 	}
 
+	public void testGetEmptyReport() {
+		
+		
+		ParkingLocationUsageReport report = adminReportDao
+			.getParkingLocationUsageReport(Integer.MAX_VALUE, reportStartDate, reportEndDate);
+		assertTrue(report.getUsageReportEntries().isEmpty());
+		
+		UserPaymentReport report2 = adminReportDao
+			.getUserPaymentReport(Integer.MAX_VALUE, reportStartDate, reportEndDate);
+		assertTrue(report2.getPaymentEntries().isEmpty());
+		
+		
+	}
+	
+	
 	public void testGetParkingLocationUsageReport(){
 		
 		// park the user 100 time using 2 minute increments

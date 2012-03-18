@@ -7,45 +7,44 @@ package com.parq.server.dao.support;
 public class ParqMockObjectCreationDao extends DaoForTestingPurposes {
 	
 	private static final String sqlInsertClientMain = 
-		"INSERT INTO client (name, address, client_desc) VALUES (?, ?, ?)";
+		"INSERT INTO client (name, address, client_desc, payment_method) VALUES (?, ?, ?, ?)";
 	
 	private static final String sqlInsertParkingLocationMain = 
 		"INSERT INTO parkinglocation (client_id, location_identifier, location_name) " + 
-		" VALUE ((SELECT client_id FROM client WHERE name= ?), ?, ?)" ;
+		" VALUE ((SELECT client_id FROM client WHERE name= ? AND is_deleted IS NOT TRUE), ?, ?)" ;
 	
 	private static final String sqlInsertGeoLocation = 
 		"INSERT INTO geolocation (location_id, latitude, longitude) " + 
-		" VALUE ((SELECT location_id FROM parkinglocation WHERE location_identifier = ? ), " +
+		" VALUE ((SELECT location_id FROM parkinglocation WHERE location_identifier = ? AND is_deleted IS NOT TRUE), " +
 		" ?, ?)" ;
 	
 	private static final String sqlInsertPaqkingSpace = 
 		"INSERT INTO parkingspace (location_id, space_identifier, space_name, parking_level) " + 
-		" VALUE ((SELECT location_id FROM parkinglocation WHERE location_identifier = ? ), ?, ?, ?)";
+		" VALUE ((SELECT location_id FROM parkinglocation WHERE location_identifier = ? AND is_deleted IS NOT TRUE), ?, ?, ?)";
 
 	private static final String sqlInsertLocationParkingRate = 
 		"INSERT INTO parkingrate (parking_rate_cents, priority, location_id, time_increment_mins) " +
-		" VALUE ( ?, ?, (SELECT location_id FROM parkinglocation WHERE location_identifier = ? ), ?)";
+		" VALUE ( ?, ?, (SELECT location_id FROM parkinglocation WHERE location_identifier = ? AND is_deleted IS NOT TRUE), ?)";
 	
 	
 	private static final String insertSpaceParkingRate = 
-		"INSERT INTO parkingrate (parking_rate_cents, priority, location_id, space_id, time_increment_mins) " +
-		" VALUE (?, ?, (SELECT location_id FROM parkinglocation WHERE location_identifier = ?), " +  
-		" (SELECT space_id FROM parkingspace WHERE space_identifier = ?), ?)";
+		"INSERT INTO parkingrate (parking_rate_cents, priority, location_id, time_increment_mins) " +
+		" VALUE (?, ?, (SELECT location_id FROM parkinglocation WHERE location_identifier = ? AND is_deleted IS NOT TRUE), ?)";
 
 	private static final String createNewAdmin = 
 		"INSERT INTO admin (email, password) VALUES (?, ?)";
 	private static final String asscoiateAdminWithClient = 
 		"INSERT INTO adminclientrelationship " +
 		"	(admin_id, client_id, adminrole_id) VALUES(" +
-		"	(SELECT admin_id FROM admin WHERE email = ?), " +
-		"	(SELECT client_id FROM client WHERE name = ?), " +
-		"	(SELECT adminrole_id FROM adminrole WHERE role_name = ?)) ";
+		"	(SELECT admin_id FROM admin WHERE email = ? AND is_deleted IS NOT TRUE), " +
+		"	(SELECT client_id FROM client WHERE name = ? AND is_deleted IS NOT TRUE), " +
+		"	(SELECT adminrole_id FROM adminrole WHERE role_name = ? AND is_deleted IS NOT TRUE)) ";
 	
 	
 	public boolean createNewClient(String clientName, String clientAddress,
-			String clientDesc) {
+			String clientDesc, String paymentMethod) {
 		return executeSqlStatement(sqlInsertClientMain, new Object[] {
-				clientName, clientAddress, clientDesc });
+				clientName, clientAddress, clientDesc, paymentMethod });
 	}
 
 	public boolean createNewParkingLocation(String clientName,
@@ -74,11 +73,9 @@ public class ParqMockObjectCreationDao extends DaoForTestingPurposes {
 	}
 	
 	public boolean setParkingSpaceRate(int parkingRateInCents,
-			int priority, String locationIdentifier, String spaceIdentifier, 
-			int parkingMinuteIncrement) {
+			int priority, String locationIdentifier, int parkingMinuteIncrement) {
 		return executeSqlStatement(insertSpaceParkingRate, new Object[] {
-				parkingRateInCents, priority, locationIdentifier,
-				spaceIdentifier, parkingMinuteIncrement });
+				parkingRateInCents, priority, locationIdentifier, parkingMinuteIncrement });
 	}
 	
 	public boolean createAdmin(String adminEmail, String adminPassword, String adminRoleName, String clientName) {

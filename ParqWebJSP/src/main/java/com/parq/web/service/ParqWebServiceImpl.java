@@ -10,7 +10,7 @@ import java.util.List;
 import com.parq.server.dao.AdminDao;
 import com.parq.server.dao.AdminReportDao;
 import com.parq.server.dao.ClientDao;
-import com.parq.server.dao.GeolocationDao;
+import com.parq.server.dao.ParkingLocationDao;
 import com.parq.server.dao.ParkingStatusDao;
 import com.parq.server.dao.PaymentAccountDao;
 import com.parq.server.dao.UserDao;
@@ -464,7 +464,7 @@ public class ParqWebServiceImpl implements ParqWebService{
 		
 		List<WebParkingLocation> parkingLocations = new ArrayList<WebParkingLocation>();
 		
-		GeolocationDao geoDao = new GeolocationDao();
+		ParkingLocationDao geoDao = new ParkingLocationDao();
 		double precision = 0.05; // this is 5.5km search radius
 		double centerPointLat = centerOfMap.getLatitude();
 		double centerPointLong = centerOfMap.getLongitude();

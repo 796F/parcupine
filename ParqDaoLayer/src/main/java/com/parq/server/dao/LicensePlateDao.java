@@ -130,6 +130,7 @@ public class LicensePlateDao extends AbstractParqDaoParent {
 	 * @param plateNum
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public List<User> getUserByPlateNumber(String plateNum) {
 		if (plateNum == null || plateNum.isEmpty()) {
 			return null;

@@ -15,6 +15,7 @@ import net.sf.ehcache.Element;
 import com.parq.server.dao.model.object.ParkingLocation;
 import com.parq.server.dao.model.object.Client;
 import com.parq.server.dao.model.object.ParkingSpace;
+import com.parq.server.dao.model.object.PaymentMethod;
 
 /**
  * @author GZ
@@ -28,8 +29,8 @@ public class ClientDao extends AbstractParqDaoParent {
 	private static final String cacheName = "ClientCache";
 	private static Cache myCache;
 
-	private static final String sqlGetClientByClientName = "SELECT client_id, name, address, client_desc FROM client WHERE name = ? AND is_deleted IS NOT TRUE";
-	private static final String sqlGetClientByClientId = "SELECT client_id, name, address, client_desc FROM client WHERE client_id = ? AND is_deleted IS NOT TRUE";
+	private static final String sqlGetClientByClientName = "SELECT client_id, name, address, client_desc, payment_method FROM client WHERE name = ? AND is_deleted IS NOT TRUE";
+	private static final String sqlGetClientByClientId = "SELECT client_id, name, address, client_desc, payment_method FROM client WHERE client_id = ? AND is_deleted IS NOT TRUE";
 	private static final String sqlGetAllSpacesByClientId = 
 		"SELECT b.client_id, b.location_identifier, b.location_id, s.space_id, s.space_identifier, s.parking_level, s.space_name " + 
 		" FROM parkinglocation AS b, parkingspace AS s " +
@@ -220,6 +221,7 @@ public class ClientDao extends AbstractParqDaoParent {
 		client.setName(rs.getString("name"));
 		client.setAddress(rs.getString("address"));
 		client.setClientDescription(rs.getString("client_desc"));
+		client.setPaymentMethod(PaymentMethod.valueOf(rs.getString("payment_method")));
 		return client;
 	}
 	

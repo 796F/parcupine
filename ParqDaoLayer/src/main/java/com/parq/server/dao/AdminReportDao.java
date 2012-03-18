@@ -104,10 +104,11 @@ public class AdminReportDao extends AbstractParqDaoParent {
 	private ParkingLocationUsageReport createParkingLocationUsageReport(
 			ResultSet rs) throws SQLException {
 		
-		if (rs == null || !rs.isBeforeFirst()) {
-			return null;
-		}
 		ParkingLocationUsageReport report = new ParkingLocationUsageReport();
+		if (rs == null || !rs.isBeforeFirst()) {
+			return report;
+		}
+		
 		while (rs.next()) {
 			
 			ParkingLocationUsageEntry entry = new ParkingLocationUsageEntry(); 
@@ -176,11 +177,11 @@ public class AdminReportDao extends AbstractParqDaoParent {
 	}
 
 	private UserPaymentReport createUserPaymentReport(ResultSet rs) throws SQLException {
+		UserPaymentReport report = new UserPaymentReport();
 		if (rs == null || !rs.isBeforeFirst()) {
-			return null;
+			return report;
 		}
 
-		UserPaymentReport report = new UserPaymentReport();
 		while (rs.next()) {
 			
 			UserPaymentEntry entry = new UserPaymentEntry(); 

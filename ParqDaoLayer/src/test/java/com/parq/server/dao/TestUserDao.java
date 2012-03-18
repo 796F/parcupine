@@ -2,6 +2,7 @@ package com.parq.server.dao;
 
 import junit.framework.TestCase;
 
+import com.parq.server.dao.model.object.PaymentMethod;
 import com.parq.server.dao.model.object.User;
 import com.parq.server.dao.support.SupportScriptForDaoTesting;
 
@@ -32,6 +33,7 @@ public class TestUserDao extends TestCase {
 		newUser.setPassword(SupportScriptForDaoTesting.userPassWord);
 		newUser.setEmail(SupportScriptForDaoTesting.userEmail);
 		newUser.setPhoneNumber(SupportScriptForDaoTesting.userPhoneNum);
+		newUser.setAccountType(PaymentMethod.PREFILL);
 
 		boolean userCreationSuccessful = userDao.createNewUser(newUser);
 		assertTrue(userCreationSuccessful);
@@ -48,6 +50,7 @@ public class TestUserDao extends TestCase {
 		assertEquals(user.getEmail(), SupportScriptForDaoTesting.userEmail);
 		assertEquals(user.getPhoneNumber(),
 				SupportScriptForDaoTesting.userPhoneNum);
+		assertEquals(user.getAccountType(), PaymentMethod.PREFILL);
 		assertTrue(user.getUserID() > 0);
 	}
 
@@ -61,6 +64,7 @@ public class TestUserDao extends TestCase {
 		assertEquals(user.getEmail(), SupportScriptForDaoTesting.userEmail);
 		assertEquals(user.getPhoneNumber(),
 				SupportScriptForDaoTesting.userPhoneNum);
+		assertEquals(user.getAccountType(), PaymentMethod.PREFILL);
 		assertTrue(user.getUserID() > 0);
 	}
 
