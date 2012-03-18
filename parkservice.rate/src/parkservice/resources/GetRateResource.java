@@ -86,7 +86,7 @@ public class GetRateResource {
 				if(loc==null) x+=pr.getLocationId();
 				if(pspace==null) x+="spacid:" +pr.getSpaceId() + " lot:" + input.getLot() + " spot:" + input.getSpot();
 				x+= pr.getLocationName() + pr.getLocationId() + pr.getMaxParkMins() + pr.getSpaceName() + pr.getTimeIncrementsMins();
-				
+
 				output.setResp(x);
 				return output;
 			}
@@ -103,7 +103,7 @@ public class GetRateResource {
 	public RateResponse unwrapGps(JAXBElement<GpsRequest> gpsrequest){
 		GpsRequest input = gpsrequest.getValue();	
 		RateResponse output = new RateResponse();
-		
+
 		AuthRequest userInfo = input.getUserInfo();
 		long uid=input.getUid();
 		if(uid==innerAuthenticate(userInfo)){
@@ -113,44 +113,52 @@ public class GetRateResource {
 			GeolocationDao gdao = new GeolocationDao();
 			double distance = 0.002;
 			List<Geolocation> spots = gdao.findCloseByParkingLocation(x-distance, x+distance, y-distance, y+distance);
-			String ss = "";
-			for(Geolocation g: spots){
-					ss+="loc string " + g.getLocationIdentifier();
-					ParkingRateDao p = new ParkingRateDao();
-					ParkingRate pr;
-					//											this is main_lot	   input.getspot is 1412
-					try{
-						pr = p.getParkingRateByName(g.getLocationIdentifier(), input.getSpot());
-						ss+="  pr spaceid" + pr.getSpaceId();
-						ParkingSpaceDao psdao = new ParkingSpaceDao();
-						ParkingSpace pspace = null;
-						try{
-							pspace =psdao.getParkingSpaceBySpaceIdentifier(g.getLocationIdentifier(), input.getSpot());
-						}catch (Exception e){}
-						if(pspace!=null){
-							RateObject rate = new RateObject();
-							rate.setLat(g.getLatitude());
-							rate.setLon(g.getLongitude());
-							output.setResp("OK");
-							rate.setLocation(pspace.getSpaceName());
-							rate.setSpotId(pr.getSpaceId());
-							rate.setMinTime(pr.getMinParkMins());
-							rate.setMaxTime(pr.getMaxParkMins());
-							rate.setDefaultRate(pr.getParkingRateCents());
-							rate.setMinIncrement(pr.getTimeIncrementsMins());
-							output.setRateObject(rate);
-							return output;
-						}else{
-							output.setResp("SPACE_NULL" + pr.getSpaceId());
-							return output;
-						}
-					}catch (Exception e){
-						output.setResp("EXCEPTION GETTING PARKING RATE");
-						return output;
-					}
-				
+			if(spots.isEmpty()){
+				output.setResp("NO_SPOTS_GPS");
+				return output;
 			}
-			output.setResp("NO_SPOTS");
+
+			for(Geolocation g: spots){
+				ParkingRateDao p = new ParkingRateDao();
+				ParkingRate pr;
+				//								this is main_lot	   input.getspot is 1412
+				try{
+					pr = p.getParkingRateByName(g.getLocationIdentifier(), input.getSpot());
+				}catch (IllegalStateException e){
+					output.setResp("NO_SPOTS_ID");
+					return output;
+				}
+				ParkingSpaceDao psdao = new ParkingSpaceDao();
+				ParkingSpace pspace = null;
+				try{
+					pspace =psdao.getParkingSpaceBySpaceIdentifier(g.getLocationIdentifier(), input.getSpot());
+				}catch (RuntimeException e){
+					output.setResp("NO_SPOTS_ID");
+					return output;
+				}
+
+				if(pr==null || pspace==null){
+					continue;
+				}
+
+
+
+				RateObject rate = new RateObject();
+				rate.setLat(g.getLatitude());
+				rate.setLon(g.getLongitude());
+				output.setResp("OK");
+				rate.setLocation(pspace.getSpaceName());
+				rate.setSpotId(pr.getSpaceId());
+				rate.setMinTime(pr.getMinParkMins());
+				rate.setMaxTime(pr.getMaxParkMins());
+				rate.setDefaultRate(pr.getParkingRateCents());
+				rate.setMinIncrement(pr.getTimeIncrementsMins());
+				output.setRateObject(rate);
+				return output;
+
+
+			}
+			output.setResp("NO_SPOTS_ID");
 			return output;
 		}else{
 			output.setResp("BAD_AUTH");
