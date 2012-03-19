@@ -11,6 +11,18 @@
 @implementation PQViewController
 @synthesize mapView;
 
+- (IBAction)gridButtonPressed:(id)sender {
+}
+- (IBAction)blockButtonPressed:(id)sender {
+}
+- (IBAction)spotButtonPressed:(id)sender {
+}
+- (IBAction)noneButtonPressed:(id)sender {
+    [mapView removeOverlays:mapView.overlays];
+
+    [locationManager startUpdatingLocation];
+}
+
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation{
     
     if (MAX(newLocation.horizontalAccuracy, newLocation.verticalAccuracy) < 100) {
