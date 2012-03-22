@@ -196,7 +196,7 @@ public class MockParqWebService implements ParqWebService{
 	}
 
 	@Override
-	public WebClient getClientByUserId(long userId) {
+	public WebClient getClientByAdminId(long userId) {
 		// TODO Auto-generated method stub
 		return null;
 	}

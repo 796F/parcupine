@@ -21,6 +21,7 @@ import com.parq.server.dao.model.object.ParkingLocation;
 import com.parq.server.dao.model.object.ParkingLocationUsageReport;
 import com.parq.server.dao.model.object.ParkingSpace;
 import com.parq.server.dao.model.object.PaymentAccount;
+import com.parq.server.dao.model.object.PaymentMethod;
 import com.parq.server.dao.model.object.User;
 import com.parq.server.dao.model.object.UserPaymentReport;
 import com.parq.server.dao.model.object.UserPaymentReport.UserPaymentEntry;
@@ -252,9 +253,9 @@ public class ParqWebServiceImpl implements ParqWebService{
 	}
 	
 	@Override
-	public WebClient getClientByUserId(long userId) {
+	public WebClient getClientByAdminId(long adminId) {
 		AdminDao adminDao = new AdminDao();
-		Admin admin = adminDao.getAdminById(userId);
+		Admin admin = adminDao.getAdminById(adminId);
 		WebClient webClient = new WebClient();
 		webClient.setClientId(admin.getClientId());
 		return webClient;
@@ -452,6 +453,10 @@ public class ParqWebServiceImpl implements ParqWebService{
 			user.setEmail(registration.getEmail());
 			user.setPassword(registration.getPassword1());
 			user.setPhoneNumber("000-000-0000");
+			
+			// set user type to be normal for user
+			user.setAccountType(PaymentMethod.NORMAL);
+			
 			userCreationSuccessful = userDao.createNewUser(user);	
 		} catch (DuplicateEmailException dee) {
 			registration.setEmailAlreadyExist(true);

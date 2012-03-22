@@ -34,5 +34,5 @@ public interface ParqWebService {
 	
 	List<String> getParkingLocationIdentifierListForClient(long clientId);
 	
-	WebClient getClientByUserId(long userId);
+	WebClient getClientByAdminId(long adminId);
 }

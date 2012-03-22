@@ -20,7 +20,7 @@
 		} else {
 			result.setLoginFailed(false);
     		if (user.isAdminUser()) {
-    	   		client.setClientId(service.getClientByUserId(user.getId()).getClientId());
+    	   		client.setClientId(service.getClientByAdminId(user.getId()).getClientId());
     		}
 	%>
 			<jsp:forward page="/index.jsp" />
