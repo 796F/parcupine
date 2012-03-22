@@ -44,7 +44,6 @@ public class TestAdminDao extends TestCase {
 		newAdmin.setClientId(client.getId());
 		newAdmin.setAdminRole(AdminRole.admin);
 		
-		
 		Boolean createSuccessful = 
 			adminDao.createAdmin(newAdmin);
 		assertTrue(createSuccessful);
