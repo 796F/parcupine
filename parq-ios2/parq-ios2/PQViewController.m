@@ -7,6 +7,7 @@
 //
 
 #import "PQViewController.h"
+#import "MKPolygon+Color.h"
 
 @implementation PQViewController
 @synthesize mapView;
@@ -56,8 +57,11 @@
 
 -(MKOverlayView *)mapView:(MKMapView *)mapView viewForOverlay:(id<MKOverlay>)overlay{
     if([overlay isKindOfClass:[MKPolygon class]]){
+        MKPolygon* casted = (MKPolygon*) overlay;
         MKPolygonView *view = [[MKPolygonView alloc] initWithOverlay:overlay];
         view.lineWidth=1;
+        NSLog(@"Color got as:%d", casted.color);
+        //need subclass of MKOverlay, with additional int field to decide color.  
         view.strokeColor=[UIColor blueColor];
         view.fillColor=[[UIColor blueColor] colorWithAlphaComponent:0.2];
         return view;
@@ -99,6 +103,8 @@
         CLLocationCoordinate2D testLotCoords[5]={topLeft, topRight, botRight, botLeft, topLeft};
         
         MKPolygon *commuterPoly1 = [MKPolygon polygonWithCoordinates:testLotCoords count:5];
+        [commuterPoly1 setColor:15];
+        NSLog(@"color set to:%d", commuterPoly1.color);
         [self.mapView addOverlay:commuterPoly1];
     }];
     
