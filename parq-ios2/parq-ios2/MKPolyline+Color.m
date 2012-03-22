@@ -1,14 +1,14 @@
 //
-//  MKPolygon.m
-//  Parq2
+//  MKPolyline+Color.m
+//  Parq
 //
-//  Created by Michael Xia on 3/22/12.
+//  Created by Mark Yen on 3/22/12.
 //  Copyright (c) 2012 Massachusetts Institute of Technology. All rights reserved.
 //
 
-#import "MKPolygon+Color.h"
+#import "MKPolyline+Color.h"
 
-@implementation MKPolygon (ColorTag)
+@implementation MKPolyline (Color)
 
 static char colorKey;
 

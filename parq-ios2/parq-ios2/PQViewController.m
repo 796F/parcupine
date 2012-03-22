@@ -8,6 +8,7 @@
 
 #import "PQViewController.h"
 #import "MKPolygon+Color.h"
+#import "MKPolyline+Color.h"
 
 @implementation PQViewController
 @synthesize mapView;
@@ -97,12 +98,19 @@
             return nil;
         }
         return view;
+    } else if ([overlay isKindOfClass:[MKPolyline class]]) {
+        MKPolylineView *view = [[MKPolylineView alloc] initWithOverlay:overlay];
+        view.lineWidth = 8;
+        MKPolyline *polyline = (MKPolyline *)overlay;
+        int color = polyline.color;
+        view.strokeColor = [UIColor colorWithRed:(4-color)/4 green:color/4 blue:0 alpha:0.5];
+        view.fillColor = [UIColor colorWithRed:(4-color)/4 green:color/4 blue:0 alpha:0.5];
+        return view;
     }
-    return nil;    
+    return nil;
 }
 
 - (NSArray*)loadGridData {
-    
     return [NSArray arrayWithObjects:
                  [[NSDictionary alloc] initWithObjectsAndKeys:@"42.350393,-71.104159", @"nw_corner", @"42.360393,-71.114159", @"se_corner", [NSNumber numberWithInt:0], @"color", nil],
                  [[NSDictionary alloc] initWithObjectsAndKeys:@"42.360393,-71.104159", @"nw_corner", @"42.370393,-71.114159", @"se_corner", [NSNumber numberWithInt:1], @"color",nil],
@@ -116,37 +124,13 @@
 
 }
 
--(CLLocationCoordinate2D*) parseString:(NSString*)string {
-    CLLocationCoordinate2D* point;
-    NSArray *array = [string componentsSeparatedByString:@","];
-    *point = CLLocationCoordinate2DMake([[array objectAtIndex:0] floatValue], [[array objectAtIndex:1] floatValue]);    
-    return point;
-}
-
-
-
--(void) drawSquareWithNW:(CLLocationCoordinate2D*)nw_loc 
-                    SE:(CLLocationCoordinate2D*)se_loc 
-                 Color:(int)color{
-        
-    CLLocationCoordinate2D ne_loc = CLLocationCoordinate2DMake(nw_loc->latitude ,se_loc->longitude);
-    CLLocationCoordinate2D sw_loc = CLLocationCoordinate2DMake(se_loc->latitude ,nw_loc->longitude);
-    
-    CLLocationCoordinate2D testLotCoords[5]={*nw_loc, ne_loc, *se_loc, sw_loc, *nw_loc};
-    
-    MKPolygon *commuterPoly1 = [MKPolygon polygonWithCoordinates:testLotCoords count:5];
-    [commuterPoly1 setColor:color];
-    [self.mapView addOverlay:commuterPoly1];
-}
-
--(void) drawGridWithData:(NSArray*)data{
-    
-    
-    
+- (NSArray*)loadBlockData {
+    return [NSArray arrayWithObjects:
+            [[NSDictionary alloc] initWithObjectsAndKeys:@"42.36441,-71.113901;42.365203,-71.104846", @"line", [NSNumber numberWithInt:0], @"color", nil],
+            [[NSDictionary alloc] initWithObjectsAndKeys:@"42.367074,-71.111155;42.363269,-71.110554", @"line", [NSNumber numberWithInt:4], @"color", nil], nil];
 }
 
 - (IBAction)gridButtonPressed:(id)sender {
-    UISearchBar* searchBar = self.searchDisplayController.searchBar;
     [mapView removeOverlays:mapView.overlays];
     NSString* addr = @"Cambridge, MA";
     //do forward geocode and zoom to result.  
@@ -171,8 +155,7 @@
         [mapView setRegion:adjustedRegion animated:YES];  //this is animateTo or w/e. 
         NSArray* data = [self loadGridData];
         
-        for(id element in data){
-            
+        for (id element in data) {
             NSArray *array = [[element objectForKey:@"se_corner"] componentsSeparatedByString:@","];
             
             CLLocationCoordinate2D nw_point = CLLocationCoordinate2DMake([[array objectAtIndex:0] floatValue], [[array objectAtIndex:1] floatValue]);    
@@ -189,13 +172,38 @@
             MKPolygon *commuterPoly1 = [MKPolygon polygonWithCoordinates:testLotCoords count:5];
             [commuterPoly1 setColor:color];
             [self.mapView addOverlay:commuterPoly1];
-            
         }
     }];
 }
 
      
 - (IBAction)blockButtonPressed:(id)sender {
+    [mapView removeOverlays:mapView.overlays];
+
+    CLLocationCoordinate2D point = {42.364854,-71.109438};
+
+    MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(point, METERS_PER_MILE/2, METERS_PER_MILE/2);
+    [mapView setRegion:[mapView regionThatFits:viewRegion] animated:YES];
+
+    NSArray* data = [self loadBlockData];
+
+    for (id line in data) {
+        NSArray *raw_waypoints = [[line objectForKey:@"line"] componentsSeparatedByString:@";"];
+        CLLocationCoordinate2D waypoints[raw_waypoints.count];
+        int i=0;
+        for (id raw_waypoint in raw_waypoints) {
+            NSArray *coordinates = [raw_waypoint componentsSeparatedByString:@","];
+            CLLocationCoordinate2D coord = CLLocationCoordinate2DMake([[coordinates objectAtIndex:0] floatValue], [[coordinates objectAtIndex:1] floatValue]);
+            waypoints[i++] = coord;
+        }
+
+        MKPolyline *routeLine = [MKPolyline polylineWithCoordinates:waypoints count:raw_waypoints.count];
+
+        int color = [[line objectForKey:@"color"] intValue];
+        [routeLine setColor:color];
+
+        [self.mapView addOverlay:routeLine];
+    }
 }
 - (IBAction)spotButtonPressed:(id)sender {
 }

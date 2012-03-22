@@ -19,6 +19,9 @@
 		8703ACCA1513FB46002FE357 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8703ACC91513FB46002FE357 /* CoreLocation.framework */; };
 		8703ACD81513FC32002FE357 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 8703ACD71513FC32002FE357 /* icon.png */; };
 		8703ACDA1513FC36002FE357 /* icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8703ACD91513FC36002FE357 /* icon@2x.png */; };
+		8730EB19151BBB3A00E7A7F8 /* MKPolygon+Color.m in Sources */ = {isa = PBXBuildFile; fileRef = 8730EB18151BBB3A00E7A7F8 /* MKPolygon+Color.m */; };
+		8730EB1D151BBB8F00E7A7F8 /* MKPolyline+Color.m in Sources */ = {isa = PBXBuildFile; fileRef = 8730EB1C151BBB8E00E7A7F8 /* MKPolyline+Color.m */; };
+		8730EB23151BBD1500E7A7F8 /* libobjc.A.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8730EB22151BBD1500E7A7F8 /* libobjc.A.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,6 +42,11 @@
 		8703ACC91513FB46002FE357 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		8703ACD71513FC32002FE357 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
 		8703ACD91513FC36002FE357 /* icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon@2x.png"; sourceTree = "<group>"; };
+		8730EB17151BBB3A00E7A7F8 /* MKPolygon+Color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MKPolygon+Color.h"; sourceTree = "<group>"; };
+		8730EB18151BBB3A00E7A7F8 /* MKPolygon+Color.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MKPolygon+Color.m"; sourceTree = "<group>"; };
+		8730EB1B151BBB8E00E7A7F8 /* MKPolyline+Color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MKPolyline+Color.h"; sourceTree = "<group>"; };
+		8730EB1C151BBB8E00E7A7F8 /* MKPolyline+Color.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MKPolyline+Color.m"; sourceTree = "<group>"; };
+		8730EB22151BBD1500E7A7F8 /* libobjc.A.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libobjc.A.dylib; path = usr/lib/libobjc.A.dylib; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -46,6 +54,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8730EB23151BBD1500E7A7F8 /* libobjc.A.dylib in Frameworks */,
 				8703ACCA1513FB46002FE357 /* CoreLocation.framework in Frameworks */,
 				8703ACC81513F9D5002FE357 /* MapKit.framework in Frameworks */,
 				8703ACAB1513F841002FE357 /* UIKit.framework in Frameworks */,
@@ -78,6 +87,7 @@
 		8703ACA91513F841002FE357 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8730EB22151BBD1500E7A7F8 /* libobjc.A.dylib */,
 				8703ACC91513FB46002FE357 /* CoreLocation.framework */,
 				8703ACC71513F9D5002FE357 /* MapKit.framework */,
 				8703ACAA1513F841002FE357 /* UIKit.framework */,
@@ -90,6 +100,10 @@
 		8703ACB01513F841002FE357 /* parq-ios2 */ = {
 			isa = PBXGroup;
 			children = (
+				8730EB17151BBB3A00E7A7F8 /* MKPolygon+Color.h */,
+				8730EB18151BBB3A00E7A7F8 /* MKPolygon+Color.m */,
+				8730EB1B151BBB8E00E7A7F8 /* MKPolyline+Color.h */,
+				8730EB1C151BBB8E00E7A7F8 /* MKPolyline+Color.m */,
 				8703ACB91513F841002FE357 /* PQAppDelegate.h */,
 				8703ACBA1513F841002FE357 /* PQAppDelegate.m */,
 				8703ACBC1513F841002FE357 /* MainStoryboard.storyboard */,
@@ -196,6 +210,8 @@
 				8703ACB71513F841002FE357 /* main.m in Sources */,
 				8703ACBB1513F841002FE357 /* PQAppDelegate.m in Sources */,
 				8703ACC11513F841002FE357 /* PQViewController.m in Sources */,
+				8730EB19151BBB3A00E7A7F8 /* MKPolygon+Color.m in Sources */,
+				8730EB1D151BBB8F00E7A7F8 /* MKPolyline+Color.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -307,6 +323,7 @@
 				8703ACC61513F841002FE357 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
