@@ -54,25 +54,101 @@
     
 }
 
+/***
+ * Preset UIColors 
+ * black, darkGray, lightGray, white, gray, red, green, 
+ * blue,cyan,yellow,magenta,orange,purple,brown
+ ***/
 
 -(MKOverlayView *)mapView:(MKMapView *)mapView viewForOverlay:(id<MKOverlay>)overlay{
     if([overlay isKindOfClass:[MKPolygon class]]){
         MKPolygon* casted = (MKPolygon*) overlay;
         MKPolygonView *view = [[MKPolygonView alloc] initWithOverlay:overlay];
         view.lineWidth=1;
-        NSLog(@"Color got as:%d", casted.color);
-        //need subclass of MKOverlay, with additional int field to decide color.  
-        view.strokeColor=[UIColor blueColor];
-        view.fillColor=[[UIColor blueColor] colorWithAlphaComponent:0.2];
+        //grab the color from the subclass
+        int color = casted.color;
+        if(color==0){
+            //no spots
+            view.strokeColor=[UIColor redColor];
+            view.fillColor=[[UIColor redColor] colorWithAlphaComponent:0.5];
+            
+        }else if(color==1){
+            //minimal spots
+            view.strokeColor=[UIColor redColor];
+            view.fillColor=[[UIColor redColor] colorWithAlphaComponent:0.2];
+            
+        }else if(color==2){
+            //some spots
+            view.strokeColor=[UIColor yellowColor];
+            view.fillColor=[[UIColor yellowColor] colorWithAlphaComponent:0.3];
+            
+        }else if(color==3){
+            //healthy spots
+            view.strokeColor=[UIColor greenColor];
+            view.fillColor=[[UIColor greenColor] colorWithAlphaComponent:0.2];
+            
+        }else if(color==4){
+            //lots of spots
+            view.strokeColor=[UIColor greenColor];
+            view.fillColor=[[UIColor greenColor] colorWithAlphaComponent:0.5];
+            
+        }else{
+            //invalid color, don't do anything.  
+            return nil;
+        }
         return view;
     }
     return nil;    
 }
 
+- (NSArray*)loadGridData {
+    
+    return [NSArray arrayWithObjects:
+                 [[NSDictionary alloc] initWithObjectsAndKeys:@"42.350393,-71.104159", @"nw_corner", @"42.360393,-71.114159", @"se_corner", [NSNumber numberWithInt:0], @"color", nil],
+                 [[NSDictionary alloc] initWithObjectsAndKeys:@"42.360393,-71.104159", @"nw_corner", @"42.370393,-71.114159", @"se_corner", [NSNumber numberWithInt:1], @"color",nil],
+                 [[NSDictionary alloc] initWithObjectsAndKeys:@"42.370393,-71.104159", @"nw_corner", @"42.380393,-71.114159", @"se_corner", [NSNumber numberWithInt:2], @"color",nil],
+                 [[NSDictionary alloc] initWithObjectsAndKeys:@"42.350393,-71.114159", @"nw_corner", @"42.360393,-71.124159", @"se_corner", [NSNumber numberWithInt:3], @"color",nil],
+                 [[NSDictionary alloc] initWithObjectsAndKeys:@"42.360393,-71.114159", @"nw_corner", @"42.370393,-71.124159", @"se_corner", [NSNumber numberWithInt:4], @"color",nil],
+                 [[NSDictionary alloc] initWithObjectsAndKeys:@"42.370393,-71.114159", @"nw_corner", @"42.380393,-71.124159", @"se_corner", [NSNumber numberWithInt:0], @"color",nil], 
+                 [[NSDictionary alloc] initWithObjectsAndKeys:@"42.350393,-71.124159", @"nw_corner",  @"42.360393,-71.134159", @"se_corner", [NSNumber numberWithInt:1], @"color",nil],
+                 [[NSDictionary alloc] initWithObjectsAndKeys:@"42.360393,-71.124159", @"nw_corner",         @"42.370393,-71.134159", @"se_corner", [NSNumber numberWithInt:2], @"color",nil],
+                 [[NSDictionary alloc] initWithObjectsAndKeys:@"42.370393,-71.124159", @"nw_corner", @"42.380393,-71.134159", @"se_corner", [NSNumber numberWithInt:3], @"color",nil], nil];
+
+}
+
+-(CLLocationCoordinate2D*) parseString:(NSString*)string {
+    CLLocationCoordinate2D* point;
+    NSArray *array = [string componentsSeparatedByString:@","];
+    *point = CLLocationCoordinate2DMake([[array objectAtIndex:0] floatValue], [[array objectAtIndex:1] floatValue]);    
+    return point;
+}
+
+
+
+-(void) drawSquareWithNW:(CLLocationCoordinate2D*)nw_loc 
+                    SE:(CLLocationCoordinate2D*)se_loc 
+                 Color:(int)color{
+        
+    CLLocationCoordinate2D ne_loc = CLLocationCoordinate2DMake(nw_loc->latitude ,se_loc->longitude);
+    CLLocationCoordinate2D sw_loc = CLLocationCoordinate2DMake(se_loc->latitude ,nw_loc->longitude);
+    
+    CLLocationCoordinate2D testLotCoords[5]={*nw_loc, ne_loc, *se_loc, sw_loc, *nw_loc};
+    
+    MKPolygon *commuterPoly1 = [MKPolygon polygonWithCoordinates:testLotCoords count:5];
+    [commuterPoly1 setColor:color];
+    [self.mapView addOverlay:commuterPoly1];
+}
+
+-(void) drawGridWithData:(NSArray*)data{
+    
+    
+    
+}
+
 - (IBAction)gridButtonPressed:(id)sender {
     UISearchBar* searchBar = self.searchDisplayController.searchBar;
     [mapView removeOverlays:mapView.overlays];
-    NSString* addr = @"University of Maryland";
+    NSString* addr = @"Cambridge, MA";
     //do forward geocode and zoom to result.  
     [IOSGeocoder geocodeAddressString:addr completionHandler:^(NSArray *placemarks, NSError *error) {
         //USE ONLY FIRST ONE.  
@@ -86,29 +162,39 @@
          */
         
         //set the zoom to fit 12 grids perfectly
+        CLLocationCoordinate2D point = CLLocationCoordinate2DMake(42.365045,-71.118965);
         
-        MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(locationObject.coordinate, 0.5*METERS_PER_MILE, 0.5*METERS_PER_MILE);  //this is essentially zoom level in android
+        MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(point, METERS_PER_MILE, METERS_PER_MILE);  //this is essentially zoom level in android
         
         MKCoordinateRegion adjustedRegion = [mapView regionThatFits:viewRegion]; //is this a check?               
         
         [mapView setRegion:adjustedRegion animated:YES];  //this is animateTo or w/e. 
+        NSArray* data = [self loadGridData];
         
-        CLLocationCoordinate2D zoomLocation = locationObject.coordinate;
-        double x = 0.001;
-        CLLocationCoordinate2D topLeft = CLLocationCoordinate2DMake(zoomLocation.latitude+x ,zoomLocation.longitude-x);
-        CLLocationCoordinate2D topRight = CLLocationCoordinate2DMake(zoomLocation.latitude+x,zoomLocation.longitude+x);
-        CLLocationCoordinate2D botRight = CLLocationCoordinate2DMake(zoomLocation.latitude-x,zoomLocation.longitude+x);
-        CLLocationCoordinate2D botLeft = CLLocationCoordinate2DMake(zoomLocation.latitude-x, zoomLocation.longitude-x);
-        
-        CLLocationCoordinate2D testLotCoords[5]={topLeft, topRight, botRight, botLeft, topLeft};
-        
-        MKPolygon *commuterPoly1 = [MKPolygon polygonWithCoordinates:testLotCoords count:5];
-        [commuterPoly1 setColor:15];
-        NSLog(@"color set to:%d", commuterPoly1.color);
-        [self.mapView addOverlay:commuterPoly1];
+        for(id element in data){
+            
+            NSArray *array = [[element objectForKey:@"se_corner"] componentsSeparatedByString:@","];
+            
+            CLLocationCoordinate2D nw_point = CLLocationCoordinate2DMake([[array objectAtIndex:0] floatValue], [[array objectAtIndex:1] floatValue]);    
+            array = [[element objectForKey:@"nw_corner"]componentsSeparatedByString:@","];
+            CLLocationCoordinate2D se_point = CLLocationCoordinate2DMake([[array objectAtIndex:0] floatValue], [[array objectAtIndex:1] floatValue]);
+            
+            int color = [[element objectForKey:@"color"] intValue];
+            
+            CLLocationCoordinate2D ne_point = CLLocationCoordinate2DMake(nw_point.latitude ,se_point.longitude);
+            CLLocationCoordinate2D sw_point = CLLocationCoordinate2DMake(se_point.latitude ,nw_point.longitude);
+            
+            CLLocationCoordinate2D testLotCoords[5]={nw_point, ne_point, se_point, sw_point, nw_point};
+            
+            MKPolygon *commuterPoly1 = [MKPolygon polygonWithCoordinates:testLotCoords count:5];
+            [commuterPoly1 setColor:color];
+            [self.mapView addOverlay:commuterPoly1];
+            
+        }
     }];
-    
 }
+
+     
 - (IBAction)blockButtonPressed:(id)sender {
 }
 - (IBAction)spotButtonPressed:(id)sender {
