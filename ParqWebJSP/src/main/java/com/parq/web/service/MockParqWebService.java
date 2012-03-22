@@ -11,6 +11,7 @@ import com.parq.web.model.ParkingHistory;
 import com.parq.web.model.ParkingReport;
 import com.parq.web.model.ParkingSpaceStatus;
 import com.parq.web.model.UserRegistration;
+import com.parq.web.model.WebClient;
 import com.parq.web.model.WebParkingLocation;
 import com.parq.web.model.WebPaymentAccount;
 import com.parq.web.model.WebUser;
@@ -190,6 +191,12 @@ public class MockParqWebService implements ParqWebService{
 
 	@Override
 	public List<String> getParkingLocationIdentifierListForClient(long clientId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public WebClient getClientByUserId(long userId) {
 		// TODO Auto-generated method stub
 		return null;
 	}

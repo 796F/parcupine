@@ -56,6 +56,7 @@ CREATE TABLE admin
  
 CREATE TABLE parkinggrid
 (grid_id BIGINT NOT NULL AUTO_INCREMENT,
+ grid_name TEXT(16) NOT NULL,
  center_latitude DOUBLE NOT NULL,
  center_longitude DOUBLE NOT NULL,
  is_deleted BOOLEAN DEFAULT FALSE,

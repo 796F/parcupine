@@ -16,7 +16,6 @@ import com.parq.server.dao.PaymentAccountDao;
 import com.parq.server.dao.UserDao;
 import com.parq.server.dao.exception.DuplicateEmailException;
 import com.parq.server.dao.model.object.Admin;
-import com.parq.server.dao.model.object.Geolocation;
 import com.parq.server.dao.model.object.ParkingInstance;
 import com.parq.server.dao.model.object.ParkingLocation;
 import com.parq.server.dao.model.object.ParkingLocationUsageReport;
@@ -32,6 +31,7 @@ import com.parq.web.model.ParkingHistory;
 import com.parq.web.model.ParkingReport;
 import com.parq.web.model.ParkingSpaceStatus;
 import com.parq.web.model.UserRegistration;
+import com.parq.web.model.WebClient;
 import com.parq.web.model.WebParkingLocation;
 import com.parq.web.model.WebPaymentAccount;
 import com.parq.web.model.WebUser;
@@ -249,6 +249,15 @@ public class ParqWebServiceImpl implements ParqWebService{
 		}
 		
 		return parkingLocationIdentifiers;
+	}
+	
+	@Override
+	public WebClient getClientByUserId(long userId) {
+		AdminDao adminDao = new AdminDao();
+		Admin admin = adminDao.getAdminById(userId);
+		WebClient webClient = new WebClient();
+		webClient.setClientId(admin.getClientId());
+		return webClient;
 	}
 	
 	private List<ParkingLocation> getParkingLocationsByClientId(long clientId) {
@@ -475,12 +484,12 @@ public class ParqWebServiceImpl implements ParqWebService{
 		centerPointLong = ((int) (centerPointLong * 100)) / 100.00;
 		
 		
-		List<Geolocation> geoLocations = geoDao.findCloseByParkingLocation(
+		List<ParkingLocation> geoLocations = geoDao.findCloseByParkingLocation(
 				centerPointLat - precision, centerPointLat + precision, 
 				centerPointLong - precision, centerPointLong + precision);
 		
 		if (geoLocations != null) {
-			for (Geolocation geoLoc: geoLocations) {
+			for (ParkingLocation geoLoc: geoLocations) {
 				WebParkingLocation parkLoc = new WebParkingLocation();
 				parkLoc.setLatitude(geoLoc.getLatitude());
 				parkLoc.setLongitude(geoLoc.getLongitude());

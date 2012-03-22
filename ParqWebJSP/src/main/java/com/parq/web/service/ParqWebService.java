@@ -9,6 +9,7 @@ import com.parq.web.model.ParkingHistory;
 import com.parq.web.model.ParkingReport;
 import com.parq.web.model.ParkingSpaceStatus;
 import com.parq.web.model.UserRegistration;
+import com.parq.web.model.WebClient;
 import com.parq.web.model.WebParkingLocation;
 import com.parq.web.model.WebPaymentAccount;
 import com.parq.web.model.WebUser;
@@ -32,4 +33,6 @@ public interface ParqWebService {
 	List<WebParkingLocation> findParkingLocations(MapLocation centerOfMap);
 	
 	List<String> getParkingLocationIdentifierListForClient(long clientId);
+	
+	WebClient getClientByUserId(long userId);
 }

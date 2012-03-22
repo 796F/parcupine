@@ -10,9 +10,13 @@
     <ul class="pull-left">
       <% if (user.isAuthenticated() == false) { %> 
       <li>
+      	<%-- https://www.parqme.com/web/action/login.jsp --%>
+      	<%-- <%=request.getContextPath()%>/web/action/login.jsp --%>
 		<a class="loginButton" href="https://www.parqme.com/web/action/login.jsp">Log in</a>
       </li>      
       <li>
+      	<%-- https://www.parqme.com/web/action/signup.jsp --%>
+      	<%-- <%=request.getContextPath()%>/web/action/signup.jsp --%>
 		<a class="signupButton" href="https://www.parqme.com/web/action/signup.jsp">Sign up</a>
       </li>
       <% }  else {

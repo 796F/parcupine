@@ -54,8 +54,8 @@ public class ParkingLocationDao extends AbstractParqDaoParent {
 		" AND pl.location_identifier = ? ";
 	
 	private static final String sqlCreateGrid = 
-		"INSERT INTO parkinggrid (center_latitude, center_longitude) " +
-		" VALUES (?, ?)";
+		"INSERT INTO parkinggrid (grid_name, center_latitude, center_longitude) " +
+		" VALUES (?, ?, ?)";
 	
 	private final String sqlDeleteGrid = 
 		"UPDATE parkinggrid SET is_deleted = TRUE WHERE grid_id = ?";
@@ -266,7 +266,7 @@ public class ParkingLocationDao extends AbstractParqDaoParent {
 		return result;
 	}
 	
-	public boolean createGrid(double latitude, double longitude) {
+	public boolean createGrid(String gridIdentifier, double latitude, double longitude) {
 		if (latitude == 0.00 || longitude == 0.00) {
 			throw new IllegalStateException("Invalid grid create request");
 		}
@@ -279,8 +279,9 @@ public class ParkingLocationDao extends AbstractParqDaoParent {
 		try {
 			con = getConnection();
 			pstmt = con.prepareStatement(sqlCreateGrid);
-			pstmt.setDouble(1, latitude);
-			pstmt.setDouble(2, longitude);
+			pstmt.setString(1, gridIdentifier);
+			pstmt.setDouble(2, latitude);
+			pstmt.setDouble(3, longitude);
 			newGridCreated = pstmt.executeUpdate() == 1;
 		} catch (SQLException sqle) {
 			System.out.println("SQL statement is invalid: " + pstmt);

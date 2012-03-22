@@ -6,8 +6,10 @@
 <%@ page import="com.parq.web.model.ParkingSpaceStatus" %>
 <%@ page import="com.parq.web.model.ParkingReport" %>
 <%@ page import="com.parq.web.ReportDateRangeFilter" %>
+<%@ page import="com.parq.web.model.WebClient" %>
 
 <jsp:useBean id="user" class="com.parq.web.model.WebUser" scope="session" />
+<jsp:useBean id="client" class="com.parq.web.model.WebClient" scope="session" />
 <jsp:useBean id="pSpaceFilter" class="com.parq.web.ParkingSpacesFilter" scope="session" />
 <jsp:useBean id="reportDateRangeFilter" class="com.parq.web.ReportDateRangeFilter" scope="session" />
 
@@ -85,7 +87,8 @@
 				    <td>
 				    	<%
 							ParqWebService service = ParqWebServiceFactory.getParqWebServiceInstance();
-							List<String> locationIdentifiers = service.getParkingLocationIdentifierListForClient(user.getId());
+							List<String> locationIdentifiers = service
+								.getParkingLocationIdentifierListForClient(client.getClientId());
 						%>
 				    	<select name="locationFilter">
 				    		<option value="<%="NULL"%>" 
@@ -119,7 +122,8 @@
 				locationIdentifier = null;
 			}
 			
-			List<ParkingSpaceStatus> status = service.getParkingStatusByClient(user.getId(), locationIdentifier);
+			List<ParkingSpaceStatus> status = service
+				.getParkingStatusByClient(client.getClientId(), locationIdentifier);
 		%>
 		<table class="zebra-striped">
 		  <thead>
@@ -218,7 +222,8 @@
 		    <%-- <th>Amount Paid</th> --%>
 		  </thead>
 		  <%
-		  	List<ParkingReport> reports = service.getParkingReportByClientId(user.getId(), reportDateRangeFilter);
+		  	List<ParkingReport> reports = service.getParkingReportByClientId(
+		  			client.getClientId(), reportDateRangeFilter);
 		  	if (reports != null && !reports.isEmpty()) { 
 		  		for (ParkingReport report :  reports) { %>
 				<tr>

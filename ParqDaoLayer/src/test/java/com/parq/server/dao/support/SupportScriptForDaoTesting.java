@@ -38,6 +38,8 @@ public final class SupportScriptForDaoTesting {
 	public static final String userPhoneNum = "123-555-7890";
 	public static final PaymentMethod payMethod = PaymentMethod.PREFILL;
 	
+	public static final String testGridIdentifier = "TestGrid";
+	
 	public static User testUser;
 	public static ParkingInstance testParkingInstance;
 	public static ParkingInstance testParkingInstanceRefil;
@@ -61,7 +63,7 @@ public final class SupportScriptForDaoTesting {
 			testDao.createNewClient(fakeClient2, "test_address", "testclient", PaymentMethod.PREFILL.name());
 
 			// create a default grid for locations
-			parkingLocationDao.createGrid(1.1, 2.1);
+			parkingLocationDao.createGrid(testGridIdentifier, 1.1, 2.1);
 			
 			// insert 3 new parking locations
 			parkingLocationDao.createLocation(parkingLocationNameMain, 
