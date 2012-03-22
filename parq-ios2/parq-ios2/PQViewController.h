@@ -10,9 +10,13 @@
 #import <MapKit/MapKit.h>
 #import <CoreLocation/CoreLocation.h>
 
-@interface PQViewController : UIViewController <MKMapViewDelegate, CLLocationManagerDelegate> {
+@interface PQViewController : UIViewController <MKMapViewDelegate, CLLocationManagerDelegate,UISearchBarDelegate> {
+    
     CLLocationManager *locationManager;
 }
 @property (weak, nonatomic) IBOutlet MKMapView *mapView;
+@property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
+
+@property (nonatomic, retain) CLGeocoder* IOSGeocoder;
 
 @end
