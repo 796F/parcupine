@@ -9,6 +9,7 @@
 #import "PQViewController.h"
 #import "MKPolygon+Color.h"
 #import "MKPolyline+Color.h"
+#import "MKCircle+Color.h"
 
 @implementation PQViewController
 @synthesize mapView;
@@ -17,15 +18,35 @@
 
 #define METERS_PER_MILE 1609.344
 
+- (void)handleGesture:(UIGestureRecognizer *)gestureRecognizer
+{
+    if (gestureRecognizer.state != UIGestureRecognizerStateEnded)
+        return;
+    
+    CGPoint touchPoint = [gestureRecognizer locationInView:mapView];
+    CLLocationCoordinate2D touchMapCoordinate = 
+    [mapView convertPoint:touchPoint toCoordinateFromView:mapView];
+    NSLog(@"%f, %f\n", touchMapCoordinate.latitude, touchMapCoordinate.longitude);
+    
+}
+
+-(void) overlayTapped:(UIGestureRecognizer*)gestureRecognizer {
+    //the subclass should also contain information about the center of the grid.  
+    NSLog(@"OVERLAY TAPPED YO\n");
+}
+
 
 -(void)searchBarSearchButtonClicked:(UISearchBar *)searchBar{
     
     //remove all existing overlays and stuff,
     [mapView removeOverlays: mapView.overlays];
-    NSString* addr = @"new york";
+    NSString* addr = @"McDonalds";
+    
     //do forward geocode and zoom to result.  
-    [IOSGeocoder geocodeAddressString:addr completionHandler:^(NSArray *placemarks, NSError *error) {
+    //[IOSGeocoder geocodeAddressString:addr completionHandler:^(NSArray *placemarks, NSError *error) {
+        [IOSGeocoder geocodeAddressString:addr inRegion:nil completionHandler:^(NSArray *placemarks, NSError * error){
         //USE ONLY FIRST ONE.  
+        NSLog(@"%@", [placemarks description]);
         CLPlacemark* place = [placemarks objectAtIndex:0];
         CLLocation* locationObject = [place location];    //we can use a location to drag out lat/lon
         
@@ -97,7 +118,13 @@
             //invalid color, don't do anything.  
             return nil;
         }
+        UITapGestureRecognizer* recognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(overlayTapped)]; 
+        recognizer.delegate=self;
+        recognizer.numberOfTapsRequired=2;
+        recognizer.numberOfTouchesRequired=1;
+        [view addGestureRecognizer:recognizer];
         return view;
+        
     } else if ([overlay isKindOfClass:[MKPolyline class]]) {
         MKPolylineView *view = [[MKPolylineView alloc] initWithOverlay:overlay];
         view.lineWidth = 8;
@@ -106,6 +133,22 @@
         view.strokeColor = [UIColor colorWithRed:(4-color)/4 green:color/4 blue:0 alpha:0.5];
         view.fillColor = [UIColor colorWithRed:(4-color)/4 green:color/4 blue:0 alpha:0.5];
         return view;
+    }else if([overlay isKindOfClass:[MKCircle class]]) {
+        MKCircleView *circleView = [[MKCircleView alloc] initWithCircle:(MKCircle *)overlay];
+        MKCircle* casted = (MKCircle*) overlay;
+        if(casted.color==0){
+            //taken
+            circleView.fillColor = [[UIColor redColor] colorWithAlphaComponent:0.5];
+            circleView.strokeColor = [UIColor redColor];
+            
+        }else{
+            //free
+            circleView.fillColor = [[UIColor greenColor] colorWithAlphaComponent:0.5];
+            circleView.strokeColor = [UIColor greenColor];
+            
+        }
+        circleView.lineWidth = 2;
+        return circleView;
     }
     return nil;
 }
@@ -113,10 +156,10 @@
 - (NSArray*)loadGridData {
     return [NSArray arrayWithObjects:
                  [[NSDictionary alloc] initWithObjectsAndKeys:@"42.350393,-71.104159", @"nw_corner", @"42.360393,-71.114159", @"se_corner", [NSNumber numberWithInt:0], @"color", nil],
-                 [[NSDictionary alloc] initWithObjectsAndKeys:@"42.360393,-71.104159", @"nw_corner", @"42.370393,-71.114159", @"se_corner", [NSNumber numberWithInt:1], @"color",nil],
+                 [[NSDictionary alloc] initWithObjectsAndKeys:@"42.360393,-71.104159", @"nw_corner", @"42.370393,-71.114159", @"se_corner", [NSNumber numberWithInt:4], @"color",nil],
                  [[NSDictionary alloc] initWithObjectsAndKeys:@"42.370393,-71.104159", @"nw_corner", @"42.380393,-71.114159", @"se_corner", [NSNumber numberWithInt:2], @"color",nil],
                  [[NSDictionary alloc] initWithObjectsAndKeys:@"42.350393,-71.114159", @"nw_corner", @"42.360393,-71.124159", @"se_corner", [NSNumber numberWithInt:3], @"color",nil],
-                 [[NSDictionary alloc] initWithObjectsAndKeys:@"42.360393,-71.114159", @"nw_corner", @"42.370393,-71.124159", @"se_corner", [NSNumber numberWithInt:4], @"color",nil],
+                 [[NSDictionary alloc] initWithObjectsAndKeys:@"42.360393,-71.114159", @"nw_corner", @"42.370393,-71.124159", @"se_corner", [NSNumber numberWithInt:3], @"color",nil],
                  [[NSDictionary alloc] initWithObjectsAndKeys:@"42.370393,-71.114159", @"nw_corner", @"42.380393,-71.124159", @"se_corner", [NSNumber numberWithInt:0], @"color",nil], 
                  [[NSDictionary alloc] initWithObjectsAndKeys:@"42.350393,-71.124159", @"nw_corner",  @"42.360393,-71.134159", @"se_corner", [NSNumber numberWithInt:1], @"color",nil],
                  [[NSDictionary alloc] initWithObjectsAndKeys:@"42.360393,-71.124159", @"nw_corner",         @"42.370393,-71.134159", @"se_corner", [NSNumber numberWithInt:2], @"color",nil],
@@ -128,6 +171,36 @@
     return [NSArray arrayWithObjects:
             [[NSDictionary alloc] initWithObjectsAndKeys:@"42.36441,-71.113901;42.365203,-71.104846", @"line", [NSNumber numberWithInt:0], @"color", nil],
             [[NSDictionary alloc] initWithObjectsAndKeys:@"42.367074,-71.111155;42.363269,-71.110554", @"line", [NSNumber numberWithInt:4], @"color", nil], nil];
+}
+
+-(NSArray*) loadSpotData {
+    return [NSArray arrayWithObjects:
+     @"42.365354, -71.110843, 1",
+     @"42.365292, -71.110835, 1",
+     @"42.365239, -71.110825, 1",
+     @"42.365187, -71.110811, 0",
+     @"42.365140, -71.110806, 1",
+     @"42.365092, -71.110798, 0",
+     @"42.365045, -71.110790, 1",
+     @"42.364995, -71.110782, 1",
+     @"42.364947, -71.110768, 0",
+     @"42.364896, -71.110766, 0",
+     @"42.364846, -71.110752, 0",
+     @"42.364797, -71.110739, 0",
+     
+     @"42.365348, -71.110924, 1",
+     @"42.365300, -71.110916, 0",
+     @"42.365251, -71.110905, 0",
+     @"42.365203, -71.110900, 0",
+     @"42.365154, -71.110892, 1",
+     @"42.365104, -71.110876, 0",
+     @"42.365049, -71.110868, 1",
+     @"42.364993, -71.110860, 1",
+     @"42.364943, -71.110849, 1",
+     @"42.364894, -71.110846, 1",
+     @"42.364846, -71.110835, 0",
+     @"42.364799, -71.110830, 1",
+     nil];
 }
 
 - (IBAction)gridButtonPressed:(id)sender {
@@ -184,7 +257,6 @@
 
     MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(point, METERS_PER_MILE/2, METERS_PER_MILE/2);
     [mapView setRegion:[mapView regionThatFits:viewRegion] animated:YES];
-
     NSArray* data = [self loadBlockData];
 
     for (id line in data) {
@@ -206,6 +278,22 @@
     }
 }
 - (IBAction)spotButtonPressed:(id)sender {
+    
+    [mapView removeOverlays:mapView.overlays];
+    CLLocationCoordinate2D point = {42.365354, -71.110843};
+    
+    MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(point, METERS_PER_MILE/16, METERS_PER_MILE/16);
+    [mapView setRegion:[mapView regionThatFits:viewRegion] animated:YES];
+    
+    NSArray* data = [self loadSpotData];
+    for(id spot in data){
+        NSArray* point = [spot componentsSeparatedByString:@","];
+        CLLocationCoordinate2D coord = CLLocationCoordinate2DMake([[point objectAtIndex:0] floatValue], [[point objectAtIndex:1] floatValue]);
+        int color = [[point objectAtIndex:2] intValue];
+        MKCircle* circle = [MKCircle circleWithCenterCoordinate:coord radius:2];
+        [circle setColor:color];
+        [self.mapView addOverlay:circle];
+    }
 }
 - (IBAction)noneButtonPressed:(id)sender {
     [mapView removeOverlays:mapView.overlays];
@@ -249,6 +337,14 @@
     mapView.delegate=self;
     mapView.showsUserLocation = YES;
     
+    //setup gesture recognizer for grids and blocks and spots.  
+    UITapGestureRecognizer *tgr = [[UITapGestureRecognizer alloc] 
+                                   initWithTarget:self action:@selector(handleGesture:)];
+    tgr.numberOfTapsRequired = 3;
+    tgr.numberOfTouchesRequired = 1;
+    [mapView addGestureRecognizer:tgr];
+    
+    //SETUP LOCATION manager
     locationManager=[[CLLocationManager alloc] init];
     locationManager.delegate=self;
     locationManager.desiredAccuracy=kCLLocationAccuracyNearestTenMeters;
