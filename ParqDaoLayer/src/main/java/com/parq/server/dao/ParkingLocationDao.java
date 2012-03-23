@@ -54,7 +54,7 @@ public class ParkingLocationDao extends AbstractParqDaoParent {
 		" AND pl.location_identifier = ? ";
 	
 	private static final String sqlCreateGrid = 
-		"INSERT INTO parkinggrid (grid_name, center_latitude, center_longitude) " +
+		"INSERT INTO parkinggrid (grid_name, latitude, longitude) " +
 		" VALUES (?, ?, ?)";
 	
 	private final String sqlDeleteGrid = 
@@ -64,11 +64,11 @@ public class ParkingLocationDao extends AbstractParqDaoParent {
 		"UPDATE parkinglocation SET is_deleted = TRUE WHERE location_id = ?";
 
 	private final String sqlGetAllGrids = 
-		"SELECT grid_id, center_latitude, center_longitude FROM parkinggrid " +
+		"SELECT grid_id, latitude, longitude FROM parkinggrid " +
 		" WHERE is_deleted IS NOT TRUE";
 	
 	private final String sqlGetGridById = 
-		"SELECT grid_id, center_latitude, center_longitude FROM parkinggrid " +
+		"SELECT grid_id, latitude, longitude FROM parkinggrid " +
 		" WHERE is_deleted IS NOT TRUE" +
 		" AND grid_id = ?";
 
@@ -357,8 +357,8 @@ public class ParkingLocationDao extends AbstractParqDaoParent {
 		}
 		Grid parkingGrid = new Grid();
 		parkingGrid.setGridId(rs.getLong("grid_id"));
-		parkingGrid.setCenterLatitude(rs.getDouble("center_latitude"));
-		parkingGrid.setCenterLongitude(rs.getDouble("center_longitude"));
+		parkingGrid.setLatitude(rs.getDouble("latitude"));
+		parkingGrid.setLongitude(rs.getDouble("longitude"));
 		return parkingGrid;
 	}
 

@@ -57,8 +57,8 @@ CREATE TABLE admin
 CREATE TABLE parkinggrid
 (grid_id BIGINT NOT NULL AUTO_INCREMENT,
  grid_name TEXT(16) NOT NULL,
- center_latitude DOUBLE NOT NULL,
- center_longitude DOUBLE NOT NULL,
+ latitude DOUBLE NOT NULL,
+ longitude DOUBLE NOT NULL,
  is_deleted BOOLEAN DEFAULT FALSE,
  lastupdatedatetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
  PRIMARY KEY (grid_id));
@@ -83,6 +83,8 @@ CREATE TABLE parkingspace
  location_id BIGINT NOT NULL,
  space_name TEXT(64),
  parking_level TEXT(16),
+ latitude DOUBLE NOT NULL,
+ longitude DOUBLE NOT NULL,
  is_deleted BOOLEAN DEFAULT FALSE,
  lastupdatedatetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
  PRIMARY KEY (space_id),

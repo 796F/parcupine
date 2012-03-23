@@ -1,5 +1,10 @@
 package com.parq.server.dao.support;
 
+import com.parq.server.dao.ParkingLocationDao;
+import com.parq.server.dao.ParkingSpaceDao;
+import com.parq.server.dao.model.object.ParkingLocation;
+import com.parq.server.dao.model.object.ParkingSpace;
+
 /**
  * @author GZ
  *
@@ -18,9 +23,9 @@ public class ParqMockObjectCreationDao extends DaoForTestingPurposes {
 		" VALUE ((SELECT location_id FROM parkinglocation WHERE location_identifier = ? AND is_deleted IS NOT TRUE), " +
 		" ?, ?)" ;
 	
-	private static final String sqlInsertPaqkingSpace = 
-		"INSERT INTO parkingspace (location_id, space_identifier, space_name, parking_level) " + 
-		" VALUE ((SELECT location_id FROM parkinglocation WHERE location_identifier = ? AND is_deleted IS NOT TRUE), ?, ?, ?)";
+//	private static final String sqlInsertPaqkingSpace = 
+//		"INSERT INTO parkingspace (location_id, space_identifier, space_name, parking_level) " + 
+//		" VALUE ((SELECT location_id FROM parkinglocation WHERE location_identifier = ? AND is_deleted IS NOT TRUE), ?, ?, ?)";
 
 	private static final String sqlInsertLocationParkingRate = 
 		"INSERT INTO parkingrate (parking_rate_cents, priority, location_id, time_increment_mins) " +
@@ -60,9 +65,23 @@ public class ParqMockObjectCreationDao extends DaoForTestingPurposes {
 	}
 
 	public boolean insertParkingSpace(String locationIdentifier,
-			String spaceIdentifier, String spaceName, String parkingLevel) {
-		return executeSqlStatement(sqlInsertPaqkingSpace, new Object[] {
-				locationIdentifier, spaceIdentifier, spaceName, parkingLevel});
+			String spaceIdentifier, String spaceName, String parkingLevel, double latitude, double longitude) {
+		
+		ParkingSpace newSpaceRequest = new ParkingSpace();
+		newSpaceRequest.setSpaceName(spaceName);
+		newSpaceRequest.setSpaceIdentifier(spaceIdentifier);
+		newSpaceRequest.setParkingLevel(parkingLevel);
+		newSpaceRequest.setLatitude(latitude);
+		newSpaceRequest.setLongitude(longitude);
+		
+		ParkingLocation location = 
+			new ParkingLocationDao().getParkingLocationByLocationIdentifier(locationIdentifier);
+		if (location == null) {
+			return false;
+		}
+		newSpaceRequest.setLocationId(location.getLocationId());
+		
+		return new ParkingSpaceDao().insertNewParkingSpace(newSpaceRequest);
 	}
 
 	public boolean setParkingLocationRate(int parkingRateInCents,

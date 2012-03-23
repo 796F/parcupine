@@ -13,8 +13,8 @@ public class Grid implements Serializable{
 	private static final long serialVersionUID = 1944957367329157867L;
 	
 	private long gridId = -1;
-	private double centerLatitude = -10000.00;
-	private double centerLongitude = -10000.00;
+	private double latitude = -10000.00;
+	private double longitude = -10000.00;
 	private int fillRate = 101;
 	private List<ParkingLocation> parkingLocations;
 
@@ -39,29 +39,29 @@ public class Grid implements Serializable{
 	/**
 	 * @return the centerLatitude
 	 */
-	public double getCenterLatitude() {
-		return centerLatitude;
+	public double getLatitude() {
+		return latitude;
 	}
 
 	/**
-	 * @param centerLatitude the centerLatitude to set
+	 * @param latitude the centerLatitude to set
 	 */
-	public void setCenterLatitude(double centerLatitude) {
-		this.centerLatitude = centerLatitude;
+	public void setLatitude(double latitude) {
+		this.latitude = latitude;
 	}
 
 	/**
 	 * @return the centerLongitude
 	 */
-	public double getCenterLongitude() {
-		return centerLongitude;
+	public double getLongitude() {
+		return longitude;
 	}
 
 	/**
-	 * @param centerLongitude the centerLongitude to set
+	 * @param longitude the centerLongitude to set
 	 */
-	public void setCenterLongitude(double centerLongitude) {
-		this.centerLongitude = centerLongitude;
+	public void setLongitude(double longitude) {
+		this.longitude = longitude;
 	}
 
 	/**

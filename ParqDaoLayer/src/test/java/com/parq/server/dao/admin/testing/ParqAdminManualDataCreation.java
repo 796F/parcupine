@@ -14,7 +14,7 @@ public class ParqAdminManualDataCreation extends TestCase {
 	private static final String parkingLocationIdentifier = "main_lot";
 	private static final String parkingLocationName = "Henry_Steinbrenner_Stadium";
 	private static final double latitude = 42.358000;
-	private static final double logitude = -71.097983;
+	private static final double longitude = -71.097983;
 	private static final String parkingSpaceIdentifier1 = "1410";
 	private static final String parkingSpaceName1 = "MIT_TEST: space num 1";
 	private static final String parkingSpaceIdentifier2 = "1411";
@@ -45,13 +45,13 @@ public class ParqAdminManualDataCreation extends TestCase {
 		helper.createNewClient(clientName, clientAddress, clientDesc, PaymentMethod.PREFILL.name());
 		helper.createNewParkingLocation(clientName, parkingLocationIdentifier, parkingLocationName);
 		helper.setGeoCoordinateForParkingLocation(parkingLocationIdentifier,
-				latitude, logitude);
+				latitude, longitude);
 		helper.insertParkingSpace(parkingLocationIdentifier,
-				parkingSpaceIdentifier1, parkingSpaceName1, parkingSpaceLevel);
+				parkingSpaceIdentifier1, parkingSpaceName1, parkingSpaceLevel, latitude, longitude);
 		helper.insertParkingSpace(parkingLocationIdentifier,
-				parkingSpaceIdentifier2, parkingSpaceName2, parkingSpaceLevel);
+				parkingSpaceIdentifier2, parkingSpaceName2, parkingSpaceLevel, latitude, longitude);
 		helper.insertParkingSpace(parkingLocationIdentifier,
-				parkingSpaceIdentifier3, parkingSpaceName3, parkingSpaceLevel);
+				parkingSpaceIdentifier3, parkingSpaceName3, parkingSpaceLevel, latitude, longitude);
 		helper.setParkingLocationRate(parkingRateInCents, LOCATION_RATE_PRIORITY,
 				parkingLocationIdentifier, parkingMinutesIncresments);
 		

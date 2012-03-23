@@ -80,16 +80,16 @@ public final class SupportScriptForDaoTesting {
 					fakeParkingLocation2Latitude, fakeParkingLocation2Longtitude);
 
 			// insert 10 test parking spaces
-			testDao.insertParkingSpace(parkingLocationNameMain, spaceNameMain, "1", "space name 1");
-			testDao.insertParkingSpace(parkingLocationNameMain, spaceNameMain2, "2", "space name 2");
-			testDao.insertParkingSpace(parkingLocationNameMain, spaceNameMain3, "3", "space name 3");
-			testDao.insertParkingSpace(fakeParkingLocation1, "Test_Fake_1", "3", "space name 4");
-			testDao.insertParkingSpace(fakeParkingLocation1, "Test_Fake_2", "2", "space name 5");
-			testDao.insertParkingSpace(fakeParkingLocation1, "Test_Fake_3", "2", "space name 6");			
-			testDao.insertParkingSpace(fakeParkingLocation1, "Test_Fake_4", "2", "space name 7");
-			testDao.insertParkingSpace(fakeParkingLocation2, "Test_Fake_5", "2", "space name 8");
-			testDao.insertParkingSpace(fakeParkingLocation2, "Test_Fake_6", "2", "space name 9");
-			testDao.insertParkingSpace(fakeParkingLocation2, "Test_Fake_7", "2", "space name 10");
+			testDao.insertParkingSpace(parkingLocationNameMain, spaceNameMain, "1", "space name 1", parkingLocationMainLatitude, parkingLocationMainLongtitude);
+			testDao.insertParkingSpace(parkingLocationNameMain, spaceNameMain2, "2", "space name 2", parkingLocationMainLatitude, parkingLocationMainLongtitude);
+			testDao.insertParkingSpace(parkingLocationNameMain, spaceNameMain3, "3", "space name 3", parkingLocationMainLatitude, parkingLocationMainLongtitude);
+			testDao.insertParkingSpace(fakeParkingLocation1, "Test_Fake_1", "3", "space name 4", fakeParkingLocation1Latitude, fakeParkingLocation1Longtitude);
+			testDao.insertParkingSpace(fakeParkingLocation1, "Test_Fake_2", "2", "space name 5", fakeParkingLocation1Latitude, fakeParkingLocation1Longtitude);
+			testDao.insertParkingSpace(fakeParkingLocation1, "Test_Fake_3", "2", "space name 6", fakeParkingLocation1Latitude, fakeParkingLocation1Longtitude);			
+			testDao.insertParkingSpace(fakeParkingLocation1, "Test_Fake_4", "2", "space name 7", fakeParkingLocation1Latitude, fakeParkingLocation1Longtitude);
+			testDao.insertParkingSpace(fakeParkingLocation2, "Test_Fake_5", "2", "space name 8", fakeParkingLocation2Latitude, fakeParkingLocation2Longtitude);
+			testDao.insertParkingSpace(fakeParkingLocation2, "Test_Fake_6", "2", "space name 9", fakeParkingLocation2Latitude, fakeParkingLocation2Longtitude);
+			testDao.insertParkingSpace(fakeParkingLocation2, "Test_Fake_7", "2", "space name 10", fakeParkingLocation2Latitude, fakeParkingLocation2Longtitude);
 
 			// insert location based parking rate
 			testDao.setParkingLocationRate(parkingLocationRate, parkingLocationParkingRatePriority, 
@@ -271,19 +271,19 @@ public final class SupportScriptForDaoTesting {
 	// ------------------------------------------------------------------------
 	// UnitTest delete statement to undo test data created during the unit test
 	// ------------------------------------------------------------------------
-	private static String deleteSpaces = 
-		"DELETE FROM parkingspace WHERE location_id IN (" +
-		" SELECT location_id FROM parkinglocation WHERE location_identifier " +
-		" IN ('" + parkingLocationNameMain + "', '" + fakeParkingLocation1 + "', '" + fakeParkingLocation2 + "'" + 
-		" ))";
-	private static String deleteLocations = 
-		"DELETE FROM parkinglocation WHERE location_identifier " +
-		" IN ('" + parkingLocationNameMain + "', '" + fakeParkingLocation1 + "', '" + fakeParkingLocation2 + "')";
-	private static String deleteClients = 
-		"DELETE FROM client WHERE name " +
-		" IN ('" + clientNameMain + "', '" + fakeClient1 + "', '" + fakeClient2 + "')";
-	private static String deleteParkingRates = 
-		"DELETE FROM parkingrate WHERE priority < 0";
+//	private static String deleteSpaces = 
+//		"DELETE FROM parkingspace WHERE location_id IN (" +
+//		" SELECT location_id FROM parkinglocation WHERE location_identifier " +
+//		" IN ('" + parkingLocationNameMain + "', '" + fakeParkingLocation1 + "', '" + fakeParkingLocation2 + "'" + 
+//		" ))";
+//	private static String deleteLocations = 
+//		"DELETE FROM parkinglocation WHERE location_identifier " +
+//		" IN ('" + parkingLocationNameMain + "', '" + fakeParkingLocation1 + "', '" + fakeParkingLocation2 + "')";
+//	private static String deleteClients = 
+//		"DELETE FROM client WHERE name " +
+//		" IN ('" + clientNameMain + "', '" + fakeClient1 + "', '" + fakeClient2 + "')";
+//	private static String deleteParkingRates = 
+//		"DELETE FROM parkingrate WHERE priority < 0";
 	private static String deletePayments = 
 		"DELETE FROM payment WHERE parkinginst_id " +
 		" IN (SELECT parkinginst_id FROM parkinginstance WHERE space_id " +
@@ -291,20 +291,20 @@ public final class SupportScriptForDaoTesting {
 		" IN (SELECT location_id FROM parkinglocation WHERE location_identifier " +
 		" IN ('" + parkingLocationNameMain + "', '" + fakeParkingLocation1 + "', '" + fakeParkingLocation2 + "'" + 
 		" ))))";
-	private static String deleteParkingInstances = 
-		"DELETE FROM parkinginstance WHERE space_id " +
-		" IN (SELECT space_id FROM parkingspace WHERE location_id " +
-		" IN (SELECT location_id FROM parkinglocation WHERE location_identifier " +
-		" IN ('" + parkingLocationNameMain + "', '" + fakeParkingLocation1 + "', '" + fakeParkingLocation2 + "'" + 
-		" )))";
-	
-	private static String deleteGeoLocations = 
-		"DELETE FROM geolocation WHERE location_id " +
-		" IN (SELECT location_id FROM parkinglocation WHERE location_identifier " +
-		" IN ('" + parkingLocationNameMain + "', '" + fakeParkingLocation1 + "', '" + 
-			fakeParkingLocation2 + "'))";
-	
-	private static String deletePaymentMethods = "DELETE FROM paymentmethod";
+//	private static String deleteParkingInstances = 
+//		"DELETE FROM parkinginstance WHERE space_id " +
+//		" IN (SELECT space_id FROM parkingspace WHERE location_id " +
+//		" IN (SELECT location_id FROM parkinglocation WHERE location_identifier " +
+//		" IN ('" + parkingLocationNameMain + "', '" + fakeParkingLocation1 + "', '" + fakeParkingLocation2 + "'" + 
+//		" )))";
+//	
+//	private static String deleteGeoLocations = 
+//		"DELETE FROM geolocation WHERE location_id " +
+//		" IN (SELECT location_id FROM parkinglocation WHERE location_identifier " +
+//		" IN ('" + parkingLocationNameMain + "', '" + fakeParkingLocation1 + "', '" + 
+//			fakeParkingLocation2 + "'))";
+//	
+//	private static String deletePaymentMethods = "DELETE FROM paymentmethod";
 
 	
 	public static String[] sqlDeleteStmtList = new String[] 
