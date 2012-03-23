@@ -11,7 +11,7 @@
 #import <CoreLocation/CoreLocation.h>
 #import <objc/runtime.h>
 
-@interface MKPolygon (ColorTag)
+@interface MKPolygon  (ColorTag)
 
 @property (nonatomic) int color;
 

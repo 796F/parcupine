@@ -10,6 +10,7 @@
 
 @implementation MKPolygon (ColorTag)
 
+
 static char colorKey;
 
 - (void) setColor:(int)color {

@@ -18,22 +18,47 @@
 
 #define METERS_PER_MILE 1609.344
 
+-(MKAnnotationView*) mapView:(MKMapView *)myMapView viewForAnnotation:(id<MKAnnotation>)annotation{
+    if([annotation isKindOfClass:[annotation class]]){
+        //Try to get an unused annotation, similar to uitableviewcells
+        MKAnnotationView *annotationView=[myMapView dequeueReusableAnnotationViewWithIdentifier:@"gridButton"];
+        if(!annotationView){
+            annotationView=[[MKAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"gridButton"];
+            annotationView.image=[UIImage imageNamed:@"border_anno.png"];
+        }
+        UITapGestureRecognizer *tgr = [[UITapGestureRecognizer alloc] 
+                                       initWithTarget:self action:@selector(handleGesture:)];
+        tgr.numberOfTapsRequired = 1;
+        tgr.numberOfTouchesRequired = 1;
+        [annotationView addGestureRecognizer:tgr];
+        CLLocationCoordinate2D center = [myMapView convertPoint: tgr.view.center toCoordinateFromView:myMapView];
+        NSLog(@"%f, %f\n", center.latitude, center.longitude);
+        return annotationView;
+    }
+    return nil;
+
+}
+
 - (void)handleGesture:(UIGestureRecognizer *)gestureRecognizer
 {
     if (gestureRecognizer.state != UIGestureRecognizerStateEnded)
         return;
     
     CGPoint touchPoint = [gestureRecognizer locationInView:mapView];
-    CLLocationCoordinate2D touchMapCoordinate = 
-    [mapView convertPoint:touchPoint toCoordinateFromView:mapView];
-    NSLog(@"%f, %f\n", touchMapCoordinate.latitude, touchMapCoordinate.longitude);
+    CLLocationCoordinate2D touchMapCoordinate = [mapView convertPoint:touchPoint toCoordinateFromView:mapView];
+//    NSLog(@"%f, %f\n", touchMapCoordinate.latitude, touchMapCoordinate.longitude);
+    CLLocationCoordinate2D gridCenter = [mapView convertPoint:[[gestureRecognizer  view] center] toCoordinateFromView:mapView];
+    
+    if([[gestureRecognizer view] isKindOfClass:[MKAnnotationView class]]){
+        NSLog(@"Center: %f, %f\n", gridCenter.latitude, gridCenter.longitude);    
+        
+        MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(gridCenter, METERS_PER_MILE/2, METERS_PER_MILE/2);
+        [mapView setRegion:[mapView regionThatFits:viewRegion] animated:YES];
+    }
+    
     
 }
 
--(void) overlayTapped:(UIGestureRecognizer*)gestureRecognizer {
-    //the subclass should also contain information about the center of the grid.  
-    NSLog(@"OVERLAY TAPPED YO\n");
-}
 
 
 -(void)searchBarSearchButtonClicked:(UISearchBar *)searchBar{
@@ -118,11 +143,6 @@
             //invalid color, don't do anything.  
             return nil;
         }
-        UITapGestureRecognizer* recognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(overlayTapped)]; 
-        recognizer.delegate=self;
-        recognizer.numberOfTapsRequired=2;
-        recognizer.numberOfTouchesRequired=1;
-        [view addGestureRecognizer:recognizer];
         return view;
         
     } else if ([overlay isKindOfClass:[MKPolyline class]]) {
@@ -132,6 +152,7 @@
         int color = polyline.color;
         view.strokeColor = [UIColor colorWithRed:(4-color)/4 green:color/4 blue:0 alpha:0.5];
         view.fillColor = [UIColor colorWithRed:(4-color)/4 green:color/4 blue:0 alpha:0.5];
+        
         return view;
     }else if([overlay isKindOfClass:[MKCircle class]]) {
         MKCircleView *circleView = [[MKCircleView alloc] initWithCircle:(MKCircle *)overlay];
@@ -148,6 +169,12 @@
             
         }
         circleView.lineWidth = 2;
+        UITapGestureRecognizer *tgr = [[UITapGestureRecognizer alloc] 
+                                       initWithTarget:self action:@selector(handleGesture:)];
+        tgr.numberOfTapsRequired = 3;
+        tgr.numberOfTouchesRequired = 1;
+        [self.mapView addGestureRecognizer:tgr];
+    
         return circleView;
     }
     return nil;
@@ -245,6 +272,7 @@
             MKPolygon *commuterPoly1 = [MKPolygon polygonWithCoordinates:testLotCoords count:5];
             [commuterPoly1 setColor:color];
             [self.mapView addOverlay:commuterPoly1];
+            [self.mapView addAnnotation:commuterPoly1]; 
         }
     }];
 }
@@ -342,7 +370,8 @@
                                    initWithTarget:self action:@selector(handleGesture:)];
     tgr.numberOfTapsRequired = 3;
     tgr.numberOfTouchesRequired = 1;
-    [mapView addGestureRecognizer:tgr];
+    //[mapView addGestureRecognizer:tgr];
+    
     
     //SETUP LOCATION manager
     locationManager=[[CLLocationManager alloc] init];
