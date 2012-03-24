@@ -19,7 +19,6 @@
 @synthesize destLat;
 @synthesize destLon;
 
-#define METERS_PER_MILE 1609.344
 
 
 
@@ -75,11 +74,20 @@
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     if(alertView.tag==GPS_LAUNCH_ALERT && alertView.firstOtherButtonIndex==buttonIndex){
-        //if yes, store the destination's lat/lon for return launch and start gps app.  
-        NSString* destinationCoordinates = [NSString stringWithFormat:@"http://maps.google.com/maps?q=%f %f", destLat, destLon];
+        //this URL kinda works.  http://maps.google.com/maps?daddr=Spot+1412@42,-73&saddr=Current+Location@42,-72
         
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:destinationCoordinates]];
+        //if yes, store the destination's lat/lon for return launch and start gps app.  
+        //NSString* destinationCoordinates = [NSString stringWithFormat:@"daddr=%@,%f, %f ,%@, %f,%f", @"Spot+1412", 42, -72, @"Current+Location", 42, -73];
+        NSString* testing =        [NSString stringWithFormat:@"%@ %@ %@ %@", @"test1", @"test2" @"test3", @"test4"];
+        
+       // [[UIApplication sharedApplication] openURL:[NSURL URLWithString:destinationCoordinates]];
+        
+        NSLog(@"%@\n", testing);
     }
+    
+}
+
+-(void) showGridLevelWithCoodinate:(CLLocationCoordinate2D*)coords{
     
 }
 
@@ -110,18 +118,10 @@
 
 }
 
--(void) zoomFromGridToBLockWithRegion:(MKCoordinateRegion*)reg{
-    //zoom to the region provided
-    [mapView setRegion:[mapView regionThatFits:(*reg)] animated:YES];
-    
-    //set zoom state to block level
-    ZOOM_STATE = ZOOM_BLOCK;
-    
-    //display overlays that are on the block level.  
-    [self showBlockLevelWithCoordinates:&((*reg).center)];
-}
 
 -(void) showSpotLevelWithCoordinates:(CLLocationCoordinate2D*)coords{
+    //remove old overlay items
+    [mapView removeOverlays:mapView.overlays];
     //load data from server or machine cache
     NSArray* data = [self loadSpotData];
     //draw them.
@@ -136,11 +136,21 @@
     
 }
 
+-(void) zoomFromGridToBLockWithRegion:(MKCoordinateRegion*)reg{
+    //zoom to the region provided
+    [mapView setRegion:[mapView regionThatFits:(*reg)] animated:YES];
+    
+    //set zoom state to block level
+    ZOOM_STATE = ZOOM_BLOCK;
+    
+    //display overlays that are on the block level.  
+    [self showBlockLevelWithCoordinates:&((*reg).center)];
+}
 
 //using the region to encompass the entire block selected.  
 -(void) zoomToSpotLevelWithCoordinates:(CLLocationCoordinate2D*)coords{
     //use coordinates provided o make region
-    MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(*coords, METERS_PER_MILE/16, METERS_PER_MILE/16);
+    MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(*coords, METERS_PER_MILE/32, METERS_PER_MILE/32);
     //zoom to the region
     [mapView setRegion:[mapView regionThatFits:viewRegion] animated:YES];
     //set zoom state to spot level
@@ -150,16 +160,41 @@
 }
 
 //called when zoom-out level event is triggered by user's pinching.  
--(void) zoomedOutToGridLevel{
+-(void) enterGridLevel{
+    ZOOM_STATE=ZOOM_GRID;
     //remove currently shown spots/blocks
-    
+    //[mapView removeOverlays:mapView.overlays];
     //reload grids that belong in the curent view.  
     
 }
 
--(void) zoomedOutToBlockLevel{
+-(void) enterBlockLevel{
+    ZOOM_STATE = ZOOM_BLOCK;
+    //remove spot level info
+    //[mapView removeOverlays:mapView.overlays];
+    //reload blocks.  
     
-    
+}
+-(void) enterSpotLevel{
+    ZOOM_STATE = ZOOM_SPOT;
+    //[mapView removeOverlays:mapView.overlays];
+
+}
+
+-(void) mapView:(MKMapView *)myMapView regionDidChangeAnimated:(BOOL)animated{
+    if(myMapView.region.span.latitudeDelta>=BLOCK_MAP_SPAN){
+        NSLog(@"GRID:currSpan: %f\n", myMapView.region.span.latitudeDelta);
+        //above block, in grid level.
+        [self enterGridLevel];
+    }else if (myMapView.region.span.latitudeDelta>=SPOT_MAP_SPAN){
+        //above spot, in block level. 
+        NSLog(@"Block:currSpan: %f\n", myMapView.region.span.latitudeDelta);
+        [self enterBlockLevel];
+    }else{
+        NSLog(@"currSpan: %f\n", myMapView.region.span.latitudeDelta);
+        //below block, in spot level.  
+        [self enterSpotLevel];
+    }
 }
 
 /***
@@ -237,26 +272,6 @@
     return nil;
 }
 
-
--(MKAnnotationView*) mapView:(MKMapView *)myMapView viewForAnnotation:(id<MKAnnotation>)annotation{
-    if([annotation isKindOfClass:[annotation class]]){
-        //Try to get an unused annotation, similar to uitableviewcells
-        MKAnnotationView *annotationView=[myMapView dequeueReusableAnnotationViewWithIdentifier:@"gridButton"];
-        if(!annotationView){
-            annotationView=[[MKAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"gridButton"];
-            annotationView.image=[UIImage imageNamed:@"border_anno.png"];
-        }
-        UITapGestureRecognizer *tgr = [[UITapGestureRecognizer alloc] 
-                                       initWithTarget:self action:@selector(handleGesture:)];
-        tgr.numberOfTapsRequired = 1;
-        tgr.numberOfTouchesRequired = 1;
-        [annotationView addGestureRecognizer:tgr];
-        return annotationView;
-    }
-    return nil;
-
-}
-
 - (void)handleGesture:(UIGestureRecognizer *)gestureRecognizer
 {
     if (gestureRecognizer.state != UIGestureRecognizerStateEnded)
@@ -300,6 +315,9 @@
         
     }else if (ZOOM_STATE==ZOOM_SPOT){
         //detect nearest spot, 
+        
+        //circleView.path may or may not contain it;
+        
         destLat= coord.latitude;
         destLat= coord.longitude;
         //ask user if that's desired destination
@@ -356,6 +374,7 @@
 }
 
 - (IBAction)gridButtonPressed:(id)sender {
+    NSLog(@"Grid Button Pressed\n" );
     ZOOM_STATE = ZOOM_GRID;
     [mapView removeOverlays:mapView.overlays];
     NSString* addr = @"Cambridge, MA";
@@ -398,8 +417,8 @@
             MKPolygon *commuterPoly1 = [MKPolygon polygonWithCoordinates:testLotCoords count:5];
             [commuterPoly1 setColor:color];
             [self.mapView addOverlay:commuterPoly1];
-            //[self.mapView addAnnotation:commuterPoly1]; 
-            NSLog(@"%f\n", mapView.region.span.latitudeDelta);
+            
+            
         }
     }];
 }
@@ -469,7 +488,7 @@
         span.longitudeDelta=.005;
         region.span=span;
         
-        [mapView setRegion:region animated:TRUE];
+//        [mapView setRegion:region animated:TRUE];
         
         [locationManager stopUpdatingLocation];
     }
@@ -483,8 +502,8 @@
 
 #pragma mark - View lifecycle
 
-- (void)viewDidLoad
-{
+- (void)viewDidLoad{
+    
     //check the current zoom level to set the ZOOM_STATE integer.  
     float zoomWidth = mapView.bounds.size.width;
     if(zoomWidth > BLOCK_MAP_SPAN){

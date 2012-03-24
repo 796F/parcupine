@@ -10,6 +10,8 @@
 #import <MapKit/MapKit.h>
 #import <CoreLocation/CoreLocation.h>
 
+
+#define METERS_PER_MILE 1609.344
 #define ZOOM_GRID 0
 #define ZOOM_BLOCK 1
 #define ZOOM_SPOT 2
