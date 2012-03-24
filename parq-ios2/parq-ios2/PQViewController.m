@@ -18,6 +18,34 @@
 
 #define METERS_PER_MILE 1609.344
 
+-(void) zoomToBLockWithCoordinates:(CLLocationCoordinate2D*)coords{
+    //zoom to the coordinates provided
+    
+    //remove all overlays, store them somewhere for when the user zooms out?
+    
+    //use information from the asynchronous server call/cache to draw blocks
+    
+}
+
+
+//using the region to encompass the entire block selected.  
+-(void) zoomToSpotLevelWithRegion:(CLRegion*)region{
+    //zoom to the block selected, 
+    
+    //remove all overlayls, store them somewhere for later?
+    
+    //load the spot information from the asynchronous server call/cache to draw blocks.  
+    
+}
+
+//called when zoom-out level event is triggered by user's pinching.  
+-(void) zoomedToGridLevel{
+    //remove currently shown spots/blocks
+    
+    //reload grids that belong in the curent view.  
+    
+}
+
 -(MKAnnotationView*) mapView:(MKMapView *)myMapView viewForAnnotation:(id<MKAnnotation>)annotation{
     if([annotation isKindOfClass:[annotation class]]){
         //Try to get an unused annotation, similar to uitableviewcells
@@ -31,8 +59,6 @@
         tgr.numberOfTapsRequired = 1;
         tgr.numberOfTouchesRequired = 1;
         [annotationView addGestureRecognizer:tgr];
-        CLLocationCoordinate2D center = [myMapView convertPoint: tgr.view.center toCoordinateFromView:myMapView];
-        NSLog(@"%f, %f\n", center.latitude, center.longitude);
         return annotationView;
     }
     return nil;
@@ -43,19 +69,64 @@
 {
     if (gestureRecognizer.state != UIGestureRecognizerStateEnded)
         return;
-    
+    //grab the point the user tapped, but in the mapView's perspective.  
     CGPoint touchPoint = [gestureRecognizer locationInView:mapView];
-    CLLocationCoordinate2D touchMapCoordinate = [mapView convertPoint:touchPoint toCoordinateFromView:mapView];
-//    NSLog(@"%f, %f\n", touchMapCoordinate.latitude, touchMapCoordinate.longitude);
-    CLLocationCoordinate2D gridCenter = [mapView convertPoint:[[gestureRecognizer  view] center] toCoordinateFromView:mapView];
-    
-    if([[gestureRecognizer view] isKindOfClass:[MKAnnotationView class]]){
-        NSLog(@"Center: %f, %f\n", gridCenter.latitude, gridCenter.longitude);    
+    //convert that to lat/lon in the map view's perspective.  
+    CLLocationCoordinate2D coord = [self.mapView convertPoint:touchPoint toCoordinateFromView:self.mapView];
+    //convert those lat/lon into an MKmapPoint.  
+    MKMapPoint mapPoint = MKMapPointForCoordinate(coord);
+    //for each overlay item that the map has loaded...
+    for(id overlay in self.mapView.overlays){
+        //get reference to the MKPolygonView object
+        id view = [self.mapView viewForOverlay:overlay];
+        MKPolygonView *polyView = (MKPolygonView*)view;
+        //get the touch point in the polygon view's perspective?
+        CGPoint polygonViewPoint = [polyView pointForMapPoint:mapPoint];
+        //now that it's in the polygon view's perspective, we can check if it's contained.  
         
-        MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(gridCenter, METERS_PER_MILE/2, METERS_PER_MILE/2);
-        [mapView setRegion:[mapView regionThatFits:viewRegion] animated:YES];
+        BOOL mapCoordinateIsInPolygon = CGPathContainsPoint(polyView.path, NULL, polygonViewPoint, NO);   
+        //BUG this contains thing is including an area even above the polygon.  
+        
+        if (mapCoordinateIsInPolygon) {
+            //thus if contained...
+            //get CLLocationCoordinate2D or MKCoordinateRegion
+            MKCoordinateRegion reg = [mapView convertRect:polyView.bounds toRegionFromView:polyView];
+            
+        //    MKCoordinateRegion reg = MKCoordinateRegionMakeWithDistance(coord, METERS_PER_MILE/2, METERS_PER_MILE/2);
+            [mapView setRegion:[mapView regionThatFits:reg] animated:YES];
+
+            [mapView setRegion:MKCoordinateRegionMakeWithDistance(mapView.centerCoordinate, METERS_PER_MILE/2, METERS_PER_MILE/2) animated:YES];
+        }
+        
     }
     
+    /*
+     UITouch *touch = [touches anyObject];
+     CGPoint point = [touch locationInView:self.mapView];
+     
+     CLLocationCoordinate2D coord = [self.mapView convertPoint:point toCoordinateFromView:self.mapView];
+     MKMapPoint mapPoint = MKMapPointForCoordinate(coord);
+     for (id overlay in self.mapView.overlays) 
+     {
+     if ([overlay isKindOfClass:[MKPolygon class]])
+     {
+     MKPolygon *poly = (MKPolygon*) overlay;
+     id view = [self.mapView viewForOverlay:poly];
+     if ([view isKindOfClass:[MKPolygonView class]])
+     {
+     MKPolygonView *polyView = (MKPolygonView*) view;
+     CGPoint polygonViewPoint = [polyView pointForMapPoint:mapPoint];
+     BOOL mapCoordinateIsInPolygon = CGPathContainsPoint(polyView.path, NULL, polygonViewPoint, NO);   
+     if (mapCoordinateIsInPolygon) {
+     debug(@"hit!") 
+     } else {
+     debug(@"miss!");   
+     }
+     }
+     }
+     }
+     
+     */
     
 }
 
@@ -107,10 +178,12 @@
  * blue,cyan,yellow,magenta,orange,purple,brown
  ***/
 
--(MKOverlayView *)mapView:(MKMapView *)mapView viewForOverlay:(id<MKOverlay>)overlay{
+-(MKOverlayView *)mapView:(MKMapView *)myMapView viewForOverlay:(id<MKOverlay>)overlay{
     if([overlay isKindOfClass:[MKPolygon class]]){
+        
         MKPolygon* casted = (MKPolygon*) overlay;
-        MKPolygonView *view = [[MKPolygonView alloc] initWithOverlay:overlay];
+        
+        MKPolygonView *view = [[MKPolygonView alloc] initWithOverlay:casted];
         view.lineWidth=1;
         //grab the color from the subclass
         int color = casted.color;
@@ -169,12 +242,6 @@
             
         }
         circleView.lineWidth = 2;
-        UITapGestureRecognizer *tgr = [[UITapGestureRecognizer alloc] 
-                                       initWithTarget:self action:@selector(handleGesture:)];
-        tgr.numberOfTapsRequired = 3;
-        tgr.numberOfTouchesRequired = 1;
-        [self.mapView addGestureRecognizer:tgr];
-    
         return circleView;
     }
     return nil;
@@ -272,7 +339,7 @@
             MKPolygon *commuterPoly1 = [MKPolygon polygonWithCoordinates:testLotCoords count:5];
             [commuterPoly1 setColor:color];
             [self.mapView addOverlay:commuterPoly1];
-            [self.mapView addAnnotation:commuterPoly1]; 
+            //[self.mapView addAnnotation:commuterPoly1]; 
         }
     }];
 }
@@ -368,10 +435,9 @@
     //setup gesture recognizer for grids and blocks and spots.  
     UITapGestureRecognizer *tgr = [[UITapGestureRecognizer alloc] 
                                    initWithTarget:self action:@selector(handleGesture:)];
-    tgr.numberOfTapsRequired = 3;
+    tgr.numberOfTapsRequired = 1;
     tgr.numberOfTouchesRequired = 1;
-    //[mapView addGestureRecognizer:tgr];
-    
+    [mapView addGestureRecognizer:tgr];
     
     //SETUP LOCATION manager
     locationManager=[[CLLocationManager alloc] init];
