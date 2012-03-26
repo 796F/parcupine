@@ -69,13 +69,22 @@ CREATE TABLE parkinglocation
  client_id BIGINT NOT NULL,
  grid_id BIGINT NOT NULL,
  location_name TEXT(64),
- latitude DOUBLE NOT NULL,
- longitude DOUBLE NOT NULL,
+ location_type TEXT(64),
  is_deleted BOOLEAN DEFAULT FALSE,
  lastupdatedatetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
  PRIMARY KEY (location_id),
  FOREIGN KEY (client_id) references client(client_id),
  FOREIGN KEY (grid_id) references parkinggrid(grid_id));
+ 
+CREATE TABLE geopoint
+(geopoint_id BIGINT NOT NULL AUTO_INCREMENT,
+ location_id BIGINT NOT NULL,
+ latitude DOUBLE NOT NULL,
+ longitude DOUBLE NOT NULL,
+ sort_order INT NOT NULL,
+ lastupdatedatetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+ PRIMARY KEY (geopoint_id),
+ FOREIGN KEY (location_id) references parkinglocation(location_id));
  
 CREATE TABLE parkingspace
 (space_id BIGINT NOT NULL AUTO_INCREMENT,

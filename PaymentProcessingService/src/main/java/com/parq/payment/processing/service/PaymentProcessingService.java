@@ -2,39 +2,16 @@ package com.parq.payment.processing.service;
 
 import java.util.Map;
 
+import com.parq.server.dao.model.object.PaymentAccount;
 import com.parq.server.dao.model.object.User;
 
-public class PaymentProcessingService {
+public interface PaymentProcessingService {
 
+	public PaymentProcessingResponse processParkingPayment(long userId, long spaceId, int amountToCharge);
 	
-	public PaymentStatus processParkingPayment(long userId, long spaceId, int amountToCharge) {
-		
-		// TODO
-		return null;
-	}
+	public Map<User, PaymentProcessingResponse> settleAllBatchPayments(long clientId);
+
+	public PaymentProcessingResponse processNormalPayment(long userId, long spaceId, int amountToCharge);
 	
-	public Map<User, PaymentStatus> settleAllBatchPayments() {
-		// TODO
-		return null;
-	}
-	
-	private PaymentStatus processBatchPayment() {
-		// TODO
-		return PaymentStatus.InvalidPaymentMethod;
-	}
-	
-	private PaymentStatus processPrefilledPayment() {
-		// TODO
-		return PaymentStatus.InvalidPaymentMethod;
-	}
-	
-	private PaymentStatus processNormalPayment() {
-		// TODO
-		return PaymentStatus.InvalidPaymentMethod;
-	}
-	
-	private PaymentStatus refillCredit() {
-		// TODO
-		return PaymentStatus.InvalidPaymentMethod;
-	}
+	public PaymentProcessingResponse refillCredit(PaymentAccount paymentAccount, int amountToRecharge);
 }

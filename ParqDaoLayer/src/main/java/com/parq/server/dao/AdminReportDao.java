@@ -265,6 +265,14 @@ public class AdminReportDao extends AbstractParqDaoParent {
 		report.getPaymentEntries().clear();
 		// then we add all the consolidated entry into the report's entry
 		report.getPaymentEntries().addAll(consolidatedPayments);
+		
+		Collections.sort(report.getPaymentEntries(), new Comparator<UserPaymentEntry>(){
+			@Override
+			public int compare(UserPaymentEntry arg0, UserPaymentEntry arg1) {
+				return (int)(arg0.getPaymentId() - arg1.getPaymentId());
+			}
+			
+		});
 		return report;
 	}
 

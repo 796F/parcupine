@@ -16,6 +16,7 @@ import com.parq.server.dao.PaymentAccountDao;
 import com.parq.server.dao.UserDao;
 import com.parq.server.dao.exception.DuplicateEmailException;
 import com.parq.server.dao.model.object.Admin;
+import com.parq.server.dao.model.object.GeoPoint;
 import com.parq.server.dao.model.object.ParkingInstance;
 import com.parq.server.dao.model.object.ParkingLocation;
 import com.parq.server.dao.model.object.ParkingLocationUsageReport;
@@ -33,6 +34,7 @@ import com.parq.web.model.ParkingReport;
 import com.parq.web.model.ParkingSpaceStatus;
 import com.parq.web.model.UserRegistration;
 import com.parq.web.model.WebClient;
+import com.parq.web.model.WebGeoPoint;
 import com.parq.web.model.WebParkingLocation;
 import com.parq.web.model.WebPaymentAccount;
 import com.parq.web.model.WebUser;
@@ -494,15 +496,32 @@ public class ParqWebServiceImpl implements ParqWebService{
 				centerPointLong - precision, centerPointLong + precision);
 		
 		if (geoLocations != null) {
-			for (ParkingLocation geoLoc: geoLocations) {
+			for (ParkingLocation parkingLoc: geoLocations) {
 				WebParkingLocation parkLoc = new WebParkingLocation();
-				parkLoc.setLatitude(geoLoc.getLatitude());
-				parkLoc.setLongitude(geoLoc.getLongitude());
-				parkLoc.setLocationName(geoLoc.getLocationIdentifier());
-				
+				WebGeoPoint webGeoPoint = getCenterGeoLocation(parkingLoc);
+				parkLoc.setLatitude(webGeoPoint.getLatitude());
+				parkLoc.setLongitude(webGeoPoint.getLongitude());
+				parkLoc.setLocationName(parkingLoc.getLocationIdentifier());
+
 				parkingLocations.add(parkLoc);
 			}
 		}
 		return parkingLocations;
+	}
+
+
+	private WebGeoPoint getCenterGeoLocation(ParkingLocation parkingLoc) {
+		double avgLat = 0.0;
+		double avgLong = 0.0;
+		
+		for (GeoPoint gp : parkingLoc.getGeoPoints()) {
+			avgLat += gp.getLatitude();
+			avgLong += gp.getLongitude();
+		}
+		
+		avgLat = avgLat / parkingLoc.getGeoPoints().size();
+		avgLong = avgLong / parkingLoc.getGeoPoints().size();
+		
+		return new WebGeoPoint(avgLat, avgLong);
 	}
 }

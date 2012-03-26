@@ -1,5 +1,7 @@
 package com.parq.server.dao.support;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -8,6 +10,7 @@ import com.parq.server.dao.ParkingLocationDao;
 import com.parq.server.dao.PaymentAccountDao;
 import com.parq.server.dao.UserDao;
 import com.parq.server.dao.model.object.AdminRole;
+import com.parq.server.dao.model.object.GeoPoint;
 import com.parq.server.dao.model.object.Grid;
 import com.parq.server.dao.model.object.ParkingInstance;
 import com.parq.server.dao.model.object.ParkingLocation;
@@ -66,18 +69,28 @@ public final class SupportScriptForDaoTesting {
 			parkingLocationDao.createGrid(testGridIdentifier, 1.1, 2.1);
 			
 			// insert 3 new parking locations
+			GeoPoint mainLocationGeoPoint = new GeoPoint(parkingLocationMainLatitude, parkingLocationMainLongtitude);
 			parkingLocationDao.createLocation(parkingLocationNameMain, 
 					clientDao.getClientByName(clientNameMain).getId(), 
 					parkingLocationDao.getAllGrids().get(0).getGridId(), "TestParkingLocation", 
-					parkingLocationMainLatitude, parkingLocationMainLongtitude);
+					fakeParkingLocationType, Collections.singletonList(mainLocationGeoPoint)); 
+			
+			GeoPoint fakeLocation1GeoPoint = new GeoPoint(fakeParkingLocation1Latitude, fakeParkingLocation1Longtitude);
 			parkingLocationDao.createLocation(fakeParkingLocation1, 
 					clientDao.getClientByName(fakeClient1).getId(), 
-					parkingLocationDao.getAllGrids().get(0).getGridId(), "TestParkingLocation", 
-					fakeParkingLocation1Latitude, fakeParkingLocation1Longtitude);
+					parkingLocationDao.getAllGrids().get(0).getGridId(), "TestParkingLocation",
+					fakeParkingLocationType, Collections.singletonList(fakeLocation1GeoPoint));
+			
+			GeoPoint fakeLocation2GeoPoint = new GeoPoint(fakeParkingLocation2Latitude, fakeParkingLocation2Longtitude);
+			fakeLocation2GeoPoint.setSortOrder(1);
+			fakeLocation1GeoPoint.setSortOrder(2);
+			List<GeoPoint> fakeLocation2GeoPoints = new ArrayList<GeoPoint>();
+			fakeLocation2GeoPoints.add(fakeLocation2GeoPoint);
+			fakeLocation2GeoPoints.add(fakeLocation1GeoPoint);
 			parkingLocationDao.createLocation(fakeParkingLocation2, 
 					clientDao.getClientByName(fakeClient1).getId(), 
-					parkingLocationDao.getAllGrids().get(0).getGridId(), "TestParkingLocation", 
-					fakeParkingLocation2Latitude, fakeParkingLocation2Longtitude);
+					parkingLocationDao.getAllGrids().get(0).getGridId(), "TestParkingLocation",
+					fakeParkingLocationType, fakeLocation2GeoPoints);
 
 			// insert 10 test parking spaces
 			testDao.insertParkingSpace(parkingLocationNameMain, spaceNameMain, "1", "space name 1", parkingLocationMainLatitude, parkingLocationMainLongtitude);
@@ -260,6 +273,8 @@ public final class SupportScriptForDaoTesting {
 	
 	public static double fakeParkingLocation2Latitude = 0.50;
 	public static double fakeParkingLocation2Longtitude = 5.00;
+	
+	public static String fakeParkingLocationType = "TestParkingType";
 	
 	public static String spaceNameMain2 = "2210";
 	public static String spaceNameMain3 = "3315";
