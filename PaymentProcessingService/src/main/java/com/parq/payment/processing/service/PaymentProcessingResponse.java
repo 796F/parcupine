@@ -25,6 +25,6 @@ public class PaymentProcessingResponse {
 	}
 
 	public enum PaymentStatus {
-		OK, InsufficentFund, NoCreditCardOnRecord, InvalidPaymentMethod;
+		OK, InsufficentFund, NoCreditCardOnRecord, InvalidCreditCard, CreditCardExpired, InvalidPaymentMethod;
 	}
 }
