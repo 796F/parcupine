@@ -6,11 +6,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 
+import com.parq.server.dao.model.object.GeoPoint;
 import com.parq.server.dao.model.object.Grid;
 import com.parq.server.dao.model.object.ParkingLocation;
 
@@ -30,28 +32,38 @@ public class ParkingLocationDao extends AbstractParqDaoParent {
 	private static final String locationIdCache = "getLocationById:";
 	
 	private static final String sqlSelectLocationPiece = 
-		"SELECT pl.location_id, pl.latitude, pl.longitude, pl.location_identifier, pl.client_id" +
-		" FROM parkinglocation AS pl" +
-		" WHERE pl.is_deleted IS NOT TRUE ";
+		"SELECT pl.grid_id, pl.location_id, pl.location_identifier, pl.client_id, pl.location_type, " +
+		"		gp.latitude, gp.longitude, gp.sort_order " +
+		" FROM parkinglocation AS pl, geopoint AS gp" +
+		" WHERE pl.is_deleted IS NOT TRUE " +
+		" AND pl.location_id = gp.location_id "; 
+	
+	private static final String sqlParkingLocationOrderBy = 
+		" ORDER BY pl.location_id";
 	
 	private static final String sqlGetParkingLocationByBoundingBox = 
-		sqlSelectLocationPiece +
-		" AND pl.latitude > ? " +
-		" AND pl.latitude < ? " +
-		" AND pl.longitude > ? " +
-		" AND pl.longitude < ? ";
+		sqlSelectLocationPiece + " AND pl.location_id IN ( " +
+		" SELECT  gp2.location_id " +
+		" 	FROM geopoint AS gp2 " +
+		" 	WHERE gp2.latitude > ? " +
+		" 	AND   gp2.latitude < ? " +
+		" 	AND   gp2.longitude > ? " +
+		" 	AND   gp2.longitude < ? )" +
+		sqlParkingLocationOrderBy;
 	
 	private static final String sqlGetParkingLocationById =
 		sqlSelectLocationPiece +
-		" AND pl.location_id = ? ";
+		" AND pl.location_id = ? " +
+		sqlParkingLocationOrderBy;
 	
 	private static final String sqlCreateLocation = 
-		"INSERT INTO parkinglocation (location_identifier, client_id, grid_id, location_name, latitude, longitude) " +
-		" VALUES (?, ?, ?, ?, ?, ?)";
+		"INSERT INTO parkinglocation (location_identifier, client_id, grid_id, location_name, location_type) " +
+		" VALUES (?, ?, ?, ?, ?)";
 	
 	private static final String sqlGetParkingLocationByLocationIdentifier = 
 		sqlSelectLocationPiece +
-		" AND pl.location_identifier = ? ";
+		" AND pl.location_identifier = ? " +
+		sqlParkingLocationOrderBy;
 	
 	private static final String sqlCreateGrid = 
 		"INSERT INTO parkinggrid (grid_name, latitude, longitude) " +
@@ -71,6 +83,10 @@ public class ParkingLocationDao extends AbstractParqDaoParent {
 		"SELECT grid_id, latitude, longitude FROM parkinggrid " +
 		" WHERE is_deleted IS NOT TRUE" +
 		" AND grid_id = ?";
+	
+	private final String sqlAddGeoPointForLocation = 
+		"INSERT INTO geopoint (location_id, latitude, longitude, sort_order) " +
+		" VALUES((SELECT MAX(location_id) FROM parkinglocation), ?, ?, ?)";
 
 	public ParkingLocationDao() {
 		super();
@@ -96,11 +112,11 @@ public class ParkingLocationDao extends AbstractParqDaoParent {
 		
 		String cacheKey = cacheKeyBuilder.toString();
 		
-		List<ParkingLocation> geoLocations = null;
+		List<ParkingLocation> parkingLocations = null;
 		Element cacheEntry = myCache.get(cacheKey); 
 		if (cacheEntry  != null) {
-			geoLocations = (List<ParkingLocation>) cacheEntry.getValue();
-			return geoLocations;
+			parkingLocations = (List<ParkingLocation>) cacheEntry.getValue();
+			return parkingLocations;
 		}
 
 		// query the DB for the parking location
@@ -115,7 +131,7 @@ public class ParkingLocationDao extends AbstractParqDaoParent {
 			pstmt.setDouble(4, longitudeMax);
 			ResultSet rs = pstmt.executeQuery();
 
-			geoLocations = createParkingLocationList(rs);
+			parkingLocations = createParkingLocationModelObjectList(rs);
 
 		} catch (SQLException sqle) {
 			System.out.println("SQL statement is invalid: " + pstmt);
@@ -126,13 +142,14 @@ public class ParkingLocationDao extends AbstractParqDaoParent {
 		}
 
 		// put result into cache
-		myCache.put(new Element(cacheKey, geoLocations));
+		myCache.put(new Element(cacheKey, parkingLocations));
 		
-		return geoLocations;
+		return parkingLocations;
 	}
 	
-	public ParkingLocation getLocationById(long locationId)
-	{
+
+
+	public ParkingLocation getLocationById(long locationId) {
 		String cacheKey = locationIdCache + locationId;
 		ParkingLocation result = null;
 		Element cacheEntry = myCache.get(cacheKey); 
@@ -151,7 +168,6 @@ public class ParkingLocationDao extends AbstractParqDaoParent {
 			ResultSet rs = pstmt.executeQuery();
 			
 			if (rs != null && rs.isBeforeFirst()) {
-				rs.next();
 				result = createParkingLocationModelObject(rs);
 			}
 
@@ -168,31 +184,55 @@ public class ParkingLocationDao extends AbstractParqDaoParent {
 		
 		return result;
 	}
-
-	private List<ParkingLocation> createParkingLocationList(ResultSet rs) throws SQLException {
+	
+	
+	private List<ParkingLocation> createParkingLocationModelObjectList(
+			ResultSet rs) throws SQLException {
 		if (rs == null || !rs.isBeforeFirst()) {
 			return Collections.emptyList();
 		}
-		List<ParkingLocation> geoLocationList = new ArrayList<ParkingLocation>();
-
+		
+		List<ParkingLocation> parkingLocationList = new ArrayList<ParkingLocation>();
+		long lastLocationId = -1;
+		ParkingLocation parkingLocation = null;
+		
 		while (rs.next()) {
-			geoLocationList.add(createParkingLocationModelObject(rs));
-		}		
-		return geoLocationList;
-	}
-	
-	private ParkingLocation createParkingLocationModelObject(ResultSet rs) throws SQLException {
-		if (rs == null) {
-			return null;
+			long curLocationId = rs.getLong("location_id");
+			if (lastLocationId != curLocationId) {
+				// create the parking location
+				parkingLocation = new ParkingLocation();
+				parkingLocation.setLocationId(curLocationId);
+				parkingLocation.setLocationIdentifier(rs.getString("location_identifier"));
+				parkingLocation.setLocationType(rs.getString("location_type"));
+				parkingLocation.setClientId(rs.getLong("client_id"));
+				
+				lastLocationId = curLocationId;
+				parkingLocationList.add(parkingLocation);
+			}
+			// set up the GeoPoint
+			GeoPoint gp = new GeoPoint();
+			gp.setLatitude(rs.getDouble("latitude"));
+			gp.setLongitude(rs.getDouble("longitude"));
+			gp.setSortOrder(rs.getInt("sort_order"));
+			// add the geo point to the parking location
+			parkingLocation.getGeoPoints().add(gp);
 		}
 		
-		ParkingLocation parkingLocation = new ParkingLocation();
-		parkingLocation.setLocationId(rs.getLong("location_id"));
-		parkingLocation.setLocationIdentifier(rs.getString("location_identifier"));
-		parkingLocation.setLatitude(rs.getDouble("latitude"));
-		parkingLocation.setLongitude(rs.getDouble("longitude"));
+		// sort the geo points
+		GeoPointComparator geoPointComparator = new GeoPointComparator();
+		for (ParkingLocation pl : parkingLocationList) {
+			Collections.sort(pl.getGeoPoints(), geoPointComparator);
+		}
 		
-		return parkingLocation;
+		return parkingLocationList;
+	}
+
+	private ParkingLocation createParkingLocationModelObject(ResultSet rs) throws SQLException {
+		List <ParkingLocation> parkingLocations = createParkingLocationModelObjectList(rs);
+		if (parkingLocations.isEmpty()) {
+			return null;
+		}
+		return parkingLocations.get(0);
 	}
 	
 	/**
@@ -205,11 +245,12 @@ public class ParkingLocationDao extends AbstractParqDaoParent {
 	}
 	
 	public boolean createLocation(String locationIdentifier, long clientId, 
-			long gridId, String locationName, double latitude, double longitude) {
+			long gridId, String locationName, String locationType,  List<GeoPoint> geoPoints) {
 		if (locationIdentifier == null || locationIdentifier.isEmpty() 
 				|| clientId <= 0 || gridId <= 0
 				|| locationName == null || locationName.isEmpty()
-				|| latitude == 0.00 || longitude == 0.00) {
+				|| locationType == null || locationType.isEmpty()
+				|| geoPoints == null || geoPoints.isEmpty()) {
 			throw new IllegalStateException("Invalid parking location create request");
 		}
 
@@ -220,25 +261,51 @@ public class ParkingLocationDao extends AbstractParqDaoParent {
 		boolean newLocationCreated = false;
 		try {
 			con = getConnection();
+			con.setAutoCommit(false);
 			pstmt = con.prepareStatement(sqlCreateLocation);
 			pstmt.setString(1, locationIdentifier);
 			pstmt.setLong(2, clientId);
 			pstmt.setLong(3, gridId);
 			pstmt.setString(4, locationName);
-			pstmt.setDouble(5, latitude);
-			pstmt.setDouble(6, longitude);
+			pstmt.setString(5, locationType);
 			newLocationCreated = pstmt.executeUpdate() == 1;
+			
+			for (int i = 0; i < geoPoints.size() && newLocationCreated; i++) {
+				newLocationCreated = insertGeoPoints(con, geoPoints.get(i));
+			}
 
+			if (!newLocationCreated) {
+				con.rollback();
+			} else {
+				con.commit();
+			}
+			
 		} catch (SQLException sqle) {
+			try {
+				con.rollback();
+			} catch (SQLException e) {}
+			
 			System.out.println("SQL statement is invalid: " + pstmt);
 			sqle.printStackTrace();
 			throw new RuntimeException(sqle);
 		} finally {
+			try {
+				con.setAutoCommit(true);
+			} catch (SQLException e) {}
+			
 			closeConnection(con);
 		}
 		return newLocationCreated;
 	}
 	
+	private boolean insertGeoPoints(Connection con, GeoPoint geoPoint) throws SQLException {
+		PreparedStatement pstmt = con.prepareStatement(sqlAddGeoPointForLocation);
+		pstmt.setDouble(1, geoPoint.getLatitude());
+		pstmt.setDouble(2, geoPoint.getLongitude());
+		pstmt.setInt(3, geoPoint.getSortOrder());
+		return pstmt.executeUpdate() == 1;
+	}
+
 	public ParkingLocation getParkingLocationByLocationIdentifier(String identifer) {
 		
 		ParkingLocation result = null;
@@ -252,7 +319,6 @@ public class ParkingLocationDao extends AbstractParqDaoParent {
 			ResultSet rs = pstmt.executeQuery();
 			
 			if (rs != null && rs.isBeforeFirst()) {
-				rs.next();
 				result = createParkingLocationModelObject(rs);
 			}
 		} catch (SQLException sqle) {
@@ -409,5 +475,13 @@ public class ParkingLocationDao extends AbstractParqDaoParent {
 			closeConnection(con);
 		}
 		return locationDeleted;
+	}
+	
+	private class GeoPointComparator implements Comparator<GeoPoint>{
+		@Override
+		public int compare(GeoPoint arg0, GeoPoint arg1) {
+			return arg0.getSortOrder() - arg1.getSortOrder();
+		}
+		
 	}
 }

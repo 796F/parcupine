@@ -19,9 +19,10 @@ public class ParkingLocation implements Serializable {
 	private long locationId = -1;
 	private String locationIdentifier;
 	private long clientId;
-	private double Latitude = -10000.00;
-	private double Longitude = -10000.00;
+	private String locationType;
 	private int fillRate = 101;
+	
+	private List<GeoPoint> geoPoints;
 	
 	private List<ParkingSpace> spaces;
 	
@@ -29,6 +30,7 @@ public class ParkingLocation implements Serializable {
 	public ParkingLocation()
 	{
 		spaces = new ArrayList<ParkingSpace>();
+		geoPoints = new ArrayList<GeoPoint>();
 	}
 	
 	/**
@@ -76,34 +78,6 @@ public class ParkingLocation implements Serializable {
 	}
 
 	/**
-	 * @return the latitude
-	 */
-	public double getLatitude() {
-		return Latitude;
-	}
-
-	/**
-	 * @param latitude the latitude to set
-	 */
-	public void setLatitude(double latitude) {
-		Latitude = latitude;
-	}
-
-	/**
-	 * @return the longitude
-	 */
-	public double getLongitude() {
-		return Longitude;
-	}
-
-	/**
-	 * @param longitude the longitude to set
-	 */
-	public void setLongitude(double longitude) {
-		Longitude = longitude;
-	}
-
-	/**
 	 * @param fillRate the fillRate to set
 	 */
 	public void setFillRate(int fillRate) {
@@ -115,6 +89,27 @@ public class ParkingLocation implements Serializable {
 	 */
 	public int getFillRate() {
 		return fillRate;
+	}
+	
+	/**
+	 * @return the geoPoints
+	 */
+	public List<GeoPoint> getGeoPoints() {
+		return geoPoints;
+	}
+
+	/**
+	 * @param locationType the locationType to set
+	 */
+	public void setLocationType(String locationType) {
+		this.locationType = locationType;
+	}
+
+	/**
+	 * @return the locationType
+	 */
+	public String getLocationType() {
+		return locationType;
 	}
 	
 }
