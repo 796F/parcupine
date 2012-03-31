@@ -17,9 +17,6 @@
                                 <rect key="frame" x="0.0" y="44" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                 <textInputTraits key="textInputTraits"/>
-                                <connections>
-                                    <outlet property="delegate" destination="2" id="Tz8-xN-c0t"/>
-                                </connections>
                             </searchBar>
                             <navigationBar contentMode="scaleToFill" id="fjI-yr-Mdn">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -106,7 +103,6 @@
                 <searchDisplayController id="3d1-uH-OtI">
                     <connections>
                         <outlet property="delegate" destination="2" id="QBZ-dX-Itc"/>
-                        <outlet property="searchBar" destination="21T-mb-eh9" id="QP0-x4-bwO"/>
                         <outlet property="searchContentsController" destination="2" id="h85-UH-3N5"/>
                         <outlet property="searchResultsDataSource" destination="2" id="n35-oo-xxn"/>
                         <outlet property="searchResultsDelegate" destination="2" id="BmK-3Y-bax"/>

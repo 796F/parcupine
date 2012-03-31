@@ -19,8 +19,9 @@
 @synthesize destLat;
 @synthesize destLon;
 
-
-
+-(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    NSLog(@"hello\n");
+}
 
 - (NSArray*)loadGridData {
     return [NSArray arrayWithObjects:
@@ -77,18 +78,9 @@
         //this URL kinda works.  http://maps.google.com/maps?daddr=Spot+1412@42,-73&saddr=Current+Location@42,-72
         
         //if yes, store the destination's lat/lon for return launch and start gps app.  
-        //NSString* destinationCoordinates = [NSString stringWithFormat:@"daddr=%@,%f, %f ,%@, %f,%f", @"Spot+1412", 42, -72, @"Current+Location", 42, -73];
-        NSString* testing =        [NSString stringWithFormat:@"%@ %@ %@ %@", @"test1", @"test2" @"test3", @"test4"];
-        
-       // [[UIApplication sharedApplication] openURL:[NSURL URLWithString:destinationCoordinates]];
-        
-        NSLog(@"%@\n", testing);
+        NSString* destination =[NSString stringWithFormat:@"http://maps.google.com/maps?daddr=Spot+%d@%1.2f,%1.2f&saddr=Current+Location@%1.2f,%1.2f", 1412, 41.343, -74.115, 43.124, -72.31552];
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:destination]];
     }
-    
-}
-
--(void) showGridLevelWithCoodinate:(CLLocationCoordinate2D*)coords{
-    
 }
 
 -(void) showBlockLevelWithCoordinates:(CLLocationCoordinate2D*)coords{
@@ -407,10 +399,13 @@
             array = [[element objectForKey:@"nw_corner"]componentsSeparatedByString:@","];
             CLLocationCoordinate2D se_point = CLLocationCoordinate2DMake([[array objectAtIndex:0] floatValue], [[array objectAtIndex:1] floatValue]);
             
+            //calculate actual se_point using haversine.  
+            
             int color = [[element objectForKey:@"color"] intValue];
             
             CLLocationCoordinate2D ne_point = CLLocationCoordinate2DMake(nw_point.latitude ,se_point.longitude);
             CLLocationCoordinate2D sw_point = CLLocationCoordinate2DMake(se_point.latitude ,nw_point.longitude);
+            
             
             CLLocationCoordinate2D testLotCoords[5]={nw_point, ne_point, se_point, sw_point, nw_point};
             
@@ -519,6 +514,7 @@
     
     [super viewDidLoad];
     searchBar.delegate = self;
+    
 	
     // Do any additional setup after loading the view, typically from a nib.
     mapView.delegate=self;
