@@ -20,6 +20,7 @@
 		8703ACD81513FC32002FE357 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 8703ACD71513FC32002FE357 /* icon.png */; };
 		8703ACDA1513FC36002FE357 /* icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8703ACD91513FC36002FE357 /* icon@2x.png */; };
 		871E20FE152CD54C00D9452A /* UIColor+Parq.m in Sources */ = {isa = PBXBuildFile; fileRef = 871E20FD152CD54C00D9452A /* UIColor+Parq.m */; };
+		871E2102152CDD5200D9452A /* MKCircle+Color.m in Sources */ = {isa = PBXBuildFile; fileRef = 871E2101152CDD5200D9452A /* MKCircle+Color.m */; };
 		8730EB19151BBB3A00E7A7F8 /* MKPolygon+Color.m in Sources */ = {isa = PBXBuildFile; fileRef = 8730EB18151BBB3A00E7A7F8 /* MKPolygon+Color.m */; };
 		8730EB1D151BBB8F00E7A7F8 /* MKPolyline+Color.m in Sources */ = {isa = PBXBuildFile; fileRef = 8730EB1C151BBB8E00E7A7F8 /* MKPolyline+Color.m */; };
 		8730EB23151BBD1500E7A7F8 /* libobjc.A.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8730EB22151BBD1500E7A7F8 /* libobjc.A.dylib */; };
@@ -45,6 +46,8 @@
 		8703ACD91513FC36002FE357 /* icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon@2x.png"; sourceTree = "<group>"; };
 		871E20FC152CD54C00D9452A /* UIColor+Parq.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+Parq.h"; sourceTree = "<group>"; };
 		871E20FD152CD54C00D9452A /* UIColor+Parq.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Parq.m"; sourceTree = "<group>"; };
+		871E2100152CDD5200D9452A /* MKCircle+Color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MKCircle+Color.h"; sourceTree = "<group>"; };
+		871E2101152CDD5200D9452A /* MKCircle+Color.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MKCircle+Color.m"; sourceTree = "<group>"; };
 		8730EB17151BBB3A00E7A7F8 /* MKPolygon+Color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MKPolygon+Color.h"; sourceTree = "<group>"; };
 		8730EB18151BBB3A00E7A7F8 /* MKPolygon+Color.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MKPolygon+Color.m"; sourceTree = "<group>"; };
 		8730EB1B151BBB8E00E7A7F8 /* MKPolyline+Color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MKPolyline+Color.h"; sourceTree = "<group>"; };
@@ -103,6 +106,8 @@
 		8703ACB01513F841002FE357 /* parq-ios2 */ = {
 			isa = PBXGroup;
 			children = (
+				871E2100152CDD5200D9452A /* MKCircle+Color.h */,
+				871E2101152CDD5200D9452A /* MKCircle+Color.m */,
 				8730EB17151BBB3A00E7A7F8 /* MKPolygon+Color.h */,
 				8730EB18151BBB3A00E7A7F8 /* MKPolygon+Color.m */,
 				8730EB1B151BBB8E00E7A7F8 /* MKPolyline+Color.h */,
@@ -218,6 +223,7 @@
 				8730EB19151BBB3A00E7A7F8 /* MKPolygon+Color.m in Sources */,
 				8730EB1D151BBB8F00E7A7F8 /* MKPolyline+Color.m in Sources */,
 				871E20FE152CD54C00D9452A /* UIColor+Parq.m in Sources */,
+				871E2102152CDD5200D9452A /* MKCircle+Color.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

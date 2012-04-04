@@ -28,7 +28,7 @@
 @property (weak, nonatomic) IBOutlet MKMapView *mapView;
 @property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
 
-@property int ZOOM_STATE; //state used to determine how we should handle the gestures.     
+@property int zoomState; //state used to determine how we should handle the gestures.     
 @property (nonatomic, retain) CLGeocoder* IOSGeocoder;
 
 @property float destLat;

@@ -16,7 +16,7 @@
 @synthesize mapView;
 @synthesize searchBar;
 @synthesize IOSGeocoder;
-@synthesize ZOOM_STATE;
+@synthesize zoomState;
 @synthesize destLat;
 @synthesize destLon;
 
@@ -134,7 +134,7 @@
     [mapView setRegion:[mapView regionThatFits:(*reg)] animated:YES];
     
     //set zoom state to block level
-    ZOOM_STATE = ZOOM_BLOCK;
+    zoomState = ZOOM_BLOCK;
     
     //display overlays that are on the block level.  
     [self showBlockLevelWithCoordinates:&((*reg).center)];
@@ -147,14 +147,14 @@
     //zoom to the region
     [mapView setRegion:[mapView regionThatFits:viewRegion] animated:YES];
     //set zoom state to spot level
-    ZOOM_STATE =ZOOM_SPOT;
+    zoomState =ZOOM_SPOT;
     //show the spots in the area.  
     [self showSpotLevelWithCoordinates:coords] ;
 }
 
 //called when zoom-out level event is triggered by user's pinching.  
 -(void) enterGridLevel{
-    ZOOM_STATE=ZOOM_GRID;
+    zoomState=ZOOM_GRID;
     //remove currently shown spots/blocks
     //[mapView removeOverlays:mapView.overlays];
     //reload grids that belong in the curent view.  
@@ -162,14 +162,14 @@
 }
 
 -(void) enterBlockLevel{
-    ZOOM_STATE = ZOOM_BLOCK;
+    zoomState = ZOOM_BLOCK;
     //remove spot level info
     //[mapView removeOverlays:mapView.overlays];
     //reload blocks.  
     
 }
 -(void) enterSpotLevel{
-    ZOOM_STATE = ZOOM_SPOT;
+    zoomState = ZOOM_SPOT;
     //[mapView removeOverlays:mapView.overlays];
 
 }
@@ -279,7 +279,7 @@
     //convert those lat/lon into an MKmapPoint.  
     MKMapPoint mapPoint = MKMapPointForCoordinate(coord);
     
-    if(ZOOM_STATE==ZOOM_GRID){        
+    if(zoomState==ZOOM_GRID){        
         for(id gridOverlay in self.mapView.overlays){
             //get reference to the MKPolygonView object
             id view = [self.mapView viewForOverlay:gridOverlay];
@@ -301,13 +301,13 @@
                 //[mapView setRegion:MKCoordinateRegionMakeWithDistance(mapView.centerCoordinate, METERS_PER_MILE/2, METERS_PER_MILE/2) animated:YES];
             }
         }
-    }else if(ZOOM_STATE==ZOOM_BLOCK){
+    }else if(zoomState==ZOOM_BLOCK){
         //if user clicked near a block, zoom to spot level
         [self zoomToSpotLevelWithCoordinates:&coord];
 
         /* so the decision bit is missing, since i don't yet nkow how to detect which block the user meant, and then from that extract the bounding regions of that block, so we ensure all spots in a block are shown.  */
         
-    }else if (ZOOM_STATE==ZOOM_SPOT){
+    }else if (zoomState==ZOOM_SPOT){
         //detect nearest spot, 
         
         //circleView.path may or may not contain it;
@@ -369,55 +369,40 @@
 
 - (IBAction)gridButtonPressed:(id)sender {
     NSLog(@"Grid Button Pressed\n" );
-    ZOOM_STATE = ZOOM_GRID;
+    zoomState = ZOOM_GRID;
     [mapView removeOverlays:mapView.overlays];
-    NSString* addr = @"Cambridge, MA";
-    //do forward geocode and zoom to result.  
-    [IOSGeocoder geocodeAddressString:addr completionHandler:^(NSArray *placemarks, NSError *error) {
-        //USE ONLY FIRST ONE.  
-        CLPlacemark* place = [placemarks objectAtIndex:0];
-        CLLocation* locationObject = [place location];    //we can use a location to drag out lat/lon
+
+    //set the zoom to fit 12 grids perfectly
+    CLLocationCoordinate2D point = CLLocationCoordinate2DMake(42.365045,-71.118965);
+    
+    MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(point, METERS_PER_MILE, METERS_PER_MILE);  //this is essentially zoom level in android
+    
+    MKCoordinateRegion adjustedRegion = [mapView regionThatFits:viewRegion]; //is this a check?               
+    
+    [mapView setRegion:adjustedRegion animated:YES];  //this is animateTo or w/e. 
+    NSArray* data = [self loadGridData];
+    
+    for (id element in data) {
+        NSArray *array = [[element objectForKey:@"se_corner"] componentsSeparatedByString:@","];
         
-        /*  HERE TO SHOW STRUCTURE ONLY.  UNUSED
-         CLLocationCoordinate2D zoomLocation;  //this object is essentially geopoint
-         zoomLocation.latitude = 39.281516;  
-         zoomLocation.longitude = -76.580806;
-         */
+        CLLocationCoordinate2D nw_point = CLLocationCoordinate2DMake([[array objectAtIndex:0] floatValue], [[array objectAtIndex:1] floatValue]);    
+        array = [[element objectForKey:@"nw_corner"]componentsSeparatedByString:@","];
+        CLLocationCoordinate2D se_point = CLLocationCoordinate2DMake([[array objectAtIndex:0] floatValue], [[array objectAtIndex:1] floatValue]);
         
-        //set the zoom to fit 12 grids perfectly
-        CLLocationCoordinate2D point = CLLocationCoordinate2DMake(42.365045,-71.118965);
+        //calculate actual se_point using haversine.  
         
-        MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(point, METERS_PER_MILE, METERS_PER_MILE);  //this is essentially zoom level in android
+        int color = [[element objectForKey:@"color"] intValue];
         
-        MKCoordinateRegion adjustedRegion = [mapView regionThatFits:viewRegion]; //is this a check?               
+        CLLocationCoordinate2D ne_point = CLLocationCoordinate2DMake(nw_point.latitude ,se_point.longitude);
+        CLLocationCoordinate2D sw_point = CLLocationCoordinate2DMake(se_point.latitude ,nw_point.longitude);
         
-        [mapView setRegion:adjustedRegion animated:YES];  //this is animateTo or w/e. 
-        NSArray* data = [self loadGridData];
         
-        for (id element in data) {
-            NSArray *array = [[element objectForKey:@"se_corner"] componentsSeparatedByString:@","];
-            
-            CLLocationCoordinate2D nw_point = CLLocationCoordinate2DMake([[array objectAtIndex:0] floatValue], [[array objectAtIndex:1] floatValue]);    
-            array = [[element objectForKey:@"nw_corner"]componentsSeparatedByString:@","];
-            CLLocationCoordinate2D se_point = CLLocationCoordinate2DMake([[array objectAtIndex:0] floatValue], [[array objectAtIndex:1] floatValue]);
-            
-            //calculate actual se_point using haversine.  
-            
-            int color = [[element objectForKey:@"color"] intValue];
-            
-            CLLocationCoordinate2D ne_point = CLLocationCoordinate2DMake(nw_point.latitude ,se_point.longitude);
-            CLLocationCoordinate2D sw_point = CLLocationCoordinate2DMake(se_point.latitude ,nw_point.longitude);
-            
-            
-            CLLocationCoordinate2D testLotCoords[5]={nw_point, ne_point, se_point, sw_point, nw_point};
-            
-            MKPolygon *commuterPoly1 = [MKPolygon polygonWithCoordinates:testLotCoords count:5];
-            [commuterPoly1 setColor:color];
-            [self.mapView addOverlay:commuterPoly1];
-            
-            
-        }
-    }];
+        CLLocationCoordinate2D testLotCoords[5]={nw_point, ne_point, se_point, sw_point, nw_point};
+        
+        MKPolygon *commuterPoly1 = [MKPolygon polygonWithCoordinates:testLotCoords count:5];
+        [commuterPoly1 setColor:color];
+        [self.mapView addOverlay:commuterPoly1];
+    }
 }
 
      
@@ -504,14 +489,14 @@
     //check the current zoom level to set the ZOOM_STATE integer.  
     float zoomWidth = mapView.bounds.size.width;
     if(zoomWidth > BLOCK_MAP_SPAN){
-        ZOOM_STATE = ZOOM_GRID;
+        zoomState = ZOOM_GRID;
         //above middle zoom level        
     }else if(SPOT_MAP_SPAN){
         //above spot zoom level
-        ZOOM_STATE = ZOOM_BLOCK;
+        zoomState = ZOOM_BLOCK;
     }else{
         //inside spot zoom level.  
-        ZOOM_STATE = ZOOM_SPOT;
+        zoomState = ZOOM_SPOT;
     }
     
     [super viewDidLoad];
