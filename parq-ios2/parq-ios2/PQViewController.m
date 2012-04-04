@@ -10,6 +10,7 @@
 #import "MKPolygon+Color.h"
 #import "MKPolyline+Color.h"
 #import "MKCircle+Color.h"
+#import "UIColor+Parq.h"
 
 @implementation PQViewController
 @synthesize mapView;
@@ -196,42 +197,29 @@
  ***/
 
 -(MKOverlayView *)mapView:(MKMapView *)myMapView viewForOverlay:(id<MKOverlay>)overlay{
-    if([overlay isKindOfClass:[MKPolygon class]]){
-        
-        MKPolygon* casted = (MKPolygon*) overlay;
-        
-        MKPolygonView *view = [[MKPolygonView alloc] initWithOverlay:casted];
+    if ([overlay isKindOfClass:[MKPolygon class]]) {
+        MKPolygon* polygon = (MKPolygon*) overlay;
+        MKPolygonView *view = [[MKPolygonView alloc] initWithOverlay:polygon];
         view.lineWidth=1;
+        view.strokeColor = [UIColor whiteColor];
         //grab the color from the subclass
-        int color = casted.color;
-        if(color==0){
-            //no spots
-            view.strokeColor=[UIColor redColor];
-            view.fillColor=[[UIColor redColor] colorWithAlphaComponent:0.5];
-            
-        }else if(color==1){
-            //minimal spots
-            view.strokeColor=[UIColor redColor];
-            view.fillColor=[[UIColor redColor] colorWithAlphaComponent:0.2];
-            
-        }else if(color==2){
-            //some spots
-            view.strokeColor=[UIColor yellowColor];
-            view.fillColor=[[UIColor yellowColor] colorWithAlphaComponent:0.3];
-            
-        }else if(color==3){
-            //healthy spots
-            view.strokeColor=[UIColor greenColor];
-            view.fillColor=[[UIColor greenColor] colorWithAlphaComponent:0.2];
-            
-        }else if(color==4){
-            //lots of spots
-            view.strokeColor=[UIColor greenColor];
-            view.fillColor=[[UIColor greenColor] colorWithAlphaComponent:0.5];
-            
-        }else{
-            //invalid color, don't do anything.  
-            return nil;
+        int color = polygon.color;
+        switch (color) {
+            case 0:
+                view.fillColor = [[UIColor veryLowAvailabilityColor] colorWithAlphaComponent:0.2];
+                break;
+            case 1:
+                view.fillColor = [[UIColor lowAvailabilityColor] colorWithAlphaComponent:0.2];
+                break;
+            case 2:
+                view.fillColor = [[UIColor mediumAvailabilityColor] colorWithAlphaComponent:0.2];
+                break;
+            case 3:
+                view.fillColor = [[UIColor highAvailabilityColor] colorWithAlphaComponent:0.2];
+                break;
+            case 4:
+                view.fillColor = [[UIColor veryHighAvailabilityColor] colorWithAlphaComponent:0.2];
+                break;
         }
         return view;
         
@@ -240,9 +228,23 @@
         view.lineWidth = 8;
         MKPolyline *polyline = (MKPolyline *)overlay;
         int color = polyline.color;
-        view.strokeColor = [UIColor colorWithRed:(4-color)/4 green:color/4 blue:0 alpha:0.5];
-        view.fillColor = [UIColor colorWithRed:(4-color)/4 green:color/4 blue:0 alpha:0.5];
-        
+        switch (color) {
+            case 0:
+                view.strokeColor = [UIColor veryLowAvailabilityColor];
+                break;
+            case 1:
+                view.strokeColor = [UIColor lowAvailabilityColor];
+                break;
+            case 2:
+                view.strokeColor = [UIColor mediumAvailabilityColor];
+                break;
+            case 3:
+                view.strokeColor = [UIColor highAvailabilityColor];
+                break;
+            case 4:
+                view.strokeColor = [UIColor veryHighAvailabilityColor];
+                break;
+        }
         return view;
     }else if([overlay isKindOfClass:[MKCircle class]]) {
         MKCircleView *circleView = [[MKCircleView alloc] initWithCircle:(MKCircle *)overlay];
