@@ -14,7 +14,6 @@
 
 @implementation PQViewController
 @synthesize mapView;
-@synthesize searchBar;
 @synthesize IOSGeocoder;
 @synthesize zoomState;
 @synthesize destLat;
@@ -500,7 +499,6 @@
     }
     
     [super viewDidLoad];
-    searchBar.delegate = self;
     
 	
     // Do any additional setup after loading the view, typically from a nib.
