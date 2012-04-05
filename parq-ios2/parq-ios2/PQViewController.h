@@ -21,7 +21,7 @@
 
 #define GPS_LAUNCH_ALERT 10
 
-@interface PQViewController : UIViewController <MKMapViewDelegate, CLLocationManagerDelegate,UISearchBarDelegate,UIGestureRecognizerDelegate, UITableViewDelegate> {
+@interface PQViewController : UIViewController <MKMapViewDelegate, CLLocationManagerDelegate,UISearchBarDelegate,UIGestureRecognizerDelegate, UITableViewDelegate, UISearchDisplayDelegate> {
         
     CLLocationManager *locationManager;
 }

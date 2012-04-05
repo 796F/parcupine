@@ -12,12 +12,17 @@
 #import "MKCircle+Color.h"
 #import "UIColor+Parq.h"
 
+@interface PQViewController ()
+@property (strong, nonatomic) UIView *disableViewOverlay;
+@end
+
 @implementation PQViewController
 @synthesize mapView;
 @synthesize IOSGeocoder;
 @synthesize zoomState;
 @synthesize destLat;
 @synthesize destLon;
+@synthesize disableViewOverlay;
 
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     NSLog(@"hello\n");
@@ -324,7 +329,26 @@
     
 }
 
+- (void)setSearchBar:(UISearchBar *)searchBar active:(BOOL)visible {
+    if (visible) {
+        [self.view addSubview:self.disableViewOverlay];
 
+        [UIView beginAnimations:@"FadeIn" context:nil];
+        [UIView setAnimationDuration:0.25];
+        self.disableViewOverlay.alpha = 0.8;
+        [UIView commitAnimations];
+    } else {
+        [searchBar resignFirstResponder];
+
+        [UIView beginAnimations:@"FadeOut" context:nil];
+        [UIView setAnimationDuration:0.25];
+        self.disableViewOverlay.alpha = 0;
+        [UIView commitAnimations];
+
+        [self.disableViewOverlay removeFromSuperview];
+    }
+    [searchBar setShowsCancelButton:visible animated:YES];
+}
 
 -(void)searchBarSearchButtonClicked:(UISearchBar *)searchBar{
     
@@ -358,13 +382,29 @@
     
     //draw the grids and set their color.  
     
-    
+    [self setSearchBar:searchBar active:NO];
 }
 
 -(void)searchBarBookmarkButtonClicked:(UISearchBar *)searchBar{
     //load recently parked spots.  
     
 }
+
+- (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
+    [self setSearchBar:searchBar active:YES];
+}
+
+- (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
+    [self setSearchBar:searchBar active:NO];
+}
+
+//- (void)searchDisplayControllerDidBeginSearch:(UISearchDisplayController *)controller {
+//    [searchBar setFrame:CGRectMake(47, 0, 273, 44)];
+//}
+//
+//- (void)searchDisplayControllerDidEndSearch:(UISearchDisplayController *)controller {
+//    [searchBar setFrame:CGRectMake(47, 0, 273, 44)];
+//}
 
 - (IBAction)gridButtonPressed:(id)sender {
     NSLog(@"Grid Button Pressed\n" );
@@ -497,7 +537,12 @@
         //inside spot zoom level.  
         zoomState = ZOOM_SPOT;
     }
-    
+
+    self.disableViewOverlay = [[UIView alloc]
+                               initWithFrame:CGRectMake(0.0f,44.0f,320.0f,416.0f)];
+    self.disableViewOverlay.backgroundColor=[UIColor blackColor];
+    self.disableViewOverlay.alpha = 0;
+
     [super viewDidLoad];
     
 	

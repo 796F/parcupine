@@ -17,12 +17,24 @@
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
-                                    <searchBar contentMode="redraw" barStyle="blackOpaque" placeholder="Where do you want to park?" showsBookmarkButton="YES" id="21T-mb-eh9">
+                                    <navigationBar contentMode="scaleToFill" barStyle="blackOpaque" id="ogw-zK-H4X">
                                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                        <items>
+                                            <navigationItem id="Rp5-eY-6wq">
+                                                <barButtonItem key="leftBarButtonItem" image="settings.png" id="3s7-ly-R1Y"/>
+                                                <connections>
+                                                    <outlet property="titleView" destination="ZNG-Ah-8CZ" id="ieG-sq-qB8"/>
+                                                </connections>
+                                            </navigationItem>
+                                        </items>
+                                    </navigationBar>
+                                    <searchBar contentMode="redraw" barStyle="blackOpaque" placeholder="Where do you want to park?" showsBookmarkButton="YES" id="ZNG-Ah-8CZ">
+                                        <rect key="frame" x="47" y="0.0" width="273" height="44"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                         <textInputTraits key="textInputTraits"/>
                                         <connections>
-                                            <outlet property="delegate" destination="2" id="UfK-RM-Jyg"/>
+                                            <outlet property="delegate" destination="2" id="Rv4-R0-G80"/>
                                         </connections>
                                     </searchBar>
                                 </subviews>
@@ -99,7 +111,7 @@
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="bbF-oI-kA9"/>
                                     <barButtonItem style="plain" id="vPm-am-cHC">
                                         <segmentedControl key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" id="YVc-xp-fRh">
-                                            <rect key="frame" x="46" y="8" width="218" height="30"/>
+                                            <rect key="frame" x="45" y="8" width="269" height="30"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <segments>
                                                 <segment title="availability"/>
@@ -109,7 +121,6 @@
                                             <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                         </segmentedControl>
                                     </barButtonItem>
-                                    <barButtonItem image="settings.png" id="QjD-4r-GTZ"/>
                                 </items>
                             </toolbar>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="avail_gradient.png" id="lAn-ft-Xqs">
@@ -121,17 +132,8 @@
                     </view>
                     <connections>
                         <outlet property="mapView" destination="VpP-MP-pHv" id="6bp-yQ-Xm1"/>
-                        <outlet property="searchDisplayController" destination="3d1-uH-OtI" id="c1k-RS-4sH"/>
                     </connections>
                 </viewController>
-                <searchDisplayController id="3d1-uH-OtI">
-                    <connections>
-                        <outlet property="searchBar" destination="21T-mb-eh9" id="RiS-MV-e8p"/>
-                        <outlet property="searchContentsController" destination="2" id="h85-UH-3N5"/>
-                        <outlet property="searchResultsDataSource" destination="2" id="n35-oo-xxn"/>
-                        <outlet property="searchResultsDelegate" destination="2" id="BmK-3Y-bax"/>
-                    </connections>
-                </searchDisplayController>
             </objects>
         </scene>
     </scenes>
@@ -139,6 +141,14 @@
         <image name="avail_gradient.png" width="58" height="59"/>
         <image name="settings.png" width="20" height="21"/>
     </resources>
+    <classes>
+        <class className="PQViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/PQViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="mapView" candidateClass="MKMapView"/>
+            </relationships>
+        </class>
+    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>
