@@ -251,16 +251,26 @@
     } else if ([overlay isKindOfClass:[MKCircle class]]) {
         MKCircleView *circleView = [[MKCircleView alloc] initWithCircle:(MKCircle *)overlay];
         MKCircle* circle = (MKCircle*) overlay;
-        if (circle.color==0) {
-            //taken
-            circleView.fillColor = [[UIColor redColor] colorWithAlphaComponent:0.5];
-            circleView.strokeColor = [UIColor redColor];
-        } else {
-            //free
-            circleView.fillColor = [[UIColor greenColor] colorWithAlphaComponent:0.5];
-            circleView.strokeColor = [UIColor greenColor];
+        switch (circle.color) {
+            case -1:
+                // Grey selection circle
+                circleView.fillColor = [[UIColor blackColor] colorWithAlphaComponent:0.3];
+                circleView.strokeColor = [UIColor whiteColor];
+                circleView.lineWidth = 6;
+                break;
+            case 0:
+                //taken
+                circleView.fillColor = [[UIColor redColor] colorWithAlphaComponent:0.5];
+                circleView.strokeColor = [UIColor redColor];
+                circleView.lineWidth = 2;
+                break;
+            case 1:
+                //free
+                circleView.fillColor = [[UIColor greenColor] colorWithAlphaComponent:0.5];
+                circleView.strokeColor = [UIColor greenColor];
+                circleView.lineWidth = 2;
+                break;
         }
-        circleView.lineWidth = 2;
         return circleView;
     }
     return nil;
@@ -480,16 +490,20 @@
 - (IBAction)spotButtonPressed:(id)sender {
     
     [mapView removeOverlays:mapView.overlays];
-    CLLocationCoordinate2D point = {42.365354, -71.110843};
+    CLLocationCoordinate2D point = {42.365096, -71.110843};
     
     MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(point, METERS_PER_MILE/16, METERS_PER_MILE/16);
     [mapView setRegion:[mapView regionThatFits:viewRegion] animated:YES];
-    
+
+    MKCircle *greyCircle = [MKCircle circleWithCenterCoordinate:point radius:15];
+    [greyCircle setColor:-1];
+    [self.mapView addOverlay:greyCircle];
+
     NSArray* data = [self loadSpotData];
     for(id spot in data){
-        NSArray* point = [spot componentsSeparatedByString:@","];
-        CLLocationCoordinate2D coord = CLLocationCoordinate2DMake([[point objectAtIndex:0] floatValue], [[point objectAtIndex:1] floatValue]);
-        int color = [[point objectAtIndex:2] intValue];
+        NSArray* points = [spot componentsSeparatedByString:@","];
+        CLLocationCoordinate2D coord = CLLocationCoordinate2DMake([[points objectAtIndex:0] floatValue], [[points objectAtIndex:1] floatValue]);
+        int color = [[points objectAtIndex:2] intValue];
         MKCircle* circle = [MKCircle circleWithCenterCoordinate:coord radius:2];
         [circle setColor:color];
         [self.mapView addOverlay:circle];
