@@ -21,14 +21,16 @@
 
 #define GPS_LAUNCH_ALERT 10
 
-@interface PQViewController : UIViewController <MKMapViewDelegate, CLLocationManagerDelegate,UISearchBarDelegate,UIGestureRecognizerDelegate, UITableViewDelegate, UISearchDisplayDelegate> {
+@interface PQViewController : UIViewController <MKMapViewDelegate, CLLocationManagerDelegate,UISearchBarDelegate,UIGestureRecognizerDelegate, UITableViewDelegate> {
         
     CLLocationManager *locationManager;
 }
 @property (weak, nonatomic) IBOutlet MKMapView *mapView;
+@property (weak, nonatomic) IBOutlet UISearchBar *topSearchBar;
+@property (weak, nonatomic) IBOutlet UINavigationItem *navigationBar;
 
 @property int zoomState; //state used to determine how we should handle the gestures.     
-@property (nonatomic, retain) CLGeocoder* IOSGeocoder;
+@property (nonatomic, retain) CLGeocoder* geocoder;
 
 @property float destLat;
 @property float destLon;

@@ -13,33 +13,15 @@
                         <rect key="frame" x="0.0" y="20" width="320" height="460"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" id="Ysy-U2-U26">
+                            <navigationBar contentMode="scaleToFill" barStyle="blackOpaque" id="ogw-zK-H4X">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <subviews>
-                                    <navigationBar contentMode="scaleToFill" barStyle="blackOpaque" id="ogw-zK-H4X">
-                                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
-                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                                        <items>
-                                            <navigationItem id="Rp5-eY-6wq">
-                                                <barButtonItem key="leftBarButtonItem" image="settings.png" id="3s7-ly-R1Y"/>
-                                                <connections>
-                                                    <outlet property="titleView" destination="ZNG-Ah-8CZ" id="ieG-sq-qB8"/>
-                                                </connections>
-                                            </navigationItem>
-                                        </items>
-                                    </navigationBar>
-                                    <searchBar contentMode="redraw" barStyle="blackOpaque" placeholder="Where do you want to park?" showsBookmarkButton="YES" id="ZNG-Ah-8CZ">
-                                        <rect key="frame" x="47" y="0.0" width="273" height="44"/>
-                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                                        <textInputTraits key="textInputTraits"/>
-                                        <connections>
-                                            <outlet property="delegate" destination="2" id="Rv4-R0-G80"/>
-                                        </connections>
-                                    </searchBar>
-                                </subviews>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                            </view>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <items>
+                                    <navigationItem id="Rp5-eY-6wq">
+                                        <barButtonItem key="leftBarButtonItem" image="settings.png" id="3s7-ly-R1Y"/>
+                                    </navigationItem>
+                                </items>
+                            </navigationBar>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" id="VpP-MP-pHv">
                                 <rect key="frame" x="0.0" y="44" width="320" height="416"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -127,11 +109,21 @@
                                 <rect key="frame" x="7" y="52" width="30" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
+                            <searchBar contentMode="redraw" barStyle="blackOpaque" placeholder="Where do you want to park?" showsBookmarkButton="YES" id="ZNG-Ah-8CZ">
+                                <rect key="frame" x="47" y="0.0" width="273" height="44"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <textInputTraits key="textInputTraits"/>
+                                <connections>
+                                    <outlet property="delegate" destination="2" id="Rv4-R0-G80"/>
+                                </connections>
+                            </searchBar>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <connections>
                         <outlet property="mapView" destination="VpP-MP-pHv" id="6bp-yQ-Xm1"/>
+                        <outlet property="navigationBar" destination="Rp5-eY-6wq" id="bu7-6i-bM5"/>
+                        <outlet property="topSearchBar" destination="ZNG-Ah-8CZ" id="Xa3-LA-cBz"/>
                     </connections>
                 </viewController>
             </objects>
@@ -146,6 +138,8 @@
             <source key="sourceIdentifier" type="project" relativePath="./Classes/PQViewController.h"/>
             <relationships>
                 <relationship kind="outlet" name="mapView" candidateClass="MKMapView"/>
+                <relationship kind="outlet" name="navigationBar" candidateClass="UINavigationItem"/>
+                <relationship kind="outlet" name="topSearchBar" candidateClass="UISearchBar"/>
             </relationships>
         </class>
     </classes>

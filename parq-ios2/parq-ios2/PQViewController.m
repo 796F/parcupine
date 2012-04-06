@@ -14,15 +14,19 @@
 
 @interface PQViewController ()
 @property (strong, nonatomic) UIView *disableViewOverlay;
+@property (strong, nonatomic) UIBarButtonItem *leftBarButton;
 @end
 
 @implementation PQViewController
 @synthesize mapView;
-@synthesize IOSGeocoder;
+@synthesize topSearchBar;
+@synthesize navigationBar;
+@synthesize geocoder;
 @synthesize zoomState;
 @synthesize destLat;
 @synthesize destLon;
 @synthesize disableViewOverlay;
+@synthesize leftBarButton;
 
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     NSLog(@"hello\n");
@@ -329,63 +333,78 @@
     
 }
 
+- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation{
+    if (MAX(newLocation.horizontalAccuracy, newLocation.verticalAccuracy) < 100) {
+        //One location is obtained.. just zoom to that location
+
+        MKCoordinateRegion region;
+        region.center=newLocation.coordinate;
+        //Set Zoom level using Span
+        MKCoordinateSpan span;
+        span.latitudeDelta=.005;
+        span.longitudeDelta=.005;
+        region.span=span;
+
+        //        [mapView setRegion:region animated:TRUE];
+
+        [locationManager stopUpdatingLocation];
+    }
+}
+
+#pragma mark - Search bar and UISearchBarDelegate methods
+
 - (void)setSearchBar:(UISearchBar *)searchBar active:(BOOL)visible {
+    [searchBar setShowsScopeBar:visible];
     if (visible) {
         [self.view addSubview:self.disableViewOverlay];
 
-        [UIView beginAnimations:@"FadeIn" context:nil];
-        [UIView setAnimationDuration:0.25];
-        self.disableViewOverlay.alpha = 0.8;
-        [UIView commitAnimations];
+        [UIView animateWithDuration:0.25 animations:^{
+            self.navigationBar.leftBarButtonItem = Nil;
+            self.disableViewOverlay.alpha = 0.8;
+            searchBar.frame = CGRectMake(0, 0, 320, 88);
+        }];
     } else {
         [searchBar resignFirstResponder];
 
-        [UIView beginAnimations:@"FadeOut" context:nil];
-        [UIView setAnimationDuration:0.25];
-        self.disableViewOverlay.alpha = 0;
-        [UIView commitAnimations];
-
-        [self.disableViewOverlay removeFromSuperview];
+        [UIView animateWithDuration:0.25 animations:^{
+            self.navigationBar.leftBarButtonItem = self.leftBarButton;
+            self.disableViewOverlay.alpha = 0;
+            searchBar.frame = CGRectMake(45, 0, 275, 44);
+        } completion:^(BOOL s){
+            [self.disableViewOverlay removeFromSuperview];
+        }];
     }
     [searchBar setShowsCancelButton:visible animated:YES];
 }
 
--(void)searchBarSearchButtonClicked:(UISearchBar *)searchBar{
-    
-    //remove all existing overlays and stuff,
-    [mapView removeOverlays: mapView.overlays];
-    NSString* addr = @"McDonalds";
-    
-    //do forward geocode and zoom to result.  
-    //[IOSGeocoder geocodeAddressString:addr completionHandler:^(NSArray *placemarks, NSError *error) {
-        [IOSGeocoder geocodeAddressString:addr inRegion:nil completionHandler:^(NSArray *placemarks, NSError * error){
-        //USE ONLY FIRST ONE.  
-        NSLog(@"%@", [placemarks description]);
-        CLPlacemark* place = [placemarks objectAtIndex:0];
-        CLLocation* locationObject = [place location];    //we can use a location to drag out lat/lon
-        
-        /*  HERE TO SHOW STRUCTURE ONLY.  UNUSED
-         CLLocationCoordinate2D zoomLocation;  //this object is essentially geopoint
-         zoomLocation.latitude = 39.281516;  
-         zoomLocation.longitude = -76.580806;
-         */
-        
-        //set the zoom to fit 12 grids perfectly
-        
-        MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(locationObject.coordinate, 0.5*METERS_PER_MILE, 0.5*METERS_PER_MILE);  //this is essentially zoom level in android
-        
-        MKCoordinateRegion adjustedRegion = [mapView regionThatFits:viewRegion]; //is this a check?               
-        
-        [mapView setRegion:adjustedRegion animated:YES];  //this is animateTo or w/e. 
-        
+- (void)handleSingleTap:(UIGestureRecognizer *)sender {
+    [self setSearchBar:(UISearchBar *)self.topSearchBar active:NO];
+}
+
+- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
+    [mapView removeOverlays:mapView.overlays];
+
+    [geocoder geocodeAddressString:searchBar.text inRegion:nil completionHandler:^(NSArray *placemarks, NSError * error){
+        CLLocation* locationObject = [[placemarks objectAtIndex:0] location];
+
+        MKCoordinateRegion viewRegion = [mapView regionThatFits:MKCoordinateRegionMakeWithDistance(locationObject.coordinate, 0.5*METERS_PER_MILE, 0.5*METERS_PER_MILE)];
+        [mapView setRegion:viewRegion animated:YES];
     }];
-    
-    //draw the grids and set their color.  
-    
+
     [self setSearchBar:searchBar active:NO];
 }
 
--(void)searchBarBookmarkButtonClicked:(UISearchBar *)searchBar{
+- (void)searchBar:(UISearchBar *)searchBar selectedScopeButtonIndexDidChange:(NSInteger)selectedScope {
+    if (selectedScope == 1) {
+        searchBar.keyboardType = UIKeyboardTypeNumberPad;
+    } else {
+        searchBar.keyboardType = UIKeyboardTypeDefault;
+    }
+    [searchBar resignFirstResponder];
+    [searchBar becomeFirstResponder];
+}
+
+- (void)searchBarBookmarkButtonClicked:(UISearchBar *)searchBar {
     //load recently parked spots.  
     
 }
@@ -398,13 +417,7 @@
     [self setSearchBar:searchBar active:NO];
 }
 
-//- (void)searchDisplayControllerDidBeginSearch:(UISearchDisplayController *)controller {
-//    [searchBar setFrame:CGRectMake(47, 0, 273, 44)];
-//}
-//
-//- (void)searchDisplayControllerDidEndSearch:(UISearchDisplayController *)controller {
-//    [searchBar setFrame:CGRectMake(47, 0, 273, 44)];
-//}
+#pragma mark - Debug button actions
 
 - (IBAction)gridButtonPressed:(id)sender {
     NSLog(@"Grid Button Pressed\n" );
@@ -496,24 +509,7 @@
     [locationManager startUpdatingLocation];
 }
 
-- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation{
-    
-    if (MAX(newLocation.horizontalAccuracy, newLocation.verticalAccuracy) < 100) {
-        //One location is obtained.. just zoom to that location
-        
-        MKCoordinateRegion region;
-        region.center=newLocation.coordinate;
-        //Set Zoom level using Span
-        MKCoordinateSpan span;
-        span.latitudeDelta=.005;
-        span.longitudeDelta=.005;
-        region.span=span;
-        
-//        [mapView setRegion:region animated:TRUE];
-        
-        [locationManager stopUpdatingLocation];
-    }
-}
+#pragma mark - Memory
 
 - (void)didReceiveMemoryWarning
 {
@@ -539,9 +535,15 @@
     }
 
     self.disableViewOverlay = [[UIView alloc]
-                               initWithFrame:CGRectMake(0.0f,44.0f,320.0f,416.0f)];
+                               initWithFrame:CGRectMake(0.0f,88.0f,320.0f,372.0f)];
     self.disableViewOverlay.backgroundColor=[UIColor blackColor];
     self.disableViewOverlay.alpha = 0;
+    UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
+    [self.disableViewOverlay addGestureRecognizer:singleTap];
+
+    ((UISearchBar *)self.topSearchBar).scopeButtonTitles = [[NSArray alloc] initWithObjects:@"Place name", @"Spot number", nil];
+
+    self.leftBarButton = self.navigationBar.leftBarButtonItem;
 
     [super viewDidLoad];
     
@@ -552,7 +554,7 @@
     
     //setup gesture recognizer for grids and blocks and spots.  
     UITapGestureRecognizer *tgr = [[UITapGestureRecognizer alloc] 
-                                   initWithTarget:self action:@selector(handleGesture:)];
+                                   initWithTarget:self action:@selector(handleSingleTap:)];
     tgr.numberOfTapsRequired = 1;
     tgr.numberOfTouchesRequired = 1;
     [mapView addGestureRecognizer:tgr];
@@ -568,6 +570,8 @@
 - (void)viewDidUnload
 {
     [self setMapView:nil];
+    [self setNavigationBar:nil];
+    [self setTopSearchBar:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -582,8 +586,8 @@
 {
     [super viewDidAppear:animated];
     //prepare geocoder upon view load.  
-    if(IOSGeocoder ==nil){
-        IOSGeocoder = [[CLGeocoder alloc] init];
+    if(geocoder ==nil){
+        geocoder = [[CLGeocoder alloc] init];
     }
 }
 
