@@ -1,16 +1,14 @@
 //
-//  MKPolygon.m
-//  Parq2
+//  MKShape+Color.m
+//  Parq
 //
-//  Created by Michael Xia on 3/22/12.
+//  Created by Mark Yen on 4/6/12.
 //  Copyright (c) 2012 Massachusetts Institute of Technology. All rights reserved.
 //
 
-#import "MKPolygon+Color.h"
+#import "MKShape+Color.h"
 
-@implementation MKPolygon (ColorTag)
-
-
+@implementation MKShape (Color)
 static char colorKey;
 
 - (void) setColor:(int)color {
@@ -20,5 +18,4 @@ static char colorKey;
 - (int) color {
     return [objc_getAssociatedObject( self, &colorKey ) intValue];
 }
-
 @end

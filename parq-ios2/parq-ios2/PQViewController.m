@@ -7,9 +7,7 @@
 //
 
 #import "PQViewController.h"
-#import "MKPolygon+Color.h"
-#import "MKPolyline+Color.h"
-#import "MKCircle+Color.h"
+#import "MKShape+Color.h"
 #import "UIColor+Parq.h"
 
 @interface PQViewController ()
@@ -204,15 +202,13 @@
  * blue,cyan,yellow,magenta,orange,purple,brown
  ***/
 
--(MKOverlayView *)mapView:(MKMapView *)myMapView viewForOverlay:(id<MKOverlay>)overlay{
+- (MKOverlayView *)mapView:(MKMapView *)myMapView viewForOverlay:(id<MKOverlay>)overlay {
     if ([overlay isKindOfClass:[MKPolygon class]]) {
         MKPolygon* polygon = (MKPolygon*) overlay;
         MKPolygonView *view = [[MKPolygonView alloc] initWithOverlay:polygon];
         view.lineWidth=1;
         view.strokeColor = [UIColor whiteColor];
-        //grab the color from the subclass
-        int color = polygon.color;
-        switch (color) {
+        switch (polygon.color) {
             case 0:
                 view.fillColor = [[UIColor veryLowAvailabilityColor] colorWithAlphaComponent:0.2];
                 break;
@@ -230,13 +226,11 @@
                 break;
         }
         return view;
-        
     } else if ([overlay isKindOfClass:[MKPolyline class]]) {
         MKPolylineView *view = [[MKPolylineView alloc] initWithOverlay:overlay];
         view.lineWidth = 8;
         MKPolyline *polyline = (MKPolyline *)overlay;
-        int color = polyline.color;
-        switch (color) {
+        switch (polyline.color) {
             case 0:
                 view.strokeColor = [UIColor veryLowAvailabilityColor];
                 break;
@@ -254,19 +248,17 @@
                 break;
         }
         return view;
-    }else if([overlay isKindOfClass:[MKCircle class]]) {
+    } else if ([overlay isKindOfClass:[MKCircle class]]) {
         MKCircleView *circleView = [[MKCircleView alloc] initWithCircle:(MKCircle *)overlay];
-        MKCircle* casted = (MKCircle*) overlay;
-        if(casted.color==0){
+        MKCircle* circle = (MKCircle*) overlay;
+        if (circle.color==0) {
             //taken
             circleView.fillColor = [[UIColor redColor] colorWithAlphaComponent:0.5];
             circleView.strokeColor = [UIColor redColor];
-            
-        }else{
+        } else {
             //free
             circleView.fillColor = [[UIColor greenColor] colorWithAlphaComponent:0.5];
             circleView.strokeColor = [UIColor greenColor];
-            
         }
         circleView.lineWidth = 2;
         return circleView;
@@ -554,9 +546,7 @@
     
     //setup gesture recognizer for grids and blocks and spots.  
     UITapGestureRecognizer *tgr = [[UITapGestureRecognizer alloc] 
-                                   initWithTarget:self action:@selector(handleSingleTap:)];
-    tgr.numberOfTapsRequired = 1;
-    tgr.numberOfTouchesRequired = 1;
+                                   initWithTarget:self action:@selector(handleGesture:)];
     [mapView addGestureRecognizer:tgr];
     
     //SETUP LOCATION manager

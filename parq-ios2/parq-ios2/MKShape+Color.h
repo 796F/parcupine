@@ -1,8 +1,8 @@
 //
-//  MKPolygon.h
-//  Parq2
+//  MKShape+Color.h
+//  Parq
 //
-//  Created by Michael Xia on 3/22/12.
+//  Created by Mark Yen on 4/6/12.
 //  Copyright (c) 2012 Massachusetts Institute of Technology. All rights reserved.
 //
 
@@ -11,7 +11,7 @@
 #import <CoreLocation/CoreLocation.h>
 #import <objc/runtime.h>
 
-@interface MKPolygon  (ColorTag)
+@interface MKShape (Color)
 
 @property (nonatomic) int color;
 
