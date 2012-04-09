@@ -10,9 +10,23 @@
 #import "MKShape+Color.h"
 #import "UIColor+Parq.h"
 
+#define METERS_PER_MILE 1609.344
+
+#define BLOCK_MAP_SPAN 0.011796
+#define SPOT_MAP_SPAN 0.001474
+
+#define GPS_LAUNCH_ALERT 10
+
+typedef enum {
+    kGridZoomLevel,
+    kStreetZoomLevel,
+    kSpotZoomLevel
+} ZoomLevel;
+
 @interface PQViewController ()
 @property (strong, nonatomic) UIView *disableViewOverlay;
 @property (strong, nonatomic) UIBarButtonItem *leftBarButton;
+@property (nonatomic) ZoomLevel zoomState;
 @end
 
 @implementation PQViewController
@@ -20,11 +34,11 @@
 @synthesize topSearchBar;
 @synthesize navigationBar;
 @synthesize geocoder;
-@synthesize zoomState;
 @synthesize destLat;
 @synthesize destLon;
 @synthesize disableViewOverlay;
 @synthesize leftBarButton;
+@synthesize zoomState;
 
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     NSLog(@"hello\n");
@@ -135,12 +149,12 @@
     
 }
 
--(void) zoomFromGridToBLockWithRegion:(MKCoordinateRegion*)reg{
+-(void) zoomFromGridToBlockWithRegion:(MKCoordinateRegion*)reg{
     //zoom to the region provided
     [mapView setRegion:[mapView regionThatFits:(*reg)] animated:YES];
     
     //set zoom state to block level
-    zoomState = ZOOM_BLOCK;
+    zoomState = kStreetZoomLevel;
     
     //display overlays that are on the block level.  
     [self showBlockLevelWithCoordinates:&((*reg).center)];
@@ -153,14 +167,14 @@
     //zoom to the region
     [mapView setRegion:[mapView regionThatFits:viewRegion] animated:YES];
     //set zoom state to spot level
-    zoomState =ZOOM_SPOT;
+    zoomState = kSpotZoomLevel;
     //show the spots in the area.  
     [self showSpotLevelWithCoordinates:coords] ;
 }
 
 //called when zoom-out level event is triggered by user's pinching.  
 -(void) enterGridLevel{
-    zoomState=ZOOM_GRID;
+    zoomState=kGridZoomLevel;
     //remove currently shown spots/blocks
     //[mapView removeOverlays:mapView.overlays];
     //reload grids that belong in the curent view.  
@@ -168,14 +182,14 @@
 }
 
 -(void) enterBlockLevel{
-    zoomState = ZOOM_BLOCK;
+    zoomState = kStreetZoomLevel;
     //remove spot level info
     //[mapView removeOverlays:mapView.overlays];
     //reload blocks.  
     
 }
 -(void) enterSpotLevel{
-    zoomState = ZOOM_SPOT;
+    zoomState = kSpotZoomLevel;
     //[mapView removeOverlays:mapView.overlays];
 
 }
@@ -289,7 +303,7 @@
     //convert those lat/lon into an MKmapPoint.  
     MKMapPoint mapPoint = MKMapPointForCoordinate(coord);
     
-    if(zoomState==ZOOM_GRID){        
+    if(zoomState==kGridZoomLevel){
         for(id gridOverlay in self.mapView.overlays){
             //get reference to the MKPolygonView object
             id view = [self.mapView viewForOverlay:gridOverlay];
@@ -303,7 +317,7 @@
             if (mapCoordinateIsInPolygon) {
                 //thus if contained...
                 MKCoordinateRegion reg = [mapView convertRect:polyView.bounds toRegionFromView:polyView];
-                [self zoomFromGridToBLockWithRegion:&reg];
+                [self zoomFromGridToBlockWithRegion:&reg];
                 
                 
                 //[mapView setRegion:[mapView regionThatFits:reg] animated:YES];
@@ -311,13 +325,13 @@
                 //[mapView setRegion:MKCoordinateRegionMakeWithDistance(mapView.centerCoordinate, METERS_PER_MILE/2, METERS_PER_MILE/2) animated:YES];
             }
         }
-    }else if(zoomState==ZOOM_BLOCK){
+    }else if(zoomState==kStreetZoomLevel){
         //if user clicked near a block, zoom to spot level
         [self zoomToSpotLevelWithCoordinates:&coord];
 
         /* so the decision bit is missing, since i don't yet nkow how to detect which block the user meant, and then from that extract the bounding regions of that block, so we ensure all spots in a block are shown.  */
         
-    }else if (zoomState==ZOOM_SPOT){
+    }else if (zoomState==kSpotZoomLevel){
         //detect nearest spot, 
         
         //circleView.path may or may not contain it;
@@ -356,14 +370,22 @@
 #pragma mark - Search bar and UISearchBarDelegate methods
 
 - (void)setSearchBar:(UISearchBar *)searchBar active:(BOOL)visible {
-    [searchBar setShowsScopeBar:visible];
     if (visible) {
+        if (zoomState == kSpotZoomLevel) {
+            self.disableViewOverlay.frame = CGRectMake(0.0f,88.0f,320.0f,372.0f);
+        } else {
+            self.disableViewOverlay.frame = CGRectMake(0.0f,44.0f,320.0f,416.0f);
+        }
         [self.view addSubview:self.disableViewOverlay];
 
         [UIView animateWithDuration:0.25 animations:^{
             self.navigationBar.leftBarButtonItem = Nil;
             self.disableViewOverlay.alpha = 0.8;
-            searchBar.frame = CGRectMake(0, 0, 320, 88);
+            if (zoomState == kSpotZoomLevel) {
+                searchBar.frame = CGRectMake(0, 0, 320, 88);
+            } else {
+                searchBar.frame = CGRectMake(0, 0, 320, 44);
+            }
         }];
     } else {
         [searchBar resignFirstResponder];
@@ -376,6 +398,7 @@
             [self.disableViewOverlay removeFromSuperview];
         }];
     }
+    [searchBar setShowsScopeBar:(visible && zoomState==kSpotZoomLevel)];
     [searchBar setShowsCancelButton:visible animated:YES];
 }
 
@@ -423,7 +446,7 @@
 
 - (IBAction)gridButtonPressed:(id)sender {
     NSLog(@"Grid Button Pressed\n" );
-    zoomState = ZOOM_GRID;
+    zoomState = kGridZoomLevel;
     [mapView removeOverlays:mapView.overlays];
 
     //set the zoom to fit 12 grids perfectly
@@ -530,14 +553,14 @@
     //check the current zoom level to set the ZOOM_STATE integer.  
     float zoomWidth = mapView.bounds.size.width;
     if(zoomWidth > BLOCK_MAP_SPAN){
-        zoomState = ZOOM_GRID;
+        zoomState = kGridZoomLevel;
         //above middle zoom level        
     }else if(SPOT_MAP_SPAN){
         //above spot zoom level
-        zoomState = ZOOM_BLOCK;
+        zoomState = kStreetZoomLevel;
     }else{
         //inside spot zoom level.  
-        zoomState = ZOOM_SPOT;
+        zoomState = kSpotZoomLevel;
     }
 
     self.disableViewOverlay = [[UIView alloc]
