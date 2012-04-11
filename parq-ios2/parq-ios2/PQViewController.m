@@ -9,6 +9,8 @@
 #import "PQViewController.h"
 #import "MKShape+Color.h"
 #import "UIColor+Parq.h"
+#import "CalloutMapAnnotation.h"
+#import "CalloutMapAnnotationView.h"
 
 #define METERS_PER_MILE 1609.344
 
@@ -104,10 +106,38 @@ typedef enum {
     }
 }
 
+- (void)showSelectionCircle:(CLLocationCoordinate2D *)coords {
+    // Assumes overlays and annotations were cleared in the calling function
+    
+    MKCircle *greyCircle = [MKCircle circleWithCenterCoordinate:*coords radius:15];
+    [greyCircle setColor:-1];
+    [self.mapView addOverlay:greyCircle];
+    
+    NSArray *calloutAnnotations = [[NSArray alloc] initWithObjects:
+    [[CalloutMapAnnotation alloc] initWithLatitude:coords->latitude+0.0003
+                                      andLongitude:coords->longitude+0.0005
+                                          andTitle:@"1101"],
+    [[CalloutMapAnnotation alloc] initWithLatitude:coords->latitude
+                                      andLongitude:coords->longitude+0.0005
+                                          andTitle:@"1105"],
+    [[CalloutMapAnnotation alloc] initWithLatitude:coords->latitude+0.0002
+                                      andLongitude:coords->longitude-0.0005
+                                          andTitle:@"1104"],
+    [[CalloutMapAnnotation alloc] initWithLatitude:coords->latitude-0.0001
+                                      andLongitude:coords->longitude-0.0005
+                                          andTitle:@"1106"],
+    [[CalloutMapAnnotation alloc] initWithLatitude:coords->latitude-0.0004
+                                      andLongitude:coords->longitude-0.0005
+                                          andTitle:@"1108"],
+                            nil];
+    [self.mapView addAnnotations:calloutAnnotations];
+}
+
 -(void) showBlockLevelWithCoordinates:(CLLocationCoordinate2D*)coords{
     
     //remove all overlays, store them somewhere for when the user zooms out?
     [mapView removeOverlays:mapView.overlays];
+    [mapView removeAnnotations:mapView.annotations];
     //load the spot information from the asynchronous server call/cache to draw blocks.  
     NSArray* data = [self loadBlockData];
     
@@ -133,11 +163,10 @@ typedef enum {
 
 
 -(void) showSpotLevelWithCoordinates:(CLLocationCoordinate2D*)coords{
-    //remove old overlay items
     [mapView removeOverlays:mapView.overlays];
-    //load data from server or machine cache
+    [mapView removeAnnotations:mapView.annotations];
+
     NSArray* data = [self loadSpotData];
-    //draw them.
     for(id spot in data){
         NSArray* point = [spot componentsSeparatedByString:@","];
         CLLocationCoordinate2D coord = CLLocationCoordinate2DMake([[point objectAtIndex:0] floatValue], [[point objectAtIndex:1] floatValue]);
@@ -146,7 +175,8 @@ typedef enum {
         [circle setColor:color];
         [self.mapView addOverlay:circle];
     }
-    
+
+    [self showSelectionCircle:coords];
 }
 
 -(void) zoomFromGridToBlockWithRegion:(MKCoordinateRegion*)reg{
@@ -290,6 +320,21 @@ typedef enum {
     return nil;
 }
 
+- (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id <MKAnnotation>)annotation {
+	if ([annotation isKindOfClass:[CalloutMapAnnotation class]]) {
+		CalloutMapAnnotationView *calloutMapAnnotationView = (CalloutMapAnnotationView *)[self.mapView dequeueReusableAnnotationViewWithIdentifier:@"CalloutAnnotation"];
+		if (!calloutMapAnnotationView) {
+			calloutMapAnnotationView = [[CalloutMapAnnotationView alloc] initWithAnnotation:annotation 
+																			 reuseIdentifier:@"CalloutAnnotation"];
+
+		}
+		calloutMapAnnotationView.mapView = self.mapView;
+		return calloutMapAnnotationView;
+	}
+
+	return nil;
+}
+
 - (void)handleGesture:(UIGestureRecognizer *)gestureRecognizer
 {
     if (gestureRecognizer.state != UIGestureRecognizerStateEnded)
@@ -331,6 +376,7 @@ typedef enum {
 
         /* so the decision bit is missing, since i don't yet nkow how to detect which block the user meant, and then from that extract the bounding regions of that block, so we ensure all spots in a block are shown.  */
         
+        /*
     }else if (zoomState==kSpotZoomLevel){
         //detect nearest spot, 
         
@@ -342,6 +388,7 @@ typedef enum {
         UIAlertView* warningAlertView = [[UIAlertView alloc] initWithTitle:@"Spot 4102 Selected!" message:@"Launch GPS to this spot?" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Launch" , nil];
         warningAlertView.tag = GPS_LAUNCH_ALERT;
         [warningAlertView show];
+         */
     }else{
         //bad state.  return 
         return;
@@ -448,6 +495,7 @@ typedef enum {
     NSLog(@"Grid Button Pressed\n" );
     zoomState = kGridZoomLevel;
     [mapView removeOverlays:mapView.overlays];
+    [mapView removeAnnotations:mapView.annotations];
 
     //set the zoom to fit 12 grids perfectly
     CLLocationCoordinate2D point = CLLocationCoordinate2DMake(42.365045,-71.118965);
@@ -485,6 +533,7 @@ typedef enum {
      
 - (IBAction)blockButtonPressed:(id)sender {
     [mapView removeOverlays:mapView.overlays];
+    [mapView removeAnnotations:mapView.annotations];
 
     CLLocationCoordinate2D point = {42.364854,-71.109438};
 
@@ -518,19 +567,7 @@ typedef enum {
     MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(point, METERS_PER_MILE/16, METERS_PER_MILE/16);
     [mapView setRegion:[mapView regionThatFits:viewRegion] animated:YES];
 
-    MKCircle *greyCircle = [MKCircle circleWithCenterCoordinate:point radius:15];
-    [greyCircle setColor:-1];
-    [self.mapView addOverlay:greyCircle];
-
-    NSArray* data = [self loadSpotData];
-    for(id spot in data){
-        NSArray* points = [spot componentsSeparatedByString:@","];
-        CLLocationCoordinate2D coord = CLLocationCoordinate2DMake([[points objectAtIndex:0] floatValue], [[points objectAtIndex:1] floatValue]);
-        int color = [[points objectAtIndex:2] intValue];
-        MKCircle* circle = [MKCircle circleWithCenterCoordinate:coord radius:2];
-        [circle setColor:color];
-        [self.mapView addOverlay:circle];
-    }
+    [self showSpotLevelWithCoordinates:&point];
 }
 - (IBAction)noneButtonPressed:(id)sender {
     [mapView removeOverlays:mapView.overlays];
@@ -582,7 +619,7 @@ typedef enum {
     mapView.showsUserLocation = YES;
     
     //setup gesture recognizer for grids and blocks and spots.  
-    UITapGestureRecognizer *tgr = [[UITapGestureRecognizer alloc] 
+    UITapGestureRecognizer *tgr = [[UITapGestureRecognizer alloc]
                                    initWithTarget:self action:@selector(handleGesture:)];
     [mapView addGestureRecognizer:tgr];
     

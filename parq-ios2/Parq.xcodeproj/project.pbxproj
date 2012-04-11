@@ -23,6 +23,10 @@
 		871E2104152CE02100D9452A /* settings.png in Resources */ = {isa = PBXBuildFile; fileRef = 871E2103152CE02100D9452A /* settings.png */; };
 		871E2106152CF22A00D9452A /* avail_gradient.png in Resources */ = {isa = PBXBuildFile; fileRef = 871E2105152CF22A00D9452A /* avail_gradient.png */; };
 		8730EB23151BBD1500E7A7F8 /* libobjc.A.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8730EB22151BBD1500E7A7F8 /* libobjc.A.dylib */; };
+		8791F9BA153379B900525267 /* callout_bubble_sw.png in Resources */ = {isa = PBXBuildFile; fileRef = 8791F9B9153379B900525267 /* callout_bubble_sw.png */; };
+		8791F9C11533804000525267 /* PQCallout.m in Sources */ = {isa = PBXBuildFile; fileRef = 8791F9C01533804000525267 /* PQCallout.m */; };
+		8791F9CE153383E500525267 /* CalloutMapAnnotationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8791F9CD153383E500525267 /* CalloutMapAnnotationView.m */; };
+		8791F9D415338DD300525267 /* CalloutMapAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 8791F9D315338DD300525267 /* CalloutMapAnnotation.m */; };
 		87AE9EFC152F918300069153 /* MKShape+Color.m in Sources */ = {isa = PBXBuildFile; fileRef = 87AE9EFB152F918300069153 /* MKShape+Color.m */; };
 /* End PBXBuildFile section */
 
@@ -49,6 +53,13 @@
 		871E2103152CE02100D9452A /* settings.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = settings.png; sourceTree = "<group>"; };
 		871E2105152CF22A00D9452A /* avail_gradient.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = avail_gradient.png; sourceTree = "<group>"; };
 		8730EB22151BBD1500E7A7F8 /* libobjc.A.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libobjc.A.dylib; path = usr/lib/libobjc.A.dylib; sourceTree = SDKROOT; };
+		8791F9B9153379B900525267 /* callout_bubble_sw.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = callout_bubble_sw.png; sourceTree = "<group>"; };
+		8791F9BF1533804000525267 /* PQCallout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PQCallout.h; sourceTree = "<group>"; };
+		8791F9C01533804000525267 /* PQCallout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PQCallout.m; sourceTree = "<group>"; };
+		8791F9CC153383E500525267 /* CalloutMapAnnotationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalloutMapAnnotationView.h; sourceTree = "<group>"; };
+		8791F9CD153383E500525267 /* CalloutMapAnnotationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CalloutMapAnnotationView.m; sourceTree = "<group>"; };
+		8791F9D215338DD300525267 /* CalloutMapAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalloutMapAnnotation.h; sourceTree = "<group>"; };
+		8791F9D315338DD300525267 /* CalloutMapAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CalloutMapAnnotation.m; sourceTree = "<group>"; };
 		87AE9EFA152F918300069153 /* MKShape+Color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MKShape+Color.h"; sourceTree = "<group>"; };
 		87AE9EFB152F918300069153 /* MKShape+Color.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MKShape+Color.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -77,6 +88,7 @@
 				8703ACA91513F841002FE357 /* Frameworks */,
 				8703ACA71513F841002FE357 /* Products */,
 				8703ACDF1513FC84002FE357 /* Resources */,
+				8791F9CA153383BA00525267 /* Shared */,
 			);
 			sourceTree = "<group>";
 		};
@@ -108,6 +120,8 @@
 				87AE9EFB152F918300069153 /* MKShape+Color.m */,
 				8703ACB91513F841002FE357 /* PQAppDelegate.h */,
 				8703ACBA1513F841002FE357 /* PQAppDelegate.m */,
+				8791F9BF1533804000525267 /* PQCallout.h */,
+				8791F9C01533804000525267 /* PQCallout.m */,
 				8703ACBC1513F841002FE357 /* MainStoryboard.storyboard */,
 				8703ACBF1513F841002FE357 /* PQViewController.h */,
 				8703ACC01513F841002FE357 /* PQViewController.m */,
@@ -141,11 +155,32 @@
 			isa = PBXGroup;
 			children = (
 				871E2105152CF22A00D9452A /* avail_gradient.png */,
+				8791F9B9153379B900525267 /* callout_bubble_sw.png */,
 				8703ACD91513FC36002FE357 /* icon@2x.png */,
 				8703ACD71513FC32002FE357 /* icon.png */,
 				871E2103152CE02100D9452A /* settings.png */,
 			);
 			name = Images;
+			sourceTree = "<group>";
+		};
+		8791F9CA153383BA00525267 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				8791F9CB153383D400525267 /* Asynchrony Solutions */,
+			);
+			name = Shared;
+			path = "parq-ios2";
+			sourceTree = "<group>";
+		};
+		8791F9CB153383D400525267 /* Asynchrony Solutions */ = {
+			isa = PBXGroup;
+			children = (
+				8791F9D215338DD300525267 /* CalloutMapAnnotation.h */,
+				8791F9D315338DD300525267 /* CalloutMapAnnotation.m */,
+				8791F9CC153383E500525267 /* CalloutMapAnnotationView.h */,
+				8791F9CD153383E500525267 /* CalloutMapAnnotationView.m */,
+			);
+			name = "Asynchrony Solutions";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -205,6 +240,7 @@
 				8703ACDA1513FC36002FE357 /* icon@2x.png in Resources */,
 				871E2104152CE02100D9452A /* settings.png in Resources */,
 				871E2106152CF22A00D9452A /* avail_gradient.png in Resources */,
+				8791F9BA153379B900525267 /* callout_bubble_sw.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -220,6 +256,9 @@
 				8703ACC11513F841002FE357 /* PQViewController.m in Sources */,
 				871E20FE152CD54C00D9452A /* UIColor+Parq.m in Sources */,
 				87AE9EFC152F918300069153 /* MKShape+Color.m in Sources */,
+				8791F9C11533804000525267 /* PQCallout.m in Sources */,
+				8791F9CE153383E500525267 /* CalloutMapAnnotationView.m in Sources */,
+				8791F9D415338DD300525267 /* CalloutMapAnnotation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
