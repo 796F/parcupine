@@ -106,31 +106,51 @@ typedef enum {
     }
 }
 
-- (void)showSelectionCircle:(CLLocationCoordinate2D *)coords {
+- (NSArray *)calloutBubblePlacement:(CLLocationCoordinate2D *)selectionCenter {
+    return [[NSArray alloc] initWithObjects:
+            [[NSDictionary alloc] initWithObjectsAndKeys:
+             [[CalloutMapAnnotation alloc] initWithLatitude:selectionCenter->latitude+0.0002 andLongitude:selectionCenter->longitude-0.0005 andTitle:@"1101" andCorner:kBottomRightCorner], @"callout",
+             [[CLLocation alloc] initWithLatitude:42.365154 longitude:-71.110892], @"spot", nil], nil];
+}
+
+- (void)showSelectionCircle:(CLLocationCoordinate2D *)coord {
     // Assumes overlays and annotations were cleared in the calling function
     
-    MKCircle *greyCircle = [MKCircle circleWithCenterCoordinate:*coords radius:15];
+    MKCircle *greyCircle = [MKCircle circleWithCenterCoordinate:*coord radius:12];
     [greyCircle setColor:-1];
     [self.mapView addOverlay:greyCircle];
     
-    NSArray *calloutAnnotations = [[NSArray alloc] initWithObjects:
-    [[CalloutMapAnnotation alloc] initWithLatitude:coords->latitude+0.0003
-                                      andLongitude:coords->longitude+0.0005
-                                          andTitle:@"1101"],
-    [[CalloutMapAnnotation alloc] initWithLatitude:coords->latitude
-                                      andLongitude:coords->longitude+0.0005
-                                          andTitle:@"1105"],
-    [[CalloutMapAnnotation alloc] initWithLatitude:coords->latitude+0.0002
-                                      andLongitude:coords->longitude-0.0005
-                                          andTitle:@"1104"],
-    [[CalloutMapAnnotation alloc] initWithLatitude:coords->latitude-0.0001
-                                      andLongitude:coords->longitude-0.0005
-                                          andTitle:@"1106"],
-    [[CalloutMapAnnotation alloc] initWithLatitude:coords->latitude-0.0004
-                                      andLongitude:coords->longitude-0.0005
-                                          andTitle:@"1108"],
-                            nil];
-    [self.mapView addAnnotations:calloutAnnotations];
+    NSArray *placement = [self calloutBubblePlacement:coord];
+    for (NSDictionary *bubble in placement) {
+        CLLocationCoordinate2D endpoints[2];
+        endpoints[0] = ((CLLocation *)[bubble objectForKey:@"spot"]).coordinate;
+        CalloutMapAnnotation *callout = [bubble objectForKey:@"callout"];
+        endpoints[1] = callout.coordinate;
+        MKPolyline *calloutLine = [MKPolyline polylineWithCoordinates:endpoints count:2];
+        [calloutLine setColor:-1];
+        [self.mapView addOverlay:calloutLine];
+
+        [self.mapView addAnnotation:callout];
+    }
+
+//    NSArray *calloutAnnotations = [[NSArray alloc] initWithObjects:
+//    [[CalloutMapAnnotation alloc] initWithLatitude:coord->latitude+0.0003
+//                                      andLongitude:coord->longitude+0.0005
+//                                          andTitle:@"1101"],
+//    [[CalloutMapAnnotation alloc] initWithLatitude:coord->latitude
+//                                      andLongitude:coord->longitude+0.0005
+//                                          andTitle:@"1105"],
+//    [[CalloutMapAnnotation alloc] initWithLatitude:coord->latitude+0.0002
+//                                      andLongitude:coord->longitude-0.0005
+//                                          andTitle:@"1104"],
+//    [[CalloutMapAnnotation alloc] initWithLatitude:coord->latitude-0.0001
+//                                      andLongitude:coord->longitude-0.0005
+//                                          andTitle:@"1106"],
+//    [[CalloutMapAnnotation alloc] initWithLatitude:coord->latitude-0.0004
+//                                      andLongitude:coord->longitude-0.0005
+//                                          andTitle:@"1108"],
+//                            nil];
+//    [self.mapView addAnnotations:calloutAnnotations];
 }
 
 -(void) showBlockLevelWithCoordinates:(CLLocationCoordinate2D*)coords{
@@ -275,6 +295,10 @@ typedef enum {
         view.lineWidth = 8;
         MKPolyline *polyline = (MKPolyline *)overlay;
         switch (polyline.color) {
+            case -1:
+                view.strokeColor = [UIColor blackColor];
+                view.lineWidth = 1;
+                break;
             case 0:
                 view.strokeColor = [UIColor veryLowAvailabilityColor];
                 break;
@@ -531,7 +555,7 @@ typedef enum {
 }
 
      
-- (IBAction)blockButtonPressed:(id)sender {
+- (IBAction)streetButtonPressed:(id)sender {
     [mapView removeOverlays:mapView.overlays];
     [mapView removeAnnotations:mapView.annotations];
 
@@ -562,8 +586,8 @@ typedef enum {
 - (IBAction)spotButtonPressed:(id)sender {
     
     [mapView removeOverlays:mapView.overlays];
-    CLLocationCoordinate2D point = {42.365096, -71.110843};
-    
+    CLLocationCoordinate2D point = {42.365077, -71.110838};
+
     MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(point, METERS_PER_MILE/16, METERS_PER_MILE/16);
     [mapView setRegion:[mapView regionThatFits:viewRegion] animated:YES];
 
@@ -571,7 +595,7 @@ typedef enum {
 }
 - (IBAction)noneButtonPressed:(id)sender {
     [mapView removeOverlays:mapView.overlays];
-    
+
     [locationManager startUpdatingLocation];
 }
 
