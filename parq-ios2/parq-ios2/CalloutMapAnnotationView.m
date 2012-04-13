@@ -5,7 +5,6 @@
 
 #define CalloutMapAnnotationViewBottomShadowBufferSize 6.0f
 #define CalloutMapAnnotationViewContentHeightBuffer 8.0f
-#define CalloutMapAnnotationViewHeightAboveParent 2.0f
 
 @interface CalloutMapAnnotationView()
 
@@ -16,21 +15,17 @@
 - (void)prepareContentFrame;
 - (void)prepareFrameSize;
 - (void)prepareOffset;
-- (CGFloat)relativeParentXPosition;
-- (void)adjustMapRegionIfNeeded;
 
 @end
 
 
 @implementation CalloutMapAnnotationView
 
-@synthesize parentAnnotationView = _parentAnnotationView;
 @synthesize mapView = _mapView;
 @synthesize contentView = _contentView;
 @synthesize animateOnNextDrawRect = _animateOnNextDrawRect;
 @synthesize endFrame = _endFrame;
 @synthesize yShadowOffset = _yShadowOffset;
-@synthesize offsetFromParent = _offsetFromParent;
 @synthesize contentHeight = _contentHeight;
 
 - (id) initWithAnnotation:(id <MKAnnotation>)annotation reuseIdentifier:(NSString *)reuseIdentifier {
@@ -93,51 +88,6 @@
 	
 //	self.centerOffset = CGPointMake(xOffset, yOffset);
     self.centerOffset = CGPointMake(0,0);
-}
-
-//if the pin is too close to the edge of the map view we need to shift the map view so the callout will fit.
-- (void)adjustMapRegionIfNeeded {
-	//Longitude
-	CGFloat xPixelShift = 0;
-	if ([self relativeParentXPosition] < 38) {
-		xPixelShift = 38 - [self relativeParentXPosition];
-	} else if ([self relativeParentXPosition] > self.frame.size.width - 38) {
-		xPixelShift = (self.frame.size.width - 38) - [self relativeParentXPosition];
-	}
-	
-	
-	//Latitude
-	CGPoint mapViewOriginRelativeToSelf = [self.mapView convertPoint:self.mapView.frame.origin toView:self];
-	CGFloat yPixelShift = 0;
-	CGFloat pixelsFromTopOfMapView = -(mapViewOriginRelativeToSelf.y + self.frame.size.height - CalloutMapAnnotationViewBottomShadowBufferSize);
-	CGFloat pixelsFromBottomOfMapView = self.mapView.frame.size.height + mapViewOriginRelativeToSelf.y - self.frame.size.height;
-	if (pixelsFromTopOfMapView < 7) {
-		yPixelShift = 7 - pixelsFromTopOfMapView;
-	} else if (pixelsFromBottomOfMapView < 10) {
-		yPixelShift = -(10 - pixelsFromBottomOfMapView);
-	}
-	
-	//Calculate new center point, if needed
-	if (xPixelShift || yPixelShift) {
-		CGFloat pixelsPerDegreeLongitude = self.mapView.frame.size.width / self.mapView.region.span.longitudeDelta;
-		CGFloat pixelsPerDegreeLatitude = self.mapView.frame.size.height / self.mapView.region.span.latitudeDelta;
-		
-		CLLocationDegrees longitudinalShift = -(xPixelShift / pixelsPerDegreeLongitude);
-		CLLocationDegrees latitudinalShift = yPixelShift / pixelsPerDegreeLatitude;
-		
-		CLLocationCoordinate2D newCenterCoordinate = {self.mapView.region.center.latitude + latitudinalShift, 
-			self.mapView.region.center.longitude + longitudinalShift};
-		
-		[self.mapView setCenterCoordinate:newCenterCoordinate animated:YES];
-		
-		//fix for now
-		self.frame = CGRectMake(self.frame.origin.x - xPixelShift,
-								self.frame.origin.y - yPixelShift,
-								self.frame.size.width, 
-								self.frame.size.height);
-		//fix for later (after zoom or other action that resets the frame)
-		self.centerOffset = CGPointMake(self.centerOffset.x - xPixelShift, self.centerOffset.y);
-	}
 }
 
 - (CGFloat)xTransformForScale:(CGFloat)scale {
@@ -203,7 +153,7 @@
 	//Determine Size
 	rect = self.bounds;
 	rect.size.width -= stroke + 14;
-	rect.size.height -= stroke + CalloutMapAnnotationViewHeightAboveParent - self.offsetFromParent.y + CalloutMapAnnotationViewBottomShadowBufferSize;
+	rect.size.height -= stroke + CalloutMapAnnotationViewBottomShadowBufferSize;
 	rect.origin.x += stroke / 2.0 + 7;
 	rect.origin.y += stroke / 2.0;
 	
@@ -362,12 +312,6 @@
 		
 	}
 	return _yShadowOffset;
-}
-
-- (CGFloat)relativeParentXPosition {
-	CGPoint parentOrigin = [self.mapView convertPoint:self.parentAnnotationView.frame.origin 
-											 fromView:self.parentAnnotationView.superview];
-	return parentOrigin.x + self.offsetFromParent.x;
 }
 
 - (UIView *)contentView {
