@@ -150,9 +150,9 @@ typedef enum {
     NSArray *placement = [self calloutBubblePlacement:coord];
     for (NSDictionary *bubble in placement) {
         CLLocationCoordinate2D endpoints[2];
-        endpoints[0] = ((CLLocation *)[bubble objectForKey:@"spot"]).coordinate;
         CalloutMapAnnotation *callout = [bubble objectForKey:@"callout"];
-        endpoints[1] = callout.coordinate;
+        endpoints[0] = callout.coordinate;
+        endpoints[1] = ((CLLocation *)[bubble objectForKey:@"spot"]).coordinate;
         MKPolyline *calloutLine = [MKPolyline polylineWithCoordinates:endpoints count:2];
         [calloutLine setColor:-1];
         [self.mapView addOverlay:calloutLine];
@@ -194,6 +194,7 @@ typedef enum {
     [mapView removeOverlays:mapView.overlays];
     [mapView removeAnnotations:mapView.annotations];
 
+    [self showSelectionCircle:coords];
     NSArray* data = [self loadSpotData];
     for(id spot in data){
         NSArray* point = [spot componentsSeparatedByString:@","];
@@ -203,8 +204,6 @@ typedef enum {
         [circle setColor:color];
         [self.mapView addOverlay:circle];
     }
-
-    [self showSelectionCircle:coords];
 }
 
 -(void) zoomFromGridToBlockWithRegion:(MKCoordinateRegion*)reg{
