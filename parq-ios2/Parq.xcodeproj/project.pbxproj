@@ -23,7 +23,6 @@
 		871E2104152CE02100D9452A /* settings.png in Resources */ = {isa = PBXBuildFile; fileRef = 871E2103152CE02100D9452A /* settings.png */; };
 		871E2106152CF22A00D9452A /* avail_gradient.png in Resources */ = {isa = PBXBuildFile; fileRef = 871E2105152CF22A00D9452A /* avail_gradient.png */; };
 		8730EB23151BBD1500E7A7F8 /* libobjc.A.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8730EB22151BBD1500E7A7F8 /* libobjc.A.dylib */; };
-		8791F9BA153379B900525267 /* callout_bubble_sw.png in Resources */ = {isa = PBXBuildFile; fileRef = 8791F9B9153379B900525267 /* callout_bubble_sw.png */; };
 		8791F9C11533804000525267 /* PQCallout.m in Sources */ = {isa = PBXBuildFile; fileRef = 8791F9C01533804000525267 /* PQCallout.m */; };
 		8791F9CE153383E500525267 /* CalloutMapAnnotationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8791F9CD153383E500525267 /* CalloutMapAnnotationView.m */; };
 		8791F9D415338DD300525267 /* CalloutMapAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 8791F9D315338DD300525267 /* CalloutMapAnnotation.m */; };
@@ -53,7 +52,6 @@
 		871E2103152CE02100D9452A /* settings.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = settings.png; sourceTree = "<group>"; };
 		871E2105152CF22A00D9452A /* avail_gradient.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = avail_gradient.png; sourceTree = "<group>"; };
 		8730EB22151BBD1500E7A7F8 /* libobjc.A.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libobjc.A.dylib; path = usr/lib/libobjc.A.dylib; sourceTree = SDKROOT; };
-		8791F9B9153379B900525267 /* callout_bubble_sw.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = callout_bubble_sw.png; sourceTree = "<group>"; };
 		8791F9BF1533804000525267 /* PQCallout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PQCallout.h; sourceTree = "<group>"; };
 		8791F9C01533804000525267 /* PQCallout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PQCallout.m; sourceTree = "<group>"; };
 		8791F9CC153383E500525267 /* CalloutMapAnnotationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalloutMapAnnotationView.h; sourceTree = "<group>"; };
@@ -155,7 +153,6 @@
 			isa = PBXGroup;
 			children = (
 				871E2105152CF22A00D9452A /* avail_gradient.png */,
-				8791F9B9153379B900525267 /* callout_bubble_sw.png */,
 				8703ACD91513FC36002FE357 /* icon@2x.png */,
 				8703ACD71513FC32002FE357 /* icon.png */,
 				871E2103152CE02100D9452A /* settings.png */,
@@ -240,7 +237,6 @@
 				8703ACDA1513FC36002FE357 /* icon@2x.png in Resources */,
 				871E2104152CE02100D9452A /* settings.png in Resources */,
 				871E2106152CF22A00D9452A /* avail_gradient.png in Resources */,
-				8791F9BA153379B900525267 /* callout_bubble_sw.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

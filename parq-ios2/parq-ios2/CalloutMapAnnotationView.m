@@ -1,4 +1,5 @@
 #import "CalloutMapAnnotationView.h"
+#import "CalloutMapAnnotation.h"
 #import <CoreGraphics/CoreGraphics.h>
 #import <QuartzCore/QuartzCore.h>
 
@@ -60,8 +61,7 @@
 	CGRect frame = self.frame;
 	CGFloat height =	self.contentHeight +
 	CalloutMapAnnotationViewContentHeightBuffer +
-	CalloutMapAnnotationViewBottomShadowBufferSize -
-	self.offsetFromParent.y;
+	CalloutMapAnnotationViewBottomShadowBufferSize;
 	
     frame.size = CGSizeMake(62, height);
 //	frame.size = CGSizeMake(self.mapView.frame.size.width, height);
@@ -107,10 +107,10 @@
 	
 	
 	//Latitude
-	CGPoint mapViewOriginRelativeToParent = [self.mapView convertPoint:self.mapView.frame.origin toView:self.parentAnnotationView];
+	CGPoint mapViewOriginRelativeToSelf = [self.mapView convertPoint:self.mapView.frame.origin toView:self];
 	CGFloat yPixelShift = 0;
-	CGFloat pixelsFromTopOfMapView = -(mapViewOriginRelativeToParent.y + self.frame.size.height - CalloutMapAnnotationViewBottomShadowBufferSize);
-	CGFloat pixelsFromBottomOfMapView = self.mapView.frame.size.height + mapViewOriginRelativeToParent.y - self.parentAnnotationView.frame.size.height;
+	CGFloat pixelsFromTopOfMapView = -(mapViewOriginRelativeToSelf.y + self.frame.size.height - CalloutMapAnnotationViewBottomShadowBufferSize);
+	CGFloat pixelsFromBottomOfMapView = self.mapView.frame.size.height + mapViewOriginRelativeToSelf.y - self.frame.size.height;
 	if (pixelsFromTopOfMapView < 7) {
 		yPixelShift = 7 - pixelsFromTopOfMapView;
 	} else if (pixelsFromBottomOfMapView < 10) {
@@ -141,13 +141,13 @@
 }
 
 - (CGFloat)xTransformForScale:(CGFloat)scale {
-	CGFloat xDistanceFromCenterToParent = self.endFrame.size.width / 2 - [self relativeParentXPosition];
-	return (xDistanceFromCenterToParent * scale) - xDistanceFromCenterToParent;
+	CGFloat xDistanceFromCenter = self.endFrame.size.width / 2;
+	return (xDistanceFromCenter * scale) - xDistanceFromCenter;
 }
 
 - (CGFloat)yTransformForScale:(CGFloat)scale {
-	CGFloat yDistanceFromCenterToParent = (((self.endFrame.size.height) / 2) + self.offsetFromParent.y + CalloutMapAnnotationViewBottomShadowBufferSize + CalloutMapAnnotationViewHeightAboveParent);
-	return yDistanceFromCenterToParent - yDistanceFromCenterToParent * scale;
+	CGFloat yDistanceFromCenter = (((self.endFrame.size.height) / 2) + CalloutMapAnnotationViewBottomShadowBufferSize);
+	return yDistanceFromCenter - yDistanceFromCenter * scale;
 }
 
 - (void)animateIn {
@@ -189,7 +189,6 @@
 }
 
 - (void)didMoveToSuperview {
-//	[self adjustMapRegionIfNeeded];
 	[self animateIn];
 }
 
@@ -209,20 +208,42 @@
 	rect.origin.y += stroke / 2.0;
 	
 	//Create Path For Callout Bubble
-	CGPathMoveToPoint(path, NULL, rect.origin.x, rect.origin.y + radius);
-	CGPathAddLineToPoint(path, NULL, rect.origin.x, rect.origin.y + rect.size.height - radius);
-	CGPathAddArc(path, NULL, rect.origin.x + radius, rect.origin.y + rect.size.height - radius, 
-				 radius, M_PI, M_PI / 2, 1);
-	CGPathAddLineToPoint(path, NULL, rect.origin.x + rect.size.width - radius, 
-						 rect.origin.y + rect.size.height);
-	CGPathAddArc(path, NULL, rect.origin.x + rect.size.width - radius, 
-				 rect.origin.y + rect.size.height - radius, radius, M_PI / 2, 0.0f, 1);
-	CGPathAddLineToPoint(path, NULL, rect.origin.x + rect.size.width, rect.origin.y + radius);
-	CGPathAddArc(path, NULL, rect.origin.x + rect.size.width - radius, rect.origin.y + radius, 
-				 radius, 0.0f, -M_PI / 2, 1);
-	CGPathAddLineToPoint(path, NULL, rect.origin.x + radius, rect.origin.y);
-	CGPathAddArc(path, NULL, rect.origin.x + radius, rect.origin.y + radius, radius, 
-				 -M_PI / 2, M_PI, 1);
+    const CalloutCorner corner = ((CalloutMapAnnotation *)self.annotation).corner;
+    if (corner != kTopLeftCorner) {
+        CGPathMoveToPoint(path, NULL, rect.origin.x, rect.origin.y + radius);
+    } else {
+        CGPathMoveToPoint(path, NULL, rect.origin.x, rect.origin.y);
+    }
+    if (corner != kBottomLeftCorner) {
+        CGPathAddLineToPoint(path, NULL, rect.origin.x, rect.origin.y + rect.size.height - radius);
+        CGPathAddArc(path, NULL, rect.origin.x + radius, rect.origin.y + rect.size.height - radius, 
+                     radius, M_PI, M_PI / 2, 1);
+    } else {
+        CGPathAddLineToPoint(path, NULL, rect.origin.x, rect.origin.y + rect.size.height);
+    }
+    if (corner != kBottomRightCorner) {
+        CGPathAddLineToPoint(path, NULL, rect.origin.x + rect.size.width - radius, 
+                             rect.origin.y + rect.size.height);
+        CGPathAddArc(path, NULL, rect.origin.x + rect.size.width - radius, 
+                     rect.origin.y + rect.size.height - radius, radius, M_PI / 2, 0.0f, 1);
+    } else {
+        CGPathAddLineToPoint(path, NULL, rect.origin.x + rect.size.width, 
+                             rect.origin.y + rect.size.height);
+    }
+    if (corner != kTopRightCorner) {
+        CGPathAddLineToPoint(path, NULL, rect.origin.x + rect.size.width, rect.origin.y + radius);
+        CGPathAddArc(path, NULL, rect.origin.x + rect.size.width - radius, rect.origin.y + radius, 
+                     radius, 0.0f, -M_PI / 2, 1);
+    } else {
+        CGPathAddLineToPoint(path, NULL, rect.origin.x + rect.size.width, rect.origin.y);
+    }
+    if (corner != kTopLeftCorner) {
+        CGPathAddLineToPoint(path, NULL, rect.origin.x + radius, rect.origin.y);
+        CGPathAddArc(path, NULL, rect.origin.x + radius, rect.origin.y + radius, radius, 
+                     -M_PI / 2, M_PI, 1);
+    } else {
+        CGPathAddLineToPoint(path, NULL, rect.origin.x, rect.origin.y);
+    }
 	CGPathCloseSubpath(path);
 	
 	//Fill Callout Bubble & Add Shadow
@@ -254,20 +275,41 @@
 	
 	//Create Path For Gloss
 	CGMutablePathRef glossPath = CGPathCreateMutable();
-	CGPathMoveToPoint(glossPath, NULL, glossRect.origin.x, glossRect.origin.y + glossTopRadius);
-	CGPathAddLineToPoint(glossPath, NULL, glossRect.origin.x, glossRect.origin.y + glossRect.size.height - glossBottomRadius);
-	CGPathAddArc(glossPath, NULL, glossRect.origin.x + glossBottomRadius, glossRect.origin.y + glossRect.size.height - glossBottomRadius, 
-				 glossBottomRadius, M_PI, M_PI / 2, 1);
-	CGPathAddLineToPoint(glossPath, NULL, glossRect.origin.x + glossRect.size.width - glossBottomRadius, 
-						 glossRect.origin.y + glossRect.size.height);
-	CGPathAddArc(glossPath, NULL, glossRect.origin.x + glossRect.size.width - glossBottomRadius, 
-				 glossRect.origin.y + glossRect.size.height - glossBottomRadius, glossBottomRadius, M_PI / 2, 0.0f, 1);
-	CGPathAddLineToPoint(glossPath, NULL, glossRect.origin.x + glossRect.size.width, glossRect.origin.y + glossTopRadius);
-	CGPathAddArc(glossPath, NULL, glossRect.origin.x + glossRect.size.width - glossTopRadius, glossRect.origin.y + glossTopRadius, 
-				 glossTopRadius, 0.0f, -M_PI / 2, 1);
-	CGPathAddLineToPoint(glossPath, NULL, glossRect.origin.x + glossTopRadius, glossRect.origin.y);
-	CGPathAddArc(glossPath, NULL, glossRect.origin.x + glossTopRadius, glossRect.origin.y + glossTopRadius, glossTopRadius, 
-				 -M_PI / 2, M_PI, 1);
+    if (corner != kTopLeftCorner) {
+        CGPathMoveToPoint(glossPath, NULL, glossRect.origin.x, glossRect.origin.y + glossTopRadius);
+    } else {
+        CGPathMoveToPoint(glossPath, NULL, glossRect.origin.x, glossRect.origin.y);
+    }
+    if (corner != kBottomLeftCorner) {
+        CGPathAddLineToPoint(glossPath, NULL, glossRect.origin.x, glossRect.origin.y + glossRect.size.height - glossBottomRadius);
+        CGPathAddArc(glossPath, NULL, glossRect.origin.x + glossBottomRadius, glossRect.origin.y + glossRect.size.height - glossBottomRadius, 
+                     glossBottomRadius, M_PI, M_PI / 2, 1);
+    } else {
+        CGPathAddLineToPoint(glossPath, NULL, glossRect.origin.x, glossRect.origin.y + glossRect.size.height);
+    }
+    if (corner != kBottomRightCorner) {
+        CGPathAddLineToPoint(glossPath, NULL, glossRect.origin.x + glossRect.size.width - glossBottomRadius, 
+                             glossRect.origin.y + glossRect.size.height);
+        CGPathAddArc(glossPath, NULL, glossRect.origin.x + glossRect.size.width - glossBottomRadius, 
+                     glossRect.origin.y + glossRect.size.height - glossBottomRadius, glossBottomRadius, M_PI / 2, 0.0f, 1);
+    } else {
+        CGPathAddLineToPoint(glossPath, NULL, glossRect.origin.x + glossRect.size.width, 
+                             glossRect.origin.y + glossRect.size.height);
+    }
+    if (corner != kTopRightCorner) {
+        CGPathAddLineToPoint(glossPath, NULL, glossRect.origin.x + glossRect.size.width, glossRect.origin.y + glossTopRadius);
+        CGPathAddArc(glossPath, NULL, glossRect.origin.x + glossRect.size.width - glossTopRadius, glossRect.origin.y + glossTopRadius, 
+                     glossTopRadius, 0.0f, -M_PI / 2, 1);
+    } else {
+        CGPathAddLineToPoint(glossPath, NULL, glossRect.origin.x + glossRect.size.width, glossRect.origin.y);
+    }
+    if (corner != kTopLeftCorner) {
+        CGPathAddLineToPoint(glossPath, NULL, glossRect.origin.x + glossTopRadius, glossRect.origin.y);
+        CGPathAddArc(glossPath, NULL, glossRect.origin.x + glossTopRadius, glossRect.origin.y + glossTopRadius, glossTopRadius, 
+                     -M_PI / 2, M_PI, 1);
+    } else {
+        CGPathAddLineToPoint(glossPath, NULL, glossRect.origin.x, glossRect.origin.y);
+    }
 	CGPathCloseSubpath(glossPath);
 	
 	//Fill Gloss Path	
