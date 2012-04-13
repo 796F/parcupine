@@ -75,7 +75,7 @@ typedef enum {
             @"42.365140, -71.110806, 1",
             @"42.365092, -71.110798, 0",
             @"42.365045, -71.110790, 1",
-            @"42.364995, -71.110782, 1",
+            @"42.364995, -71.110782, 0",
             @"42.364947, -71.110768, 0",
             @"42.364896, -71.110766, 0",
             @"42.364846, -71.110752, 0",
@@ -109,8 +109,20 @@ typedef enum {
 - (NSArray *)calloutBubblePlacement:(CLLocationCoordinate2D *)selectionCenter {
     return [[NSArray alloc] initWithObjects:
             [[NSDictionary alloc] initWithObjectsAndKeys:
-             [[CalloutMapAnnotation alloc] initWithLatitude:selectionCenter->latitude+0.0002 andLongitude:selectionCenter->longitude-0.0005 andTitle:@"1101" andCorner:kBottomRightCorner], @"callout",
-             [[CLLocation alloc] initWithLatitude:42.365154 longitude:-71.110892], @"spot", nil], nil];
+             [[CalloutMapAnnotation alloc] initWithLatitude:selectionCenter->latitude+0.0002 andLongitude:selectionCenter->longitude-0.0005 andTitle:@"1104" andCorner:kBottomRightCorner], @"callout",
+             [[CLLocation alloc] initWithLatitude:42.365154 longitude:-71.110892], @"spot", nil],
+            [[NSDictionary alloc] initWithObjectsAndKeys:
+             [[CalloutMapAnnotation alloc] initWithLatitude:selectionCenter->latitude-0.0001 andLongitude:selectionCenter->longitude-0.0005 andTitle:@"1106" andCorner:kTopRightCorner], @"callout",
+             [[CLLocation alloc] initWithLatitude:42.365049 longitude:-71.110868], @"spot", nil],
+            [[NSDictionary alloc] initWithObjectsAndKeys:
+             [[CalloutMapAnnotation alloc] initWithLatitude:selectionCenter->latitude-0.0004 andLongitude:selectionCenter->longitude-0.0005 andTitle:@"1108" andCorner:kTopRightCorner], @"callout",
+             [[CLLocation alloc] initWithLatitude:42.364993 longitude:-71.110860], @"spot", nil],
+            [[NSDictionary alloc] initWithObjectsAndKeys:
+             [[CalloutMapAnnotation alloc] initWithLatitude:selectionCenter->latitude+0.0003 andLongitude:selectionCenter->longitude+0.0005 andTitle:@"1101" andCorner:kBottomLeftCorner], @"callout",
+             [[CLLocation alloc] initWithLatitude:42.365140 longitude:-71.110806], @"spot", nil],
+            [[NSDictionary alloc] initWithObjectsAndKeys:
+             [[CalloutMapAnnotation alloc] initWithLatitude:selectionCenter->latitude andLongitude:selectionCenter->longitude+0.0005 andTitle:@"1105" andCorner:kBottomLeftCorner], @"callout",
+             [[CLLocation alloc] initWithLatitude:42.365045 longitude:-71.110790], @"spot", nil], nil];
 }
 
 - (void)showSelectionCircle:(CLLocationCoordinate2D *)coord {
