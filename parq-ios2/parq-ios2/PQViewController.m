@@ -54,8 +54,8 @@ typedef enum {
             [[NSDictionary alloc] initWithObjectsAndKeys:@"42.350393,-71.114159", @"nw_corner", @"42.360393,-71.124159", @"se_corner", [NSNumber numberWithInt:3], @"color",nil],
             [[NSDictionary alloc] initWithObjectsAndKeys:@"42.360393,-71.114159", @"nw_corner", @"42.370393,-71.124159", @"se_corner", [NSNumber numberWithInt:3], @"color",nil],
             [[NSDictionary alloc] initWithObjectsAndKeys:@"42.370393,-71.114159", @"nw_corner", @"42.380393,-71.124159", @"se_corner", [NSNumber numberWithInt:0], @"color",nil], 
-            [[NSDictionary alloc] initWithObjectsAndKeys:@"42.350393,-71.124159", @"nw_corner",  @"42.360393,-71.134159", @"se_corner", [NSNumber numberWithInt:1], @"color",nil],
-            [[NSDictionary alloc] initWithObjectsAndKeys:@"42.360393,-71.124159", @"nw_corner",         @"42.370393,-71.134159", @"se_corner", [NSNumber numberWithInt:2], @"color",nil],
+            [[NSDictionary alloc] initWithObjectsAndKeys:@"42.350393,-71.124159", @"nw_corner", @"42.360393,-71.134159", @"se_corner", [NSNumber numberWithInt:1], @"color",nil],
+            [[NSDictionary alloc] initWithObjectsAndKeys:@"42.360393,-71.124159", @"nw_corner", @"42.370393,-71.134159", @"se_corner", [NSNumber numberWithInt:2], @"color",nil],
             [[NSDictionary alloc] initWithObjectsAndKeys:@"42.370393,-71.124159", @"nw_corner", @"42.380393,-71.134159", @"se_corner", [NSNumber numberWithInt:3], @"color",nil], nil];
     
 }
@@ -109,19 +109,34 @@ typedef enum {
 - (NSArray *)calloutBubblePlacement:(CLLocationCoordinate2D *)selectionCenter {
     return [[NSArray alloc] initWithObjects:
             [[NSDictionary alloc] initWithObjectsAndKeys:
-             [[CalloutMapAnnotation alloc] initWithLatitude:selectionCenter->latitude+0.0002 andLongitude:selectionCenter->longitude-0.0005 andTitle:@"1104" andCorner:kBottomRightCorner], @"callout",
+             [[CalloutMapAnnotation alloc] initWithLatitude:selectionCenter->latitude+0.0002
+                                               andLongitude:selectionCenter->longitude-0.0005
+                                                   andTitle:@"1104"
+                                                  andCorner:kBottomRightCorner], @"callout",
              [[CLLocation alloc] initWithLatitude:42.365154 longitude:-71.110892], @"spot", nil],
             [[NSDictionary alloc] initWithObjectsAndKeys:
-             [[CalloutMapAnnotation alloc] initWithLatitude:selectionCenter->latitude-0.0001 andLongitude:selectionCenter->longitude-0.0005 andTitle:@"1106" andCorner:kTopRightCorner], @"callout",
+             [[CalloutMapAnnotation alloc] initWithLatitude:selectionCenter->latitude-0.0001
+                                               andLongitude:selectionCenter->longitude-0.0005
+                                                   andTitle:@"1106"
+                                                  andCorner:kTopRightCorner], @"callout",
              [[CLLocation alloc] initWithLatitude:42.365049 longitude:-71.110868], @"spot", nil],
             [[NSDictionary alloc] initWithObjectsAndKeys:
-             [[CalloutMapAnnotation alloc] initWithLatitude:selectionCenter->latitude-0.0004 andLongitude:selectionCenter->longitude-0.0005 andTitle:@"1108" andCorner:kTopRightCorner], @"callout",
+             [[CalloutMapAnnotation alloc] initWithLatitude:selectionCenter->latitude-0.0004
+                                               andLongitude:selectionCenter->longitude-0.0005
+                                                   andTitle:@"1108"
+                                                  andCorner:kTopRightCorner], @"callout",
              [[CLLocation alloc] initWithLatitude:42.364993 longitude:-71.110860], @"spot", nil],
             [[NSDictionary alloc] initWithObjectsAndKeys:
-             [[CalloutMapAnnotation alloc] initWithLatitude:selectionCenter->latitude+0.0003 andLongitude:selectionCenter->longitude+0.0005 andTitle:@"1101" andCorner:kBottomLeftCorner], @"callout",
+             [[CalloutMapAnnotation alloc] initWithLatitude:selectionCenter->latitude+0.0003
+                                               andLongitude:selectionCenter->longitude+0.0005
+                                                   andTitle:@"1101"
+                                                  andCorner:kBottomLeftCorner], @"callout",
              [[CLLocation alloc] initWithLatitude:42.365140 longitude:-71.110806], @"spot", nil],
             [[NSDictionary alloc] initWithObjectsAndKeys:
-             [[CalloutMapAnnotation alloc] initWithLatitude:selectionCenter->latitude andLongitude:selectionCenter->longitude+0.0005 andTitle:@"1105" andCorner:kBottomLeftCorner], @"callout",
+             [[CalloutMapAnnotation alloc] initWithLatitude:selectionCenter->latitude
+                                               andLongitude:selectionCenter->longitude+0.0005
+                                                   andTitle:@"1105"
+                                                  andCorner:kBottomLeftCorner], @"callout",
              [[CLLocation alloc] initWithLatitude:42.365045 longitude:-71.110790], @"spot", nil], nil];
 }
 
@@ -144,25 +159,6 @@ typedef enum {
 
         [self.mapView addAnnotation:callout];
     }
-
-//    NSArray *calloutAnnotations = [[NSArray alloc] initWithObjects:
-//    [[CalloutMapAnnotation alloc] initWithLatitude:coord->latitude+0.0003
-//                                      andLongitude:coord->longitude+0.0005
-//                                          andTitle:@"1101"],
-//    [[CalloutMapAnnotation alloc] initWithLatitude:coord->latitude
-//                                      andLongitude:coord->longitude+0.0005
-//                                          andTitle:@"1105"],
-//    [[CalloutMapAnnotation alloc] initWithLatitude:coord->latitude+0.0002
-//                                      andLongitude:coord->longitude-0.0005
-//                                          andTitle:@"1104"],
-//    [[CalloutMapAnnotation alloc] initWithLatitude:coord->latitude-0.0001
-//                                      andLongitude:coord->longitude-0.0005
-//                                          andTitle:@"1106"],
-//    [[CalloutMapAnnotation alloc] initWithLatitude:coord->latitude-0.0004
-//                                      andLongitude:coord->longitude-0.0005
-//                                          andTitle:@"1108"],
-//                            nil];
-//    [self.mapView addAnnotations:calloutAnnotations];
 }
 
 -(void) showBlockLevelWithCoordinates:(CLLocationCoordinate2D*)coords{
