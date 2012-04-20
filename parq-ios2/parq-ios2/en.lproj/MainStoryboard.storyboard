@@ -128,7 +128,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <connections>
-                        <outlet property="mapView" destination="VpP-MP-pHv" id="6bp-yQ-Xm1"/>
+                        <outlet property="map" destination="VpP-MP-pHv" id="LAh-bw-Q42"/>
                         <outlet property="navigationBar" destination="Rp5-eY-6wq" id="bu7-6i-bM5"/>
                         <outlet property="topSearchBar" destination="ZNG-Ah-8CZ" id="Xa3-LA-cBz"/>
                     </connections>
@@ -144,7 +144,7 @@
         <class className="PQViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/PQViewController.h"/>
             <relationships>
-                <relationship kind="outlet" name="mapView" candidateClass="MKMapView"/>
+                <relationship kind="outlet" name="map" candidateClass="MKMapView"/>
                 <relationship kind="outlet" name="navigationBar" candidateClass="UINavigationItem"/>
                 <relationship kind="outlet" name="topSearchBar" candidateClass="UISearchBar"/>
             </relationships>

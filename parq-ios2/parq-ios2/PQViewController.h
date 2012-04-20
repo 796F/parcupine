@@ -14,13 +14,10 @@
         
     CLLocationManager *locationManager;
 }
-@property (weak, nonatomic) IBOutlet MKMapView *mapView;
+@property (weak, nonatomic) IBOutlet MKMapView *map;
 @property (weak, nonatomic) IBOutlet UISearchBar *topSearchBar;
 @property (weak, nonatomic) IBOutlet UINavigationItem *navigationBar;
 
 @property (nonatomic, retain) CLGeocoder* geocoder;
-
-@property float destLat;
-@property float destLon;
 
 @end

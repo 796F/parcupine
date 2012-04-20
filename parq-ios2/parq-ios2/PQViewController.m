@@ -14,8 +14,8 @@
 
 #define METERS_PER_MILE 1609.344
 
-#define BLOCK_MAP_SPAN 0.011796
-#define SPOT_MAP_SPAN 0.001474
+#define STREET_MAP_SPAN 0.0132
+#define SPOT_MAP_SPAN 0.0017
 
 #define GPS_LAUNCH_ALERT 10
 
@@ -32,12 +32,10 @@ typedef enum {
 @end
 
 @implementation PQViewController
-@synthesize mapView;
+@synthesize map;
 @synthesize topSearchBar;
 @synthesize navigationBar;
 @synthesize geocoder;
-@synthesize destLat;
-@synthesize destLon;
 @synthesize disableViewOverlay;
 @synthesize leftBarButton;
 @synthesize zoomState;
@@ -145,7 +143,7 @@ typedef enum {
     
     MKCircle *greyCircle = [MKCircle circleWithCenterCoordinate:*coord radius:12];
     [greyCircle setColor:-1];
-    [self.mapView addOverlay:greyCircle];
+    [self.map addOverlay:greyCircle];
     
     NSArray *placement = [self calloutBubblePlacement:coord];
     for (NSDictionary *bubble in placement) {
@@ -155,18 +153,44 @@ typedef enum {
         endpoints[1] = ((CLLocation *)[bubble objectForKey:@"spot"]).coordinate;
         MKPolyline *calloutLine = [MKPolyline polylineWithCoordinates:endpoints count:2];
         [calloutLine setColor:-1];
-        [self.mapView addOverlay:calloutLine];
+        [self.map addOverlay:calloutLine];
 
-        [self.mapView addAnnotation:callout];
+        [self.map addAnnotation:callout];
     }
 }
 
--(void) showBlockLevelWithCoordinates:(CLLocationCoordinate2D*)coords{
+- (void)showGridLevelWithCoordinates:(CLLocationCoordinate2D *)coord {
+    NSArray* data = [self loadGridData];
+    
+    for (id element in data) {
+        NSArray *array = [[element objectForKey:@"se_corner"] componentsSeparatedByString:@","];
+        
+        CLLocationCoordinate2D nw_point = CLLocationCoordinate2DMake([[array objectAtIndex:0] floatValue], [[array objectAtIndex:1] floatValue]);    
+        array = [[element objectForKey:@"nw_corner"]componentsSeparatedByString:@","];
+        CLLocationCoordinate2D se_point = CLLocationCoordinate2DMake([[array objectAtIndex:0] floatValue], [[array objectAtIndex:1] floatValue]);
+        
+        //calculate actual se_point using haversine.  
+        
+        int color = [[element objectForKey:@"color"] intValue];
+        
+        CLLocationCoordinate2D ne_point = CLLocationCoordinate2DMake(nw_point.latitude ,se_point.longitude);
+        CLLocationCoordinate2D sw_point = CLLocationCoordinate2DMake(se_point.latitude ,nw_point.longitude);
+        
+        
+        CLLocationCoordinate2D testLotCoords[5]={nw_point, ne_point, se_point, sw_point, nw_point};
+        
+        MKPolygon *commuterPoly1 = [MKPolygon polygonWithCoordinates:testLotCoords count:5];
+        [commuterPoly1 setColor:color];
+        [self.map addOverlay:commuterPoly1];
+    }
+}
+
+- (void)showStreetLevelWithCoordinates:(CLLocationCoordinate2D *)coord {
     
     //remove all overlays, store them somewhere for when the user zooms out?
-    [mapView removeOverlays:mapView.overlays];
-    [mapView removeAnnotations:mapView.annotations];
-    //load the spot information from the asynchronous server call/cache to draw blocks.  
+    [self.map removeOverlays:self.map.overlays];
+    [self.map removeAnnotations:self.map.annotations];
+
     NSArray* data = [self loadBlockData];
     
     for (id line in data) {
@@ -175,8 +199,8 @@ typedef enum {
         int i=0;
         for (id raw_waypoint in raw_waypoints) {
             NSArray *coordinates = [raw_waypoint componentsSeparatedByString:@","];
-            CLLocationCoordinate2D coord = CLLocationCoordinate2DMake([[coordinates objectAtIndex:0] floatValue], [[coordinates objectAtIndex:1] floatValue]);
-            waypoints[i++] = coord;
+            CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake([[coordinates objectAtIndex:0] floatValue], [[coordinates objectAtIndex:1] floatValue]);
+            waypoints[i++] = coordinate;
         }
         
         MKPolyline *routeLine = [MKPolyline polylineWithCoordinates:waypoints count:raw_waypoints.count];
@@ -184,17 +208,16 @@ typedef enum {
         int color = [[line objectForKey:@"color"] intValue];
         [routeLine setColor:color];
         
-        [self.mapView addOverlay:routeLine];
+        [self.map addOverlay:routeLine];
     }
-
 }
 
 
--(void) showSpotLevelWithCoordinates:(CLLocationCoordinate2D*)coords{
-    [mapView removeOverlays:mapView.overlays];
-    [mapView removeAnnotations:mapView.annotations];
+- (void)showSpotLevelWithCoordinates:(CLLocationCoordinate2D *)coord {
+    [self.map removeOverlays:self.map.overlays];
+    [self.map removeAnnotations:self.map.annotations];
 
-    [self showSelectionCircle:coords];
+    [self showSelectionCircle:coord];
     NSArray* data = [self loadSpotData];
     for(id spot in data){
         NSArray* point = [spot componentsSeparatedByString:@","];
@@ -202,76 +225,26 @@ typedef enum {
         int color = [[point objectAtIndex:2] intValue];
         MKCircle* circle = [MKCircle circleWithCenterCoordinate:coord radius:2];
         [circle setColor:color];
-        [self.mapView addOverlay:circle];
+        [self.map addOverlay:circle];
     }
 }
 
--(void) zoomFromGridToBlockWithRegion:(MKCoordinateRegion*)reg{
-    //zoom to the region provided
-    [mapView setRegion:[mapView regionThatFits:(*reg)] animated:YES];
-    
-    //set zoom state to block level
-    zoomState = kStreetZoomLevel;
-    
-    //display overlays that are on the block level.  
-    [self showBlockLevelWithCoordinates:&((*reg).center)];
-}
-
-//using the region to encompass the entire block selected.  
--(void) zoomToSpotLevelWithCoordinates:(CLLocationCoordinate2D*)coords{
-    //use coordinates provided o make region
-    MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(*coords, METERS_PER_MILE/32, METERS_PER_MILE/32);
-    //zoom to the region
-    [mapView setRegion:[mapView regionThatFits:viewRegion] animated:YES];
-    //set zoom state to spot level
-    zoomState = kSpotZoomLevel;
-    //show the spots in the area.  
-    [self showSpotLevelWithCoordinates:coords] ;
-}
-
-//called when zoom-out level event is triggered by user's pinching.  
--(void) enterGridLevel{
-    zoomState=kGridZoomLevel;
-    //remove currently shown spots/blocks
-    //[mapView removeOverlays:mapView.overlays];
-    //reload grids that belong in the curent view.  
-    
-}
-
--(void) enterBlockLevel{
-    zoomState = kStreetZoomLevel;
-    //remove spot level info
-    //[mapView removeOverlays:mapView.overlays];
-    //reload blocks.  
-    
-}
--(void) enterSpotLevel{
-    zoomState = kSpotZoomLevel;
-    //[mapView removeOverlays:mapView.overlays];
-
-}
-
--(void) mapView:(MKMapView *)myMapView regionDidChangeAnimated:(BOOL)animated{
-    if(myMapView.region.span.latitudeDelta>=BLOCK_MAP_SPAN){
-        NSLog(@"GRID:currSpan: %f\n", myMapView.region.span.latitudeDelta);
-        //above block, in grid level.
-        [self enterGridLevel];
-    }else if (myMapView.region.span.latitudeDelta>=SPOT_MAP_SPAN){
-        //above spot, in block level. 
-        NSLog(@"Block:currSpan: %f\n", myMapView.region.span.latitudeDelta);
-        [self enterBlockLevel];
-    }else{
-        NSLog(@"currSpan: %f\n", myMapView.region.span.latitudeDelta);
-        //below block, in spot level.  
-        [self enterSpotLevel];
+- (void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated {
+    CLLocationCoordinate2D coord = mapView.centerCoordinate;
+    if (mapView.region.span.latitudeDelta>=STREET_MAP_SPAN) {
+        NSLog(@"GRID:currSpan: %f\n", mapView.region.span.latitudeDelta);
+        zoomState = kGridZoomLevel;
+        [self showGridLevelWithCoordinates:&coord];
+    } else if (mapView.region.span.latitudeDelta>=SPOT_MAP_SPAN) {
+        NSLog(@"Block:currSpan: %f\n", mapView.region.span.latitudeDelta);
+        zoomState = kStreetZoomLevel;
+        [self showStreetLevelWithCoordinates:&coord];
+    } else {
+        NSLog(@"currSpan: %f\n", mapView.region.span.latitudeDelta);
+        zoomState = kSpotZoomLevel;
+        [self showSpotLevelWithCoordinates:&coord];
     }
 }
-
-/***
- * Preset UIColors 
- * black, darkGray, lightGray, white, gray, red, green, 
- * blue,cyan,yellow,magenta,orange,purple,brown
- ***/
 
 - (MKOverlayView *)mapView:(MKMapView *)myMapView viewForOverlay:(id<MKOverlay>)overlay {
     if ([overlay isKindOfClass:[MKPolygon class]]) {
@@ -353,13 +326,13 @@ typedef enum {
 
 - (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id <MKAnnotation>)annotation {
 	if ([annotation isKindOfClass:[CalloutMapAnnotation class]]) {
-		CalloutMapAnnotationView *calloutMapAnnotationView = (CalloutMapAnnotationView *)[self.mapView dequeueReusableAnnotationViewWithIdentifier:@"CalloutAnnotation"];
+		CalloutMapAnnotationView *calloutMapAnnotationView = (CalloutMapAnnotationView *)[self.map dequeueReusableAnnotationViewWithIdentifier:@"CalloutAnnotation"];
 		if (!calloutMapAnnotationView) {
 			calloutMapAnnotationView = [[CalloutMapAnnotationView alloc] initWithAnnotation:annotation 
 																			 reuseIdentifier:@"CalloutAnnotation"];
 
 		}
-		calloutMapAnnotationView.mapView = self.mapView;
+		calloutMapAnnotationView.mapView = self.map;
 		return calloutMapAnnotationView;
 	}
 
@@ -370,78 +343,36 @@ typedef enum {
 {
     if (gestureRecognizer.state != UIGestureRecognizerStateEnded)
         return;
-    
-    
-    //grab the point the user tapped, but in the mapView's perspective.  
-    CGPoint touchPoint = [gestureRecognizer locationInView:mapView];
-    //convert that to lat/lon in the map view's perspective.  
-    CLLocationCoordinate2D coord = [self.mapView convertPoint:touchPoint toCoordinateFromView:self.mapView];
-    //convert those lat/lon into an MKmapPoint.  
+
+    CGPoint touchPoint = [gestureRecognizer locationInView:self.map];
+    CLLocationCoordinate2D coord = [self.map convertPoint:touchPoint toCoordinateFromView:self.map];
     MKMapPoint mapPoint = MKMapPointForCoordinate(coord);
     
-    if(zoomState==kGridZoomLevel){
-        for(id gridOverlay in self.mapView.overlays){
-            //get reference to the MKPolygonView object
-            id view = [self.mapView viewForOverlay:gridOverlay];
-            MKPolygonView *polyView = (MKPolygonView*)view;
-            //get the touch point in the polygon view's perspective?
+    if (zoomState==kGridZoomLevel) {
+        for (id gridOverlay in self.map.overlays) {
+            MKPolygonView *polyView = (MKPolygonView*)[self.map viewForOverlay:gridOverlay];
             CGPoint polygonViewPoint = [polyView pointForMapPoint:mapPoint];
-            //now that it's in the polygon view's perspective, we can check if it's contained.  
-            
-            BOOL mapCoordinateIsInPolygon = CGPathContainsPoint(polyView.path, NULL, polygonViewPoint, NO);   
+
             //BUG this contains thing is including an area even above the polygon  
-            if (mapCoordinateIsInPolygon) {
-                //thus if contained...
-                MKCoordinateRegion reg = [mapView convertRect:polyView.bounds toRegionFromView:polyView];
-                [self zoomFromGridToBlockWithRegion:&reg];
-                
-                
-                //[mapView setRegion:[mapView regionThatFits:reg] animated:YES];
-                
-                //[mapView setRegion:MKCoordinateRegionMakeWithDistance(mapView.centerCoordinate, METERS_PER_MILE/2, METERS_PER_MILE/2) animated:YES];
+            if (CGPathContainsPoint(polyView.path, NULL, polygonViewPoint, NO)) {
+                MKCoordinateRegion reg = [self.map convertRect:polyView.bounds toRegionFromView:polyView];
+                [self.map setRegion:[self.map regionThatFits:reg] animated:YES];
+                [self showStreetLevelWithCoordinates:&(reg.center)];
             }
         }
-    }else if(zoomState==kStreetZoomLevel){
-        //if user clicked near a block, zoom to spot level
-        [self zoomToSpotLevelWithCoordinates:&coord];
-
-        /* so the decision bit is missing, since i don't yet nkow how to detect which block the user meant, and then from that extract the bounding regions of that block, so we ensure all spots in a block are shown.  */
-        
+    } else if (zoomState==kStreetZoomLevel) {
+        MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(coord, METERS_PER_MILE/16, METERS_PER_MILE/16);
+        [self.map setRegion:[self.map regionThatFits:viewRegion] animated:YES];
+        [self showSpotLevelWithCoordinates:&coord];
         /*
-    }else if (zoomState==kSpotZoomLevel){
-        //detect nearest spot, 
-        
-        //circleView.path may or may not contain it;
-        
-        destLat= coord.latitude;
-        destLat= coord.longitude;
-        //ask user if that's desired destination
-        UIAlertView* warningAlertView = [[UIAlertView alloc] initWithTitle:@"Spot 4102 Selected!" message:@"Launch GPS to this spot?" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Launch" , nil];
-        warningAlertView.tag = GPS_LAUNCH_ALERT;
-        [warningAlertView show];
+         //ask user if that's desired destination
+         UIAlertView* warningAlertView = [[UIAlertView alloc] initWithTitle:@"Spot 4102 Selected!" message:@"Launch GPS to this spot?" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Launch" , nil];
+         warningAlertView.tag = GPS_LAUNCH_ALERT;
+         [warningAlertView show];
          */
-    }else{
-        //bad state.  return 
-        return;
-    }
-    
-}
-
-- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation{
-    if (MAX(newLocation.horizontalAccuracy, newLocation.verticalAccuracy) < 100) {
-        //One location is obtained.. just zoom to that location
-
-        MKCoordinateRegion region;
-        region.center=newLocation.coordinate;
-        //Set Zoom level using Span
-        MKCoordinateSpan span;
-        span.latitudeDelta=.005;
-        span.longitudeDelta=.005;
-        region.span=span;
-
-        //        [mapView setRegion:region animated:TRUE];
-
-        [locationManager stopUpdatingLocation];
+    } else if (zoomState==kSpotZoomLevel) {
+        [self showSpotLevelWithCoordinates:&coord];
+        [self.map setCenterCoordinate:coord animated:YES];
     }
 }
 
@@ -485,13 +416,13 @@ typedef enum {
 }
 
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
-    [mapView removeOverlays:mapView.overlays];
+    [self.map removeOverlays:self.map.overlays];
 
     [geocoder geocodeAddressString:searchBar.text inRegion:nil completionHandler:^(NSArray *placemarks, NSError * error){
         CLLocation* locationObject = [[placemarks objectAtIndex:0] location];
 
-        MKCoordinateRegion viewRegion = [mapView regionThatFits:MKCoordinateRegionMakeWithDistance(locationObject.coordinate, 0.5*METERS_PER_MILE, 0.5*METERS_PER_MILE)];
-        [mapView setRegion:viewRegion animated:YES];
+        MKCoordinateRegion viewRegion = [self.map regionThatFits:MKCoordinateRegionMakeWithDistance(locationObject.coordinate, 0.5*METERS_PER_MILE, 0.5*METERS_PER_MILE)];
+        [self.map setRegion:viewRegion animated:YES];
     }];
 
     [self setSearchBar:searchBar active:NO];
@@ -525,85 +456,65 @@ typedef enum {
 - (IBAction)gridButtonPressed:(id)sender {
     NSLog(@"Grid Button Pressed\n" );
     zoomState = kGridZoomLevel;
-    [mapView removeOverlays:mapView.overlays];
-    [mapView removeAnnotations:mapView.annotations];
+    [self.map removeOverlays:map.overlays];
+    [self.map removeAnnotations:self.map.annotations];
 
     //set the zoom to fit 12 grids perfectly
     CLLocationCoordinate2D point = CLLocationCoordinate2DMake(42.365045,-71.118965);
     
     MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(point, METERS_PER_MILE, METERS_PER_MILE);  //this is essentially zoom level in android
     
-    MKCoordinateRegion adjustedRegion = [mapView regionThatFits:viewRegion]; //is this a check?               
+    MKCoordinateRegion adjustedRegion = [map regionThatFits:viewRegion];
     
-    [mapView setRegion:adjustedRegion animated:YES];  //this is animateTo or w/e. 
-    NSArray* data = [self loadGridData];
-    
-    for (id element in data) {
-        NSArray *array = [[element objectForKey:@"se_corner"] componentsSeparatedByString:@","];
-        
-        CLLocationCoordinate2D nw_point = CLLocationCoordinate2DMake([[array objectAtIndex:0] floatValue], [[array objectAtIndex:1] floatValue]);    
-        array = [[element objectForKey:@"nw_corner"]componentsSeparatedByString:@","];
-        CLLocationCoordinate2D se_point = CLLocationCoordinate2DMake([[array objectAtIndex:0] floatValue], [[array objectAtIndex:1] floatValue]);
-        
-        //calculate actual se_point using haversine.  
-        
-        int color = [[element objectForKey:@"color"] intValue];
-        
-        CLLocationCoordinate2D ne_point = CLLocationCoordinate2DMake(nw_point.latitude ,se_point.longitude);
-        CLLocationCoordinate2D sw_point = CLLocationCoordinate2DMake(se_point.latitude ,nw_point.longitude);
-        
-        
-        CLLocationCoordinate2D testLotCoords[5]={nw_point, ne_point, se_point, sw_point, nw_point};
-        
-        MKPolygon *commuterPoly1 = [MKPolygon polygonWithCoordinates:testLotCoords count:5];
-        [commuterPoly1 setColor:color];
-        [self.mapView addOverlay:commuterPoly1];
-    }
+    [self.map setRegion:adjustedRegion animated:YES];
+    [self showGridLevelWithCoordinates:&point];
 }
 
      
 - (IBAction)streetButtonPressed:(id)sender {
-    [mapView removeOverlays:mapView.overlays];
-    [mapView removeAnnotations:mapView.annotations];
+    [self.map removeOverlays:self.map.overlays];
+    [self.map removeAnnotations:self.map.annotations];
 
     CLLocationCoordinate2D point = {42.364854,-71.109438};
 
     MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(point, METERS_PER_MILE/2, METERS_PER_MILE/2);
-    [mapView setRegion:[mapView regionThatFits:viewRegion] animated:YES];
-    NSArray* data = [self loadBlockData];
-
-    for (id line in data) {
-        NSArray *raw_waypoints = [[line objectForKey:@"line"] componentsSeparatedByString:@";"];
-        CLLocationCoordinate2D waypoints[raw_waypoints.count];
-        int i=0;
-        for (id raw_waypoint in raw_waypoints) {
-            NSArray *coordinates = [raw_waypoint componentsSeparatedByString:@","];
-            CLLocationCoordinate2D coord = CLLocationCoordinate2DMake([[coordinates objectAtIndex:0] floatValue], [[coordinates objectAtIndex:1] floatValue]);
-            waypoints[i++] = coord;
-        }
-
-        MKPolyline *routeLine = [MKPolyline polylineWithCoordinates:waypoints count:raw_waypoints.count];
-
-        int color = [[line objectForKey:@"color"] intValue];
-        [routeLine setColor:color];
-
-        [self.mapView addOverlay:routeLine];
-    }
+    [self.map setRegion:[self.map regionThatFits:viewRegion] animated:YES];
+    [self showStreetLevelWithCoordinates:&point];
 }
 - (IBAction)spotButtonPressed:(id)sender {
     
-    [mapView removeOverlays:mapView.overlays];
+    [map removeOverlays:map.overlays];
     CLLocationCoordinate2D point = {42.365077, -71.110838};
 
     MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(point, METERS_PER_MILE/16, METERS_PER_MILE/16);
-    [mapView setRegion:[mapView regionThatFits:viewRegion] animated:YES];
+    [map setRegion:[map regionThatFits:viewRegion] animated:YES];
 
     [self showSpotLevelWithCoordinates:&point];
 }
 - (IBAction)noneButtonPressed:(id)sender {
-    [mapView removeOverlays:mapView.overlays];
+    [self.map removeOverlays:map.overlays];
+    [self.map removeAnnotations:self.map.annotations];
+}
 
-    [locationManager startUpdatingLocation];
+- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation{
+    if (MAX(newLocation.horizontalAccuracy, newLocation.verticalAccuracy) < 100) {
+        //One location is obtained.. just zoom to that location
+        /*
+         MKCoordinateRegion region;
+         region.center=newLocation.coordinate;
+         //Set Zoom level using Span
+         MKCoordinateSpan span;
+         span.latitudeDelta=.005;
+         span.longitudeDelta=.005;
+         region.span=span;
+         
+         [map setRegion:region animated:TRUE];
+         */
+
+        [self spotButtonPressed:Nil];
+
+        [locationManager stopUpdatingLocation];
+    }
 }
 
 #pragma mark - Memory
@@ -619,8 +530,8 @@ typedef enum {
 - (void)viewDidLoad{
     
     //check the current zoom level to set the ZOOM_STATE integer.  
-    float zoomWidth = mapView.bounds.size.width;
-    if(zoomWidth > BLOCK_MAP_SPAN){
+    float zoomWidth = self.map.bounds.size.width;
+    if(zoomWidth > STREET_MAP_SPAN){
         zoomState = kGridZoomLevel;
         //above middle zoom level        
     }else if(SPOT_MAP_SPAN){
@@ -646,13 +557,13 @@ typedef enum {
     
 	
     // Do any additional setup after loading the view, typically from a nib.
-    mapView.delegate=self;
-    mapView.showsUserLocation = YES;
+    self.map.delegate=self;
+    self.map.showsUserLocation = YES;
     
     //setup gesture recognizer for grids and blocks and spots.  
     UITapGestureRecognizer *tgr = [[UITapGestureRecognizer alloc]
                                    initWithTarget:self action:@selector(handleGesture:)];
-    [mapView addGestureRecognizer:tgr];
+    [map addGestureRecognizer:tgr];
     
     //SETUP LOCATION manager
     locationManager=[[CLLocationManager alloc] init];
@@ -664,7 +575,7 @@ typedef enum {
 
 - (void)viewDidUnload
 {
-    [self setMapView:nil];
+    [self setMap:nil];
     [self setNavigationBar:nil];
     [self setTopSearchBar:nil];
     [super viewDidUnload];
