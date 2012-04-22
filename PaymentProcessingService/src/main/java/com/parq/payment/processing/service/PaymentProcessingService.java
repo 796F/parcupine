@@ -2,6 +2,8 @@ package com.parq.payment.processing.service;
 
 import java.util.Map;
 
+import AuthNet.Rebill.CreateCustomerProfileResponseType;
+
 import com.parq.server.dao.model.object.PaymentAccount;
 
 public interface PaymentProcessingService {
@@ -42,5 +44,24 @@ public interface PaymentProcessingService {
 	 * @return a map of all userId to payment processing response.
 	 */
 	public Map<Long, PaymentProcessingResponse> settleAllBatchPayments(String batchPaymentToken);
+	
+	/**
+	 * Create a new customer profile with the credit card processor. Note: check the return type to make sure the
+	 * the profile was successfully created.
+	 * 
+	 * @param emailAddress email address of the user
+	 * @param ccNum credit card number
+	 * @param csc credit card security check number
+	 * @param month expiration month
+	 * @param year expiration year
+	 * @param firstName
+	 * @param lastName
+	 * @param zipcode zip code of the bill address of the credit card owner
+	 * @param address billing address of the credit card owner
+	 * @return the direct response message of the Merchant API.
+	 */
+	public CreateCustomerProfileResponseType createCustomerProfile(
+			String emailAddress, String ccNum, String csc, int month, int year, 
+			String firstName, String lastName, String zipcode, String address);
 	
 }

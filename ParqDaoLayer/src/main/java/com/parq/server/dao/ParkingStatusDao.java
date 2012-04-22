@@ -16,6 +16,7 @@ import net.sf.ehcache.Element;
 import com.mysql.jdbc.Statement;
 import com.parq.server.dao.model.object.ParkingInstance;
 import com.parq.server.dao.model.object.Payment;
+import com.parq.server.grid.GridManagementService;
 
 /**
  * @author GZ
@@ -338,6 +339,11 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 			closeConnection(con);
 		}
 		
+		// add the parking information to the GridManagementService
+		if (parkingInstanceCreated) {
+			GridManagementService.getInstance().park(parkingSpaceId,
+					parkingInst.getParkingEndTime());
+		}
 		return parkingInstanceCreated;
 	}
 
@@ -395,6 +401,11 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 			closeConnection(con);
 		}
 		
+		// update the parking information to the GridManagementService
+		if (refillComplete) {
+			GridManagementService.getInstance()
+				.refillParking(spaceId, newParkingEndTime);
+		}
 		return refillComplete;
 	}
 	
@@ -431,6 +442,10 @@ public class ParkingStatusDao extends AbstractParqDaoParent{
 			closeConnection(con);
 		}
 		
+		// remove the parking information to the GridManagementService
+		if (parkingEndTimeUpdated) {
+			GridManagementService.getInstance().unpark(spaceId);
+		}
 		return parkingEndTimeUpdated;
 	}
 	

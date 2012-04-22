@@ -214,8 +214,12 @@ public class TestAdminReportDao extends TestCase {
 						.getUserID(), reportStartDate, reportEndDate);
 		
 		assertEquals(2, consolidatedReport.getPaymentEntries().size());
-		
 		UserPaymentEntry parkingEntry1 = consolidatedReport.getPaymentEntries().get(0);
+		// the report list is not sorted, so we have to look for the right one to compare
+		if (consolidatedReport.getPaymentEntries().get(0).getParkingEndTime().getTime()
+				< consolidatedReport.getPaymentEntries().get(1).getParkingEndTime().getTime()) {
+			parkingEntry1 = consolidatedReport.getPaymentEntries().get(1);
+		}
 		assertEquals(curTime / 1000, parkingEntry1.getParkingBeganTime().getTime() / 1000);
 		assertEquals(newParkingEndTime.getTime() / 1000, parkingEntry1.getParkingEndTime().getTime() / 1000);
 		assertEquals(SupportScriptForDaoTesting.testParkingInstance.getPaymentInfo().getAmountPaidCents() * 3, 
@@ -223,6 +227,11 @@ public class TestAdminReportDao extends TestCase {
 		
 
 		UserPaymentEntry parkingEntry2 = consolidatedReport.getPaymentEntries().get(1);
+		// the report list is not sorted, so we have to look for the right one to compare
+		if (consolidatedReport.getPaymentEntries().get(0).getParkingEndTime().getTime()
+				< consolidatedReport.getPaymentEntries().get(1).getParkingEndTime().getTime()) {
+			parkingEntry2 = consolidatedReport.getPaymentEntries().get(0);
+		}
 		assertEquals(newParkingStartTime / 1000, parkingEntry2.getParkingBeganTime().getTime() / 1000);
 		assertEquals(newParkingEndTime2.getTime() / 1000, parkingEntry2.getParkingEndTime().getTime() / 1000);
 		assertEquals(SupportScriptForDaoTesting.testParkingInstance.getPaymentInfo().getAmountPaidCents() * 2, 

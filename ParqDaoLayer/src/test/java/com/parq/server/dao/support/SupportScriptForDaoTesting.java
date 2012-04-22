@@ -6,19 +6,20 @@ import java.util.Date;
 import java.util.List;
 
 import com.parq.server.dao.ClientDao;
+import com.parq.server.dao.GridDao;
 import com.parq.server.dao.ParkingLocationDao;
 import com.parq.server.dao.PaymentAccountDao;
 import com.parq.server.dao.UserDao;
 import com.parq.server.dao.model.object.AdminRole;
 import com.parq.server.dao.model.object.GeoPoint;
-import com.parq.server.dao.model.object.Grid;
 import com.parq.server.dao.model.object.ParkingInstance;
 import com.parq.server.dao.model.object.ParkingLocation;
 import com.parq.server.dao.model.object.Payment;
+import com.parq.server.dao.model.object.Payment.PaymentType;
 import com.parq.server.dao.model.object.PaymentAccount;
 import com.parq.server.dao.model.object.PaymentMethod;
+import com.parq.server.dao.model.object.SimpleGrid;
 import com.parq.server.dao.model.object.User;
-import com.parq.server.dao.model.object.Payment.PaymentType;
 
 
 /**
@@ -58,6 +59,7 @@ public final class SupportScriptForDaoTesting {
 			deleteMainTestDataSet();
 			ParqMockObjectCreationDao testDao = new ParqMockObjectCreationDao();
 			ParkingLocationDao parkingLocationDao = new ParkingLocationDao();
+			GridDao parkingGridDao = new GridDao();
 			ClientDao clientDao = new ClientDao();
 
 			// create 3 new test clients
@@ -66,19 +68,19 @@ public final class SupportScriptForDaoTesting {
 			testDao.createNewClient(fakeClient2, "test_address", "testclient", PaymentMethod.PREFILL.name());
 
 			// create a default grid for locations
-			parkingLocationDao.createGrid(testGridIdentifier, 1.1, 2.1);
+			parkingGridDao.createGrid(testGridIdentifier, 1.1, 2.1);
 			
 			// insert 3 new parking locations
 			GeoPoint mainLocationGeoPoint = new GeoPoint(parkingLocationMainLatitude, parkingLocationMainLongtitude);
 			parkingLocationDao.createLocation(parkingLocationNameMain, 
 					clientDao.getClientByName(clientNameMain).getId(), 
-					parkingLocationDao.getAllGrids().get(0).getGridId(), "TestParkingLocation", 
+					parkingGridDao.getAllSimpleGrids().get(0).getGridId(), "TestParkingLocation", 
 					fakeParkingLocationType, Collections.singletonList(mainLocationGeoPoint)); 
 			
 			GeoPoint fakeLocation1GeoPoint = new GeoPoint(fakeParkingLocation1Latitude, fakeParkingLocation1Longtitude);
 			parkingLocationDao.createLocation(fakeParkingLocation1, 
 					clientDao.getClientByName(fakeClient1).getId(), 
-					parkingLocationDao.getAllGrids().get(0).getGridId(), "TestParkingLocation",
+					parkingGridDao.getAllSimpleGrids().get(0).getGridId(), "TestParkingLocation",
 					fakeParkingLocationType, Collections.singletonList(fakeLocation1GeoPoint));
 			
 			GeoPoint fakeLocation2GeoPoint = new GeoPoint(fakeParkingLocation2Latitude, fakeParkingLocation2Longtitude);
@@ -89,20 +91,20 @@ public final class SupportScriptForDaoTesting {
 			fakeLocation2GeoPoints.add(fakeLocation1GeoPoint);
 			parkingLocationDao.createLocation(fakeParkingLocation2, 
 					clientDao.getClientByName(fakeClient1).getId(), 
-					parkingLocationDao.getAllGrids().get(0).getGridId(), "TestParkingLocation",
+					parkingGridDao.getAllSimpleGrids().get(0).getGridId(), "TestParkingLocation",
 					fakeParkingLocationType, fakeLocation2GeoPoints);
 
 			// insert 10 test parking spaces
-			testDao.insertParkingSpace(parkingLocationNameMain, spaceNameMain, "1", "space name 1", parkingLocationMainLatitude, parkingLocationMainLongtitude);
-			testDao.insertParkingSpace(parkingLocationNameMain, spaceNameMain2, "2", "space name 2", parkingLocationMainLatitude, parkingLocationMainLongtitude);
-			testDao.insertParkingSpace(parkingLocationNameMain, spaceNameMain3, "3", "space name 3", parkingLocationMainLatitude, parkingLocationMainLongtitude);
-			testDao.insertParkingSpace(fakeParkingLocation1, "Test_Fake_1", "3", "space name 4", fakeParkingLocation1Latitude, fakeParkingLocation1Longtitude);
-			testDao.insertParkingSpace(fakeParkingLocation1, "Test_Fake_2", "2", "space name 5", fakeParkingLocation1Latitude, fakeParkingLocation1Longtitude);
-			testDao.insertParkingSpace(fakeParkingLocation1, "Test_Fake_3", "2", "space name 6", fakeParkingLocation1Latitude, fakeParkingLocation1Longtitude);			
-			testDao.insertParkingSpace(fakeParkingLocation1, "Test_Fake_4", "2", "space name 7", fakeParkingLocation1Latitude, fakeParkingLocation1Longtitude);
-			testDao.insertParkingSpace(fakeParkingLocation2, "Test_Fake_5", "2", "space name 8", fakeParkingLocation2Latitude, fakeParkingLocation2Longtitude);
-			testDao.insertParkingSpace(fakeParkingLocation2, "Test_Fake_6", "2", "space name 9", fakeParkingLocation2Latitude, fakeParkingLocation2Longtitude);
-			testDao.insertParkingSpace(fakeParkingLocation2, "Test_Fake_7", "2", "space name 10", fakeParkingLocation2Latitude, fakeParkingLocation2Longtitude);
+			testDao.insertParkingSpace(parkingLocationNameMain, spaceNameMain, "space name 1", "1", parkingLocationMainLatitude, parkingLocationMainLongtitude);
+			testDao.insertParkingSpace(parkingLocationNameMain, spaceNameMain2, "space name 2", "2", parkingLocationMainLatitude, parkingLocationMainLongtitude);
+			testDao.insertParkingSpace(parkingLocationNameMain, spaceNameMain3, "space name 3", "3", parkingLocationMainLatitude, parkingLocationMainLongtitude);
+			testDao.insertParkingSpace(fakeParkingLocation1, "Test_Fake_1", "space name 4", "3", fakeParkingLocation1Latitude, fakeParkingLocation1Longtitude);
+			testDao.insertParkingSpace(fakeParkingLocation1, "Test_Fake_2", "space name 5", "2", fakeParkingLocation1Latitude, fakeParkingLocation1Longtitude);
+			testDao.insertParkingSpace(fakeParkingLocation1, "Test_Fake_3", "space name 6", "2", fakeParkingLocation1Latitude, fakeParkingLocation1Longtitude);			
+			testDao.insertParkingSpace(fakeParkingLocation1, "Test_Fake_4", "space name 7", "2", fakeParkingLocation1Latitude, fakeParkingLocation1Longtitude);
+			testDao.insertParkingSpace(fakeParkingLocation2, "Test_Fake_5", "space name 8", "2", fakeParkingLocation2Latitude, fakeParkingLocation2Longtitude);
+			testDao.insertParkingSpace(fakeParkingLocation2, "Test_Fake_6", "space name 9", "2", fakeParkingLocation2Latitude, fakeParkingLocation2Longtitude);
+			testDao.insertParkingSpace(fakeParkingLocation2, "Test_Fake_7", "space name 10", "2", fakeParkingLocation2Latitude, fakeParkingLocation2Longtitude);
 
 			// insert location based parking rate
 			testDao.setParkingLocationRate(parkingLocationRate, parkingLocationParkingRatePriority, 
@@ -121,10 +123,12 @@ public final class SupportScriptForDaoTesting {
 		
 		// delete the test grid data
 		ParkingLocationDao plDao = new ParkingLocationDao();
-		List<Grid> parkingGrids = plDao.getAllGrids();
+		GridDao gridDao = new GridDao();
+		
+		List<SimpleGrid> parkingGrids = gridDao.getAllSimpleGrids();
 		if (parkingGrids != null && !parkingGrids.isEmpty()) {
-			for (Grid g : parkingGrids) {
-				plDao.deleteGrid(g.getGridId());
+			for (SimpleGrid g : parkingGrids) {
+				gridDao.deleteGrid(g.getGridId());
 			}
 		}
 		

@@ -8,16 +8,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+
+import AuthNet.Rebill.ArrayOfCustomerPaymentProfileType;
+import AuthNet.Rebill.CreateCustomerProfileResponseType;
 import AuthNet.Rebill.CreateCustomerProfileTransactionResponseType;
+import AuthNet.Rebill.CreditCardType;
+import AuthNet.Rebill.CustomerAddressType;
+import AuthNet.Rebill.CustomerPaymentProfileType;
+import AuthNet.Rebill.CustomerProfileType;
+import AuthNet.Rebill.MessageTypeEnum;
 import AuthNet.Rebill.OrderExType;
+import AuthNet.Rebill.PaymentType;
 import AuthNet.Rebill.ProfileTransAuthCaptureType;
 import AuthNet.Rebill.ProfileTransactionType;
 import AuthNet.Rebill.ServiceSoap;
+import AuthNet.Rebill.ValidationModeEnum;
 
 import com.parq.payment.processing.service.PaymentProcessingResponse.PaymentStatus;
 import com.parq.payment.processing.service.exceptions.InvalidUserPaymentMethodException;
 import com.parq.payment.processing.service.exceptions.MulformedPaymentAccountException;
-import com.parq.payment.processing.service.exceptions.PaymentFailedException;
 import com.parq.payment.processing.service.support.AuthNetSoapUtilities;
 import com.parq.server.dao.BatchCCProcessingDao;
 import com.parq.server.dao.UserDao;
@@ -86,16 +98,21 @@ public class PaymentProcessingServiceImpl implements PaymentProcessingService {
 		
 		PaymentStatus status = PaymentStatus.OK;
 		// validate the soapResponse to make sure the charges goes through
-		if (!soapResponse.getResultCode().value().equalsIgnoreCase("Ok")) {
-			// TODO we also need to handle credit card decline and credit card expired 
-			// error message
+		if (!MessageTypeEnum.OK.equals(soapResponse.getResultCode())) {
 			String errorMessage = "Payment Processing Failed!! Merchant Terminal Error message: " 
 				+ soapResponse.getResultCode().value();
-			throw new PaymentFailedException(errorMessage);
-		} else {
+			// TODO need to switch to using logger
+			System.err.println(errorMessage + " : " 
+					+ soapResponse.getDirectResponse());
 			
-		}
-		
+			// TODO we also need to handle credit card decline and credit card expired 
+			// error message
+			if ("".equalsIgnoreCase(soapResponse.getDirectResponse())) {
+				
+			} else {
+				status = PaymentStatus.PaymentError;
+			}
+		}		
 		return status;
 	}
 
@@ -324,5 +341,67 @@ public class PaymentProcessingServiceImpl implements PaymentProcessingService {
 			sum += charge.getAmountPaid();
 		}
 		return sum;
+	}
+	
+	
+	public CreateCustomerProfileResponseType createCustomerProfile(
+			String emailAddress, String ccNum, String csc, int month, int year, 
+			String firstName, String lastName, String zipcode, String address){
+		try{
+			ServiceSoap service = AuthNetSoapUtilities.getServiceSoap();
+			CustomerPaymentProfileType newCustomerPaymentProfile = new CustomerPaymentProfileType();
+
+			PaymentType newPayment = new PaymentType();
+			CreditCardType newCard = new CreditCardType();
+			newCard.setCardNumber(ccNum);
+			newCard.setCardCode(csc);
+			try{
+				XMLGregorianCalendar expirationDate = 
+					DatatypeFactory.newInstance().newXMLGregorianCalendar();
+				expirationDate.setMonth(month);
+				expirationDate.setYear(year);
+				newCard.setExpirationDate(expirationDate);
+			}
+			catch(DatatypeConfigurationException dce){
+				return null;
+			}
+
+			newPayment.setCreditCard(newCard);
+			newCustomerPaymentProfile.setPayment(newPayment);
+
+			CustomerAddressType billToAddr = new CustomerAddressType();
+
+			billToAddr.setAddress(address);
+			
+			//billToAddr.setCity("Wilmington");
+			//billToAddr.setState("DE");
+			//billToAddr.setPhoneNumber("3023546447");
+			
+			billToAddr.setZip(zipcode);
+			billToAddr.setFirstName(firstName);
+			billToAddr.setLastName(lastName);
+			newCustomerPaymentProfile.setBillTo(billToAddr);
+
+			ArrayOfCustomerPaymentProfileType paymentList = new ArrayOfCustomerPaymentProfileType();
+			paymentList.getCustomerPaymentProfileType().add(newCustomerPaymentProfile);
+
+			CustomerProfileType customer = createUserProfile(emailAddress);
+			
+			customer.setPaymentProfiles(paymentList);
+
+			CreateCustomerProfileResponseType response = 
+				service.createCustomerProfile(AuthNetSoapUtilities.getMerchantAuthentication(), 
+						customer, ValidationModeEnum.LIVE_MODE);
+			return response;
+			
+		}catch(Exception e){
+			return null;
+		}
+	}
+	
+	private CustomerProfileType createUserProfile(String email){
+		CustomerProfileType xx = new CustomerProfileType();
+		xx.setEmail(email);
+		return xx;
 	}
 }

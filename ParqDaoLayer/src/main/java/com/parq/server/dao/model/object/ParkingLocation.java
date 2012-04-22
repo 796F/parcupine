@@ -16,15 +16,14 @@ public class ParkingLocation implements Serializable {
 	 */
 	private static final long serialVersionUID = -6446814645979756594L;
 	
-	private long locationId = -1;
-	private String locationIdentifier;
-	private long clientId;
-	private String locationType;
-	private int fillRate = 101;
+	protected long locationId = -1;
+	protected String locationIdentifier;
+	protected long clientId;
+	protected String locationType;
 	
-	private List<GeoPoint> geoPoints;
+	protected List<GeoPoint> geoPoints;
 	
-	private List<ParkingSpace> spaces;
+	protected List<ParkingSpace> spaces;
 	
 	
 	public ParkingLocation()
@@ -75,20 +74,6 @@ public class ParkingLocation implements Serializable {
 	 */
 	public List<ParkingSpace> getSpaces() {
 		return spaces;
-	}
-
-	/**
-	 * @param fillRate the fillRate to set
-	 */
-	public void setFillRate(int fillRate) {
-		this.fillRate = fillRate;
-	}
-
-	/**
-	 * @return the fillRate
-	 */
-	public int getFillRate() {
-		return fillRate;
 	}
 	
 	/**
