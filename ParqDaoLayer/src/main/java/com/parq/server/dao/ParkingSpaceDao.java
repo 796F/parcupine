@@ -12,14 +12,17 @@ public class ParkingSpaceDao extends AbstractParqDaoParent {
 	private static final String sqlGetParkingSpaceBySpaceId =
 		"SELECT space_id, space_identifier, location_id, parking_level, space_name, latitude, longitude " +
 		" FROM parkingspace " +
-		" WHERE space_id = ? "; 
+		" WHERE space_id = ? " +
+		" AND is_deleted IS NOT TRUE"; 
 	
 	private static final String sqlGetParkingSpaceBySpaceIdentifier = 
 		"SELECT s.space_id, s.space_identifier, s.location_id, s.parking_level, s.space_name, s.latitude, s.longitude " +
 		" FROM parkingspace s, parkinglocation l " +
 		" WHERE s.location_id = l.location_id " +
 		" AND location_identifier = ? " +
-		" AND space_identifier = ? "; 
+		" AND space_identifier = ? " +
+		" AND s.is_deleted IS NOT TRUE " +
+		" AND l.is_deleted IS NOT TRUE "; 
 	
 	private static final String sqlInsertParkingSpace = 
 		"INSERT INTO parkingspace (location_id, space_identifier, space_name, parking_level, latitude, longitude) " + 

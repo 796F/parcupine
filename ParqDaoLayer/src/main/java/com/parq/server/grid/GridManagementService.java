@@ -59,8 +59,8 @@ public class GridManagementService implements Runnable{
 		for (GridWithFillRate grid : gridInfoMap.values()) {
 			for (ParkingLocation pl : grid.getParkingLocations()) {
 				for (ParkingSpace space : pl.getSpaces()) {
-					spaceIdToGridIdMap.put(space.getSpaceId(), pl.getLocationId());
-					spaceIdToParkingLocationIdMap.put(space.getSpaceId(), grid.getGridId());
+					spaceIdToGridIdMap.put(space.getSpaceId(), grid.getGridId());
+					spaceIdToParkingLocationIdMap.put(space.getSpaceId(), pl.getLocationId());
 				}
 			}
 		}

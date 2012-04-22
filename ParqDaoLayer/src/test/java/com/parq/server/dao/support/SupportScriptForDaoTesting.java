@@ -290,14 +290,14 @@ public final class SupportScriptForDaoTesting {
 	// ------------------------------------------------------------------------
 	// UnitTest delete statement to undo test data created during the unit test
 	// ------------------------------------------------------------------------
-//	private static String deleteSpaces = 
-//		"DELETE FROM parkingspace WHERE location_id IN (" +
-//		" SELECT location_id FROM parkinglocation WHERE location_identifier " +
-//		" IN ('" + parkingLocationNameMain + "', '" + fakeParkingLocation1 + "', '" + fakeParkingLocation2 + "'" + 
-//		" ))";
-//	private static String deleteLocations = 
-//		"DELETE FROM parkinglocation WHERE location_identifier " +
-//		" IN ('" + parkingLocationNameMain + "', '" + fakeParkingLocation1 + "', '" + fakeParkingLocation2 + "')";
+	private static String deleteSpaces = 
+		"UPDATE parkingspace SET is_deleted = TRUE WHERE location_id IN (" +
+		" SELECT location_id FROM parkinglocation WHERE location_identifier " +
+		" IN ('" + parkingLocationNameMain + "', '" + fakeParkingLocation1 + "', '" + fakeParkingLocation2 + "'" + 
+		" ))";
+	private static String deleteLocations = 
+		"UPDATE parkinglocation SET is_deleted = TRUE WHERE location_identifier " +
+		" IN ('" + parkingLocationNameMain + "', '" + fakeParkingLocation1 + "', '" + fakeParkingLocation2 + "')";
 //	private static String deleteClients = 
 //		"DELETE FROM client WHERE name " +
 //		" IN ('" + clientNameMain + "', '" + fakeClient1 + "', '" + fakeClient2 + "')";
@@ -327,6 +327,6 @@ public final class SupportScriptForDaoTesting {
 
 	
 	public static String[] sqlDeleteStmtList = new String[] 
-		{ deletePayments };
+		{ deletePayments, deleteSpaces, deleteLocations};
 
 }
