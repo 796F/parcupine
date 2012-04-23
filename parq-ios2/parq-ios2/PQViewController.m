@@ -138,6 +138,11 @@ typedef enum {
              [[CLLocation alloc] initWithLatitude:42.365045 longitude:-71.110790], @"spot", nil], nil];
 }
 
+- (void)clearMap {
+    [self.map removeOverlays:self.map.overlays];
+    [self.map removeAnnotations:self.map.annotations];
+}
+
 - (void)showSelectionCircle:(CLLocationCoordinate2D *)coord {
     // Assumes overlays and annotations were cleared in the calling function
     
@@ -160,6 +165,8 @@ typedef enum {
 }
 
 - (void)showGridLevelWithCoordinates:(CLLocationCoordinate2D *)coord {
+    [self clearMap];
+
     NSArray* data = [self loadGridData];
     
     for (id element in data) {
@@ -186,10 +193,7 @@ typedef enum {
 }
 
 - (void)showStreetLevelWithCoordinates:(CLLocationCoordinate2D *)coord {
-    
-    //remove all overlays, store them somewhere for when the user zooms out?
-    [self.map removeOverlays:self.map.overlays];
-    [self.map removeAnnotations:self.map.annotations];
+    [self clearMap];
 
     NSArray* data = [self loadBlockData];
     
@@ -214,8 +218,7 @@ typedef enum {
 
 
 - (void)showSpotLevelWithCoordinates:(CLLocationCoordinate2D *)coord {
-    [self.map removeOverlays:self.map.overlays];
-    [self.map removeAnnotations:self.map.annotations];
+    [self clearMap];
 
     [self showSelectionCircle:coord];
     NSArray* data = [self loadSpotData];
@@ -388,7 +391,7 @@ typedef enum {
         [self.view addSubview:self.disableViewOverlay];
 
         [UIView animateWithDuration:0.25 animations:^{
-            self.navigationBar.leftBarButtonItem = Nil;
+            self.navigationBar.leftBarButtonItem = nil;
             self.disableViewOverlay.alpha = 0.8;
             if (zoomState == kSpotZoomLevel) {
                 searchBar.frame = CGRectMake(0, 0, 320, 88);
@@ -416,7 +419,7 @@ typedef enum {
 }
 
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
-    [self.map removeOverlays:self.map.overlays];
+    [self clearMap];
 
     [geocoder geocodeAddressString:searchBar.text inRegion:nil completionHandler:^(NSArray *placemarks, NSError * error){
         CLLocation* locationObject = [[placemarks objectAtIndex:0] location];
@@ -456,8 +459,6 @@ typedef enum {
 - (IBAction)gridButtonPressed:(id)sender {
     NSLog(@"Grid Button Pressed\n" );
     zoomState = kGridZoomLevel;
-    [self.map removeOverlays:map.overlays];
-    [self.map removeAnnotations:self.map.annotations];
 
     //set the zoom to fit 12 grids perfectly
     CLLocationCoordinate2D point = CLLocationCoordinate2DMake(42.365045,-71.118965);
@@ -472,9 +473,6 @@ typedef enum {
 
      
 - (IBAction)streetButtonPressed:(id)sender {
-    [self.map removeOverlays:self.map.overlays];
-    [self.map removeAnnotations:self.map.annotations];
-
     CLLocationCoordinate2D point = {42.364854,-71.109438};
 
     MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(point, METERS_PER_MILE/2, METERS_PER_MILE/2);
@@ -482,8 +480,6 @@ typedef enum {
     [self showStreetLevelWithCoordinates:&point];
 }
 - (IBAction)spotButtonPressed:(id)sender {
-    
-    [map removeOverlays:map.overlays];
     CLLocationCoordinate2D point = {42.365077, -71.110838};
 
     MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(point, METERS_PER_MILE/16, METERS_PER_MILE/16);
@@ -492,8 +488,7 @@ typedef enum {
     [self showSpotLevelWithCoordinates:&point];
 }
 - (IBAction)noneButtonPressed:(id)sender {
-    [self.map removeOverlays:map.overlays];
-    [self.map removeAnnotations:self.map.annotations];
+    [self clearMap];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation{
@@ -511,7 +506,7 @@ typedef enum {
          [map setRegion:region animated:TRUE];
          */
 
-        [self spotButtonPressed:Nil];
+        [self spotButtonPressed:nil];
 
         [locationManager stopUpdatingLocation];
     }
