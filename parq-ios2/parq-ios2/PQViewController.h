@@ -19,6 +19,9 @@
 @property (weak, nonatomic) IBOutlet UINavigationItem *navigationBar;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *bottomSpotSelectionBar;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *topSpotSelectionBar;
+@property (weak, nonatomic) IBOutlet UIView *availabilitySelectionView;
+@property (weak, nonatomic) IBOutlet UIView *bottomSpotSelectionView;
+@property (weak, nonatomic) IBOutlet UIView *topSpotSelectionView;
 
 @property (nonatomic, retain) CLGeocoder* geocoder;
 

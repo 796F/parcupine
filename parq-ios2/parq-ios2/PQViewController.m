@@ -34,6 +34,9 @@ typedef enum {
 @implementation PQViewController
 @synthesize map;
 @synthesize topSearchBar;
+@synthesize availabilitySelectionView;
+@synthesize bottomSpotSelectionView;
+@synthesize topSpotSelectionView;
 @synthesize navigationBar;
 @synthesize bottomSpotSelectionBar;
 @synthesize topSpotSelectionBar;
@@ -234,20 +237,35 @@ typedef enum {
     }
 }
 
+- (void)showAvailabilitySelectionView {
+    self.availabilitySelectionView.hidden = NO;
+    self.topSpotSelectionView.hidden = YES;
+    self.bottomSpotSelectionView.hidden = YES;
+}
+
+- (void)showSpotSelectionViews {
+    self.topSpotSelectionView.hidden = NO;
+    self.bottomSpotSelectionView.hidden = NO;
+    self.availabilitySelectionView.hidden = YES;
+}
+
 - (void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated {
     CLLocationCoordinate2D coord = mapView.centerCoordinate;
     if (mapView.region.span.latitudeDelta>=STREET_MAP_SPAN) {
         NSLog(@"GRID:currSpan: %f\n", mapView.region.span.latitudeDelta);
         zoomState = kGridZoomLevel;
         [self showGridLevelWithCoordinates:&coord];
+        [self showAvailabilitySelectionView];
     } else if (mapView.region.span.latitudeDelta>=SPOT_MAP_SPAN) {
         NSLog(@"Block:currSpan: %f\n", mapView.region.span.latitudeDelta);
         zoomState = kStreetZoomLevel;
         [self showStreetLevelWithCoordinates:&coord];
+        [self showAvailabilitySelectionView];
     } else {
         NSLog(@"currSpan: %f\n", mapView.region.span.latitudeDelta);
         zoomState = kSpotZoomLevel;
         [self showSpotLevelWithCoordinates:&coord];
+        [self showSpotSelectionViews];
     }
 }
 
@@ -579,6 +597,9 @@ typedef enum {
     [self setTopSearchBar:nil];
     [self setBottomSpotSelectionBar:nil];
     [self setTopSpotSelectionBar:nil];
+    [self setAvailabilitySelectionView:nil];
+    [self setBottomSpotSelectionView:nil];
+    [self setTopSpotSelectionView:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
