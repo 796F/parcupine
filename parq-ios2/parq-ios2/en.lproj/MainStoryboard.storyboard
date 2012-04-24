@@ -27,7 +27,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             </mapView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="hbZ-8d-jN4">
-                                <rect key="frame" x="0.0" y="403" width="72" height="37"/>
+                                <rect key="frame" x="0.0" y="371" width="72" height="37"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                 <state key="normal" title="Grid">
@@ -42,7 +42,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="oie-85-EUx">
-                                <rect key="frame" x="83" y="403" width="72" height="37"/>
+                                <rect key="frame" x="83" y="371" width="72" height="37"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                 <state key="normal" title="Street">
@@ -57,7 +57,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="YiJ-I9-3ka">
-                                <rect key="frame" x="165" y="403" width="72" height="37"/>
+                                <rect key="frame" x="165" y="371" width="72" height="37"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                 <state key="normal" title="Spot">
@@ -72,7 +72,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="cGx-cc-8cz">
-                                <rect key="frame" x="248" y="403" width="72" height="37"/>
+                                <rect key="frame" x="248" y="371" width="72" height="37"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                 <state key="normal" title="None">
@@ -116,6 +116,62 @@
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             </view>
+                            <view opaque="NO" contentMode="scaleToFill" id="3zE-go-tx2">
+                                <rect key="frame" x="0.0" y="416" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" barStyle="blackTranslucent" id="Px2-aB-PpB">
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                        <items>
+                                            <barButtonItem style="plain" id="AXB-dh-5yW">
+                                                <segmentedControl key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" momentary="YES" id="kda-6o-i24">
+                                                    <rect key="frame" x="6" y="8" width="309" height="30"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <segments>
+                                                        <segment title="" image="left_arrow.png"/>
+                                                        <segment title="1102"/>
+                                                        <segment title="1104"/>
+                                                        <segment title="1106"/>
+                                                        <segment title="1108"/>
+                                                        <segment title="" image="right_arrow.png"/>
+                                                    </segments>
+                                                    <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                                </segmentedControl>
+                                            </barButtonItem>
+                                        </items>
+                                    </toolbar>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            </view>
+                            <view opaque="NO" contentMode="scaleToFill" id="Hss-DW-Gm6">
+                                <rect key="frame" x="0.0" y="44" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" barStyle="blackTranslucent" id="ZJT-sV-epO">
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                        <items>
+                                            <barButtonItem style="plain" id="cY7-6a-lgc">
+                                                <segmentedControl key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" momentary="YES" id="apn-5B-zhp">
+                                                    <rect key="frame" x="6" y="8" width="309" height="30"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <segments>
+                                                        <segment title="" image="left_arrow.png"/>
+                                                        <segment title="1101"/>
+                                                        <segment title="1103"/>
+                                                        <segment title="1105"/>
+                                                        <segment title="1107"/>
+                                                        <segment title="" image="right_arrow.png"/>
+                                                    </segments>
+                                                    <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                                </segmentedControl>
+                                            </barButtonItem>
+                                        </items>
+                                    </toolbar>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            </view>
                             <searchBar contentMode="redraw" barStyle="blackOpaque" placeholder="Where do you want to park?" showsBookmarkButton="YES" id="ZNG-Ah-8CZ">
                                 <rect key="frame" x="47" y="0.0" width="273" height="44"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
@@ -128,9 +184,11 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <connections>
+                        <outlet property="bottomSpotSelectionBar" destination="kda-6o-i24" id="7id-xr-AH0"/>
                         <outlet property="map" destination="VpP-MP-pHv" id="LAh-bw-Q42"/>
                         <outlet property="navigationBar" destination="Rp5-eY-6wq" id="bu7-6i-bM5"/>
                         <outlet property="topSearchBar" destination="ZNG-Ah-8CZ" id="Xa3-LA-cBz"/>
+                        <outlet property="topSpotSelectionBar" destination="apn-5B-zhp" id="Jp6-qQ-sdG"/>
                     </connections>
                 </viewController>
             </objects>
@@ -138,15 +196,19 @@
     </scenes>
     <resources>
         <image name="avail_gradient.png" width="58" height="59"/>
+        <image name="left_arrow.png" width="20" height="20"/>
+        <image name="right_arrow.png" width="20" height="20"/>
         <image name="settings.png" width="20" height="21"/>
     </resources>
     <classes>
         <class className="PQViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/PQViewController.h"/>
             <relationships>
+                <relationship kind="outlet" name="bottomSpotSelectionBar" candidateClass="UISegmentedControl"/>
                 <relationship kind="outlet" name="map" candidateClass="MKMapView"/>
                 <relationship kind="outlet" name="navigationBar" candidateClass="UINavigationItem"/>
                 <relationship kind="outlet" name="topSearchBar" candidateClass="UISearchBar"/>
+                <relationship kind="outlet" name="topSpotSelectionBar" candidateClass="UISegmentedControl"/>
             </relationships>
         </class>
     </classes>

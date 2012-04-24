@@ -35,6 +35,8 @@ typedef enum {
 @synthesize map;
 @synthesize topSearchBar;
 @synthesize navigationBar;
+@synthesize bottomSpotSelectionBar;
+@synthesize topSpotSelectionBar;
 @synthesize geocoder;
 @synthesize disableViewOverlay;
 @synthesize leftBarButton;
@@ -523,16 +525,16 @@ typedef enum {
 #pragma mark - View lifecycle
 
 - (void)viewDidLoad{
-    
+    [super viewDidLoad];
+
     //check the current zoom level to set the ZOOM_STATE integer.  
-    float zoomWidth = self.map.bounds.size.width;
-    if(zoomWidth > STREET_MAP_SPAN){
+    if (self.map.bounds.size.width > STREET_MAP_SPAN) {
         zoomState = kGridZoomLevel;
         //above middle zoom level        
-    }else if(SPOT_MAP_SPAN){
+    } else if (SPOT_MAP_SPAN) {
         //above spot zoom level
         zoomState = kStreetZoomLevel;
-    }else{
+    } else {
         //inside spot zoom level.  
         zoomState = kSpotZoomLevel;
     }
@@ -548,9 +550,11 @@ typedef enum {
 
     self.leftBarButton = self.navigationBar.leftBarButtonItem;
 
-    [super viewDidLoad];
-    
-	
+    [self.topSpotSelectionBar setWidth:36 forSegmentAtIndex:0];
+    [self.topSpotSelectionBar setWidth:36 forSegmentAtIndex:5];
+    [self.bottomSpotSelectionBar setWidth:36 forSegmentAtIndex:0];
+    [self.bottomSpotSelectionBar setWidth:36 forSegmentAtIndex:5];
+
     // Do any additional setup after loading the view, typically from a nib.
     self.map.delegate=self;
     self.map.showsUserLocation = YES;
@@ -573,6 +577,8 @@ typedef enum {
     [self setMap:nil];
     [self setNavigationBar:nil];
     [self setTopSearchBar:nil];
+    [self setBottomSpotSelectionBar:nil];
+    [self setTopSpotSelectionBar:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
