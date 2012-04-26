@@ -23,6 +23,10 @@
 @property (weak, nonatomic) IBOutlet UIView *bottomSpotSelectionView;
 @property (weak, nonatomic) IBOutlet UIView *topSpotSelectionView;
 
+@property (weak, nonatomic) MKCircle* gCircle;
+@property (nonatomic, retain) NSMutableArray* callouts;
+@property (nonatomic, retain) NSMutableArray* calloutLines;
+
 @property (nonatomic, retain) CLGeocoder* geocoder;
 
 @end

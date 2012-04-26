@@ -18,7 +18,7 @@
 #define SPOT_MAP_SPAN 0.0017
 
 #define GPS_LAUNCH_ALERT 10
-
+#define MAX_CALLOUTS 8
 typedef enum {
     kGridZoomLevel,
     kStreetZoomLevel,
@@ -32,6 +32,9 @@ typedef enum {
 @end
 
 @implementation PQViewController
+@synthesize gCircle;
+@synthesize callouts;
+@synthesize calloutLines;
 @synthesize map;
 @synthesize topSearchBar;
 @synthesize availabilitySelectionView;
@@ -64,38 +67,40 @@ typedef enum {
 }
 
 - (NSArray*)loadBlockData {
+    
     return [NSArray arrayWithObjects:
             [[NSDictionary alloc] initWithObjectsAndKeys:@"42.36441,-71.113901;42.365203,-71.104846", @"line", [NSNumber numberWithInt:0], @"color", nil],
-            [[NSDictionary alloc] initWithObjectsAndKeys:@"42.367074,-71.111155;42.363269,-71.110554", @"line", [NSNumber numberWithInt:4], @"color", nil], nil];
+            [[NSDictionary alloc] initWithObjectsAndKeys:@"42.365399,-71.110897;42.364751,-71.110771", @"line", [NSNumber numberWithInt:4], @"color", nil], nil];
+
 }
 
 -(NSArray*) loadSpotData {
     return [NSArray arrayWithObjects:
-            @"42.365354, -71.110843, 1",
-            @"42.365292, -71.110835, 1",
-            @"42.365239, -71.110825, 1",
-            @"42.365187, -71.110811, 0",
-            @"42.365140, -71.110806, 1",
-            @"42.365092, -71.110798, 0",
-            @"42.365045, -71.110790, 1",
-            @"42.364995, -71.110782, 0",
-            @"42.364947, -71.110768, 0",
-            @"42.364896, -71.110766, 0",
-            @"42.364846, -71.110752, 0",
-            @"42.364797, -71.110739, 0",
+            @"42.365354, -71.110843, 1, 1410",
+            @"42.365292, -71.110835, 1, 1412",
+            @"42.365239, -71.110825, 1, 1414",
+            @"42.365187, -71.110811, 0, 1416",
+            @"42.365140, -71.110806, 1, 1418",
+            @"42.365092, -71.110798, 0, 1420",
+            @"42.365045, -71.110790, 1, 1422",
+            @"42.364995, -71.110782, 0, 1424",
+            @"42.364947, -71.110768, 0, 1426",
+            @"42.364896, -71.110766, 0, 1428",
+            @"42.364846, -71.110752, 0, 1430",
+            @"42.364797, -71.110739, 0, 1432",
             
-            @"42.365348, -71.110924, 1",
-            @"42.365300, -71.110916, 0",
-            @"42.365251, -71.110905, 0",
-            @"42.365203, -71.110900, 0",
-            @"42.365154, -71.110892, 1",
-            @"42.365104, -71.110876, 0",
-            @"42.365049, -71.110868, 1",
-            @"42.364993, -71.110860, 1",
-            @"42.364943, -71.110849, 1",
-            @"42.364894, -71.110846, 1",
-            @"42.364846, -71.110835, 0",
-            @"42.364799, -71.110830, 1",
+            @"42.365348, -71.110924, 1, 1411",
+            @"42.365300, -71.110916, 0, 1413",
+            @"42.365251, -71.110905, 0, 1415",
+            @"42.365203, -71.110900, 0, 1417",
+            @"42.365154, -71.110892, 1, 1419",
+            @"42.365104, -71.110876, 0, 1421",
+            @"42.365049, -71.110868, 1, 1423",
+            @"42.364993, -71.110860, 1, 1425",
+            @"42.364943, -71.110849, 1, 1427",
+            @"42.364894, -71.110846, 1, 1429",
+            @"42.364846, -71.110835, 0, 1431",
+            @"42.364799, -71.110830, 1, 1433",
             nil];
 }
 
@@ -109,7 +114,54 @@ typedef enum {
     }
 }
 
-- (NSArray *)calloutBubblePlacement:(CLLocationCoordinate2D *)selectionCenter {
+- (double) dot_prodX1:(double)x1 Y1:(double)y1 X2:(double)x2 Y2:(double)y2 {
+    return x1*x2 + y1*y2;
+}
+
+-(double) dot_relative_to_P:(CLLocationCoordinate2D*)p V:(CLLocationCoordinate2D*)v W:(CLLocationCoordinate2D*)w{
+    return [self dot_prodX1:(*p).latitude - (*v).latitude 
+                         Y1:(*p).longitude - (*v).longitude 
+                         X2:(*v).latitude - (*w).latitude 
+                         Y2:(*v).longitude - (*w).longitude];
+}
+
+- (double) l_sqrdV:(CLLocationCoordinate2D*)v W:(CLLocationCoordinate2D*) w{
+    return ((*v).latitude-(*w).latitude)*((*v).latitude-(*w).latitude) 
+    + ((*v).longitude - (*w).longitude)*((*v).longitude - (*w).longitude);
+}
+
+- (NSArray *)calloutBubblePlacement:(CLLocationCoordinate2D *)selectionCenter withR:(CLLocationDistance) radius{
+    //using the street information, snap to the street via geometric projection 
+    
+    
+    CLLocation* center = [[CLLocation alloc] initWithLatitude:(*selectionCenter).latitude longitude:(*selectionCenter).longitude];
+    
+    //look through list of points, check spot distanceFromLocation (coord) vs radius.  
+    NSArray* data = [self loadSpotData];
+    //keep track of some stuff
+    float avgLat=0, avgLon;
+
+    for(id spot in data){
+        NSArray* point = [spot componentsSeparatedByString:@","];
+        CLLocation* spot_loc = [[CLLocation alloc] initWithLatitude:[[point objectAtIndex:0] floatValue] longitude:[[point objectAtIndex:1] floatValue]];
+        
+        CLLocationDistance dist = [spot_loc distanceFromLocation:center];
+        
+        if(dist<radius){
+            //inside the circle
+            avgLat += spot_loc.coordinate.latitude;
+            avgLon += spot_loc.coordinate.longitude;   
+
+        }
+    }
+    //compute the average point
+    avgLat /= data.count;
+    avgLon /= data.count;
+    
+    //project bubbles using this average and the spot's coordinates.  
+    
+    
+    
     return [[NSArray alloc] initWithObjects:
             [[NSDictionary alloc] initWithObjectsAndKeys:
              [[CalloutMapAnnotation alloc] initWithLatitude:selectionCenter->latitude+0.0002
@@ -150,12 +202,28 @@ typedef enum {
 
 - (void)showSelectionCircle:(CLLocationCoordinate2D *)coord {
     // Assumes overlays and annotations were cleared in the calling function
+    [self.map setCenterCoordinate:*coord animated:YES];
     
     MKCircle *greyCircle = [MKCircle circleWithCenterCoordinate:*coord radius:12];
     [greyCircle setColor:-1];
     [self.map addOverlay:greyCircle];
+
     
-    NSArray *placement = [self calloutBubblePlacement:coord];
+    NSArray *placement = [self calloutBubblePlacement:coord withR:greyCircle.radius];
+    
+    if(calloutLines==NULL || callouts == NULL){
+        calloutLines = [[NSMutableArray alloc]initWithCapacity:MAX_CALLOUTS];
+        callouts = [[NSMutableArray alloc] initWithCapacity:MAX_CALLOUTS];
+
+    }else{
+        [self.map removeAnnotations:callouts];
+        [self.map removeOverlays:calloutLines];
+        [self.map removeOverlay:gCircle];
+        
+        [calloutLines removeAllObjects];
+        [callouts removeAllObjects];
+    }
+    gCircle = greyCircle;
     for (NSDictionary *bubble in placement) {
         CLLocationCoordinate2D endpoints[2];
         CalloutMapAnnotation *callout = [bubble objectForKey:@"callout"];
@@ -163,9 +231,11 @@ typedef enum {
         endpoints[1] = ((CLLocation *)[bubble objectForKey:@"spot"]).coordinate;
         MKPolyline *calloutLine = [MKPolyline polylineWithCoordinates:endpoints count:2];
         [calloutLine setColor:-1];
+        [callouts addObject:callout];
+        [calloutLines addObject:calloutLine];
         [self.map addOverlay:calloutLine];
-
         [self.map addAnnotation:callout];
+
     }
 }
 
@@ -224,14 +294,17 @@ typedef enum {
 
 - (void)showSpotLevelWithCoordinates:(CLLocationCoordinate2D *)coord {
     [self clearMap];
-
-    [self showSelectionCircle:coord];
     NSArray* data = [self loadSpotData];
     for(id spot in data){
         NSArray* point = [spot componentsSeparatedByString:@","];
         CLLocationCoordinate2D coord = CLLocationCoordinate2DMake([[point objectAtIndex:0] floatValue], [[point objectAtIndex:1] floatValue]);
         int color = [[point objectAtIndex:2] intValue];
-        MKCircle* circle = [MKCircle circleWithCenterCoordinate:coord radius:2];
+        MKCircle* circle;
+        if(color==0){
+            circle  = [MKCircle circleWithCenterCoordinate:coord radius:2];
+        }else if(color==1){
+            circle = [MKCircle circleWithCenterCoordinate:coord radius:3];   
+        }
         [circle setColor:color];
         [self.map addOverlay:circle];
     }
@@ -264,7 +337,6 @@ typedef enum {
     } else {
         NSLog(@"currSpan: %f\n", mapView.region.span.latitudeDelta);
         zoomState = kSpotZoomLevel;
-        [self showSpotLevelWithCoordinates:&coord];
         [self showSpotSelectionViews];
     }
 }
@@ -327,18 +399,20 @@ typedef enum {
                 // Grey selection circle
                 circleView.fillColor = [[UIColor blackColor] colorWithAlphaComponent:0.3];
                 circleView.strokeColor = [UIColor whiteColor];
+                //51 204 0
+
                 circleView.lineWidth = 6;
                 break;
             case 0:
                 //taken
-                circleView.fillColor = [[UIColor redColor] colorWithAlphaComponent:0.5];
-                circleView.strokeColor = [UIColor redColor];
+                circleView.fillColor = [[UIColor redColor] colorWithAlphaComponent:0.9];
+                circleView.strokeColor = [UIColor whiteColor];
                 circleView.lineWidth = 2;
                 break;
             case 1:
                 //free
-                circleView.fillColor = [[UIColor greenColor] colorWithAlphaComponent:0.5];
-                circleView.strokeColor = [UIColor greenColor];
+                circleView.fillColor = [UIColor colorWithRed:51.0/255 green:224.0/255 blue:0 alpha:0.8];;
+                circleView.strokeColor = [UIColor whiteColor];
                 circleView.lineWidth = 2;
                 break;
         }
@@ -376,7 +450,7 @@ typedef enum {
             MKPolygonView *polyView = (MKPolygonView*)[self.map viewForOverlay:gridOverlay];
             CGPoint polygonViewPoint = [polyView pointForMapPoint:mapPoint];
 
-            //BUG this contains thing is including an area even above the polygon  
+
             if (CGPathContainsPoint(polyView.path, NULL, polygonViewPoint, NO)) {
                 MKCoordinateRegion reg = [self.map convertRect:polyView.bounds toRegionFromView:polyView];
                 [self.map setRegion:[self.map regionThatFits:reg] animated:YES];
@@ -394,8 +468,9 @@ typedef enum {
          [warningAlertView show];
          */
     } else if (zoomState==kSpotZoomLevel) {
-        [self showSpotLevelWithCoordinates:&coord];
-        [self.map setCenterCoordinate:coord animated:YES];
+        if([gestureRecognizer numberOfTouches]==1){
+            [self showSelectionCircle:&coord];
+        }
     }
 }
 
@@ -556,7 +631,6 @@ typedef enum {
         //inside spot zoom level.  
         zoomState = kSpotZoomLevel;
     }
-
     self.disableViewOverlay = [[UIView alloc]
                                initWithFrame:CGRectMake(0.0f,88.0f,320.0f,372.0f)];
     self.disableViewOverlay.backgroundColor=[UIColor blackColor];
