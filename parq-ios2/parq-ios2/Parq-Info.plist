@@ -52,5 +52,9 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
+	<key>UIAppFonts</key>
+	<array>
+		<string>OCRAStd.otf</string>
+	</array>
 </dict>
 </plist>
