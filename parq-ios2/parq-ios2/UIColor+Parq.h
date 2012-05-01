@@ -14,4 +14,6 @@
 + (UIColor *)mediumAvailabilityColor;
 + (UIColor *)highAvailabilityColor;
 + (UIColor *)veryHighAvailabilityColor;
++ (UIColor *)disabledTextColor;
++ (UIColor *)activeTextColor;
 @end

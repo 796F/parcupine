@@ -209,13 +209,6 @@
                             <rect key="frame" x="0.0" y="0.0" width="320" height="235"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
-                                <navigationBar contentMode="scaleToFill" barStyle="blackOpaque" id="Bh9-R2-eZ1">
-                                    <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                                    <items>
-                                        <navigationItem title="1106, Cambridge, MA" id="EOt-VH-tmc"/>
-                                    </items>
-                                </navigationBar>
                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="meter.png" id="nZj-d2-r3b">
                                     <rect key="frame" x="0.0" y="44" width="320" height="130"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
@@ -232,6 +225,10 @@
                                     <fontDescription key="fontDescription" type="system" pointSize="60"/>
                                     <nil key="highlightedColor"/>
                                 </label>
+                                <imageView hidden="YES" autoresizesSubviews="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="TopLeft" image="prepaid.png" id="9Fx-qN-c0G">
+                                    <rect key="frame" x="69" y="116" width="141" height="56"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                </imageView>
                                 <imageView autoresizesSubviews="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="TopLeft" image="payg.png" id="oH6-bD-6fX">
                                     <rect key="frame" x="70" y="117" width="139" height="55"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -272,6 +269,13 @@
                                     <nil key="highlightedColor"/>
                                     <color key="shadowColor" white="0.0" alpha="0.40000000000000002" colorSpace="calibratedWhite"/>
                                 </label>
+                                <navigationBar contentMode="scaleToFill" barStyle="blackOpaque" id="Bh9-R2-eZ1">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                    <items>
+                                        <navigationItem title="1106, Cambridge, MA" id="EOt-VH-tmc"/>
+                                    </items>
+                                </navigationBar>
                             </subviews>
                             <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         </view>
@@ -339,8 +343,8 @@
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                 </label>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Enter Amonut" lineBreakMode="tailTruncation" minimumFontSize="10" id="v5T-9w-4wz">
-                                                    <rect key="frame" x="178" y="11" width="105" height="21"/>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Enter Amount" textAlignment="right" lineBreakMode="tailTruncation" minimumFontSize="10" id="v5T-9w-4wz">
+                                                    <rect key="frame" x="113" y="11" width="170" height="21"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" red="0.76078431372549016" green="0.75294117647058822" blue="0.75294117647058822" alpha="1" colorSpace="calibratedRGB"/>
@@ -360,9 +364,13 @@
                         </connections>
                     </tableView>
                     <connections>
-                        <outlet property="minutes" destination="A8E-fm-VSP" id="6Pr-S0-hjY"/>
+                        <outlet property="hours" destination="A8E-fm-VSP" id="H36-Qb-Hn7"/>
+                        <outlet property="minutes" destination="Y6q-af-rFO" id="Mkg-0h-abd"/>
+                        <outlet property="paygCheck" destination="iLf-wM-LbY" id="8g8-4F-iZc"/>
                         <outlet property="paygFlag" destination="oH6-bD-6fX" id="o93-c4-5oS"/>
-                        <outlet property="seconds" destination="Y6q-af-rFO" id="EJh-m0-6Jz"/>
+                        <outlet property="prepaidAmount" destination="v5T-9w-4wz" id="LqN-O4-XBQ"/>
+                        <outlet property="prepaidCheck" destination="ZxQ-hL-3De" id="joM-Na-eC1"/>
+                        <outlet property="prepaidFlag" destination="9Fx-qN-c0G" id="JtG-pT-hgq"/>
                         <outlet property="startButton" destination="T3R-6P-VeW" id="lys-gJ-Yz9"/>
                     </connections>
                 </tableViewController>
@@ -378,6 +386,7 @@
         <image name="left_arrow.png" width="20" height="20"/>
         <image name="meter.png" width="640" height="261"/>
         <image name="payg.png" width="139" height="99"/>
+        <image name="prepaid.png" width="141" height="102"/>
         <image name="right_arrow.png" width="20" height="20"/>
         <image name="settings.png" width="20" height="21"/>
     </resources>
@@ -385,9 +394,13 @@
         <class className="PQParkingViewController" superclassName="UITableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/PQParkingViewController.h"/>
             <relationships>
+                <relationship kind="outlet" name="hours" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="minutes" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="paygCheck" candidateClass="UIImageView"/>
                 <relationship kind="outlet" name="paygFlag" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="seconds" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="prepaidAmount" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="prepaidCheck" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="prepaidFlag" candidateClass="UIImageView"/>
                 <relationship kind="outlet" name="startButton" candidateClass="UIButton"/>
             </relationships>
         </class>

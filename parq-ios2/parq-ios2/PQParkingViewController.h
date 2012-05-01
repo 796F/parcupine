@@ -11,7 +11,11 @@
 @interface PQParkingViewController : UITableViewController <UITableViewDelegate>
 @property (weak, nonatomic) IBOutlet UIButton *startButton;
 @property (weak, nonatomic) IBOutlet UIImageView *paygFlag;
+@property (weak, nonatomic) IBOutlet UIImageView *prepaidFlag;
+@property (weak, nonatomic) IBOutlet UILabel *hours;
 @property (weak, nonatomic) IBOutlet UILabel *minutes;
-@property (weak, nonatomic) IBOutlet UILabel *seconds;
+@property (weak, nonatomic) IBOutlet UIImageView *paygCheck;
+@property (weak, nonatomic) IBOutlet UIImageView *prepaidCheck;
+@property (weak, nonatomic) IBOutlet UILabel *prepaidAmount;
 
 @end

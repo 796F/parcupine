@@ -7,12 +7,17 @@
 //
 
 #import "PQParkingViewController.h"
+#import "UIColor+Parq.h"
 
 @implementation PQParkingViewController
 @synthesize startButton;
 @synthesize paygFlag;
+@synthesize prepaidFlag;
+@synthesize hours;
 @synthesize minutes;
-@synthesize seconds;
+@synthesize paygCheck;
+@synthesize prepaidCheck;
+@synthesize prepaidAmount;
 
 #pragma mark - UITableViewDelegate
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
@@ -40,6 +45,31 @@
     return 36;
 }
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.section == 0) {
+        if (indexPath.row == 0) {
+            paygCheck.image = [UIImage imageNamed:@"check.png"];
+            prepaidCheck.image = [UIImage imageNamed:@"check_empty.png"];
+            paygFlag.hidden = NO;
+            prepaidFlag.hidden = YES;
+            prepaidAmount.text = @"Enter Amount";
+            prepaidAmount.textColor = [UIColor disabledTextColor];
+            hours.text = @"00";
+            minutes.text = @"00";
+        } else if (indexPath.row == 1) {
+            paygCheck.image = [UIImage imageNamed:@"check_empty.png"];
+            prepaidCheck.image = [UIImage imageNamed:@"check.png"];
+            paygFlag.hidden = YES;
+            prepaidFlag.hidden = NO;
+            prepaidAmount.text = @"1h 30m ($2.50)";
+            prepaidAmount.textColor = [UIColor activeTextColor];
+            hours.text = @"01";
+            minutes.text = @"30";
+        }
+    }
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+}
+
 #pragma mark - Memory
 
 - (void)didReceiveMemoryWarning
@@ -56,16 +86,20 @@
     [startButton setBackgroundImage:[[UIImage imageNamed:@"green_button.png"] stretchableImageWithLeftCapWidth:14.0 topCapHeight:0.0] forState:UIControlStateNormal];
 //    [startButton addTarget:self action:@selector(buttonPressed) forControlEvents:UIControlEventTouchUpInside];
 
+    hours.font = [UIFont fontWithName:@"OCR A Std" size:60];
     minutes.font = [UIFont fontWithName:@"OCR A Std" size:60];
-    seconds.font = [UIFont fontWithName:@"OCR A Std" size:60];
 }
 
 - (void)viewDidUnload
 {
     [self setPaygFlag:nil];
+    [self setHours:nil];
     [self setMinutes:nil];
-    [self setSeconds:nil];
     [self setStartButton:nil];
+    [self setPrepaidFlag:nil];
+    [self setPaygCheck:nil];
+    [self setPrepaidCheck:nil];
+    [self setPrepaidAmount:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
