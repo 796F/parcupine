@@ -54,7 +54,7 @@
 	</array>
 	<key>UIAppFonts</key>
 	<array>
-		<string>OCRAStd.otf</string>
+		<string>OCRBStd.otf</string>
 	</array>
 </dict>
 </plist>

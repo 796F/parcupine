@@ -29,6 +29,7 @@
 		8791F9C11533804000525267 /* PQCallout.m in Sources */ = {isa = PBXBuildFile; fileRef = 8791F9C01533804000525267 /* PQCallout.m */; };
 		8791F9CE153383E500525267 /* CalloutMapAnnotationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8791F9CD153383E500525267 /* CalloutMapAnnotationView.m */; };
 		8791F9D415338DD300525267 /* CalloutMapAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 8791F9D315338DD300525267 /* CalloutMapAnnotation.m */; };
+		879B298B1550862E00017E2F /* OCRBStd.otf in Resources */ = {isa = PBXBuildFile; fileRef = 879B298A1550862E00017E2F /* OCRBStd.otf */; };
 		87AE9EFC152F918300069153 /* MKShape+Color.m in Sources */ = {isa = PBXBuildFile; fileRef = 87AE9EFB152F918300069153 /* MKShape+Color.m */; };
 		87E1BE5A154741190095E92D /* left_arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 87E1BE58154741190095E92D /* left_arrow.png */; };
 		87E1BE5B154741190095E92D /* right_arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 87E1BE59154741190095E92D /* right_arrow.png */; };
@@ -38,7 +39,6 @@
 		87E1BE64154888CE0095E92D /* grey_tabs_bar.png in Resources */ = {isa = PBXBuildFile; fileRef = 87E1BE63154888CE0095E92D /* grey_tabs_bar.png */; };
 		87E1BE67154A08D80095E92D /* PQParkingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 87E1BE66154A08D80095E92D /* PQParkingViewController.m */; };
 		87E1BE69154B35270095E92D /* payg.png in Resources */ = {isa = PBXBuildFile; fileRef = 87E1BE68154B35270095E92D /* payg.png */; };
-		87E1BE74154B52700095E92D /* OCRAStd.otf in Resources */ = {isa = PBXBuildFile; fileRef = 87E1BE73154B52700095E92D /* OCRAStd.otf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -73,6 +73,7 @@
 		8791F9CD153383E500525267 /* CalloutMapAnnotationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CalloutMapAnnotationView.m; sourceTree = "<group>"; };
 		8791F9D215338DD300525267 /* CalloutMapAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalloutMapAnnotation.h; sourceTree = "<group>"; };
 		8791F9D315338DD300525267 /* CalloutMapAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CalloutMapAnnotation.m; sourceTree = "<group>"; };
+		879B298A1550862E00017E2F /* OCRBStd.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = OCRBStd.otf; sourceTree = "<group>"; };
 		87AE9EFA152F918300069153 /* MKShape+Color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MKShape+Color.h"; sourceTree = "<group>"; };
 		87AE9EFB152F918300069153 /* MKShape+Color.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MKShape+Color.m"; sourceTree = "<group>"; };
 		87E1BE58154741190095E92D /* left_arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = left_arrow.png; sourceTree = "<group>"; };
@@ -84,7 +85,6 @@
 		87E1BE65154A08D70095E92D /* PQParkingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PQParkingViewController.h; sourceTree = "<group>"; };
 		87E1BE66154A08D80095E92D /* PQParkingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PQParkingViewController.m; sourceTree = "<group>"; };
 		87E1BE68154B35270095E92D /* payg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = payg.png; sourceTree = "<group>"; };
-		87E1BE73154B52700095E92D /* OCRAStd.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = OCRAStd.otf; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -221,7 +221,7 @@
 		87E1BE72154B52280095E92D /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
-				87E1BE73154B52700095E92D /* OCRAStd.otf */,
+				879B298A1550862E00017E2F /* OCRBStd.otf */,
 			);
 			name = Fonts;
 			sourceTree = "<group>";
@@ -290,10 +290,10 @@
 				87E1BE62154880700095E92D /* red_button.png in Resources */,
 				87E1BE64154888CE0095E92D /* grey_tabs_bar.png in Resources */,
 				87E1BE69154B35270095E92D /* payg.png in Resources */,
-				87E1BE74154B52700095E92D /* OCRAStd.otf in Resources */,
 				873F8F2F154F257F002FB511 /* check_empty.png in Resources */,
 				873F8F30154F257F002FB511 /* check.png in Resources */,
 				876702E41550667700318941 /* prepaid.png in Resources */,
+				879B298B1550862E00017E2F /* OCRBStd.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

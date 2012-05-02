@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="1.0" toolsVersion="1938" systemVersion="11D50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="2">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="1.0" toolsVersion="1938" systemVersion="11D50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="Hs3-94-mR9">
     <dependencies>
         <development defaultVersion="4200" identifier="xcode"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="933"/>
@@ -214,13 +214,13 @@
                                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                 </imageView>
                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="00" lineBreakMode="tailTruncation" minimumFontSize="10" id="Y6q-af-rFO">
-                                    <rect key="frame" x="166" y="84" width="77" height="66"/>
+                                    <rect key="frame" x="164" y="82" width="87" height="74"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="60"/>
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="00" textAlignment="right" lineBreakMode="tailTruncation" minimumFontSize="10" id="A8E-fm-VSP">
-                                    <rect key="frame" x="79" y="84" width="77" height="66"/>
+                                    <rect key="frame" x="70.5" y="82" width="87" height="74"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="60"/>
                                     <nil key="highlightedColor"/>
@@ -295,6 +295,25 @@
                                     <state key="highlighted">
                                         <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     </state>
+                                    <connections>
+                                        <action selector="startTimer:" destination="Hs3-94-mR9" eventType="touchUpInside" id="ivk-7R-mqN"/>
+                                    </connections>
+                                </button>
+                                <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="qoH-ki-1qF">
+                                    <rect key="frame" x="10" y="10" width="300" height="52"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="21.5"/>
+                                    <size key="titleShadowOffset" width="0.0" height="-1"/>
+                                    <state key="normal" title="Unpark Now">
+                                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <color key="titleShadowColor" white="0.0" alpha="0.40000000000000002" colorSpace="calibratedWhite"/>
+                                    </state>
+                                    <state key="highlighted">
+                                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    </state>
+                                    <connections>
+                                        <action selector="unparkNow:" destination="Hs3-94-mR9" eventType="touchUpInside" id="1My-KB-kLc"/>
+                                    </connections>
                                 </button>
                             </subviews>
                             <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
@@ -309,17 +328,38 @@
                                             <rect key="frame" x="10" y="1" width="300" height="43"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="check.png" id="iLf-wM-LbY">
-                                                    <rect key="frame" x="7" y="7" width="29" height="30"/>
+                                                <view opaque="NO" contentMode="scaleToFill" id="pyS-oV-YAr">
+                                                    <rect key="frame" x="0.0" y="-1" width="300" height="46"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                </imageView>
-                                                <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" text="Pay as you go" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="3gq-6L-gBw">
-                                                    <rect key="frame" x="43" y="0.0" width="235" height="43"/>
-                                                    <autoresizingMask key="autoresizingMask"/>
-                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
-                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                                    <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                                </label>
+                                                    <subviews>
+                                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="check.png" id="iLf-wM-LbY">
+                                                            <rect key="frame" x="7" y="8" width="29" height="30"/>
+                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                        </imageView>
+                                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" text="Pay as you go" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="3gq-6L-gBw">
+                                                            <rect key="frame" x="42.5" y="2" width="235" height="43"/>
+                                                            <autoresizingMask key="autoresizingMask"/>
+                                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                            <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                        </label>
+                                                    </subviews>
+                                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                </view>
+                                                <view hidden="YES" opaque="NO" contentMode="scaleToFill" id="oM8-I2-p1a">
+                                                    <rect key="frame" x="0.0" y="-1" width="300" height="46"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <subviews>
+                                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" text="75-77 Massachusetts Ave, Cambrid..." lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="t6o-Xy-Eni">
+                                                            <rect key="frame" x="10" y="2" width="280" height="43"/>
+                                                            <autoresizingMask key="autoresizingMask"/>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                            <color key="textColor" red="0.34509803921568627" green="0.34509803921568627" blue="0.34509803921568627" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                        </label>
+                                                    </subviews>
+                                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                </view>
                                             </subviews>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
@@ -332,24 +372,45 @@
                                             <rect key="frame" x="10" y="1" width="300" height="43"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="check_empty.png" id="ZxQ-hL-3De">
-                                                    <rect key="frame" x="7" y="7" width="30" height="30"/>
+                                                <view opaque="NO" contentMode="scaleToFill" id="w60-Sc-7sv">
+                                                    <rect key="frame" x="0.0" y="-1" width="300" height="46"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                </imageView>
-                                                <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" text="Prepaid" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="EIE-XX-LdJ">
-                                                    <rect key="frame" x="43" y="0.0" width="235" height="43"/>
-                                                    <autoresizingMask key="autoresizingMask"/>
-                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
-                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                                    <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                                </label>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Enter Amount" textAlignment="right" lineBreakMode="tailTruncation" minimumFontSize="10" id="v5T-9w-4wz">
-                                                    <rect key="frame" x="113" y="11" width="170" height="21"/>
+                                                    <subviews>
+                                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="check_empty.png" id="ZxQ-hL-3De">
+                                                            <rect key="frame" x="7" y="8" width="30" height="30"/>
+                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                        </imageView>
+                                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" text="Prepaid" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="EIE-XX-LdJ">
+                                                            <rect key="frame" x="42.5" y="2" width="235" height="43"/>
+                                                            <autoresizingMask key="autoresizingMask"/>
+                                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                            <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                        </label>
+                                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Enter Amount" textAlignment="right" lineBreakMode="tailTruncation" minimumFontSize="10" id="v5T-9w-4wz">
+                                                            <rect key="frame" x="113" y="13" width="170" height="21"/>
+                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                            <color key="textColor" red="0.76078431372549016" green="0.75294117647058822" blue="0.75294117647058822" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                    </subviews>
+                                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                </view>
+                                                <view hidden="YES" opaque="NO" contentMode="scaleToFill" id="U83-uB-5Jz">
+                                                    <rect key="frame" x="0.0" y="-1" width="300" height="46"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" red="0.76078431372549016" green="0.75294117647058822" blue="0.75294117647058822" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
+                                                    <subviews>
+                                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" text="See map" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="KRl-Az-FAC">
+                                                            <rect key="frame" x="10" y="2" width="235" height="43"/>
+                                                            <autoresizingMask key="autoresizingMask"/>
+                                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                            <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                        </label>
+                                                    </subviews>
+                                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                </view>
                                             </subviews>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
@@ -364,14 +425,19 @@
                         </connections>
                     </tableView>
                     <connections>
+                        <outlet property="addressView" destination="oM8-I2-p1a" id="0u5-Bq-WHW"/>
                         <outlet property="hours" destination="A8E-fm-VSP" id="H36-Qb-Hn7"/>
                         <outlet property="minutes" destination="Y6q-af-rFO" id="Mkg-0h-abd"/>
                         <outlet property="paygCheck" destination="iLf-wM-LbY" id="8g8-4F-iZc"/>
                         <outlet property="paygFlag" destination="oH6-bD-6fX" id="o93-c4-5oS"/>
+                        <outlet property="paygView" destination="pyS-oV-YAr" id="1HL-gb-B3O"/>
                         <outlet property="prepaidAmount" destination="v5T-9w-4wz" id="LqN-O4-XBQ"/>
                         <outlet property="prepaidCheck" destination="ZxQ-hL-3De" id="joM-Na-eC1"/>
                         <outlet property="prepaidFlag" destination="9Fx-qN-c0G" id="JtG-pT-hgq"/>
+                        <outlet property="prepaidView" destination="w60-Sc-7sv" id="n3E-Xm-cbA"/>
+                        <outlet property="seeMapView" destination="U83-uB-5Jz" id="Tty-SX-Ms2"/>
                         <outlet property="startButton" destination="T3R-6P-VeW" id="lys-gJ-Yz9"/>
+                        <outlet property="unparkButton" destination="qoH-ki-1qF" id="BcL-6S-hCA"/>
                     </connections>
                 </tableViewController>
             </objects>
@@ -394,14 +460,19 @@
         <class className="PQParkingViewController" superclassName="UITableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/PQParkingViewController.h"/>
             <relationships>
+                <relationship kind="outlet" name="addressView" candidateClass="UIView"/>
                 <relationship kind="outlet" name="hours" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="minutes" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="paygCheck" candidateClass="UIImageView"/>
                 <relationship kind="outlet" name="paygFlag" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="paygView" candidateClass="UIView"/>
                 <relationship kind="outlet" name="prepaidAmount" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="prepaidCheck" candidateClass="UIImageView"/>
                 <relationship kind="outlet" name="prepaidFlag" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="prepaidView" candidateClass="UIView"/>
+                <relationship kind="outlet" name="seeMapView" candidateClass="UIView"/>
                 <relationship kind="outlet" name="startButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="unparkButton" candidateClass="UIButton"/>
             </relationships>
         </class>
         <class className="PQViewController" superclassName="UIViewController">
