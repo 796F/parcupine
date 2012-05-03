@@ -22,5 +22,6 @@
 @property (weak, nonatomic) IBOutlet UIView *addressView;
 @property (weak, nonatomic) IBOutlet UIView *prepaidView;
 @property (weak, nonatomic) IBOutlet UIView *seeMapView;
+@property (weak, nonatomic) IBOutlet UIDatePicker *datePicker;
 
 @end

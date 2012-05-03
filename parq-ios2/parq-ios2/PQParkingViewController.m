@@ -27,6 +27,7 @@
 @synthesize addressView;
 @synthesize prepaidView;
 @synthesize seeMapView;
+@synthesize datePicker;
 @synthesize timerStarted;
 
 - (IBAction)startTimer:(id)sender {
@@ -55,32 +56,78 @@
     [self.tableView reloadData];
 }
 
+- (void)activatePicker {
+    [UIView animateWithDuration:.25 animations:^{
+        self.tableView.frame = CGRectMake(0, -131, 320, 611);
+        datePicker.frame = CGRectMake(0, 2, 320, 216);
+    }];
+    self.navigationItem.title = @"Enter Amount";
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelPicker:)];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(doneWithPicker:)];
+}
+
+- (void)resignPicker {
+    [UIView animateWithDuration:.25 animations:^{
+        self.tableView.frame = CGRectMake(0, 0, 320, 416);
+        datePicker.frame = CGRectMake(0, 89, 320, 216);
+    }];
+    self.navigationItem.title = @"1106, Cambridge, MA";
+    self.navigationItem.leftBarButtonItem = nil;
+    self.navigationItem.rightBarButtonItem = nil;
+}
+
+- (void)paygSelected {
+    paygCheck.image = [UIImage imageNamed:@"check.png"];
+    prepaidCheck.image = [UIImage imageNamed:@"check_empty.png"];
+    paygFlag.hidden = NO;
+    prepaidFlag.hidden = YES;
+    prepaidAmount.text = @"Enter Amount";
+    prepaidAmount.textColor = [UIColor disabledTextColor];
+    hours.text = @"00";
+    minutes.text = @"00";
+    [self resignPicker];
+}
+
+- (void)prepaidSelected {
+    paygCheck.image = [UIImage imageNamed:@"check_empty.png"];
+    prepaidCheck.image = [UIImage imageNamed:@"check.png"];
+    paygFlag.hidden = YES;
+    prepaidFlag.hidden = NO;
+    prepaidAmount.text = @"1h 30m ($2.50)";
+    prepaidAmount.textColor = [UIColor whiteColor];
+    hours.text = @"01";
+    minutes.text = @"30";
+    [self activatePicker];
+}
+
+- (void)cancelPicker:(id)sender {
+    [self.tableView deselectRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0] animated:NO];
+    NSIndexPath *paygIndexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+    [self.tableView selectRowAtIndexPath:paygIndexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
+    [self paygSelected];
+    [self.tableView deselectRowAtIndexPath:paygIndexPath animated:YES];
+}
+
+- (void)doneWithPicker:(id)sender {
+    [self.tableView deselectRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0] animated:YES];
+    prepaidAmount.textColor = [UIColor activeTextColor];
+    [self resignPicker];
+}
+
 #pragma mark - UITableViewDelegate
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     if (!timerStarted) {
         if (indexPath.section == 0) {
             if (indexPath.row == 0) {
-                paygCheck.image = [UIImage imageNamed:@"check.png"];
-                prepaidCheck.image = [UIImage imageNamed:@"check_empty.png"];
-                paygFlag.hidden = NO;
-                prepaidFlag.hidden = YES;
-                prepaidAmount.text = @"Enter Amount";
-                prepaidAmount.textColor = [UIColor disabledTextColor];
-                hours.text = @"00";
-                minutes.text = @"00";
+                [self paygSelected];
+                [tableView deselectRowAtIndexPath:indexPath animated:YES];
             } else if (indexPath.row == 1) {
-                paygCheck.image = [UIImage imageNamed:@"check_empty.png"];
-                prepaidCheck.image = [UIImage imageNamed:@"check.png"];
-                paygFlag.hidden = YES;
-                prepaidFlag.hidden = NO;
-                prepaidAmount.text = @"1h 30m ($2.50)";
-                prepaidAmount.textColor = [UIColor activeTextColor];
-                hours.text = @"01";
-                minutes.text = @"30";
+                [self prepaidSelected];
             }
         }
+    } else {
+        [tableView deselectRowAtIndexPath:indexPath animated:YES];
     }
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
@@ -155,6 +202,7 @@
     [self setPrepaidView:nil];
     [self setSeeMapView:nil];
     [self setUnparkButton:nil];
+    [self setDatePicker:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
