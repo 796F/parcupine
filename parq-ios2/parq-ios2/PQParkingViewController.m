@@ -11,6 +11,8 @@
 
 @interface PQParkingViewController ()
 @property (nonatomic) BOOL timerStarted;
+@property (strong, nonatomic) UIBarButtonItem *cancelButton;
+@property (strong, nonatomic) UIBarButtonItem *doneButton;
 @end
 
 @implementation PQParkingViewController
@@ -28,8 +30,11 @@
 @synthesize prepaidView;
 @synthesize seeMapView;
 @synthesize datePicker;
+@synthesize cancelButton;
+@synthesize doneButton;
 @synthesize timerStarted;
 
+#pragma mark - Main button actions
 - (IBAction)startTimer:(id)sender {
     timerStarted = YES;
     paygView.hidden = YES;
@@ -56,14 +61,21 @@
     [self.tableView reloadData];
 }
 
+#pragma mark - Date Picker control
 - (void)activatePicker {
     [UIView animateWithDuration:.25 animations:^{
         self.tableView.frame = CGRectMake(0, -131, 320, 611);
         datePicker.frame = CGRectMake(0, 2, 320, 216);
     }];
     self.navigationItem.title = @"Enter Amount";
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelPicker:)];
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(doneWithPicker:)];
+    if (cancelButton == nil) {
+        cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelPicker)];
+    }
+    if (doneButton == nil) {
+        doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(doneWithPicker)];
+    }
+    self.navigationItem.leftBarButtonItem = cancelButton;
+    self.navigationItem.rightBarButtonItem = doneButton;
 }
 
 - (void)resignPicker {
@@ -76,6 +88,7 @@
     self.navigationItem.rightBarButtonItem = nil;
 }
 
+#pragma mark - Table View actions
 - (void)paygSelected {
     paygCheck.image = [UIImage imageNamed:@"check.png"];
     prepaidCheck.image = [UIImage imageNamed:@"check_empty.png"];
@@ -100,15 +113,15 @@
     [self activatePicker];
 }
 
-- (void)cancelPicker:(id)sender {
-    [self.tableView deselectRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0] animated:NO];
+#pragma mark - Bar Button actions
+- (void)cancelPicker {
     NSIndexPath *paygIndexPath = [NSIndexPath indexPathForRow:0 inSection:0];
     [self.tableView selectRowAtIndexPath:paygIndexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
     [self paygSelected];
     [self.tableView deselectRowAtIndexPath:paygIndexPath animated:YES];
 }
 
-- (void)doneWithPicker:(id)sender {
+- (void)doneWithPicker {
     [self.tableView deselectRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0] animated:YES];
     prepaidAmount.textColor = [UIColor activeTextColor];
     [self resignPicker];
