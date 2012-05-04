@@ -17,10 +17,12 @@
 
 @implementation PQParkingViewController
 @dynamic rate;
+@dynamic address;
 @synthesize rateNumeratorCents;
 @synthesize rateDenominatorMinutes;
 @synthesize limit;
 @synthesize limitUnit;
+@synthesize addressLabel;
 @synthesize startButton;
 @synthesize unparkButton;
 @synthesize paygFlag;
@@ -41,10 +43,6 @@
 @synthesize cancelButton;
 @synthesize doneButton;
 @synthesize timerStarted;
-
-- (double)rate {
-    return (double)rateNumeratorCents/rateDenominatorMinutes;
-}
 
 #pragma mark - Main button actions
 - (IBAction)startTimer:(id)sender {
@@ -210,6 +208,19 @@
     return 36;
 }
 
+#pragma mark - Dynamic properties
+- (double)rate {
+    return (double)rateNumeratorCents/rateDenominatorMinutes;
+}
+
+- (NSString *)address {
+    return addressLabel.text;
+}
+
+- (void)setAddress:(NSString *)addressString {
+    addressLabel.text = addressString;
+}
+
 #pragma mark - Memory
 
 - (void)didReceiveMemoryWarning
@@ -228,6 +239,17 @@
     rateDenominatorMinutes = 30;
     limit = 600; // 10 hours * 60 min/hr
 
+    timerStarted = NO;
+
+    [startButton setBackgroundImage:[[UIImage imageNamed:@"green_button.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 14, 0, 14)] forState:UIControlStateNormal];
+    [unparkButton setBackgroundImage:[[UIImage imageNamed:@"red_button.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 14, 0, 14)] forState:UIControlStateNormal];
+
+    [datePicker addTarget:self action:@selector(durationChanged) forControlEvents:UIControlEventValueChanged];
+
+    hours.font = [UIFont fontWithName:@"OCR B Std" size:60];
+    minutes.font = [UIFont fontWithName:@"OCR B Std" size:60];
+
+    // rateNumerator
     int dollarsPart = rateNumeratorCents/100;
     int centsPart = rateNumeratorCents%100;
     if (dollarsPart == 0) {
@@ -238,6 +260,7 @@
         rateNumerator.text = [NSString stringWithFormat:@"$%d.%02d", dollarsPart, centsPart];
     }
 
+    // rateDenominator
     int hoursPart = rateDenominatorMinutes/60;
     int minutesPart = rateDenominatorMinutes%60;
     if (hoursPart == 0) {
@@ -254,6 +277,7 @@
         }
     }
 
+    // limitValue and limitUnit
     if (limit<60) {
         limitValue.text = [NSString stringWithFormat:@"%d", limit];
         limitUnit.text = @"mins";
@@ -268,16 +292,6 @@
         limitValue.text = @"1";
         limitUnit.text = @"hour";
     }
-
-    timerStarted = NO;
-
-    [startButton setBackgroundImage:[[UIImage imageNamed:@"green_button.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 14, 0, 14)] forState:UIControlStateNormal];
-    [unparkButton setBackgroundImage:[[UIImage imageNamed:@"red_button.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 14, 0, 14)] forState:UIControlStateNormal];
-
-    hours.font = [UIFont fontWithName:@"OCR B Std" size:60];
-    minutes.font = [UIFont fontWithName:@"OCR B Std" size:60];
-
-    [datePicker addTarget:self action:@selector(durationChanged) forControlEvents:UIControlEventValueChanged];
 }
 
 - (void)viewDidUnload
@@ -300,6 +314,7 @@
     [self setRateDenominator:nil];
     [self setLimitValue:nil];
     [self setLimitUnit:nil];
+    [self setAddressLabel:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
