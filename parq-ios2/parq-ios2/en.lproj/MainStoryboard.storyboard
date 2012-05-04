@@ -8,7 +8,7 @@
         <scene sceneID="5">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4" sceneMemberID="firstResponder"/>
-                <viewController id="2" customClass="PQViewController" sceneMemberID="viewController">
+                <viewController id="2" customClass="PQMapViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="3">
                         <rect key="frame" x="0.0" y="20" width="320" height="460"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -38,7 +38,7 @@
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="gridButtonPressed:" destination="2" eventType="touchUpInside" id="v3h-PB-Gha"/>
+                                    <action selector="gridButtonPressed:" destination="2" eventType="touchUpInside" id="hzV-WD-Qx6"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="oie-85-EUx">
@@ -53,7 +53,7 @@
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="streetButtonPressed:" destination="2" eventType="touchUpInside" id="8Ta-8G-WUU"/>
+                                    <action selector="streetButtonPressed:" destination="2" eventType="touchUpInside" id="rP2-f3-PJh"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="YiJ-I9-3ka">
@@ -68,7 +68,7 @@
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="spotButtonPressed:" destination="2" eventType="touchUpInside" id="Hfx-32-gcp"/>
+                                    <action selector="spotButtonPressed:" destination="2" eventType="touchUpInside" id="3xE-kh-KcW"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="cGx-cc-8cz">
@@ -83,7 +83,7 @@
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="noneButtonPressed:" destination="2" eventType="touchUpInside" id="RsO-Vy-IMg"/>
+                                    <action selector="noneButtonPressed:" destination="2" eventType="touchUpInside" id="9Mt-CY-Iaa"/>
                                 </connections>
                             </button>
                             <view opaque="NO" contentMode="scaleToFill" id="xax-VC-fGh">
@@ -503,6 +503,19 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         <image name="settings.png" width="20" height="21"/>
     </resources>
     <classes>
+        <class className="PQMapViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/PQMapViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="availabilitySelectionView" candidateClass="UIView"/>
+                <relationship kind="outlet" name="bottomSpotSelectionBar" candidateClass="UISegmentedControl"/>
+                <relationship kind="outlet" name="bottomSpotSelectionView" candidateClass="UIView"/>
+                <relationship kind="outlet" name="map" candidateClass="MKMapView"/>
+                <relationship kind="outlet" name="navigationBar" candidateClass="UINavigationItem"/>
+                <relationship kind="outlet" name="topSearchBar" candidateClass="UISearchBar"/>
+                <relationship kind="outlet" name="topSpotSelectionBar" candidateClass="UISegmentedControl"/>
+                <relationship kind="outlet" name="topSpotSelectionView" candidateClass="UIView"/>
+            </relationships>
+        </class>
         <class className="PQParkingViewController" superclassName="UITableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/PQParkingViewController.h"/>
             <relationships>
@@ -525,19 +538,6 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                 <relationship kind="outlet" name="seeMapView" candidateClass="UIView"/>
                 <relationship kind="outlet" name="startButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="unparkButton" candidateClass="UIButton"/>
-            </relationships>
-        </class>
-        <class className="PQViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/PQViewController.h"/>
-            <relationships>
-                <relationship kind="outlet" name="availabilitySelectionView" candidateClass="UIView"/>
-                <relationship kind="outlet" name="bottomSpotSelectionBar" candidateClass="UISegmentedControl"/>
-                <relationship kind="outlet" name="bottomSpotSelectionView" candidateClass="UIView"/>
-                <relationship kind="outlet" name="map" candidateClass="MKMapView"/>
-                <relationship kind="outlet" name="navigationBar" candidateClass="UINavigationItem"/>
-                <relationship kind="outlet" name="topSearchBar" candidateClass="UISearchBar"/>
-                <relationship kind="outlet" name="topSpotSelectionBar" candidateClass="UISegmentedControl"/>
-                <relationship kind="outlet" name="topSpotSelectionView" candidateClass="UIView"/>
             </relationships>
         </class>
     </classes>

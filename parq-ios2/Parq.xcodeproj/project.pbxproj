@@ -14,7 +14,7 @@
 		8703ACB71513F841002FE357 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8703ACB61513F841002FE357 /* main.m */; };
 		8703ACBB1513F841002FE357 /* PQAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8703ACBA1513F841002FE357 /* PQAppDelegate.m */; };
 		8703ACBE1513F841002FE357 /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8703ACBC1513F841002FE357 /* MainStoryboard.storyboard */; };
-		8703ACC11513F841002FE357 /* PQViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8703ACC01513F841002FE357 /* PQViewController.m */; };
+		8703ACC11513F841002FE357 /* PQMapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8703ACC01513F841002FE357 /* PQMapViewController.m */; };
 		8703ACC81513F9D5002FE357 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8703ACC71513F9D5002FE357 /* MapKit.framework */; };
 		8703ACCA1513FB46002FE357 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8703ACC91513FB46002FE357 /* CoreLocation.framework */; };
 		8703ACD81513FC32002FE357 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 8703ACD71513FC32002FE357 /* icon.png */; };
@@ -53,8 +53,8 @@
 		8703ACB91513F841002FE357 /* PQAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PQAppDelegate.h; sourceTree = "<group>"; };
 		8703ACBA1513F841002FE357 /* PQAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PQAppDelegate.m; sourceTree = "<group>"; };
 		8703ACBD1513F841002FE357 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
-		8703ACBF1513F841002FE357 /* PQViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PQViewController.h; sourceTree = "<group>"; };
-		8703ACC01513F841002FE357 /* PQViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PQViewController.m; sourceTree = "<group>"; };
+		8703ACBF1513F841002FE357 /* PQMapViewController.h */ = {isa = PBXFileReference; path = PQMapViewController.h; sourceTree = "<group>"; };
+		8703ACC01513F841002FE357 /* PQMapViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PQMapViewController.m; sourceTree = "<group>"; };
 		8703ACC71513F9D5002FE357 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		8703ACC91513FB46002FE357 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		8703ACD71513FC32002FE357 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
@@ -148,8 +148,8 @@
 				8703ACBC1513F841002FE357 /* MainStoryboard.storyboard */,
 				87E1BE65154A08D70095E92D /* PQParkingViewController.h */,
 				87E1BE66154A08D80095E92D /* PQParkingViewController.m */,
-				8703ACBF1513F841002FE357 /* PQViewController.h */,
-				8703ACC01513F841002FE357 /* PQViewController.m */,
+				8703ACBF1513F841002FE357 /* PQMapViewController.h */,
+				8703ACC01513F841002FE357 /* PQMapViewController.m */,
 				871E20FC152CD54C00D9452A /* UIColor+Parq.h */,
 				871E20FD152CD54C00D9452A /* UIColor+Parq.m */,
 				8703ACB11513F841002FE357 /* Supporting Files */,
@@ -306,7 +306,7 @@
 			files = (
 				8703ACB71513F841002FE357 /* main.m in Sources */,
 				8703ACBB1513F841002FE357 /* PQAppDelegate.m in Sources */,
-				8703ACC11513F841002FE357 /* PQViewController.m in Sources */,
+				8703ACC11513F841002FE357 /* PQMapViewController.m in Sources */,
 				871E20FE152CD54C00D9452A /* UIColor+Parq.m in Sources */,
 				87AE9EFC152F918300069153 /* MKShape+Color.m in Sources */,
 				8791F9C11533804000525267 /* PQCallout.m in Sources */,

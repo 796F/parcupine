@@ -1,5 +1,5 @@
 //
-//  PQViewController.h
+//  PQMapViewController.h
 //  parq-ios2
 //
 //  Created by Mark Yen on 3/16/12.
@@ -10,7 +10,7 @@
 #import <MapKit/MapKit.h>
 #import <CoreLocation/CoreLocation.h>
 
-@interface PQViewController : UIViewController <MKMapViewDelegate, CLLocationManagerDelegate,UISearchBarDelegate,UIGestureRecognizerDelegate, UITableViewDelegate> {
+@interface PQMapViewController : UIViewController <MKMapViewDelegate, CLLocationManagerDelegate,UISearchBarDelegate,UIGestureRecognizerDelegate, UITableViewDelegate> {
         
     CLLocationManager *locationManager;
 }

@@ -1,12 +1,12 @@
 //
-//  PQViewController.m
+//  PQMapViewController.m
 //  parq-ios2
 //
 //  Created by Mark Yen on 3/16/12.
 //  Copyright (c) 2012 Massachusetts Institute of Technology. All rights reserved.
 //
 
-#import "PQViewController.h"
+#import "PQMapViewController.h"
 #import "MKShape+Color.h"
 #import "UIColor+Parq.h"
 #import "CalloutMapAnnotation.h"
@@ -25,13 +25,13 @@ typedef enum {
     kSpotZoomLevel
 } ZoomLevel;
 
-@interface PQViewController ()
+@interface PQMapViewController ()
 @property (strong, nonatomic) UIView *disableViewOverlay;
 @property (strong, nonatomic) UIBarButtonItem *leftBarButton;
 @property (nonatomic) ZoomLevel zoomState;
 @end
 
-@implementation PQViewController
+@implementation PQMapViewController
 @synthesize gCircle;
 @synthesize callouts;
 @synthesize calloutLines;
@@ -550,7 +550,6 @@ typedef enum {
 }
 
 #pragma mark - Debug button actions
-
 - (IBAction)gridButtonPressed:(id)sender {
     NSLog(@"Grid Button Pressed\n" );
     zoomState = kGridZoomLevel;
@@ -566,7 +565,6 @@ typedef enum {
     [self showGridLevelWithCoordinates:&point];
 }
 
-     
 - (IBAction)streetButtonPressed:(id)sender {
     CLLocationCoordinate2D point = {42.364854,-71.109438};
 
