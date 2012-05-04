@@ -9,6 +9,10 @@
 #import <UIKit/UIKit.h>
 
 @interface PQParkingViewController : UITableViewController <UITableViewDelegate>
+@property (nonatomic, readonly) double rate;
+@property (nonatomic) int rateNumeratorCents;
+@property (nonatomic) int rateDenominatorMinutes;
+@property (nonatomic) int limit;
 @property (weak, nonatomic) IBOutlet UIButton *startButton;
 @property (weak, nonatomic) IBOutlet UIButton *unparkButton;
 @property (weak, nonatomic) IBOutlet UIImageView *paygFlag;
@@ -23,5 +27,9 @@
 @property (weak, nonatomic) IBOutlet UIView *prepaidView;
 @property (weak, nonatomic) IBOutlet UIView *seeMapView;
 @property (weak, nonatomic) IBOutlet UIDatePicker *datePicker;
+@property (weak, nonatomic) IBOutlet UILabel *rateNumerator;
+@property (weak, nonatomic) IBOutlet UILabel *rateDenominator;
+@property (weak, nonatomic) IBOutlet UILabel *limitValue;
+@property (weak, nonatomic) IBOutlet UILabel *limitUnit;
 
 @end

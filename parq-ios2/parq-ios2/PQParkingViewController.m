@@ -16,6 +16,11 @@
 @end
 
 @implementation PQParkingViewController
+@dynamic rate;
+@synthesize rateNumeratorCents;
+@synthesize rateDenominatorMinutes;
+@synthesize limit;
+@synthesize limitUnit;
 @synthesize startButton;
 @synthesize unparkButton;
 @synthesize paygFlag;
@@ -30,9 +35,16 @@
 @synthesize prepaidView;
 @synthesize seeMapView;
 @synthesize datePicker;
+@synthesize rateNumerator;
+@synthesize rateDenominator;
+@synthesize limitValue;
 @synthesize cancelButton;
 @synthesize doneButton;
 @synthesize timerStarted;
+
+- (double)rate {
+    return (double)rateNumeratorCents/rateDenominatorMinutes;
+}
 
 #pragma mark - Main button actions
 - (IBAction)startTimer:(id)sender {
@@ -62,6 +74,28 @@
 }
 
 #pragma mark - Date Picker control
+- (void)durationChanged {
+    int totalMinutes = (datePicker.countDownDuration-1)/60+1;
+    if (totalMinutes > limit) {
+        datePicker.countDownDuration = limit*60;
+        totalMinutes = limit;
+    }
+    int hoursPart = totalMinutes/60;
+    int minutesPart = totalMinutes%60;
+    hours.text = [NSString stringWithFormat:@"%02d", hoursPart];
+    minutes.text = [NSString stringWithFormat:@"%02d", minutesPart];
+
+    int totalCents = self.rate * totalMinutes;
+    int dollarsPart = totalCents/100;
+    int centsPart = totalCents%100;
+
+    if (hoursPart == 0) {
+        prepaidAmount.text = [NSString stringWithFormat:@"%dm ($%d.%02d)", minutesPart, dollarsPart, centsPart];
+    } else {
+        prepaidAmount.text = [NSString stringWithFormat:@"%dh %02dm ($%d.%02d)", hoursPart, minutesPart, dollarsPart, centsPart];
+    }
+}
+
 - (void)activatePicker {
     [UIView animateWithDuration:.25 animations:^{
         self.tableView.frame = CGRectMake(0, -131, 320, 611);
@@ -76,6 +110,7 @@
     }
     self.navigationItem.leftBarButtonItem = cancelButton;
     self.navigationItem.rightBarButtonItem = doneButton;
+    [self durationChanged];
 }
 
 - (void)resignPicker {
@@ -106,10 +141,7 @@
     prepaidCheck.image = [UIImage imageNamed:@"check.png"];
     paygFlag.hidden = YES;
     prepaidFlag.hidden = NO;
-    prepaidAmount.text = @"1h 30m ($2.50)";
     prepaidAmount.textColor = [UIColor whiteColor];
-    hours.text = @"01";
-    minutes.text = @"30";
     [self activatePicker];
 }
 
@@ -191,6 +223,52 @@
 - (void)viewDidLoad{
     [super viewDidLoad];
 
+    // Hardcoding the rate and limit for now
+    rateNumeratorCents = 50;
+    rateDenominatorMinutes = 30;
+    limit = 600; // 10 hours * 60 min/hr
+
+    int dollarsPart = rateNumeratorCents/100;
+    int centsPart = rateNumeratorCents%100;
+    if (dollarsPart == 0) {
+        rateNumerator.text = [NSString stringWithFormat:@"%d¢", centsPart];
+    } else if (centsPart == 0) {
+        rateNumerator.text = [NSString stringWithFormat:@"$%d", dollarsPart];
+    } else {
+        rateNumerator.text = [NSString stringWithFormat:@"$%d.%02d", dollarsPart, centsPart];
+    }
+
+    int hoursPart = rateDenominatorMinutes/60;
+    int minutesPart = rateDenominatorMinutes%60;
+    if (hoursPart == 0) {
+        rateDenominator.text = [NSString stringWithFormat:@"/%dmin", minutesPart];
+    } else {
+        if (minutesPart == 0) {
+            if (hoursPart == 1) {
+                rateDenominator.text = @"/hour";
+            } else {
+                rateDenominator.text = [NSString stringWithFormat:@"/%d hrs", hoursPart];
+            }
+        } else {
+            rateDenominator.text = [NSString stringWithFormat:@"/%dh %02dm", hoursPart, minutesPart];
+        }
+    }
+
+    if (limit<60) {
+        limitValue.text = [NSString stringWithFormat:@"%d", limit];
+        limitUnit.text = @"mins";
+    } else if (limit>60) {
+        if (limit%60 == 0) {
+            limitValue.text = [NSString stringWithFormat:@"%d", limit/60];
+        } else {
+            limitValue.text = [NSString stringWithFormat:@"%.1f", limit/60.0];
+        }
+        limitUnit.text = @"hours";
+    } else {
+        limitValue.text = @"1";
+        limitUnit.text = @"hour";
+    }
+
     timerStarted = NO;
 
     [startButton setBackgroundImage:[[UIImage imageNamed:@"green_button.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 14, 0, 14)] forState:UIControlStateNormal];
@@ -198,6 +276,8 @@
 
     hours.font = [UIFont fontWithName:@"OCR B Std" size:60];
     minutes.font = [UIFont fontWithName:@"OCR B Std" size:60];
+
+    [datePicker addTarget:self action:@selector(durationChanged) forControlEvents:UIControlEventValueChanged];
 }
 
 - (void)viewDidUnload
@@ -216,6 +296,10 @@
     [self setSeeMapView:nil];
     [self setUnparkButton:nil];
     [self setDatePicker:nil];
+    [self setRateNumerator:nil];
+    [self setRateDenominator:nil];
+    [self setLimitValue:nil];
+    [self setLimitUnit:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;

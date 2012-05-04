@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="1.0" toolsVersion="1938" systemVersion="11D50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="2">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="1.0" toolsVersion="1938" systemVersion="11D50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="ojf-4J-7Hf">
     <dependencies>
         <development defaultVersion="4200" identifier="xcode"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="933"/>
@@ -238,7 +238,7 @@
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 </imageView>
                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="/30min" lineBreakMode="tailTruncation" minimumFontSize="10" id="eBk-Ue-TxC">
-                                    <rect key="frame" x="85" y="155" width="70" height="24"/>
+                                    <rect key="frame" x="90" y="155" width="63" height="25"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                     <color key="textColor" red="0.76078431369999999" green="0.75294117650000003" blue="0.75294117650000003" alpha="1" colorSpace="calibratedRGB"/>
@@ -246,7 +246,7 @@
                                     <color key="shadowColor" white="0.0" alpha="0.40000000000000002" colorSpace="calibratedWhite"/>
                                 </label>
                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="50¢" textAlignment="right" lineBreakMode="tailTruncation" minimumFontSize="10" id="96y-AS-O0j">
-                                    <rect key="frame" x="44" y="155" width="42" height="24"/>
+                                    <rect key="frame" x="48" y="155" width="42" height="25"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
                                     <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
@@ -254,7 +254,7 @@
                                     <color key="shadowColor" white="0.0" alpha="0.40000000000000002" colorSpace="calibratedWhite"/>
                                 </label>
                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="hours" lineBreakMode="tailTruncation" minimumFontSize="10" id="gLO-bZ-CXq">
-                                    <rect key="frame" x="239" y="155" width="60" height="24"/>
+                                    <rect key="frame" x="243" y="155" width="54" height="25"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                     <color key="textColor" red="0.76078431369999999" green="0.75294117650000003" blue="0.75294117650000003" alpha="1" colorSpace="calibratedRGB"/>
@@ -262,7 +262,7 @@
                                     <color key="shadowColor" white="0.0" alpha="0.40000000000000002" colorSpace="calibratedWhite"/>
                                 </label>
                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="10" textAlignment="right" lineBreakMode="tailTruncation" minimumFontSize="10" id="kqk-Hd-aM9">
-                                    <rect key="frame" x="205" y="155" width="30" height="24"/>
+                                    <rect key="frame" x="202" y="155" width="36" height="25"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
                                     <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
@@ -308,7 +308,7 @@
                                         <action selector="unparkNow:" destination="Hs3-94-mR9" eventType="touchUpInside" id="1My-KB-kLc"/>
                                     </connections>
                                 </button>
-                                <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="countDownTimer" minuteInterval="1" id="TKm-MG-65C">
+                                <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="countDownTimer" minuteInterval="5" id="TKm-MG-65C">
                                     <rect key="frame" x="0.0" y="89" width="320" height="216"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                     <date key="date" timeIntervalSinceReferenceDate="357679357.26344001">
@@ -316,7 +316,7 @@
                                     </date>
                                     <locale key="locale" localeIdentifier="en_US"/>
                                     <timeZone key="timeZone" name="America/Los_Angeles">
-                                        <mutableData key="data">
+                                        <data key="data">
 VFppZgAAAAAAAAAAAAAAAAAAAAAAAAAEAAAABAAAAAAAAAC5AAAABAAAABCepkign7sVkKCGKqChmveQ
 y4kaoNIj9HDSYSYQ1v50INiArZDa/tGg28CQENzes6DdqayQ3r6VoN+JjpDgnneg4WlwkOJ+WaDjSVKQ
 5F47oOUpNJDmR1gg5xJREOgnOiDo8jMQ6gccIOrSFRDr5v4g7LH3EO3G4CDukdkQ76/8oPBxuxDxj96g
@@ -334,7 +334,7 @@ f5gqkAABAAECAwEAAQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEA
 AQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEA
 AQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEA
 AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
-</mutableData>
+</data>
                                     </timeZone>
                                 </datePicker>
                             </subviews>
@@ -350,7 +350,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                                             <rect key="frame" x="10" y="1" width="300" height="43"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <view opaque="NO" autoresizesSubviews="NO" contentMode="scaleToFill" id="pyS-oV-YAr">
+                                                <view autoresizesSubviews="NO" opaque="NO" contentMode="scaleToFill" id="pyS-oV-YAr">
                                                     <rect key="frame" x="0.0" y="-1" width="300" height="46"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <subviews>
@@ -368,7 +368,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                                                     </subviews>
                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                 </view>
-                                                <view hidden="YES" opaque="NO" autoresizesSubviews="NO" contentMode="scaleToFill" id="oM8-I2-p1a">
+                                                <view hidden="YES" autoresizesSubviews="NO" opaque="NO" contentMode="scaleToFill" id="oM8-I2-p1a">
                                                     <rect key="frame" x="0.0" y="-1" width="300" height="46"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <subviews>
@@ -394,7 +394,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                                             <rect key="frame" x="10" y="1" width="300" height="43"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <view opaque="NO" autoresizesSubviews="NO" contentMode="scaleToFill" id="w60-Sc-7sv">
+                                                <view autoresizesSubviews="NO" opaque="NO" contentMode="scaleToFill" id="w60-Sc-7sv">
                                                     <rect key="frame" x="0.0" y="-1" width="300" height="46"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <subviews>
@@ -419,7 +419,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                                                     </subviews>
                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                 </view>
-                                                <view hidden="YES" opaque="NO" autoresizesSubviews="NO" contentMode="scaleToFill" id="U83-uB-5Jz">
+                                                <view hidden="YES" autoresizesSubviews="NO" opaque="NO" contentMode="scaleToFill" id="U83-uB-5Jz">
                                                     <rect key="frame" x="0.0" y="-1" width="300" height="46"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <subviews>
@@ -451,6 +451,8 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                         <outlet property="addressView" destination="oM8-I2-p1a" id="0u5-Bq-WHW"/>
                         <outlet property="datePicker" destination="TKm-MG-65C" id="55h-uS-UH8"/>
                         <outlet property="hours" destination="A8E-fm-VSP" id="H36-Qb-Hn7"/>
+                        <outlet property="limitUnit" destination="gLO-bZ-CXq" id="iI1-Ba-fSH"/>
+                        <outlet property="limitValue" destination="kqk-Hd-aM9" id="9Pb-Em-Q07"/>
                         <outlet property="minutes" destination="Y6q-af-rFO" id="Mkg-0h-abd"/>
                         <outlet property="paygCheck" destination="iLf-wM-LbY" id="8g8-4F-iZc"/>
                         <outlet property="paygFlag" destination="oH6-bD-6fX" id="o93-c4-5oS"/>
@@ -459,6 +461,8 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                         <outlet property="prepaidCheck" destination="ZxQ-hL-3De" id="joM-Na-eC1"/>
                         <outlet property="prepaidFlag" destination="9Fx-qN-c0G" id="JtG-pT-hgq"/>
                         <outlet property="prepaidView" destination="w60-Sc-7sv" id="n3E-Xm-cbA"/>
+                        <outlet property="rateDenominator" destination="eBk-Ue-TxC" id="jd4-8B-TXe"/>
+                        <outlet property="rateNumerator" destination="96y-AS-O0j" id="gjV-6b-yae"/>
                         <outlet property="seeMapView" destination="U83-uB-5Jz" id="Tty-SX-Ms2"/>
                         <outlet property="startButton" destination="T3R-6P-VeW" id="lys-gJ-Yz9"/>
                         <outlet property="unparkButton" destination="qoH-ki-1qF" id="BcL-6S-hCA"/>
@@ -504,6 +508,8 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                 <relationship kind="outlet" name="addressView" candidateClass="UIView"/>
                 <relationship kind="outlet" name="datePicker" candidateClass="UIDatePicker"/>
                 <relationship kind="outlet" name="hours" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="limitUnit" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="limitValue" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="minutes" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="paygCheck" candidateClass="UIImageView"/>
                 <relationship kind="outlet" name="paygFlag" candidateClass="UIImageView"/>
@@ -512,6 +518,8 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                 <relationship kind="outlet" name="prepaidCheck" candidateClass="UIImageView"/>
                 <relationship kind="outlet" name="prepaidFlag" candidateClass="UIImageView"/>
                 <relationship kind="outlet" name="prepaidView" candidateClass="UIView"/>
+                <relationship kind="outlet" name="rateDenominator" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="rateNumerator" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="seeMapView" candidateClass="UIView"/>
                 <relationship kind="outlet" name="startButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="unparkButton" candidateClass="UIButton"/>
