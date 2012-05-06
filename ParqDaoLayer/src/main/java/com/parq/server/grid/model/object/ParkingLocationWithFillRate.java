@@ -11,7 +11,6 @@ public class ParkingLocationWithFillRate extends ParkingLocation {
 	 * Generated serial id
 	 */
 	private static final long serialVersionUID = -7240916083257037864L;
-	private long gridId = -1;
 	private int numberOfSpaces = -1;
 	private Set<Long> parkedSpaces;
 	
@@ -28,6 +27,8 @@ public class ParkingLocationWithFillRate extends ParkingLocation {
 		this.locationType = location.getLocationType();
 		this.spaces = location.getSpaces();
 		this.parkedSpaces = new HashSet<Long>();
+		
+		lastUpdatedDateTime = System.currentTimeMillis();
 	}
 	
 	/**
@@ -74,20 +75,6 @@ public class ParkingLocationWithFillRate extends ParkingLocation {
 	 */
 	public boolean park(long spaceId) {
 		return parkedSpaces.add(spaceId);
-	}
-
-	/**
-	 * @return the gridId
-	 */
-	public long getGridId() {
-		return gridId;
-	}
-
-	/**
-	 * @param gridId the gridId to set
-	 */
-	public void setGridId(long gridId) {
-		this.gridId = gridId;
 	}
 
 	/**

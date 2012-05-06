@@ -10,6 +10,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import com.parq.server.dao.GridDao;
+import com.parq.server.dao.model.object.GeoPoint;
 import com.parq.server.dao.model.object.Grid;
 import com.parq.server.dao.model.object.ParkingLocation;
 import com.parq.server.dao.model.object.ParkingSpace;
@@ -222,6 +223,7 @@ public class GridManagementService implements Runnable{
 
 	@Override
 	public void run() {
+		System.out.println("Parking Status Update Triggered");
 		updateParkingStatus();
 	}
 
@@ -241,19 +243,8 @@ public class GridManagementService implements Runnable{
 		List<ParkingLocationWithFillRate> allLocationsWithinGPSCoor 
 				= new ArrayList<ParkingLocationWithFillRate>();
 		
-		// since the grid gps coordinate is designated by the top left corner, we need
-		// to do enlargement when the app viewing window is not center exactly inside the grid
-		// however the enlargement should only need to apply to the top quadrant and 
-		// the left side quadrant, since the bottom quadrant and right quadrant 
-		// should be automatically enlarge when the view window pan right, or down
-		double topLeftLatitudeWithOffSet = topLeftLatitude - gridSearchEnlargement;
-		double topLeftLongitudeWithOffSet = topLeftLatitude - gridSearchEnlargement;
-		double bottomRightLatitudeWithOffSet = topLeftLatitude;
-		double bottomRightLongitudeWithOffSet = topLeftLatitude;
-		
 		List<GridWithFillRate> grids = 	findGridWithFillrateByGPSCoor(
-				topLeftLatitudeWithOffSet, topLeftLongitudeWithOffSet, 
-				bottomRightLatitudeWithOffSet, bottomRightLongitudeWithOffSet);
+				topLeftLatitude, topLeftLongitude, bottomRightLatitude, bottomRightLongitude);;
 		
 		// iterate through each of the grids to get the parkingLocation list
 		// using the parking location list to get the ParkingLocationWithFillRate
@@ -261,7 +252,23 @@ public class GridManagementService implements Runnable{
 		for (GridWithFillRate grid: grids) {
 			for (ParkingLocation pl: grid.getParkingLocations()) {
 				ParkingLocationWithFillRate plfr = locationInfoMap.get(pl.getLocationId());
-				allLocationsWithinGPSCoor.add(plfr);
+				// check the geo point of the street
+				GeoPoint firstStreetCoor = plfr.getGeoPoints().get(0);
+				GeoPoint lastStreeetCoor = plfr.getGeoPoints().get(plfr.getGeoPoints().size() - 1);
+				// double check the geo points, only add street to the result list
+				// if the first street coordinate is within the bounding box
+				if (firstStreetCoor.getLatitude() >= topLeftLatitude 
+						&& firstStreetCoor.getLongitude() >= topLeftLongitude 
+						&& firstStreetCoor.getLatitude() <= bottomRightLatitude
+						&& firstStreetCoor.getLongitude() <= bottomRightLongitude) {
+					allLocationsWithinGPSCoor.add(plfr);
+					// or if the last geo point is inside the bounding box
+				} else if (lastStreeetCoor.getLatitude() >= topLeftLatitude 
+						&& lastStreeetCoor.getLongitude() >= topLeftLongitude
+						&& lastStreeetCoor.getLatitude() <= bottomRightLatitude
+						&& lastStreeetCoor.getLongitude() <= bottomRightLongitude) {
+					allLocationsWithinGPSCoor.add(plfr);
+				}
 			}
 		}
 		return allLocationsWithinGPSCoor;
@@ -270,9 +277,20 @@ public class GridManagementService implements Runnable{
 	public List<GridWithFillRate> findGridWithFillrateByGPSCoor(double topLeftLatitude, double topLeftLongitude,
 			double bottomRightLatitude, double bottomRightLongitude) {
 		
+		// since the grid gps coordinate is designated by the top left corner, we need
+		// to do enlargement when the app viewing window is not center exactly inside the grid
+		// however the enlargement should only need to apply to the top quadrant and 
+		// the left side quadrant, since the bottom quadrant and right quadrant 
+		// should be automatically enlarge when the view window pan right, or down
+		double topLeftLatitudeWithOffSet = topLeftLatitude - gridSearchEnlargement;
+		double topLeftLongitudeWithOffSet = topLeftLatitude - gridSearchEnlargement;
+		double bottomRightLatitudeWithOffSet = bottomRightLatitude;
+		double bottomRightLongitudeWithOffSet = bottomRightLongitude;
+		
 		GridDao gridDao = new GridDao();
 		List<SimpleGrid> grids = gridDao.findSimpleGridNearBy(
-				topLeftLatitude, topLeftLongitude, bottomRightLatitude, bottomRightLongitude);
+				topLeftLatitudeWithOffSet, topLeftLongitudeWithOffSet, 
+				bottomRightLatitudeWithOffSet, bottomRightLongitudeWithOffSet);
 		
 		List<GridWithFillRate> allGridsWithinGPSCoor = new ArrayList<GridWithFillRate>();		
 		for (SimpleGrid sGrid: grids) {

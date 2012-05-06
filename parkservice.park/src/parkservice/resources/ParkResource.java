@@ -1,9 +1,7 @@
 package parkservice.resources;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -29,9 +27,7 @@ import com.parq.server.dao.ParkingRateDao;
 import com.parq.server.dao.ParkingStatusDao;
 import com.parq.server.dao.PaymentAccountDao;
 import com.parq.server.dao.UserDao;
-import com.parq.server.dao.model.object.GeoPoint;
 import com.parq.server.dao.model.object.ParkingInstance;
-import com.parq.server.dao.model.object.ParkingLocation;
 import com.parq.server.dao.model.object.ParkingRate;
 import com.parq.server.dao.model.object.ParkingSpace;
 import com.parq.server.dao.model.object.Payment;

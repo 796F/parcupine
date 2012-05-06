@@ -21,10 +21,12 @@ public class GridWithFillRate extends Grid implements Serializable {
 	private long lastUpdatedDateTime;
 
 	public GridWithFillRate(Grid grid) {
+		super();
 		this.gridId = grid.getGridId();
 		this.latitude = grid.getLatitude();
 		this.longitude = grid.getLongitude();
 		this.parkingLocations = grid.getParkingLocations();
+		lastUpdatedDateTime = System.currentTimeMillis();
 		parkedSpaces = new HashSet<Long>();
 	}
 

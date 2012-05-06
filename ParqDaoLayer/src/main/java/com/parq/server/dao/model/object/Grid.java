@@ -14,6 +14,7 @@ public class Grid extends SimpleGrid implements Serializable{
 	protected List<ParkingLocation> parkingLocations;
 
 	public Grid() {
+		super();
 		parkingLocations = new ArrayList<ParkingLocation>();
 	}
 
