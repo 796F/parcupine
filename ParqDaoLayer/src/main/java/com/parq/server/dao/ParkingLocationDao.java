@@ -188,6 +188,7 @@ public class ParkingLocationDao extends AbstractParqDaoParent {
 				parkingLocation.setLocationIdentifier(rs.getString("location_identifier"));
 				parkingLocation.setLocationType(rs.getString("location_type"));
 				parkingLocation.setClientId(rs.getLong("client_id"));
+				parkingLocation.setGridId(rs.getLong("grid_id"));
 				
 				lastLocationId = curLocationId;
 				parkingLocationList.add(parkingLocation);

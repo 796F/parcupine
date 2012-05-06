@@ -15,6 +15,10 @@ public class GridWithFillRate extends Grid implements Serializable {
 
 	private int numberOfSpaces = -1;
 	private Set<Long> parkedSpaces;
+	
+	// keep track of when the last time the parking
+	// status was updated, in seconds interval.
+	private long lastUpdatedDateTime;
 
 	public GridWithFillRate(Grid grid) {
 		this.gridId = grid.getGridId();
@@ -67,5 +71,19 @@ public class GridWithFillRate extends Grid implements Serializable {
 	 */
 	public boolean park(long spaceId) {
 		return parkedSpaces.add(spaceId);
+	}
+
+	/**
+	 * @param lastUpdatedDateTime the lastUpdatedDateTime to set
+	 */
+	public void setLastUpdatedDateTime(long lastUpdatedDateTime) {
+		this.lastUpdatedDateTime = lastUpdatedDateTime;
+	}
+
+	/**
+	 * @return the lastUpdatedDateTime
+	 */
+	public long getLastUpdatedDateTime() {
+		return lastUpdatedDateTime;
 	}
 }

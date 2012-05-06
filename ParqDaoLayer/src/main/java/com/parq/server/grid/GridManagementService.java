@@ -13,6 +13,7 @@ import com.parq.server.dao.GridDao;
 import com.parq.server.dao.model.object.Grid;
 import com.parq.server.dao.model.object.ParkingLocation;
 import com.parq.server.dao.model.object.ParkingSpace;
+import com.parq.server.dao.model.object.SimpleGrid;
 import com.parq.server.grid.model.object.GridWithFillRate;
 import com.parq.server.grid.model.object.ParkingLocationWithFillRate;
 import com.parq.server.grid.model.object.SpaceExpirationEntry;
@@ -28,6 +29,8 @@ public class GridManagementService implements Runnable{
 	private Map<Long, Long> spaceIdToGridIdMap;
 	// keep a spaceId to locationId reference for location look up by spaceId
 	private Map<Long, Long> spaceIdToParkingLocationIdMap;
+	// the complete list of grids with parking location w/ rates inside.
+	private List<GridWithFillRate> fullGridList;
 	
 	// this map keep track of spaceId to the ExpirationEntry
 	private Map<Long, SpaceExpirationEntry> spaceIdToExpirationEntryMap;
@@ -37,6 +40,11 @@ public class GridManagementService implements Runnable{
 	private static ScheduledThreadPoolExecutor refreshTimer;
 	// how often the timer refresh parking status in seconds
 	private static final int parkingStatusUpdateRate = 30;
+	
+	// set how much to enlarge the search radius, when searching for streets within a grid
+	// this value should be the size of at least 1 grid length or width
+	// TODO set the value to the correct grid size value
+	private static final double gridSearchEnlargement = 0.3;
 	
 	
 	//singleton instance
@@ -80,12 +88,14 @@ public class GridManagementService implements Runnable{
 	
 	private void loadGridData() {
 		GridDao gridDao = new GridDao();
-		List<Grid> grids = gridDao.getAllCompleteGridHiarchy();
+		List<Grid> gridList = gridDao.getAllCompleteGridHiarchy();
 		this.gridInfoMap = new HashMap<Long, GridWithFillRate>();
+		
+		fullGridList = new ArrayList<GridWithFillRate>();
 		
 		// iterate each of the grid object, create the fillRate info
 		// and put it into the hashmap.
-		for (Grid grid : grids) {
+		for (Grid grid : gridList) {
 			GridWithFillRate gInfo = new GridWithFillRate(grid);
 			// the number of space for the grid is the sum of all the
 			// number of spaces for the parking locations in the grid
@@ -96,6 +106,7 @@ public class GridManagementService implements Runnable{
 			gInfo.setNumberOfSpaces(numSpaces);
 			
 			gridInfoMap.put(gInfo.getGridId(), gInfo);
+			fullGridList.add(gInfo);
 		}
 	}
 	
@@ -113,13 +124,17 @@ public class GridManagementService implements Runnable{
 
 	public void park(long spaceId, Date parkingEndTime) {
 		
+		long lastUpdatedDateTimeInSeconds = System.currentTimeMillis() / 1000;
+		
 		long gridId = spaceIdToGridIdMap.get(spaceId);
 		GridWithFillRate grid = gridInfoMap.get(gridId);
 		grid.park(spaceId);
+		grid.setLastUpdatedDateTime(lastUpdatedDateTimeInSeconds);
 		
 		long locationId = spaceIdToParkingLocationIdMap.get(spaceId);
 		ParkingLocationWithFillRate pl = locationInfoMap.get(locationId);
 		pl.park(spaceId);
+		pl.setLastUpdatedDateTime(lastUpdatedDateTimeInSeconds);
 	
 		// add the parking end time to the timer
 		SpaceExpirationEntry expirationEntry = new SpaceExpirationEntry(spaceId, parkingEndTime);
@@ -129,13 +144,18 @@ public class GridManagementService implements Runnable{
 	}
 	
 	public void unpark(long spaceId) {
+		
+		long lastUpdatedDateTimeInSeconds = System.currentTimeMillis() / 1000;
+		
 		long gridId = spaceIdToGridIdMap.get(spaceId);
 		GridWithFillRate grid = gridInfoMap.get(gridId);
 		grid.unPark(spaceId);
+		grid.setLastUpdatedDateTime(lastUpdatedDateTimeInSeconds);
 		
 		long locationId = spaceIdToParkingLocationIdMap.get(spaceId);
 		ParkingLocationWithFillRate pl = locationInfoMap.get(locationId);
 		pl.unPark(spaceId);
+		pl.setLastUpdatedDateTime(lastUpdatedDateTimeInSeconds);
 		
 		// remove the spaceId from the expiration map, and priority queue
 		SpaceExpirationEntry see = 
@@ -214,6 +234,52 @@ public class GridManagementService implements Runnable{
 		// stop the refreshTimer
 		refreshTimer.shutdown();
 	}
-	
+
+	public List<ParkingLocationWithFillRate> findStreetByGPSCoor(double topLeftLatitude, double topLeftLongitude,
+			double bottomRightLatitude, double bottomRightLongitude) {
+		
+		List<ParkingLocationWithFillRate> allLocationsWithinGPSCoor 
+				= new ArrayList<ParkingLocationWithFillRate>();
+		
+		// since the grid gps coordinate is designated by the top left corner, we need
+		// to do enlargement when the app viewing window is not center exactly inside the grid
+		// however the enlargement should only need to apply to the top quadrant and 
+		// the left side quadrant, since the bottom quadrant and right quadrant 
+		// should be automatically enlarge when the view window pan right, or down
+		double topLeftLatitudeWithOffSet = topLeftLatitude - gridSearchEnlargement;
+		double topLeftLongitudeWithOffSet = topLeftLatitude - gridSearchEnlargement;
+		double bottomRightLatitudeWithOffSet = topLeftLatitude;
+		double bottomRightLongitudeWithOffSet = topLeftLatitude;
+		
+		List<GridWithFillRate> grids = 	findGridWithFillrateByGPSCoor(
+				topLeftLatitudeWithOffSet, topLeftLongitudeWithOffSet, 
+				bottomRightLatitudeWithOffSet, bottomRightLongitudeWithOffSet);
+		
+		// iterate through each of the grids to get the parkingLocation list
+		// using the parking location list to get the ParkingLocationWithFillRate
+		// object
+		for (GridWithFillRate grid: grids) {
+			for (ParkingLocation pl: grid.getParkingLocations()) {
+				ParkingLocationWithFillRate plfr = locationInfoMap.get(pl.getLocationId());
+				allLocationsWithinGPSCoor.add(plfr);
+			}
+		}
+		return allLocationsWithinGPSCoor;
+	}
+
+	public List<GridWithFillRate> findGridWithFillrateByGPSCoor(double topLeftLatitude, double topLeftLongitude,
+			double bottomRightLatitude, double bottomRightLongitude) {
+		
+		GridDao gridDao = new GridDao();
+		List<SimpleGrid> grids = gridDao.findSimpleGridNearBy(
+				topLeftLatitude, topLeftLongitude, bottomRightLatitude, bottomRightLongitude);
+		
+		List<GridWithFillRate> allGridsWithinGPSCoor = new ArrayList<GridWithFillRate>();		
+		for (SimpleGrid sGrid: grids) {
+			GridWithFillRate fullGrid = gridInfoMap.get(sGrid.getGridId());
+			allGridsWithinGPSCoor.add(fullGrid);
+		}
+		return allGridsWithinGPSCoor;
+	}
 	
 }

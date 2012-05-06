@@ -24,7 +24,7 @@ public class GridDao extends AbstractParqDaoParent {
 			+ " WHERE is_deleted IS NOT TRUE";
 
 	private final String sqlGetSimpleGridById = "SELECT grid_id, latitude, longitude FROM parkinggrid "
-			+ " WHERE is_deleted IS NOT TRUE" + " AND grid_id = ?";
+			+ " WHERE is_deleted IS NOT TRUE AND grid_id = ?";
 
 	private final String sqlGetAllGrids = "SELECT g.grid_id, g.latitude, g.longitude, "
 			+ " pl.location_id, pl.location_identifier, pl.location_type, pl.client_id, "
@@ -33,6 +33,16 @@ public class GridDao extends AbstractParqDaoParent {
 			+ " WHERE g.grid_id = pl.grid_id AND pl.location_id = s.location_id"
 			+ " AND g.is_deleted IS NOT TRUE AND pl.is_deleted IS NOT TRUE AND s.is_deleted IS NOT TRUE"
 			+ " ORDER BY g.grid_id,  pl.location_id";
+	
+	private final String sqlSearchForGridsByBoundingBox = 
+		" SELECT g.grid_id, g.latitude, g.longitude" +
+		" 	FROM parkinggrid AS g " +
+		" 	WHERE g.latitude > ? " +
+		" 	AND   g.latitude < ? " +
+		" 	AND   g.longitude > ? " +
+		" 	AND   g.longitude < ? " +
+		"	AND   g.is_deleted IS NOT TRUE " +
+		" 	ORDER BY latitude, longitude";
 
 	public boolean createGrid(String gridIdentifier, double latitude,
 			double longitude) {
@@ -272,5 +282,40 @@ public class GridDao extends AbstractParqDaoParent {
 			}
 		}
 		return spaces;
+	}
+	
+	/**
+	 * Search for Parking Grids inside the bounding box. Note the return type is a list of 
+	 * <code>SimpleGrid</code>, which only contain a the grid id, latitude, longitude
+	 * 
+	 * @return if no parking grid are found inside the bounding box, a empty list is returned.
+	 */
+	public List<SimpleGrid> findSimpleGridNearBy(double latitudeMin,
+			double longitudeMin, double latitudeMax, double longitudeMax) {
+	
+		List<SimpleGrid> simpleGrids = null;
+		// query the DB for the parking grids
+		PreparedStatement pstmt = null;
+		Connection con = null;
+		try {
+			con = getConnection();
+			pstmt = con.prepareStatement(sqlSearchForGridsByBoundingBox);
+			pstmt.setDouble(1, latitudeMin);
+			pstmt.setDouble(2, latitudeMax);
+			pstmt.setDouble(3, longitudeMin);
+			pstmt.setDouble(4, longitudeMax);
+			ResultSet rs = pstmt.executeQuery();
+
+			simpleGrids = createSimpleParkingGridList(rs);
+
+		} catch (SQLException sqle) {
+			System.out.println("SQL statement is invalid: " + pstmt);
+			sqle.printStackTrace();
+			throw new RuntimeException(sqle);
+		} finally {
+			closeConnection(con);
+		}
+
+		return simpleGrids;
 	}
 }

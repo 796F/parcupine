@@ -11,10 +11,16 @@ public class ParkingLocationWithFillRate extends ParkingLocation {
 	 * Generated serial id
 	 */
 	private static final long serialVersionUID = -7240916083257037864L;
+	private long gridId = -1;
 	private int numberOfSpaces = -1;
 	private Set<Long> parkedSpaces;
+	
+	// keep track of when the last time the parking
+	// status was updated, in seconds interval.
+	private long lastUpdatedDateTime;
 
 	public ParkingLocationWithFillRate(ParkingLocation location) {
+		this.gridId = location.getGridId();
 		this.clientId = location.getClientId();
 		this.geoPoints = location.getGeoPoints();
 		this.locationId = location.getLocationId();
@@ -68,5 +74,40 @@ public class ParkingLocationWithFillRate extends ParkingLocation {
 	 */
 	public boolean park(long spaceId) {
 		return parkedSpaces.add(spaceId);
+	}
+
+	/**
+	 * @return the gridId
+	 */
+	public long getGridId() {
+		return gridId;
+	}
+
+	/**
+	 * @param gridId the gridId to set
+	 */
+	public void setGridId(long gridId) {
+		this.gridId = gridId;
+	}
+
+	/**
+	 * @return the lastUpdateDateTime
+	 */
+	public long getLastUpdatedDateTime() {
+		return lastUpdatedDateTime;
+	}
+
+	/**
+	 * @param lastUpdateDateTime the lastUpdateDateTime to set
+	 */
+	public void setLastUpdatedDateTime(long lastUpdateDateTime) {
+		this.lastUpdatedDateTime = lastUpdateDateTime;
+	}
+	
+	/**
+	 * Check to see if the space is available
+	 */
+	public boolean isSpaceAvaliable(long spaceId) {
+		return !parkedSpaces.contains(spaceId);
 	}
 }

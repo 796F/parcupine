@@ -17,6 +17,7 @@ public class ParkingLocation implements Serializable {
 	private static final long serialVersionUID = -6446814645979756594L;
 	
 	protected long locationId = -1;
+	protected long gridId = -1;
 	protected String locationIdentifier;
 	protected long clientId;
 	protected String locationType;
@@ -95,6 +96,20 @@ public class ParkingLocation implements Serializable {
 	 */
 	public String getLocationType() {
 		return locationType;
+	}
+
+	/**
+	 * @return the gridId
+	 */
+	public long getGridId() {
+		return gridId;
+	}
+
+	/**
+	 * @param gridId the gridId to set
+	 */
+	public void setGridId(long gridId) {
+		this.gridId = gridId;
 	}
 	
 }
