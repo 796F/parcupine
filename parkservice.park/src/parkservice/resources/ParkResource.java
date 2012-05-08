@@ -408,7 +408,7 @@ public class ParkResource {
 			if (grid.getLastUpdatedDateTime() > lastUpdateDateTime) {
 				FindGridsByGPSCoordinateResponse response = new FindGridsByGPSCoordinateResponse();
 				response.setGridId(grid.getGridId());
-				response.setFillRate(grid.getFillRate());
+				response.setFillRate(1.0 * grid.getFillRate() / 100);
 				response.setLatitude(grid.getLatitude());
 				response.setLongitude(grid.getLongitude());
 				responseList.add(response);
@@ -440,7 +440,7 @@ public class ParkResource {
 		// create the individual street response
 		for (ParkingLocationWithFillRate pl : parkingLocationsWithFillRate) {
 			SearchForStreetsResponse response = new SearchForStreetsResponse();
-			response.setFillRate(pl.getFillRate());
+			response.setFillRate(1.0 * pl.getFillRate() / 100);
 			response.setStreetId(pl.getLocationId());
 			// set the gps coordinate for the streets
 			for (int i = 0; i < pl.getGeoPoints().size(); i++) {
@@ -479,7 +479,7 @@ public class ParkResource {
 		for (ParkingLocationWithFillRate pl : parkingLocationsWithFillRate) {
 			if (pl.getLastUpdatedDateTime() > lastUpdateDateTime) {
 				GetUpdatedStreetInfoResponse response = new GetUpdatedStreetInfoResponse();
-				response.setFillRate(pl.getFillRate());
+				response.setFillRate(1.0 * pl.getFillRate() / 100);
 				response.setStreetId(pl.getLocationId());
 				responseList.add(response);
 			}
@@ -511,7 +511,7 @@ public class ParkResource {
 		for (ParkingLocationWithFillRate pl : parkingLocationsWithFillRate) {
 			GetStreetInfoResponse response = new GetStreetInfoResponse();
 			response.setStreetId(pl.getLocationId());
-			response.setFillRate(pl.getFillRate());
+			response.setFillRate(1.0 * pl.getFillRate() / 100);
 			// insert the spaces list
 			for (ParkingSpace ps :  pl.getSpaces()) {
 				ParkingSpaceWithStatus spaceWithStatus = new ParkingSpaceWithStatus();;

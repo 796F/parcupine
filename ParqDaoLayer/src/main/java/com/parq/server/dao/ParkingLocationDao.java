@@ -70,6 +70,14 @@ public class ParkingLocationDao extends AbstractParqDaoParent {
 	private final String sqlAddGeoPointForLocation = 
 		"INSERT INTO geopoint (location_id, latitude, longitude, sort_order) " +
 		" VALUES((SELECT MAX(location_id) FROM parkinglocation), ?, ?, ?)";
+	
+	private static final String sqlGetAllLocationsWithGeoPoints = 
+		"SELECT pl.grid_id, pl.location_id, pl.location_identifier, pl.client_id, pl.location_type, " +
+		"		gp.latitude, gp.longitude, gp.sort_order " +
+		" FROM parkinglocation AS pl, geopoint AS gp" +
+		" WHERE pl.is_deleted IS NOT TRUE " +
+		" AND pl.location_id = gp.location_id " +
+		sqlParkingLocationOrderBy;
 
 	public ParkingLocationDao() {
 		super();
@@ -316,7 +324,26 @@ public class ParkingLocationDao extends AbstractParqDaoParent {
 		return result;
 	}
 	
-	
+	public List<ParkingLocation> getAllLocationWithGeoPoints() {
+		// query the DB for the parking location
+		PreparedStatement pstmt = null;
+		Connection con = null;
+		List<ParkingLocation> parkingLocations = null;
+		try {
+			con = getConnection();
+			pstmt = con.prepareStatement(sqlGetAllLocationsWithGeoPoints);
+			ResultSet rs = pstmt.executeQuery();
+			parkingLocations = createParkingLocationModelObjectList(rs);
+
+		} catch (SQLException sqle) {
+			System.out.println("SQL statement is invalid: " + pstmt);
+			sqle.printStackTrace();
+			throw new RuntimeException(sqle);
+		} finally {
+			closeConnection(con);
+		}
+		return parkingLocations;
+	}
 	
 	public boolean deleteParkingLocation(long locationId) {
 		if (locationId <= 0) {

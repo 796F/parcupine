@@ -27,8 +27,7 @@ public class ParkingLocationWithFillRate extends ParkingLocation {
 		this.locationType = location.getLocationType();
 		this.spaces = location.getSpaces();
 		this.parkedSpaces = new HashSet<Long>();
-		
-		lastUpdatedDateTime = System.currentTimeMillis();
+		lastUpdatedDateTime = 100;
 	}
 	
 	/**

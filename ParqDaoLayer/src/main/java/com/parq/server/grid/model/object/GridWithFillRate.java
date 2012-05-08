@@ -26,7 +26,7 @@ public class GridWithFillRate extends Grid implements Serializable {
 		this.latitude = grid.getLatitude();
 		this.longitude = grid.getLongitude();
 		this.parkingLocations = grid.getParkingLocations();
-		lastUpdatedDateTime = System.currentTimeMillis();
+		lastUpdatedDateTime = 100;
 		parkedSpaces = new HashSet<Long>();
 	}
 

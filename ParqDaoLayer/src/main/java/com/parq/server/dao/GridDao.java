@@ -6,7 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.parq.server.dao.model.object.Grid;
 import com.parq.server.dao.model.object.ParkingLocation;
@@ -29,7 +31,7 @@ public class GridDao extends AbstractParqDaoParent {
 	private final String sqlGetAllGrids = "SELECT g.grid_id, g.latitude, g.longitude, "
 			+ " pl.location_id, pl.location_identifier, pl.location_type, pl.client_id, "
 			+ " s.space_id, s.space_identifier, s.parking_level, s.space_name, s.latitude, s.longitude "
-			+ " FROM parkinggrid g, parkinglocation AS pl, parkingspace s "
+			+ " FROM parkinggrid AS g, parkinglocation AS pl, parkingspace AS s "
 			+ " WHERE g.grid_id = pl.grid_id AND pl.location_id = s.location_id"
 			+ " AND g.is_deleted IS NOT TRUE AND pl.is_deleted IS NOT TRUE AND s.is_deleted IS NOT TRUE"
 			+ " ORDER BY g.grid_id,  pl.location_id";
@@ -200,6 +202,28 @@ public class GridDao extends AbstractParqDaoParent {
 		} finally {
 			closeConnection(con);
 		}
+		
+		parkingGrids = addLocationGeoPoints(parkingGrids);
+		
+		return parkingGrids;
+	}
+
+	private List<Grid> addLocationGeoPoints(List<Grid> parkingGrids) {
+		ParkingLocationDao plDao = new ParkingLocationDao();
+		
+		List<ParkingLocation> parkingLocations = plDao.getAllLocationWithGeoPoints();
+		Map<Long, ParkingLocation> parkingLocationMap = new HashMap<Long, ParkingLocation>();
+		for (ParkingLocation pl : parkingLocations) {
+			parkingLocationMap.put(pl.getLocationId(), pl);
+		}
+		
+		for (Grid g : parkingGrids) {
+			for (ParkingLocation pl : g.getParkingLocations()) {
+				ParkingLocation plGP = parkingLocationMap.get(pl.getLocationId());
+				pl.getGeoPoints().addAll(plGP.getGeoPoints());
+			}
+		}
+		
 		return parkingGrids;
 	}
 
@@ -242,6 +266,7 @@ public class GridDao extends AbstractParqDaoParent {
 					.getString("location_identifier"));
 			curLocation.setLocationType(rs.getString("location_type"));
 			curLocation.setClientId(rs.getLong("client_id"));
+			curLocation.setGridId(gridId);
 			// add the spaces to the parking location
 			curLocation.getSpaces().addAll(createParkingSpaces(rs));
 			locations.add(curLocation);
