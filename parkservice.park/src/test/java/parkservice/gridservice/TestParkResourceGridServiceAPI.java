@@ -1,10 +1,15 @@
 package parkservice.gridservice;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 
+import com.parq.server.dao.ParkingStatusDao;
+import com.parq.server.dao.model.object.ParkingInstance;
+import com.parq.server.dao.model.object.Payment;
+import com.parq.server.dao.model.object.Payment.PaymentType;
 import com.parq.server.grid.GridManagementService;
 
 import parkservice.gridservice.model.FindGridsByGPSCoordinateRequest;
@@ -281,12 +286,110 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		assertEquals(responseGrid[0].getFillRate(), 0.0);
 	}
 	
+	public void testFullParkingScenrio() {
+		// search for streets in gps coor
+		ParkResource parkResource = new ParkResource();
+		GpsCoordinate topLeft = new GpsCoordinate();
+		topLeft.setLatitude(-180);
+		topLeft.setLongitude(-180);
+		GpsCoordinate bottomRight = new GpsCoordinate();
+		bottomRight.setLatitude(180);
+		bottomRight.setLongitude(180);
+		
+		GetStreetInfoRequest getStreetInfoRequest = new GetStreetInfoRequest();
+		getStreetInfoRequest.setTopLeftCorner(topLeft);
+		getStreetInfoRequest.setBottomRightCorner(bottomRight);
+		JAXBElement<GetStreetInfoRequest> jaxbTestStreetRequest = new JAXBElement<GetStreetInfoRequest>(
+				new QName("Test"), GetStreetInfoRequest.class, getStreetInfoRequest);
+		
+		FindGridsByGPSCoordinateRequest findGridByGPSCoordinateRequest = new FindGridsByGPSCoordinateRequest();
+		findGridByGPSCoordinateRequest.setLastUpdateTime(0);
+		findGridByGPSCoordinateRequest.setTopLeftCorner(topLeft);
+		findGridByGPSCoordinateRequest.setBottomRightCorner(bottomRight);
+		JAXBElement<FindGridsByGPSCoordinateRequest> jaxbTestGridRequest = new JAXBElement<FindGridsByGPSCoordinateRequest>(
+				new QName("Test"), FindGridsByGPSCoordinateRequest.class, findGridByGPSCoordinateRequest);
+		
+		FindGridsByGPSCoordinateResponse[] responseGrid = parkResource.findGridByGPSCoor(jaxbTestGridRequest);
+		GetStreetInfoResponse[] responseStreet = parkResource.getStreetInfo(jaxbTestStreetRequest);
+		long spaceToParkAtId = responseStreet[0].getParkingSpace().get(0).getSpaceId();
+		long streetToParkAtId = responseStreet[0].getStreetId();
+		long gridToParkAtId = responseGrid[0].getGridId();
+		
+		// TODO this field will likely change alot
+		long userId = 278;
+		
+		responseStreet = parkResource.getStreetInfo(jaxbTestStreetRequest);
+		assertEquals(responseStreet[0].getFillRate(), 0.0);
+		assertEquals(responseGrid[0].getFillRate(), 0.0);
+		
+		// park for 5 seconds
+		ParkingInstance pi = new ParkingInstance();
+		pi.setPaidParking(true);
+		pi.setParkingBeganTime(new Date(System.currentTimeMillis()));
+		pi.setParkingEndTime(new Date(System.currentTimeMillis() + 5000));
+		pi.setSpaceId(spaceToParkAtId);
+		pi.setUserId(userId);
+		// set the payment type;
+		Payment payment = new Payment();
+		payment.setAmountPaidCents(15);
+		payment.setPaymentRefNumber("Test");
+		payment.setPaymentDateTime(new Date(System.currentTimeMillis()));
+		payment.setPaymentType(PaymentType.PrePaid);
+		payment.setAccountId(-1);
+		pi.setPaymentInfo(payment);
+		
+		// park with the parking status dao
+		ParkingStatusDao psDao = new ParkingStatusDao();
+		psDao.addNewParkingAndPayment(pi);
+		
+		// make sure the grid and street data are updated
+		responseGrid = parkResource.findGridByGPSCoor(jaxbTestGridRequest);
+		assertTrue(responseGrid[0].getFillRate() > 0.01);
+		responseStreet = parkResource.getStreetInfo(jaxbTestStreetRequest);
+		assertTrue(responseStreet[0].getFillRate() > 0.01);
+		
+		// wait 32 second to see if the status are updated correctly
+		try {
+			Thread.sleep(32000);
+		} catch (InterruptedException ie) {}
+		responseStreet = parkResource.getStreetInfo(jaxbTestStreetRequest);
+		assertEquals(responseStreet[0].getFillRate(), 0.0);
+		responseGrid = parkResource.findGridByGPSCoor(jaxbTestGridRequest);
+		assertEquals(responseGrid[0].getFillRate(), 0.0);
+		
+		// park for 500 second
+		pi.setParkingEndTime(new Date(System.currentTimeMillis() + 500000));
+		psDao.addNewParkingAndPayment(pi);
+		
+		// make sure the grid and street data are updated
+		responseGrid = parkResource.findGridByGPSCoor(jaxbTestGridRequest);
+		assertTrue(responseGrid[0].getFillRate() > 0.01);
+		responseStreet = parkResource.getStreetInfo(jaxbTestStreetRequest);
+		assertTrue(responseStreet[0].getFillRate() > 0.01);
+		
+		// wait 2 second then unpark
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException ie) {}
+		
+		// unpark
+		List<ParkingInstance> piLists = psDao.getParkingStatusBySpaceIds(new long[]{spaceToParkAtId});
+		psDao.unparkBySpaceIdAndParkingRefNum(spaceToParkAtId, 
+				piLists.get(0).getParkingRefNumber(), new Date(System.currentTimeMillis()));
+		
+		responseStreet = parkResource.getStreetInfo(jaxbTestStreetRequest);
+		assertEquals(responseStreet[0].getFillRate(), 0.0);
+		responseGrid = parkResource.findGridByGPSCoor(jaxbTestGridRequest);
+		assertEquals(responseGrid[0].getFillRate(), 0.0);
+		
+	}
 	
-	public void _testGridServiceUpdateThreadIsRunning() {
+	
+	public void testGridServiceUpdateThreadIsRunning() {
 		
 		ParkResource parkResource = new ParkResource();
 		try {
-			Thread.sleep(31000);
+			Thread.sleep(61000);
 		} catch (InterruptedException ie) {}
 		// expecting to see 1 system.out.println messages
 	}

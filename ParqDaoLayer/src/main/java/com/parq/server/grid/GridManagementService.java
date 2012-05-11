@@ -46,7 +46,7 @@ public class GridManagementService implements Runnable{
 	// this value should be the size of at least 1 grid length or width
 	// TODO set the value to the correct grid size value
 	private static final double gridSearchEnlargement = 0.3;
-	
+
 	
 	//singleton instance
 	private GridManagementService() {
@@ -77,9 +77,8 @@ public class GridManagementService implements Runnable{
 
 	public static GridManagementService getInstance(){
 		if (gridManagementService == null) {
-			gridManagementService  = new GridManagementService();
-			
-			// creating the expireation check timer
+			gridManagementService = new GridManagementService();
+			// creating the expiration check timer
 			refreshTimer = new ScheduledThreadPoolExecutor(1);
 			refreshTimer.scheduleWithFixedDelay(gridManagementService, parkingStatusUpdateRate, 
 					parkingStatusUpdateRate, TimeUnit.SECONDS);
@@ -206,10 +205,16 @@ public class GridManagementService implements Runnable{
 			boolean parkingExpired = true;
 			while (parkingExpired) {
 				SpaceExpirationEntry see = expireTimeQueue.peek();
-				// check to see the parking entry if it has expired
-				if (curTime.compareTo(see.getParkingExiprationTime()) > 0) {
+				
+				// check to see there are items on the queue
+				if (see == null) {
+					parkingExpired = false;
+				
+					// check to see the parking entry if it has expired
+				} else if (curTime.compareTo(see.getParkingExiprationTime()) > 0) {
 					// parking has expired, unpark this parking space
 					unpark(see.getSpaceId());
+					expireTimeQueue.poll();
 				} else {
 					// parking has not expire, break out of the loop. 
 					// No further element need to be check, 
