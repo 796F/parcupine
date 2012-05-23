@@ -47,6 +47,7 @@ typedef enum {
 @synthesize disableViewOverlay;
 @synthesize leftBarButton;
 @synthesize zoomState;
+@synthesize actionCause;
 
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     NSLog(@"hello\n");
@@ -139,7 +140,7 @@ typedef enum {
     //look through list of points, check spot distanceFromLocation (coord) vs radius.  
     NSArray* data = [self loadSpotData];
     //keep track of some stuff
-    float avgLat=0, avgLon;
+    float avgLat=0, avgLon=0, count=0;
 
     for(id spot in data){
         NSArray* point = [spot componentsSeparatedByString:@","];
@@ -151,13 +152,17 @@ typedef enum {
             //inside the circle
             avgLat += spot_loc.coordinate.latitude;
             avgLon += spot_loc.coordinate.longitude;   
-
+            count++;
         }
     }
     //compute the average point
-    avgLat /= data.count;
-    avgLon /= data.count;
+    avgLat /= count;
+    avgLon /= count;
     
+    CLLocationCoordinate2D coord = CLLocationCoordinate2DMake(avgLat,avgLon);
+    MKCircle* circ =  [MKCircle circleWithCenterCoordinate:coord radius:1];
+    [circ setColor: 0];
+    [self.map addOverlay:circ];
     //project bubbles using this average and the spot's coordinates.  
     
     
@@ -201,6 +206,8 @@ typedef enum {
 }
 
 - (void)showSelectionCircle:(CLLocationCoordinate2D *)coord {
+    actionCause = 1; //set atomic action cause to be 1, meaning grey circle summoned
+    
     // Assumes overlays and annotations were cleared in the calling function
     [self.map setCenterCoordinate:*coord animated:YES];
     
@@ -335,9 +342,19 @@ typedef enum {
         [self showStreetLevelWithCoordinates:&coord];
         [self showAvailabilitySelectionView];
     } else {
-        NSLog(@"currSpan: %f\n", mapView.region.span.latitudeDelta);
+        if(actionCause!=1){
+            //only clear if the previous action did NOT summon grey circle
+            [self.map removeAnnotations:callouts];
+            [self.map removeOverlays:calloutLines];   
+            [self.map removeOverlay:gCircle];
+            
+            [calloutLines removeAllObjects];
+            [callouts removeAllObjects];    
+        }
+        //NSLog(@"currSpan: %f\n", mapView.region.span.latitudeDelta);
         zoomState = kSpotZoomLevel;
         [self showSpotSelectionViews];
+        actionCause = 0; //remove lock
     }
 }
 
@@ -660,6 +677,8 @@ typedef enum {
     locationManager.desiredAccuracy=kCLLocationAccuracyNearestTenMeters;
     
     [locationManager startUpdatingLocation];
+    
+    actionCause = -1; //initial value.  
 }
 
 - (void)viewDidUnload

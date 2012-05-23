@@ -28,5 +28,7 @@
 @property (nonatomic, retain) NSMutableArray* calloutLines;
 
 @property (nonatomic, retain) CLGeocoder* geocoder;
+@property (atomic) int actionCause;
+
 
 @end
