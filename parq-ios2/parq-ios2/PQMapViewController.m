@@ -19,6 +19,10 @@
 
 #define GPS_LAUNCH_ALERT 10
 #define MAX_CALLOUTS 8
+
+//if the action was a pan, we are to erase the grey circle.  
+#define panAction(x) x>0 ? 0:1
+
 typedef enum {
     kGridZoomLevel,
     kStreetZoomLevel,
@@ -72,7 +76,7 @@ typedef enum {
     return [NSArray arrayWithObjects:
             [[NSDictionary alloc] initWithObjectsAndKeys:@"42.36441,-71.113901;42.365203,-71.104846", @"line", [NSNumber numberWithInt:0], @"color", nil],
             [[NSDictionary alloc] initWithObjectsAndKeys:@"42.365399,-71.110897;42.364751,-71.110771", @"line", [NSNumber numberWithInt:4], @"color", nil], nil];
-
+    
 }
 
 -(NSArray*) loadSpotData {
@@ -141,7 +145,7 @@ typedef enum {
     NSArray* data = [self loadSpotData];
     //keep track of some stuff
     float avgLat=0, avgLon=0, count=0;
-
+    
     for(id spot in data){
         NSArray* point = [spot componentsSeparatedByString:@","];
         CLLocation* spot_loc = [[CLLocation alloc] initWithLatitude:[[point objectAtIndex:0] floatValue] longitude:[[point objectAtIndex:1] floatValue]];
@@ -155,49 +159,101 @@ typedef enum {
             count++;
         }
     }
-    //compute the average point
+    //compute the average point of those inside the selection circle.  
     avgLat /= count;
     avgLon /= count;
     
-    CLLocationCoordinate2D coord = CLLocationCoordinate2DMake(avgLat,avgLon);
-    MKCircle* circ =  [MKCircle circleWithCenterCoordinate:coord radius:1];
-    [circ setColor: 0];
-    [self.map addOverlay:circ];
     //project bubbles using this average and the spot's coordinates.  
-    
-    
-    
-    return [[NSArray alloc] initWithObjects:
-            [[NSDictionary alloc] initWithObjectsAndKeys:
-             [[CalloutMapAnnotation alloc] initWithLatitude:selectionCenter->latitude+0.0002
-                                               andLongitude:selectionCenter->longitude-0.0005
-                                                   andTitle:@"1104"
-                                                  andCorner:kBottomRightCorner], @"callout",
-             [[CLLocation alloc] initWithLatitude:42.365154 longitude:-71.110892], @"spot", nil],
-            [[NSDictionary alloc] initWithObjectsAndKeys:
-             [[CalloutMapAnnotation alloc] initWithLatitude:selectionCenter->latitude-0.0001
-                                               andLongitude:selectionCenter->longitude-0.0005
-                                                   andTitle:@"1106"
-                                                  andCorner:kTopRightCorner], @"callout",
-             [[CLLocation alloc] initWithLatitude:42.365049 longitude:-71.110868], @"spot", nil],
-            [[NSDictionary alloc] initWithObjectsAndKeys:
-             [[CalloutMapAnnotation alloc] initWithLatitude:selectionCenter->latitude-0.0004
-                                               andLongitude:selectionCenter->longitude-0.0005
-                                                   andTitle:@"1108"
-                                                  andCorner:kTopRightCorner], @"callout",
-             [[CLLocation alloc] initWithLatitude:42.364993 longitude:-71.110860], @"spot", nil],
-            [[NSDictionary alloc] initWithObjectsAndKeys:
-             [[CalloutMapAnnotation alloc] initWithLatitude:selectionCenter->latitude+0.0003
-                                               andLongitude:selectionCenter->longitude+0.0005
-                                                   andTitle:@"1101"
-                                                  andCorner:kBottomLeftCorner], @"callout",
-             [[CLLocation alloc] initWithLatitude:42.365140 longitude:-71.110806], @"spot", nil],
-            [[NSDictionary alloc] initWithObjectsAndKeys:
-             [[CalloutMapAnnotation alloc] initWithLatitude:selectionCenter->latitude
-                                               andLongitude:selectionCenter->longitude+0.0005
-                                                   andTitle:@"1105"
-                                                  andCorner:kBottomLeftCorner], @"callout",
-             [[CLLocation alloc] initWithLatitude:42.365045 longitude:-71.110790], @"spot", nil], nil];
+    NSMutableArray* results = [[NSMutableArray alloc] initWithCapacity:count];
+    for(id spot in data){
+        NSArray* point = [spot componentsSeparatedByString:@","];
+        CLLocation* spot_loc = [[CLLocation alloc] initWithLatitude:[[point objectAtIndex:0] floatValue] longitude:[[point objectAtIndex:1] floatValue]];
+        
+        CLLocationDistance dist = [spot_loc distanceFromLocation:center];
+        NSLog(@"radius: %f\n", radius);
+        
+        //controls how far the callouts go.  
+        double rsq = 0.00000023;
+        
+        //only make callout for those clearly in circle
+        //using 2 because the radius of small red circles is 2.  aka don't call it out
+        //unless the red circle is clearly inside selection circle.  
+        if(dist<radius-2){ 
+            
+            double mdx = avgLat - [[point objectAtIndex:0] floatValue];
+            double mdy = avgLon - [[point objectAtIndex:1] floatValue];
+            double dx = sqrt(rsq / (1 + (mdy * mdy)/(mdx * mdx)));
+            double dy = sqrt(rsq / (1 + (mdx * mdx)/(mdy * mdy)));
+        
+            if(mdy>0){
+                if(mdx>0){
+                    //bottom left of avg
+                    NSDictionary* add = [[NSDictionary alloc] initWithObjectsAndKeys:[[CalloutMapAnnotation alloc] initWithLatitude:avgLat - dx                                          andLongitude:avgLon - dy
+                                                                                                       andTitle:[point objectAtIndex:3]
+                                                                                                      andCorner:kTopRightCorner], @"callout",
+                     spot_loc, @"spot", nil];
+                    [results addObject:add];
+                    
+                }else{
+                    //bottom right of avg
+                    NSDictionary* add = [[NSDictionary alloc] initWithObjectsAndKeys:[[CalloutMapAnnotation alloc] initWithLatitude:avgLat + dx                                          andLongitude:avgLon - dy
+                                                                                                                           andTitle:[point objectAtIndex:3]
+                                                                                                                          andCorner:kBottomRightCorner], @"callout",
+                                         spot_loc, @"spot", nil];
+                    [results addObject:add];
+                }
+            }else{
+                if(mdx>0){
+                    //top Left of avg
+                    NSDictionary* add = [[NSDictionary alloc] initWithObjectsAndKeys:[[CalloutMapAnnotation alloc] initWithLatitude:avgLat - dx                                          andLongitude:avgLon + dy
+                                                                                                                           andTitle:[point objectAtIndex:3]
+                                                                                                                          andCorner:kTopLeftCorner], @"callout",
+                                         spot_loc, @"spot", nil];
+                    [results addObject:add];
+                }else{
+                    //top right of avg
+                    NSDictionary* add = [[NSDictionary alloc] initWithObjectsAndKeys:[[CalloutMapAnnotation alloc] initWithLatitude:avgLat + dx                                          andLongitude:avgLon + dy
+                                                                                                                           andTitle:[point objectAtIndex:3]
+                                                                                                                          andCorner:kBottomLeftCorner], @"callout",
+                                         spot_loc, @"spot", nil];
+                    [results addObject:add];
+                }
+            }
+        }
+        
+    }//dx = dy/dx
+    return results;
+//    return [[NSArray alloc] initWithObjects:
+//            [[NSDictionary alloc] initWithObjectsAndKeys:
+//             [[CalloutMapAnnotation alloc] initWithLatitude:selectionCenter->latitude+0.0002
+//                                               andLongitude:selectionCenter->longitude-0.0005
+//                                                   andTitle:@"1104"
+//                                                  andCorner:kBottomRightCorner], @"callout",
+//             [[CLLocation alloc] initWithLatitude:42.365154 longitude:-71.110892], @"spot", nil],
+//            [[NSDictionary alloc] initWithObjectsAndKeys:
+//             [[CalloutMapAnnotation alloc] initWithLatitude:selectionCenter->latitude-0.0001
+//                                               andLongitude:selectionCenter->longitude-0.0005
+//                                                   andTitle:@"1106"
+//                                                  andCorner:kTopRightCorner], @"callout",
+//             [[CLLocation alloc] initWithLatitude:42.365049 longitude:-71.110868], @"spot", nil],
+//            [[NSDictionary alloc] initWithObjectsAndKeys:
+//             [[CalloutMapAnnotation alloc] initWithLatitude:selectionCenter->latitude-0.0004
+//                                               andLongitude:selectionCenter->longitude-0.0005
+//                                                   andTitle:@"1108"
+//                                                  andCorner:kTopRightCorner], @"callout",
+//             [[CLLocation alloc] initWithLatitude:42.364993 longitude:-71.110860], @"spot", nil],
+//            [[NSDictionary alloc] initWithObjectsAndKeys:
+//             [[CalloutMapAnnotation alloc] initWithLatitude:selectionCenter->latitude+0.0003
+//                                               andLongitude:selectionCenter->longitude+0.0005
+//                                                   andTitle:@"1101"
+//                                                  andCorner:kBottomLeftCorner], @"callout",
+//             [[CLLocation alloc] initWithLatitude:42.365140 longitude:-71.110806], @"spot", nil],
+//            [[NSDictionary alloc] initWithObjectsAndKeys:
+//             [[CalloutMapAnnotation alloc] initWithLatitude:selectionCenter->latitude
+//                                               andLongitude:selectionCenter->longitude+0.0005
+//                                                   andTitle:@"1105"
+//                                                  andCorner:kBottomLeftCorner], @"callout",
+//             [[CLLocation alloc] initWithLatitude:42.365045 longitude:-71.110790], @"spot", nil], nil];
 }
 
 - (void)clearMap {
@@ -214,14 +270,14 @@ typedef enum {
     MKCircle *greyCircle = [MKCircle circleWithCenterCoordinate:*coord radius:12];
     [greyCircle setColor:-1];
     [self.map addOverlay:greyCircle];
-
     
-    NSArray *placement = [self calloutBubblePlacement:coord withR:greyCircle.radius];
+    
+    NSArray *placement = [self calloutBubblePlacement:coord withR:(greyCircle.radius)];
     
     if(calloutLines==NULL || callouts == NULL){
         calloutLines = [[NSMutableArray alloc]initWithCapacity:MAX_CALLOUTS];
         callouts = [[NSMutableArray alloc] initWithCapacity:MAX_CALLOUTS];
-
+        
     }else{
         [self.map removeAnnotations:callouts];
         [self.map removeOverlays:calloutLines];
@@ -242,13 +298,13 @@ typedef enum {
         [calloutLines addObject:calloutLine];
         [self.map addOverlay:calloutLine];
         [self.map addAnnotation:callout];
-
+        
     }
 }
 
 - (void)showGridLevelWithCoordinates:(CLLocationCoordinate2D *)coord {
     [self clearMap];
-
+    
     NSArray* data = [self loadGridData];
     
     for (id element in data) {
@@ -276,7 +332,7 @@ typedef enum {
 
 - (void)showStreetLevelWithCoordinates:(CLLocationCoordinate2D *)coord {
     [self clearMap];
-
+    
     NSArray* data = [self loadBlockData];
     
     for (id line in data) {
@@ -301,6 +357,7 @@ typedef enum {
 
 - (void)showSpotLevelWithCoordinates:(CLLocationCoordinate2D *)coord {
     [self clearMap];
+    
     NSArray* data = [self loadSpotData];
     for(id spot in data){
         NSArray* point = [spot componentsSeparatedByString:@","];
@@ -342,7 +399,7 @@ typedef enum {
         [self showStreetLevelWithCoordinates:&coord];
         [self showAvailabilitySelectionView];
     } else {
-        if(actionCause!=1){
+        if(panAction(actionCause)){
             //only clear if the previous action did NOT summon grey circle
             [self.map removeAnnotations:callouts];
             [self.map removeOverlays:calloutLines];   
@@ -354,6 +411,7 @@ typedef enum {
         //NSLog(@"currSpan: %f\n", mapView.region.span.latitudeDelta);
         zoomState = kSpotZoomLevel;
         [self showSpotSelectionViews];
+        
         actionCause = 0; //remove lock
     }
 }
@@ -417,7 +475,7 @@ typedef enum {
                 circleView.fillColor = [[UIColor blackColor] colorWithAlphaComponent:0.3];
                 circleView.strokeColor = [UIColor whiteColor];
                 //51 204 0
-
+                
                 circleView.lineWidth = 6;
                 break;
             case 0:
@@ -443,13 +501,13 @@ typedef enum {
 		CalloutMapAnnotationView *calloutMapAnnotationView = (CalloutMapAnnotationView *)[self.map dequeueReusableAnnotationViewWithIdentifier:@"CalloutAnnotation"];
 		if (!calloutMapAnnotationView) {
 			calloutMapAnnotationView = [[CalloutMapAnnotationView alloc] initWithAnnotation:annotation 
-																			 reuseIdentifier:@"CalloutAnnotation"];
-
+                                                                            reuseIdentifier:@"CalloutAnnotation"];
+            
 		}
 		calloutMapAnnotationView.mapView = self.map;
 		return calloutMapAnnotationView;
 	}
-
+    
 	return nil;
 }
 
@@ -457,7 +515,7 @@ typedef enum {
 {
     if (gestureRecognizer.state != UIGestureRecognizerStateEnded)
         return;
-
+    
     CGPoint touchPoint = [gestureRecognizer locationInView:self.map];
     CLLocationCoordinate2D coord = [self.map convertPoint:touchPoint toCoordinateFromView:self.map];
     MKMapPoint mapPoint = MKMapPointForCoordinate(coord);
@@ -466,8 +524,8 @@ typedef enum {
         for (id gridOverlay in self.map.overlays) {
             MKPolygonView *polyView = (MKPolygonView*)[self.map viewForOverlay:gridOverlay];
             CGPoint polygonViewPoint = [polyView pointForMapPoint:mapPoint];
-
-
+            
+            
             if (CGPathContainsPoint(polyView.path, NULL, polygonViewPoint, NO)) {
                 MKCoordinateRegion reg = [self.map convertRect:polyView.bounds toRegionFromView:polyView];
                 [self.map setRegion:[self.map regionThatFits:reg] animated:YES];
@@ -501,7 +559,7 @@ typedef enum {
             self.disableViewOverlay.frame = CGRectMake(0.0f,44.0f,320.0f,416.0f);
         }
         [self.view addSubview:self.disableViewOverlay];
-
+        
         [UIView animateWithDuration:0.25 animations:^{
             self.navigationBar.leftBarButtonItem = nil;
             self.disableViewOverlay.alpha = 0.8;
@@ -513,7 +571,7 @@ typedef enum {
         }];
     } else {
         [searchBar resignFirstResponder];
-
+        
         [UIView animateWithDuration:0.25 animations:^{
             self.navigationBar.leftBarButtonItem = self.leftBarButton;
             self.disableViewOverlay.alpha = 0;
@@ -532,14 +590,14 @@ typedef enum {
 
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
     [self clearMap];
-
+    
     [geocoder geocodeAddressString:searchBar.text inRegion:nil completionHandler:^(NSArray *placemarks, NSError * error){
         CLLocation* locationObject = [[placemarks objectAtIndex:0] location];
-
+        
         MKCoordinateRegion viewRegion = [self.map regionThatFits:MKCoordinateRegionMakeWithDistance(locationObject.coordinate, 0.5*METERS_PER_MILE, 0.5*METERS_PER_MILE)];
         [self.map setRegion:viewRegion animated:YES];
     }];
-
+    
     [self setSearchBar:searchBar active:NO];
 }
 
@@ -570,7 +628,7 @@ typedef enum {
 - (IBAction)gridButtonPressed:(id)sender {
     NSLog(@"Grid Button Pressed\n" );
     zoomState = kGridZoomLevel;
-
+    
     //set the zoom to fit 12 grids perfectly
     CLLocationCoordinate2D point = CLLocationCoordinate2DMake(42.365045,-71.118965);
     
@@ -584,17 +642,17 @@ typedef enum {
 
 - (IBAction)streetButtonPressed:(id)sender {
     CLLocationCoordinate2D point = {42.364854,-71.109438};
-
+    
     MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(point, METERS_PER_MILE/2, METERS_PER_MILE/2);
     [self.map setRegion:[self.map regionThatFits:viewRegion] animated:YES];
     [self showStreetLevelWithCoordinates:&point];
 }
 - (IBAction)spotButtonPressed:(id)sender {
     CLLocationCoordinate2D point = {42.365077, -71.110838};
-
+    
     MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(point, METERS_PER_MILE/16, METERS_PER_MILE/16);
     [map setRegion:[map regionThatFits:viewRegion] animated:YES];
-
+    
     [self showSpotLevelWithCoordinates:&point];
 }
 - (IBAction)noneButtonPressed:(id)sender {
@@ -615,9 +673,9 @@ typedef enum {
          
          [map setRegion:region animated:TRUE];
          */
-
+        
         [self spotButtonPressed:nil];
-
+        
         [locationManager stopUpdatingLocation];
     }
 }
@@ -634,7 +692,7 @@ typedef enum {
 
 - (void)viewDidLoad{
     [super viewDidLoad];
-
+    
     //check the current zoom level to set the ZOOM_STATE integer.  
     if (self.map.bounds.size.width > STREET_MAP_SPAN) {
         zoomState = kGridZoomLevel;
@@ -652,16 +710,16 @@ typedef enum {
     self.disableViewOverlay.alpha = 0;
     UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
     [self.disableViewOverlay addGestureRecognizer:singleTap];
-
+    
     ((UISearchBar *)self.topSearchBar).scopeButtonTitles = [[NSArray alloc] initWithObjects:@"Place name", @"Spot number", nil];
-
+    
     self.leftBarButton = self.navigationBar.leftBarButtonItem;
-
+    
     [self.topSpotSelectionBar setWidth:36 forSegmentAtIndex:0];
     [self.topSpotSelectionBar setWidth:36 forSegmentAtIndex:5];
     [self.bottomSpotSelectionBar setWidth:36 forSegmentAtIndex:0];
     [self.bottomSpotSelectionBar setWidth:36 forSegmentAtIndex:5];
-
+    
     // Do any additional setup after loading the view, typically from a nib.
     self.map.delegate=self;
     self.map.showsUserLocation = YES;
@@ -713,7 +771,7 @@ typedef enum {
 - (void)viewWillDisappear:(BOOL)animated
 {
 	[super viewWillDisappear:animated];
-
+    
     [locationManager stopUpdatingLocation];
 }
 
