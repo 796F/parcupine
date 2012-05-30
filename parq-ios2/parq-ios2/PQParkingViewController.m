@@ -43,7 +43,7 @@
 @synthesize cancelButton;
 @synthesize doneButton;
 @synthesize timerStarted;
-
+@synthesize parent;
 #pragma mark - Main button actions
 - (IBAction)startTimer:(id)sender {
     timerStarted = YES;
@@ -69,6 +69,7 @@
     [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]].userInteractionEnabled = YES;
     [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0]].accessoryType = UITableViewCellAccessoryNone;
     [self.tableView reloadData];
+    [self dismissModalViewControllerAnimated:YES];
 }
 
 #pragma mark - Date Picker control

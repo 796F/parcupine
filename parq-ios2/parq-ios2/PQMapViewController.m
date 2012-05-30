@@ -7,6 +7,7 @@
 //
 
 #import "PQMapViewController.h"
+#import "PQParkingViewController.h"
 #import "MKShape+Color.h"
 #import "UIColor+Parq.h"
 #import "CalloutMapAnnotation.h"
@@ -25,6 +26,7 @@
 #define CALLOUT_LINE_LENGTH 0.00000023
 //if the action was a pan, we are to erase the grey circle.  
 #define panAction(x) x>0 ? 0:1
+#define CALLOUT_TAPPED 1
 
 typedef enum {
     kGridZoomLevel,
@@ -118,6 +120,16 @@ typedef enum {
         //if yes, store the destination's lat/lon for return launch and start gps app.  
         NSString* destination =[NSString stringWithFormat:@"http://maps.google.com/maps?daddr=Spot+%d@%1.2f,%1.2f&saddr=Current+Location@%1.2f,%1.2f", 1412, 41.343, -74.115, 43.124, -72.31552];
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:destination]];
+    }else if(alertView.tag == CALLOUT_TAPPED && alertView.firstOtherButtonIndex==buttonIndex){
+        
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
+        UINavigationController *vc = [storyboard instantiateViewControllerWithIdentifier:@"ParkingController"];
+        [vc setModalPresentationStyle:UIModalPresentationFullScreen];
+        PQParkingViewController *vcTop = [[vc viewControllers] objectAtIndex:0];
+        vcTop.parent = self;
+        [self presentModalViewController:vc animated:YES];
+        
+        
     }
 }
 
@@ -154,19 +166,25 @@ typedef enum {
         
         CLLocationDistance dist = [spot_loc distanceFromLocation:center];
         
-        if(dist<radius){
+        if(dist<radius-2){
             //inside the circle
             avgLat += spot_loc.coordinate.latitude;
             avgLon += spot_loc.coordinate.longitude;   
             count++;
         }
     }
+    
+    
     //compute the average point of those inside the selection circle.  
     avgLat /= count;
     avgLon /= count;
-    
-    //project bubbles using this average and the spot's coordinates.  
     NSMutableArray* results = [[NSMutableArray alloc] initWithCapacity:count];
+    if(count==1){
+        //if only one circle was within radius, do not callout.  
+        //as it breaks the callout line algorithm.  
+        return results;
+    }
+    //project bubbles using this average and the spot's coordinates.  
     for(id spot in data){
         NSArray* point = [spot componentsSeparatedByString:@","];
         CLLocation* spot_loc = [[CLLocation alloc] initWithLatitude:[[point objectAtIndex:0] floatValue] longitude:[[point objectAtIndex:1] floatValue]];
@@ -234,16 +252,12 @@ typedef enum {
 }
 
 - (void)showSelectionCircle:(CLLocationCoordinate2D *)coord {
-
-
     int radius = GREY_CIRCLE_R;
-    //check to see if coordinates are close to any points.  snap if possible.  
     
-    //if no spots near tap location, just make grey circle and do nothing.  
-    
-    //once snapped to new coordinates, do callout bubble placement.  
     NSArray *placement = [self calloutBubblePlacement:coord withR:radius];
-    [self.map setCenterCoordinate:*coord animated:YES];
+    if(placement.count >0){
+        [self.map setCenterCoordinate:*coord animated:YES];
+    }
     MKCircle *greyCircle= [MKCircle circleWithCenterCoordinate:*coord radius:radius];
     [greyCircle setColor:-1];
     [self.map addOverlay:greyCircle];
@@ -497,7 +511,10 @@ typedef enum {
 
 - (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id <MKAnnotation>)annotation {
 	if ([annotation isKindOfClass:[CalloutMapAnnotation class]]) {
-		CalloutMapAnnotationView *calloutMapAnnotationView = (CalloutMapAnnotationView *)[self.map dequeueReusableAnnotationViewWithIdentifier:@"CalloutAnnotation"];
+        
+        //reusing annotation views causes the displayed numberes to be incorrect 
+        //ie.  1412's callout is 1422 or something.  temporarily removed, not too much slower.
+		CalloutMapAnnotationView *calloutMapAnnotationView;// = (CalloutMapAnnotationView *)[self.map dequeueReusableAnnotationViewWithIdentifier:@"CalloutAnnotation"];
 		if (!calloutMapAnnotationView) {
 			calloutMapAnnotationView = [[CalloutMapAnnotationView alloc] initWithAnnotation:annotation 
                                                                             reuseIdentifier:@"CalloutAnnotation"];
@@ -511,9 +528,16 @@ typedef enum {
 }
 
 -(void) mapView:(MKMapView *)mapView didSelectAnnotationView:(MKAnnotationView *)view{
-    NSLog(@"OMG TOUCHED ME\n");
+    
+     //ask user if that's desired destination
+   
+    NSString* destination =[NSString stringWithFormat:@"Park at %s?",     [view.annotation.title UTF8String]];
+    UIAlertView* warningAlertView = [[UIAlertView alloc] initWithTitle:destination message:nil delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Park" , nil];
+     warningAlertView.tag = CALLOUT_TAPPED;
+     [warningAlertView show];
+     
+     
 }
-
 -(void) mapView:(MKMapView *)mapView didDeselectAnnotationView:(MKAnnotationView *)view{
     NSLog(@"OMG unselected me\n");
 }
@@ -523,21 +547,40 @@ typedef enum {
     
 }
 //given a point p, and a segment a to b, find the orthogonally projected point on the segment.
--(CLLocationCoordinate2D*) getProjectedPoint: (CLLocationCoordinate2D*) p A:(CLLocationCoordinate2D*)a B:(CLLocationCoordinate2D*) b{
-
-    return nil;
+-(CLLocationCoordinate2D) getProjectedPoint: (CLLocationCoordinate2D*) p A:(CLLocationCoordinate2D*)a B:(CLLocationCoordinate2D*) b{
+    double x1 = (*b).latitude;
+    double y1 = (*b).longitude;
+    double dy = y1 - (*a).longitude;
+    double dx = x1- (*a).latitude;
+    double m = dy/dx; 
+    double b1 = y1 - x1*m;
+    double x2 = (*p).latitude;
+    double y2 = (*p).longitude;
+    double new_x = (m*y2 + x2 - m*y1 + m*m*x1) / (m*m+1);
+    double new_y = m*new_x + b1;
+    return CLLocationCoordinate2DMake(new_x, new_y);
 }
 
 -(void)handlePanGesture:(UIGestureRecognizer*)gestureRecognizer{
     if(gestureRecognizer.state != UIGestureRecognizerStateEnded)
         return;
-        //only clear if the previous action did NOT summon grey circle
-        [self.map removeAnnotations:callouts];
-        [self.map removeOverlays:calloutLines];   
-        [self.map removeOverlay:gCircle];
+    if(zoomState == kGridZoomLevel){
         
-        [calloutLines removeAllObjects];
-        [callouts removeAllObjects];    
+        //ping server for new data with coordinates.  
+    }else if(zoomState == kStreetZoomLevel){
+        
+        //ping server for new data with coordinates
+    }else{
+        if(callouts.count >0){
+            //remove overlays on pan
+            [self.map removeAnnotations:callouts];
+            [self.map removeOverlays:calloutLines];   
+            [calloutLines removeAllObjects];
+            [callouts removeAllObjects];    
+        }
+        [self.map removeOverlay:gCircle];
+        //ping server for new data
+    }
     
     
 }
@@ -564,54 +607,15 @@ typedef enum {
                 [self showStreetLevelWithCoordinates:&(reg.center)];
             }
         }
-    } else if (zoomState==kStreetZoomLevel) {
+    } else if (zoomState==kStreetZoomLevel) { 
         MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(coord, METERS_PER_MILE/16, METERS_PER_MILE/16);
         [self.map setRegion:[self.map regionThatFits:viewRegion] animated:YES];
         [self showSpotLevelWithCoordinates:&coord];
-        /*
-         //ask user if that's desired destination
-         UIAlertView* warningAlertView = [[UIAlertView alloc] initWithTitle:@"Spot 4102 Selected!" message:@"Launch GPS to this spot?" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Launch" , nil];
-         warningAlertView.tag = GPS_LAUNCH_ALERT;
-         [warningAlertView show];
-         */
+        
     } else if (zoomState==kSpotZoomLevel) {
-        if([gestureRecognizer numberOfTouches]==3){
-            NSLog(@"HARRO\n");
-        }
         if([gestureRecognizer numberOfTouches]==1){
             //snap the circle to the closest polyline.  
-//            NSArray* data = [self loadBlockData];
-//            MKPolyline* myLine = nil;
-//            double min=0;
-//                NSArray* overlays = [self.map overlays];
-//            for(id overlay in overlays){
-//                if([overlay isKindOfClass:[MKPolyline class]]){
-//                    //for all polylines on the map...this won't work.  
-//                }
-//            }
-//            //for each polyline that's in view
-//            for(id line in data){
-//                NSArray *raw_waypoints = [[line objectForKey:@"line"] componentsSeparatedByString:@";"];
-//                CLLocationCoordinate2D waypoints[raw_waypoints.count];
-//                int i=0;
-//                for (id raw_waypoint in raw_waypoints) {
-//                    NSArray *coordinates = [raw_waypoint componentsSeparatedByString:@","];
-//                    CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake([[coordinates objectAtIndex:0] floatValue], [[coordinates objectAtIndex:1] floatValue]);
-//                    waypoints[i++] = coordinate;
-//                }
-//                
-//                
-//                //calculate shortest distance between coord and line.  
-//                //CLLocationCoordinate2D* proj_p = [self getProjectedPoint:&coord A:<#(CLLocationCoordinate2D *)#> B:<#(CLLocationCoordinate2D *)#>];
-//
-//                double dist = 0;
-//                if(dist<min){
-//                    //even closer than previously calculated distance
-//                    min = dist;
-//                    
-//                }
-//            }
-            
+                
             [self showSelectionCircle:&coord];
         }
     }

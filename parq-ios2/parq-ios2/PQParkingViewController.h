@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "PQMapViewController.h"
 @interface PQParkingViewController : UITableViewController <UITableViewDelegate>
 @property (nonatomic, readonly) double rate;
 @property (nonatomic) int rateNumeratorCents;
@@ -33,5 +33,5 @@
 @property (weak, nonatomic) IBOutlet UILabel *limitValue;
 @property (weak, nonatomic) IBOutlet UILabel *limitUnit;
 @property (weak, nonatomic) IBOutlet UILabel *addressLabel;
-
+@property (weak, nonatomic) PQMapViewController *parent;
 @end
