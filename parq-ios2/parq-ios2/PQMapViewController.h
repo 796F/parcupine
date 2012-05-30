@@ -26,9 +26,6 @@
 @property (weak, nonatomic) MKCircle* gCircle;
 @property (nonatomic, retain) NSMutableArray* callouts;
 @property (nonatomic, retain) NSMutableArray* calloutLines;
-
 @property (nonatomic, retain) CLGeocoder* geocoder;
-@property (atomic) int actionCause;
-
 
 @end
