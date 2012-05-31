@@ -12,7 +12,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4" sceneMemberID="firstResponder"/>
                 <viewController id="2" customClass="PQMapViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="3">
-                        <rect key="frame" x="0.0" y="64" width="320" height="416"/>
+                        <rect key="frame" x="0.0" y="20" width="320" height="460"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <navigationBar contentMode="scaleToFill" barStyle="blackOpaque" id="ogw-zK-H4X">
@@ -25,7 +25,7 @@
                                 </items>
                             </navigationBar>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" id="VpP-MP-pHv">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="416"/>
+                                <rect key="frame" x="0.0" y="44" width="320" height="416"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             </mapView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="hbZ-8d-jN4">
@@ -471,7 +471,6 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                         <outlet property="seeMapView" destination="U83-uB-5Jz" id="Tty-SX-Ms2"/>
                         <outlet property="startButton" destination="T3R-6P-VeW" id="lys-gJ-Yz9"/>
                         <outlet property="unparkButton" destination="qoH-ki-1qF" id="BcL-6S-hCA"/>
-                        <segue destination="2" kind="push" identifier="ParkSpot" id="6Nf-oc-giL"/>
                     </connections>
                 </tableViewController>
             </objects>
