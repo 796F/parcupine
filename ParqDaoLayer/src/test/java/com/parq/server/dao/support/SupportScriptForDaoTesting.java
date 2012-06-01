@@ -95,16 +95,16 @@ public final class SupportScriptForDaoTesting {
 					fakeParkingLocationType, fakeLocation2GeoPoints);
 
 			// insert 10 test parking spaces
-			testDao.insertParkingSpace(parkingLocationNameMain, spaceNameMain, "space name 1", "1", parkingLocationMainLatitude, parkingLocationMainLongtitude);
-			testDao.insertParkingSpace(parkingLocationNameMain, spaceNameMain2, "space name 2", "2", parkingLocationMainLatitude, parkingLocationMainLongtitude);
-			testDao.insertParkingSpace(parkingLocationNameMain, spaceNameMain3, "space name 3", "3", parkingLocationMainLatitude, parkingLocationMainLongtitude);
-			testDao.insertParkingSpace(fakeParkingLocation1, "Test_Fake_1", "space name 4", "3", fakeParkingLocation1Latitude, fakeParkingLocation1Longtitude);
-			testDao.insertParkingSpace(fakeParkingLocation1, "Test_Fake_2", "space name 5", "2", fakeParkingLocation1Latitude, fakeParkingLocation1Longtitude);
-			testDao.insertParkingSpace(fakeParkingLocation1, "Test_Fake_3", "space name 6", "2", fakeParkingLocation1Latitude, fakeParkingLocation1Longtitude);			
-			testDao.insertParkingSpace(fakeParkingLocation1, "Test_Fake_4", "space name 7", "2", fakeParkingLocation1Latitude, fakeParkingLocation1Longtitude);
-			testDao.insertParkingSpace(fakeParkingLocation2, "Test_Fake_5", "space name 8", "2", fakeParkingLocation2Latitude, fakeParkingLocation2Longtitude);
-			testDao.insertParkingSpace(fakeParkingLocation2, "Test_Fake_6", "space name 9", "2", fakeParkingLocation2Latitude, fakeParkingLocation2Longtitude);
-			testDao.insertParkingSpace(fakeParkingLocation2, "Test_Fake_7", "space name 10", "2", fakeParkingLocation2Latitude, fakeParkingLocation2Longtitude);
+			testDao.insertParkingSpace(parkingLocationNameMain, spaceNameMain, "space name 1", "1", parkingLocationMainLatitude, parkingLocationMainLongtitude, 1);
+			testDao.insertParkingSpace(parkingLocationNameMain, spaceNameMain2, "space name 2", "2", parkingLocationMainLatitude, parkingLocationMainLongtitude, 2);
+			testDao.insertParkingSpace(parkingLocationNameMain, spaceNameMain3, "space name 3", "3", parkingLocationMainLatitude, parkingLocationMainLongtitude, 3);
+			testDao.insertParkingSpace(fakeParkingLocation1, "Test_Fake_1", "space name 4", "3", fakeParkingLocation1Latitude, fakeParkingLocation1Longtitude, 4);
+			testDao.insertParkingSpace(fakeParkingLocation1, "Test_Fake_2", "space name 5", "2", fakeParkingLocation1Latitude, fakeParkingLocation1Longtitude, 5);
+			testDao.insertParkingSpace(fakeParkingLocation1, "Test_Fake_3", "space name 6", "2", fakeParkingLocation1Latitude, fakeParkingLocation1Longtitude, 6);			
+			testDao.insertParkingSpace(fakeParkingLocation1, "Test_Fake_4", "space name 7", "2", fakeParkingLocation1Latitude, fakeParkingLocation1Longtitude, 7);
+			testDao.insertParkingSpace(fakeParkingLocation2, "Test_Fake_5", "space name 8", "2", fakeParkingLocation2Latitude, fakeParkingLocation2Longtitude, 8);
+			testDao.insertParkingSpace(fakeParkingLocation2, "Test_Fake_6", "space name 9", "2", fakeParkingLocation2Latitude, fakeParkingLocation2Longtitude, 9);
+			testDao.insertParkingSpace(fakeParkingLocation2, "Test_Fake_7", "space name 10", "2", fakeParkingLocation2Latitude, fakeParkingLocation2Longtitude, 10);
 
 			// insert location based parking rate
 			testDao.setParkingLocationRate(parkingLocationRate, parkingLocationParkingRatePriority, 

@@ -10,6 +10,7 @@ public class ParkingSpaceWithStatus {
 	private double longitude;
 	private double latitude;
 	private long streetId;
+	private int spaceOrder;
 
 	/**
 	 * @return the spaceId
@@ -84,6 +85,20 @@ public class ParkingSpaceWithStatus {
 	 */
 	public void setStreetId(long streetId) {
 		this.streetId = streetId;
+	}
+
+	/**
+	 * @return
+	 */
+	public int getSpaceOrder() {
+		return spaceOrder;
+	}
+
+	/**
+	 * @param spaceOrder
+	 */
+	public void setSpaceOrder(int spaceOrder) {
+		this.spaceOrder = spaceOrder;
 	}
 
 }
