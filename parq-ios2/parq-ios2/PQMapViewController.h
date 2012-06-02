@@ -9,11 +9,17 @@
 #import <UIKit/UIKit.h>
 #import <MapKit/MapKit.h>
 #import <CoreLocation/CoreLocation.h>
+#import "DataLayer.h"
+#import "PQAppDelegate.h"
 
 @interface PQMapViewController : UIViewController <MKMapViewDelegate, CLLocationManagerDelegate,UISearchBarDelegate,UIGestureRecognizerDelegate, UITableViewDelegate, UIAlertViewDelegate> {
-        
+    DataLayer * dataLayer;
+    NSManagedObjectContext* managedObjectContext;
     CLLocationManager *locationManager;
 }
+
+@property (nonatomic, retain) NSManagedObjectContext *managedObjectContext;
+
 @property (weak, nonatomic) IBOutlet MKMapView *map;
 @property (weak, nonatomic) IBOutlet UISearchBar *topSearchBar;
 @property (weak, nonatomic) IBOutlet UINavigationItem *navigationBar;

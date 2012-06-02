@@ -12,24 +12,23 @@
 #import "UIColor+Parq.h"
 #import "CalloutMapAnnotation.h"
 #import "CalloutMapAnnotationView.h"
+#import "NetworkLayer.h"
 
+//calculation constants
 #define METERS_PER_MILE 1609.344
-
-#define STREET_MAP_SPAN 0.0132
-#define SPOT_MAP_SPAN 0.0017
-
-#define GPS_LAUNCH_ALERT 10
 #define MAX_CALLOUTS 8
 #define GREY_CIRCLE_R 12
 #define annotation_offset_y 0.000045
 #define annotation_offset_x 0.00012
 #define CALLOUT_LINE_LENGTH 0.00000023
-//if the action was a pan, we are to erase the grey circle.  
-#define panAction(x) x>0 ? 0:1
+#define CALLOUT_WIDTH 0.00008
+#define CALLOUT_HEIGHT 0.00015
+#define STREET_MAP_SPAN 0.0132
+#define SPOT_MAP_SPAN 0.0017
 
+//alert view tags
+#define GPS_LAUNCH_ALERT 0
 #define CALLOUT_TAPPED 1
-#define CALLOUT_WIDTH 0.00005
-#define CALLOUT_HEIGHT 0.00012
 
 typedef enum {
     kGridZoomLevel,
@@ -62,13 +61,15 @@ typedef enum {
 @synthesize grids;
 @synthesize streets;
 @synthesize spots;
-
+@synthesize managedObjectContext;
 
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     NSLog(@"hello\n");
 }
 
 - (NSArray*)loadGridData {
+
+    
     return [NSArray arrayWithObjects:
             [[NSDictionary alloc] initWithObjectsAndKeys:@"42.350393,-71.104159", @"nw_corner", @"42.360393,-71.114159", @"se_corner", [NSNumber numberWithInt:0], @"color", nil],
             [[NSDictionary alloc] initWithObjectsAndKeys:@"42.360393,-71.104159", @"nw_corner", @"42.370393,-71.114159", @"se_corner", [NSNumber numberWithInt:4], @"color",nil],
@@ -172,15 +173,15 @@ typedef enum {
         CLLocation* spot_loc = [[CLLocation alloc] initWithLatitude:[[point objectAtIndex:0] floatValue] longitude:[[point objectAtIndex:1] floatValue]];
         
         CLLocationDistance dist = [spot_loc distanceFromLocation:center];
-        
-        if(dist<radius-2){
+        int status = [[point objectAtIndex:2] intValue];
+        if(dist<radius-2 && status == 1){
             //inside the circle
             avgLat += spot_loc.coordinate.latitude;
             avgLon += spot_loc.coordinate.longitude;   
             count++;
         }
     }
-    
+    //Average of points on one side, projected onto the segment, then use that point to shoot out
     
     //compute the average point of those inside the selection circle.  
     avgLat /= count;
@@ -197,57 +198,55 @@ typedef enum {
         CLLocation* spot_loc = [[CLLocation alloc] initWithLatitude:[[point objectAtIndex:0] floatValue] longitude:[[point objectAtIndex:1] floatValue]];
         
         CLLocationDistance dist = [spot_loc distanceFromLocation:center];
-        
+        int status = [[point objectAtIndex:2] intValue];
         //controls how far the callouts go.  
         double rsq = CALLOUT_LINE_LENGTH;
-
+        
         //only make callout for those clearly in circle
-        //using 2 because the radius of small red circles is 2.  aka don't call it out
-        //unless the red circle is clearly inside selection circle.  
-        if(dist<radius-2){ 
+        if(dist<radius-2 && status==1){ 
             
             double mdx = avgLat - [[point objectAtIndex:0] floatValue];
             double mdy = avgLon - [[point objectAtIndex:1] floatValue];
             double dx = sqrt(rsq / (1 + (mdy * mdy)/(mdx * mdx)));
             double dy = sqrt(rsq / (1 + (mdx * mdx)/(mdy * mdy)));
-            
+            double callout_lat;
+            double callout_lon;
+            CalloutCorner corner;
             if(mdy>0){
                 if(mdx>0){
                     //bottom left of avg
-                    NSDictionary* add = [[NSDictionary alloc] initWithObjectsAndKeys:[[CalloutMapAnnotation alloc]                                                                                    initWithLatitude:avgLat - dx                                         andLongitude:avgLon - dy 
-                                                                                                                                                                                                                 andTitle:[point objectAtIndex:3]
-                                                                                                                                                                                                                andCorner:kTopRightCorner], @"callout",
-                                         spot_loc, @"spot", nil];
-                    [results addObject:add];
+                    callout_lat = avgLat - dx;
+                    callout_lon = avgLon - dy;
+                    corner = kTopRightCorner;
                 }else{
                     //bottom right of avg
-                    NSDictionary* add = [[NSDictionary alloc] initWithObjectsAndKeys:[[CalloutMapAnnotation alloc] 
-                        initWithLatitude:avgLat + dx                                               andLongitude:avgLon - dy
-                                                                                                                andTitle:[point objectAtIndex:3]
-                                                                                                                          andCorner:kBottomRightCorner], @"callout",
-                                         spot_loc, @"spot", nil];
-                    [results addObject:add];
+                    callout_lat = avgLat + dx;
+                    callout_lon = avgLon - dy;
+                    corner = kBottomRightCorner;
                 }
             }else{
                 if(mdx>0){
                     //top Left of avg
-                    NSDictionary* add = [[NSDictionary alloc] initWithObjectsAndKeys:[[CalloutMapAnnotation alloc] initWithLatitude:avgLat - dx                                          andLongitude:avgLon + dy
-                                                                                                                           andTitle:[point objectAtIndex:3]
-                                                                                                                          andCorner:kTopLeftCorner], @"callout",
-                                         spot_loc, @"spot", nil];
-                    [results addObject:add];
+                    callout_lat = avgLat - dx;
+                    callout_lon = avgLon + dy;
+                    corner = kTopLeftCorner;
                 }else{
                     //top right of avg
-                    NSDictionary* add = [[NSDictionary alloc] initWithObjectsAndKeys:[[CalloutMapAnnotation alloc] initWithLatitude:avgLat + dx                                          andLongitude:avgLon + dy
-                                                                                                                           andTitle:[point objectAtIndex:3]
-                                                                                                                          andCorner:kBottomLeftCorner], @"callout",
-                                         spot_loc, @"spot", nil];
-                    [results addObject:add];
+                    callout_lat = avgLat + dx;
+                    callout_lon = avgLon + dy;
+                    corner = kBottomLeftCorner;
+                    
                 }
             }
+            NSDictionary* add = [[NSDictionary alloc] initWithObjectsAndKeys:[[CalloutMapAnnotation alloc] initWithLatitude:callout_lat                                         andLongitude:callout_lon
+                    andTitle:[point objectAtIndex:3]
+                   andCorner:corner], @"callout",spot_loc, @"spot", nil];
+            
+            [results addObject:add];
         }
         
-    }//dx = dy/dx
+    }
+    
     return results;
     
 }
@@ -325,39 +324,40 @@ typedef enum {
                  for future aesthetics, maybe rearrange?
                  */
                 
-//            case kBottomRightCorner:
-//                NSLog(@"%s has corner bottom right\n", [callout.title cString]);
-//                corner_lat-=annotation_offset_y;
-//                corner_lon-=annotation_offset_x;
-//                break;
-//            case kBottomLeftCorner:
-//                corner_lat-=annotation_offset_y;
-//                corner_lon-=annotation_offset_x;
-//                break;
-//            case kTopLeftCorner:
-//                corner_lat+=annotation_offset_y;
-//                corner_lon+=annotation_offset_x;
-//                break;
-//            case kTopRightCorner:
-//                corner_lat+=annotation_offset_y;
-//                corner_lon+=annotation_offset_x;
-//                break;
+                //            case kBottomRightCorner:
+                //                NSLog(@"%s has corner bottom right\n", [callout.title cString]);
+                //                corner_lat-=annotation_offset_y;
+                //                corner_lon-=annotation_offset_x;
+                //                break;
+                //            case kBottomLeftCorner:
+                //                corner_lat-=annotation_offset_y;
+                //                corner_lon-=annotation_offset_x;
+                //                break;
+                //            case kTopLeftCorner:
+                //                corner_lat+=annotation_offset_y;
+                //                corner_lon+=annotation_offset_x;
+                //                break;
+                //            case kTopRightCorner:
+                //                corner_lat+=annotation_offset_y;
+                //                corner_lon+=annotation_offset_x;
+                //                break;
             default:
                 //NSLog(@"error, corner type unknown\n");
                 corner_lat = callout.coordinate.latitude;
                 corner_lon = callout.coordinate.longitude;
                 break;
         }
-
+        
         endpoints[0] = CLLocationCoordinate2DMake(corner_lat, corner_lon);
         endpoints[1] = ((CLLocation *)[bubble objectForKey:@"spot"]).coordinate;
         MKPolyline *calloutLine = [MKPolyline polylineWithCoordinates:endpoints count:2];
         [calloutLine setColor:-1];
         [callouts addObject:callout];
         [calloutLines addObject:calloutLine];
-
+        
         [self.map addAnnotation:callout];
-        [self.map addOverlay:calloutLine];        
+        [self.map addOverlay:calloutLine];
+        
     }
 }
 
@@ -416,7 +416,7 @@ typedef enum {
         int color = [[line objectForKey:@"color"] intValue];
         [routeLine setColor:color];
         [streets addObject:routeLine];
-
+        
     }
     [self.map addOverlays:streets];
 }
@@ -585,16 +585,6 @@ typedef enum {
 	return nil;
 }
 
--(void) mapView:(MKMapView *)mapView didSelectAnnotationView:(MKAnnotationView *)view{
-    
-     
-     
-}
-
--(void) mapView:(MKMapView *)mapView annotationView:(MKAnnotationView *)view calloutAccessoryControlTapped:(UIControl *)control{
-    NSLog(@"OMG second touched me\n");
-    
-}
 //given a point p, and a segment a to b, find the orthogonally projected point on the segment.
 -(CLLocationCoordinate2D) getProjectedPoint: (CLLocationCoordinate2D*) p A:(CLLocationCoordinate2D*)a B:(CLLocationCoordinate2D*) b{
     double x1 = (*b).latitude;
@@ -617,8 +607,8 @@ typedef enum {
         
         //ping server for new data with coordinates.  
     }else if(zoomState == kStreetZoomLevel){
-        
-        //ping server for new data with coordinates
+    
+        //ping server for new street data with coordinates
     }else{
         if(callouts.count >0){
             //remove overlays on pan
@@ -628,7 +618,11 @@ typedef enum {
             [callouts removeAllObjects];    
         }
         [self.map removeOverlay:gCircle];
-        //ping server for new data
+        //ping server for new spot data
+        
+        //load the new data to the map
+        
+        //asynchronously ping server for street data
     }
     
     
@@ -663,12 +657,27 @@ typedef enum {
         
     } else if (zoomState==kSpotZoomLevel) {
         if([gestureRecognizer numberOfTouches]==1){
-            //snap the circle to the closest polyline.  
+            //snap the circle to the closest polyline.
+            
+            /* SnapToLine(coordinates, segment) returns coordinates to snap to. */
+            NSArray* data = [self loadBlockData];
+            NSDictionary* line = [data objectAtIndex:1];
+            NSArray *raw_waypoints = [[line objectForKey:@"line"] componentsSeparatedByString:@";"];
+            CLLocationCoordinate2D waypoints[raw_waypoints.count];
+            int i=0;
+            for (id raw_waypoint in raw_waypoints) {
+                NSArray *coordinates = [raw_waypoint componentsSeparatedByString:@","];
+                CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake([[coordinates objectAtIndex:0] floatValue], [[coordinates objectAtIndex:1] floatValue]);
+                waypoints[i++] = coordinate;
+            }
+            CLLocationCoordinate2D snaploc = [self getProjectedPoint:&coord A:&waypoints[0] B:&waypoints[1]];
+            /* end snap stuff */
+            
             if([self tappedCalloutAtCoords:&coord]){
             }else{
-                [self showSelectionCircle:&coord];                
+                [self showSelectionCircle:&snaploc];                
             }
-
+            
         }
     }
 }
@@ -780,7 +789,8 @@ typedef enum {
     [self showSpotLevelWithCoordinates:&point];
 }
 - (IBAction)noneButtonPressed:(id)sender {
-    [self clearMap];
+    NSArray* test = [NetworkLayer callGridWithNW:nil SE:nil];
+    [managedObjectContext insertObject:test.lastObject];    
 }
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {   
     return YES;
@@ -818,7 +828,14 @@ typedef enum {
 
 - (void)viewDidLoad{
     [super viewDidLoad];
-    
+    if(!dataLayer){
+        //prepare the data layer for fetching from core data
+        NSLog(@"setting data layer...\n");    
+        dataLayer = [((PQAppDelegate*)[[UIApplication sharedApplication] delegate]) getDataLayer];
+    }
+    if(dataLayer.managedObjectContext.persistentStoreCoordinator.managedObjectModel!=nil){
+        NSLog(@"dl set complete.\n");
+    }
     //check the current zoom level to set the ZOOM_STATE integer.  
     if (self.map.bounds.size.width > STREET_MAP_SPAN) {
         zoomState = kGridZoomLevel;
@@ -862,8 +879,7 @@ typedef enum {
                                    initWithTarget:self action:@selector(handlePanGesture:)];
     pgr.delegate = self;
     [self.map addGestureRecognizer:pgr];
-        
-    //[self gestureRecognizer:tgr shouldRecognizeSimultaneouslyWithGestureRecognizer:pgr];
+    
     //SETUP LOCATION manager
     locationManager=[[CLLocationManager alloc] init];
     locationManager.delegate=self;
