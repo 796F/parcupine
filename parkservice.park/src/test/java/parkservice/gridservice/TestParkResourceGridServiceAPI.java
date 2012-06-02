@@ -25,7 +25,11 @@ import parkservice.resources.ParkResource;
 import junit.framework.TestCase;
 
 public class TestParkResourceGridServiceAPI extends TestCase {
-
+	
+	// TODO this field will likely change a lot
+	private long testUserId = 14;
+	
+	
 	public void testBasicFindGridByGPSCoor() {
 		ParkResource parkResource = new ParkResource();
 		
@@ -155,6 +159,8 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		GetStreetInfoResponse[] response = parkResource.getStreetInfo(jaxbTestRequest);
 		assertNotNull(response);
 		assertTrue(response.length > 0);
+		assertTrue(response[0].getParkingSpace().get(0).getSpaceOrder() > -1);
+		assertTrue(response[0].getParkingSpace().get(0).getSpaceOrder() < 100);
 		
 		// test for search with no result
 		topLeft.setLatitude(0.0);
@@ -312,11 +318,8 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		FindGridsByGPSCoordinateResponse[] responseGrid = parkResource.findGridByGPSCoor(jaxbTestGridRequest);
 		GetStreetInfoResponse[] responseStreet = parkResource.getStreetInfo(jaxbTestStreetRequest);
 		long spaceToParkAtId = responseStreet[0].getParkingSpace().get(0).getSpaceId();
-		long streetToParkAtId = responseStreet[0].getStreetId();
-		long gridToParkAtId = responseGrid[0].getGridId();
-		
-		// TODO this field will likely change alot
-		long userId = 278;
+		//long streetToParkAtId = responseStreet[0].getStreetId();
+		//long gridToParkAtId = responseGrid[0].getGridId();
 		
 		responseStreet = parkResource.getStreetInfo(jaxbTestStreetRequest);
 		assertEquals(responseStreet[0].getFillRate(), 0.0);
@@ -328,7 +331,7 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		pi.setParkingBeganTime(new Date(System.currentTimeMillis()));
 		pi.setParkingEndTime(new Date(System.currentTimeMillis() + 5000));
 		pi.setSpaceId(spaceToParkAtId);
-		pi.setUserId(userId);
+		pi.setUserId(testUserId);
 		// set the payment type;
 		Payment payment = new Payment();
 		payment.setAmountPaidCents(15);
@@ -385,13 +388,11 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 	}
 	
 	
-	public void testGridServiceUpdateThreadIsRunning() {
-		
-		ParkResource parkResource = new ParkResource();
+	public void _testGridServiceUpdateThreadIsRunning() {
 		try {
 			Thread.sleep(61000);
 		} catch (InterruptedException ie) {}
-		// expecting to see 1 system.out.println messages
+		// expecting to see 2 system.out.println messages
 	}
 	
 }

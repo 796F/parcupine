@@ -20,6 +20,7 @@ public class ParkingSpace implements Serializable {
 	private String spaceName;
 	private double latitude = -10000.00;
 	private double longitude = -10000.00;
+	private int ordering = 999000;
 	
 	/**
 	 * @return the id
@@ -104,5 +105,19 @@ public class ParkingSpace implements Serializable {
 	 */
 	public void setLongitude(double longitude) {
 		this.longitude = longitude;
+	}
+
+	/**
+	 * @return
+	 */
+	public int getOrdering() {
+		return ordering ;
+	}
+	
+	/**
+	 * @param ordering
+	 */
+	public void setOrdering(int ordering) {
+		this.ordering = ordering;
 	}
 }

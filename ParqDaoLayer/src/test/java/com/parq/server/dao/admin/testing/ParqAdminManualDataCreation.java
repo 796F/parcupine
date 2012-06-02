@@ -47,11 +47,11 @@ public class ParqAdminManualDataCreation extends TestCase {
 		helper.setGeoCoordinateForParkingLocation(parkingLocationIdentifier,
 				latitude, longitude);
 		helper.insertParkingSpace(parkingLocationIdentifier,
-				parkingSpaceIdentifier1, parkingSpaceName1, parkingSpaceLevel, latitude, longitude);
+				parkingSpaceIdentifier1, parkingSpaceName1, parkingSpaceLevel, latitude, longitude, 1);
 		helper.insertParkingSpace(parkingLocationIdentifier,
-				parkingSpaceIdentifier2, parkingSpaceName2, parkingSpaceLevel, latitude, longitude);
+				parkingSpaceIdentifier2, parkingSpaceName2, parkingSpaceLevel, latitude, longitude, 2);
 		helper.insertParkingSpace(parkingLocationIdentifier,
-				parkingSpaceIdentifier3, parkingSpaceName3, parkingSpaceLevel, latitude, longitude);
+				parkingSpaceIdentifier3, parkingSpaceName3, parkingSpaceLevel, latitude, longitude, 3);
 		helper.setParkingLocationRate(parkingRateInCents, LOCATION_RATE_PRIORITY,
 				parkingLocationIdentifier, parkingMinutesIncresments);
 		

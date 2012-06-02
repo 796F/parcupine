@@ -519,6 +519,7 @@ public class ParkResource {
 				spaceWithStatus.setStreetId(pl.getLocationId());
 				spaceWithStatus.setLatitude(ps.getLatitude());
 				spaceWithStatus.setLongitude(ps.getLongitude());
+				spaceWithStatus.setSpaceOrder(ps.getOrdering());
 				// set the parking space status
 				if (pl.isSpaceAvaliable(ps.getSpaceId())) {
 					spaceWithStatus.setStatus("available");
