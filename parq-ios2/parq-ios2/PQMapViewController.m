@@ -268,10 +268,19 @@ typedef enum {
     return false;
 }
 
+-(void) clearCallouts{
+    [self.map removeAnnotations:callouts];
+    [self.map removeOverlays:calloutLines];   
+    [calloutLines removeAllObjects];
+    [callouts removeAllObjects];   
+}
+
 - (void)clearMap {
     [self clearGrids];
     [self clearStreets];
     [self clearSpots];
+    [self clearCallouts];
+    [self.map removeOverlay:gCircle];
 }
 
 - (void)clearGrids {
@@ -423,7 +432,8 @@ typedef enum {
 
 
 - (void)showSpotLevelWithCoordinates:(CLLocationCoordinate2D *)coord {
-    [self clearMap];
+    [self clearStreets];
+    [self clearGrids];
     
     NSArray* data = [self loadSpotData];
     if(spots==NULL){
@@ -612,10 +622,7 @@ typedef enum {
     }else{
         if(callouts.count >0){
             //remove overlays on pan
-            [self.map removeAnnotations:callouts];
-            [self.map removeOverlays:calloutLines];   
-            [calloutLines removeAllObjects];
-            [callouts removeAllObjects];    
+            [self clearCallouts]; 
         }
         [self.map removeOverlay:gCircle];
         //ping server for new spot data
@@ -659,7 +666,11 @@ typedef enum {
         if([gestureRecognizer numberOfTouches]==1){
             //snap the circle to the closest polyline.
             
-            /* SnapToLine(coordinates, segment) returns coordinates to snap to. */
+            /* 
+             SnapToLine(coordinates, segment) returns coordinates to snap to. 
+             Should look in core data for all segments associated with few nearby spots, then
+             run calculations, and compare distance.  
+             */
             NSArray* data = [self loadBlockData];
             NSDictionary* line = [data objectAtIndex:1];
             NSArray *raw_waypoints = [[line objectForKey:@"line"] componentsSeparatedByString:@";"];

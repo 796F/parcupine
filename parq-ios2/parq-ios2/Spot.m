@@ -19,4 +19,6 @@
 @dynamic streetId;
 @dynamic street;
 
+
+
 @end

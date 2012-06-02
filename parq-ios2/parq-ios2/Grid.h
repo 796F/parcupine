@@ -1,5 +1,5 @@
 //
-//  Spot.h
+//  Grid.h
 //  Parq
 //
 //  Created by Michael Xia on 6/1/12.
@@ -9,17 +9,17 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class Street;
 
-@interface Spot : NSManagedObject
+@interface Grid : NSManagedObject{
+    NSNumber* gridId;
+    NSNumber* lat;
+    NSNumber* lon;
+}
 
+@property (nonatomic, retain) NSNumber * gridId;
 @property (nonatomic, retain) NSNumber * lat;
 @property (nonatomic, retain) NSNumber * lon;
-@property (nonatomic, retain) NSNumber * segNumber;
-@property (nonatomic, retain) NSNumber * spotNumber;
-@property (nonatomic, retain) NSNumber * streetId;
-@property (nonatomic, retain) Street *street;
 
-
+-(id) initWithGridId:(long) gid Latitude:(double)lat Longitude:(double)lon;
 
 @end
