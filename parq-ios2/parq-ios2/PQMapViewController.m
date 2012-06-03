@@ -434,7 +434,8 @@ typedef enum {
 - (void)showSpotLevelWithCoordinates:(CLLocationCoordinate2D *)coord {
     [self clearStreets];
     [self clearGrids];
-    
+    [self clearSpots];
+
     NSArray* data = [self loadSpotData];
     if(spots==NULL){
         spots = [[NSMutableArray alloc] init];
