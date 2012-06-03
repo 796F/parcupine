@@ -119,13 +119,17 @@
     if (__managedObjectModel != nil) {
         return __managedObjectModel;
     }
-    NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"Parq" withExtension:@"momd"];
-    __managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
+    //the following works only in simulator, but not on actual devices.  
+//    NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"Parq" withExtension:@"momd"];
+//    __managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
+    
+    __managedObjectModel = [NSManagedObjectModel mergedModelFromBundles:nil] ;    
     
     if(__managedObjectModel==nil){
         
         NSLog(@"mom function nil\n");
     }
+    
     
     return __managedObjectModel;
 }
