@@ -1,5 +1,5 @@
 //
-//  Grid.h
+//  Waypoint.h
 //  Parq
 //
 //  Created by Michael Xia on 6/4/12.
@@ -9,11 +9,12 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
+@class Street;
 
-@interface Grid : NSManagedObject
+@interface Waypoint : NSManagedObject
 
-@property (nonatomic, retain) NSNumber * gridId;
 @property (nonatomic, retain) NSNumber * lat;
 @property (nonatomic, retain) NSNumber * lon;
+@property (nonatomic, retain) Street *parentStreet;
 
 @end

@@ -39,6 +39,15 @@
 		87E1BE64154888CE0095E92D /* grey_tabs_bar.png in Resources */ = {isa = PBXBuildFile; fileRef = 87E1BE63154888CE0095E92D /* grey_tabs_bar.png */; };
 		87E1BE67154A08D80095E92D /* PQParkingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 87E1BE66154A08D80095E92D /* PQParkingViewController.m */; };
 		87E1BE69154B35270095E92D /* payg.png in Resources */ = {isa = PBXBuildFile; fileRef = 87E1BE68154B35270095E92D /* payg.png */; };
+		FC48560A1577B9F4002C4479 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC4856091577B9F4002C4479 /* CoreData.framework */; };
+		FC48560E1577C222002C4479 /* Parq.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = FC48560C1577C222002C4479 /* Parq.xcdatamodeld */; };
+		FC4856301577FD37002C4479 /* DataLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = FC48562F1577FD37002C4479 /* DataLayer.m */; };
+		FC77275A157C2C8C005DEBEA /* Segment.m in Sources */ = {isa = PBXBuildFile; fileRef = FC772759157C2C8C005DEBEA /* Segment.m */; };
+		FC7CE865157943630059EE43 /* NetworkLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = FC7CE864157943630059EE43 /* NetworkLayer.m */; };
+		FCF937A7157D30F10062A5A1 /* Grid.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF937A6157D30F10062A5A1 /* Grid.m */; };
+		FCF937AA157D31030062A5A1 /* Street.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF937A9157D31030062A5A1 /* Street.m */; };
+		FCF937AD157D31180062A5A1 /* Spot.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF937AC157D31180062A5A1 /* Spot.m */; };
+		FCF937B0157D31350062A5A1 /* Waypoint.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF937AF157D31350062A5A1 /* Waypoint.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -53,7 +62,7 @@
 		8703ACB91513F841002FE357 /* PQAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PQAppDelegate.h; sourceTree = "<group>"; };
 		8703ACBA1513F841002FE357 /* PQAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PQAppDelegate.m; sourceTree = "<group>"; };
 		8703ACBD1513F841002FE357 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
-		8703ACBF1513F841002FE357 /* PQMapViewController.h */ = {isa = PBXFileReference; path = PQMapViewController.h; sourceTree = "<group>"; };
+		8703ACBF1513F841002FE357 /* PQMapViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PQMapViewController.h; sourceTree = "<group>"; };
 		8703ACC01513F841002FE357 /* PQMapViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PQMapViewController.m; sourceTree = "<group>"; };
 		8703ACC71513F9D5002FE357 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		8703ACC91513FB46002FE357 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
@@ -85,6 +94,22 @@
 		87E1BE65154A08D70095E92D /* PQParkingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PQParkingViewController.h; sourceTree = "<group>"; };
 		87E1BE66154A08D80095E92D /* PQParkingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PQParkingViewController.m; sourceTree = "<group>"; };
 		87E1BE68154B35270095E92D /* payg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = payg.png; sourceTree = "<group>"; };
+		FC4856091577B9F4002C4479 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		FC48560D1577C222002C4479 /* parq.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = parq.xcdatamodel; sourceTree = "<group>"; };
+		FC48562E1577FD37002C4479 /* DataLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataLayer.h; sourceTree = "<group>"; };
+		FC48562F1577FD37002C4479 /* DataLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataLayer.m; sourceTree = "<group>"; };
+		FC772758157C2C8C005DEBEA /* Segment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Segment.h; sourceTree = "<group>"; };
+		FC772759157C2C8C005DEBEA /* Segment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Segment.m; sourceTree = "<group>"; };
+		FC7CE863157943620059EE43 /* NetworkLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkLayer.h; sourceTree = "<group>"; };
+		FC7CE864157943630059EE43 /* NetworkLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NetworkLayer.m; sourceTree = "<group>"; };
+		FCF937A5157D30F10062A5A1 /* Grid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Grid.h; path = "parq-ios2/Grid.h"; sourceTree = "<group>"; };
+		FCF937A6157D30F10062A5A1 /* Grid.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Grid.m; path = "parq-ios2/Grid.m"; sourceTree = "<group>"; };
+		FCF937A8157D31030062A5A1 /* Street.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Street.h; path = "parq-ios2/Street.h"; sourceTree = "<group>"; };
+		FCF937A9157D31030062A5A1 /* Street.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Street.m; path = "parq-ios2/Street.m"; sourceTree = "<group>"; };
+		FCF937AB157D31180062A5A1 /* Spot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Spot.h; path = "parq-ios2/Spot.h"; sourceTree = "<group>"; };
+		FCF937AC157D31180062A5A1 /* Spot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Spot.m; path = "parq-ios2/Spot.m"; sourceTree = "<group>"; };
+		FCF937AE157D31350062A5A1 /* Waypoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Waypoint.h; path = "parq-ios2/Waypoint.h"; sourceTree = "<group>"; };
+		FCF937AF157D31350062A5A1 /* Waypoint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Waypoint.m; path = "parq-ios2/Waypoint.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,6 +117,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FC48560A1577B9F4002C4479 /* CoreData.framework in Frameworks */,
 				8730EB23151BBD1500E7A7F8 /* libobjc.A.dylib in Frameworks */,
 				8703ACCA1513FB46002FE357 /* CoreLocation.framework in Frameworks */,
 				8703ACC81513F9D5002FE357 /* MapKit.framework in Frameworks */,
@@ -126,6 +152,7 @@
 		8703ACA91513F841002FE357 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				FC4856091577B9F4002C4479 /* CoreData.framework */,
 				8730EB22151BBD1500E7A7F8 /* libobjc.A.dylib */,
 				8703ACC91513FB46002FE357 /* CoreLocation.framework */,
 				8703ACC71513F9D5002FE357 /* MapKit.framework */,
@@ -139,6 +166,7 @@
 		8703ACB01513F841002FE357 /* parq-ios2 */ = {
 			isa = PBXGroup;
 			children = (
+				FC48560C1577C222002C4479 /* Parq.xcdatamodeld */,
 				87AE9EFA152F918300069153 /* MKShape+Color.h */,
 				87AE9EFB152F918300069153 /* MKShape+Color.m */,
 				8703ACB91513F841002FE357 /* PQAppDelegate.h */,
@@ -153,6 +181,12 @@
 				871E20FC152CD54C00D9452A /* UIColor+Parq.h */,
 				871E20FD152CD54C00D9452A /* UIColor+Parq.m */,
 				8703ACB11513F841002FE357 /* Supporting Files */,
+				FC48562E1577FD37002C4479 /* DataLayer.h */,
+				FC48562F1577FD37002C4479 /* DataLayer.m */,
+				FC7CE863157943620059EE43 /* NetworkLayer.h */,
+				FC7CE864157943630059EE43 /* NetworkLayer.m */,
+				FC772758157C2C8C005DEBEA /* Segment.h */,
+				FC772759157C2C8C005DEBEA /* Segment.m */,
 			);
 			path = "parq-ios2";
 			sourceTree = "<group>";
@@ -171,6 +205,7 @@
 		8703ACDF1513FC84002FE357 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				FC7CE851157902630059EE43 /* Model Class */,
 				87E1BE72154B52280095E92D /* Fonts */,
 				8703ACE01513FC8E002FE357 /* Images */,
 			);
@@ -226,6 +261,21 @@
 			name = Fonts;
 			sourceTree = "<group>";
 		};
+		FC7CE851157902630059EE43 /* Model Class */ = {
+			isa = PBXGroup;
+			children = (
+				FCF937AE157D31350062A5A1 /* Waypoint.h */,
+				FCF937AF157D31350062A5A1 /* Waypoint.m */,
+				FCF937AB157D31180062A5A1 /* Spot.h */,
+				FCF937AC157D31180062A5A1 /* Spot.m */,
+				FCF937A8157D31030062A5A1 /* Street.h */,
+				FCF937A9157D31030062A5A1 /* Street.m */,
+				FCF937A5157D30F10062A5A1 /* Grid.h */,
+				FCF937A6157D30F10062A5A1 /* Grid.m */,
+			);
+			name = "Model Class";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -252,7 +302,7 @@
 		8703AC9D1513F841002FE357 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0420;
+				LastUpgradeCheck = 0430;
 				ORGANIZATIONNAME = "Massachusetts Institute of Technology";
 			};
 			buildConfigurationList = 8703ACA01513F841002FE357 /* Build configuration list for PBXProject "Parq" */;
@@ -313,6 +363,14 @@
 				8791F9CE153383E500525267 /* CalloutMapAnnotationView.m in Sources */,
 				8791F9D415338DD300525267 /* CalloutMapAnnotation.m in Sources */,
 				87E1BE67154A08D80095E92D /* PQParkingViewController.m in Sources */,
+				FC48560E1577C222002C4479 /* Parq.xcdatamodeld in Sources */,
+				FC4856301577FD37002C4479 /* DataLayer.m in Sources */,
+				FC7CE865157943630059EE43 /* NetworkLayer.m in Sources */,
+				FC77275A157C2C8C005DEBEA /* Segment.m in Sources */,
+				FCF937A7157D30F10062A5A1 /* Grid.m in Sources */,
+				FCF937AA157D31030062A5A1 /* Street.m in Sources */,
+				FCF937AD157D31180062A5A1 /* Spot.m in Sources */,
+				FCF937B0157D31350062A5A1 /* Waypoint.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -427,6 +485,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		FC48560C1577C222002C4479 /* Parq.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				FC48560D1577C222002C4479 /* parq.xcdatamodel */,
+			);
+			currentVersion = FC48560D1577C222002C4479 /* parq.xcdatamodel */;
+			name = Parq.xcdatamodeld;
+			path = ../parq.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 8703AC9D1513F841002FE357 /* Project object */;
 }

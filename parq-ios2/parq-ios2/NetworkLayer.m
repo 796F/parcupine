@@ -33,10 +33,10 @@
                       nil];
     NSMutableArray* gridArr = [[NSMutableArray alloc] initWithCapacity:grids.count];
     for(id dic in grids){
-        Grid* t = [[Grid alloc] initWithGridId:[[dic objectForKey:@"gridId"] longLongValue]
-                                      Latitude:[[dic objectForKey:@"lat"] doubleValue] 
-                                     Longitude:[[dic objectForKey:@"lon"] doubleValue]];
-        [gridArr addObject:t];
+//        Grid* t = [[Grid alloc] initWithGridId:[[dic objectForKey:@"gridId"] longLongValue]
+//                                      Latitude:[[dic objectForKey:@"lat"] doubleValue] 
+//                                     Longitude:[[dic objectForKey:@"lon"] doubleValue]];
+//        [gridArr addObject:t];
     }
     return gridArr; 
 }

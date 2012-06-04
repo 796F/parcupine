@@ -37,6 +37,11 @@ typedef enum {
     kSpotZoomLevel
 } ZoomLevel;
 
+typedef struct{
+    CLLocationCoordinate2D A;
+    CLLocationCoordinate2D B;
+} SegTwo;
+
 @interface PQMapViewController ()
 @property (strong, nonatomic) UIView *disableViewOverlay;
 @property (strong, nonatomic) UIBarButtonItem *leftBarButton;
@@ -69,7 +74,7 @@ typedef enum {
 }
 
 - (NSArray*)loadGridData {
-
+    
     
     return [NSArray arrayWithObjects:
             [[NSDictionary alloc] initWithObjectsAndKeys:@"42.350393,-71.104159", @"nw_corner", @"42.360393,-71.114159", @"se_corner", [NSNumber numberWithInt:0], @"color", nil],
@@ -85,15 +90,36 @@ typedef enum {
 }
 
 - (NSArray*)loadBlockData {
-    
-    return [NSArray arrayWithObjects:
-            [[NSDictionary alloc] initWithObjectsAndKeys:@"42.36441,-71.113901;42.365203,-71.104846", @"line", [NSNumber numberWithInt:0], @"color", nil],
-            [[NSDictionary alloc] initWithObjectsAndKeys:@"42.365399,-71.110897;42.364751,-71.110771", @"line", [NSNumber numberWithInt:4], @"color", nil], nil];
-    
+    NSArray* data = [NSArray arrayWithObjects:
+            [[NSDictionary alloc] initWithObjectsAndKeys:@"42.364551,-71.113099;42.364753,-71.110776", @"line", [NSNumber numberWithInt:0], @"color", nil],
+            [[NSDictionary alloc] initWithObjectsAndKeys:@"42.36643,-71.111047;42.363285,-71.110543", @"line", [NSNumber numberWithInt:1], @"color", nil],
+            [[NSDictionary alloc] initWithObjectsAndKeys:@"42.365352,-71.112211;42.364904,-71.112343", @"line", [NSNumber numberWithInt:2], @"color", nil],
+            [[NSDictionary alloc] initWithObjectsAndKeys:@"42.364904,-71.112343;42.364618,-71.112311", @"line", [NSNumber numberWithInt:0], @"color", nil],
+            [[NSDictionary alloc] initWithObjectsAndKeys:@"42.365352,-71.112211;42.365294,-71.111857", @"line", [NSNumber numberWithInt:4], @"color", nil],
+            [[NSDictionary alloc] initWithObjectsAndKeys:@"42.365294,-71.111857;42.365383,-71.110889", @"line", [NSNumber numberWithInt:1], @"color", nil],
+            [[NSDictionary alloc] initWithObjectsAndKeys:@"42.36532,-71.111565;42.366043,-71.111667", @"line", [NSNumber numberWithInt:3], @"color", nil],
+            [[NSDictionary alloc] initWithObjectsAndKeys:@"42.366043,-71.111667;42.36622,-71.111839", @"line", [NSNumber numberWithInt:3], @"color", nil],
+            [[NSDictionary alloc] initWithObjectsAndKeys:@"42.36622,-71.111839;42.366392,-71.112826", @"line", [NSNumber numberWithInt:3], @"color", nil],
+            [[NSDictionary alloc] initWithObjectsAndKeys:@"42.366788,-71.11193;42.366412,-71.111031", @"line", [NSNumber numberWithInt:0], @"color", nil],nil];
+
+    NSMutableArray* segList = [[NSMutableArray alloc] initWithCapacity:2];
+    for(id line in data){
+        NSArray *raw_waypoints = [[line objectForKey:@"line"] componentsSeparatedByString:@";"];
+        CLLocationCoordinate2D waypoints[raw_waypoints.count];
+        int i=0;
+        for (id raw_waypoint in raw_waypoints) {
+            NSArray *coordinates = [raw_waypoint componentsSeparatedByString:@","];
+            CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake([[coordinates objectAtIndex:0] floatValue], [[coordinates objectAtIndex:1] floatValue]);
+            waypoints[i++] = coordinate;
+        }
+        Segment* x =[[Segment alloc] initWithPointsA:&waypoints[0] andB:&waypoints[1]];
+        [segList addObject:x];
+    }
+    return segList;
 }
 
 -(NSArray*) loadSpotData {
-    return [NSArray arrayWithObjects:
+    NSArray* data= [NSArray arrayWithObjects:
             @"42.365354,-71.110843,1,1410",
             @"42.365292,-71.110835,1,1412",
             @"42.365239,-71.110825,1,1414",
@@ -120,6 +146,13 @@ typedef enum {
             @"42.364846,-71.110835,0,1431",
             @"42.364799,-71.110830,1,1433",
             nil];
+    NSMutableArray* spotList = [[NSMutableArray alloc] initWithCapacity:data.count];
+    for(id spot in data){
+        
+        
+        
+    }
+    return spotList;
 }
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
@@ -129,6 +162,8 @@ typedef enum {
         //if yes, store the destination's lat/lon for return launch and start gps app.  
         NSString* destination =[NSString stringWithFormat:@"http://maps.google.com/maps?daddr=Spot+%d@%1.2f,%1.2f&saddr=Current+Location@%1.2f,%1.2f", 1412, 41.343, -74.115, 43.124, -72.31552];
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:destination]];
+    
+    
     }else if(alertView.tag == CALLOUT_TAPPED && alertView.firstOtherButtonIndex==buttonIndex){
         
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
@@ -138,29 +173,54 @@ typedef enum {
         vcTop.parent = self;
         [self presentModalViewController:vc animated:YES];
         
-        
     }
 }
+// unused now.  originally intended for snap to street.  
+//- (double) dot_prodX1:(double)x1 Y1:(double)y1 X2:(double)x2 Y2:(double)y2 {
+//    return x1*x2 + y1*y2;
+//}
+//
+//-(double) dot_relative_to_P:(CLLocationCoordinate2D*)p V:(CLLocationCoordinate2D*)v W:(CLLocationCoordinate2D*)w{
+//    return [self dot_prodX1:(*p).latitude - (*v).latitude 
+//                         Y1:(*p).longitude - (*v).longitude 
+//                         X2:(*v).latitude - (*w).latitude 
+//                         Y2:(*v).longitude - (*w).longitude];
+//}
+//
+//- (double) l_sqrdV:(CLLocationCoordinate2D*)v W:(CLLocationCoordinate2D*) w{
+//    return ((*v).latitude-(*w).latitude)*((*v).latitude-(*w).latitude) 
+//    + ((*v).longitude - (*w).longitude)*((*v).longitude - (*w).longitude);
+//}
 
-- (double) dot_prodX1:(double)x1 Y1:(double)y1 X2:(double)x2 Y2:(double)y2 {
-    return x1*x2 + y1*y2;
-}
-
--(double) dot_relative_to_P:(CLLocationCoordinate2D*)p V:(CLLocationCoordinate2D*)v W:(CLLocationCoordinate2D*)w{
-    return [self dot_prodX1:(*p).latitude - (*v).latitude 
-                         Y1:(*p).longitude - (*v).longitude 
-                         X2:(*v).latitude - (*w).latitude 
-                         Y2:(*v).longitude - (*w).longitude];
-}
-
-- (double) l_sqrdV:(CLLocationCoordinate2D*)v W:(CLLocationCoordinate2D*) w{
-    return ((*v).latitude-(*w).latitude)*((*v).latitude-(*w).latitude) 
-    + ((*v).longitude - (*w).longitude)*((*v).longitude - (*w).longitude);
+//separates points for a segment to left and right, uses first segment if multiple exist.  
+-(CLLocationCoordinate2D*) getLeftAndRightAveragesForSegment:(Segment*)seg andSpots:(NSArray*)spotList{
+    double left_coords[2] = {0,0};
+    double right_coords[2] = {0,0};
+    int left_count = 0;
+    int right_count = 0;
+    bool isLeftSide = false;
+    for(id spot in spotList){
+        //for each spot inside the grey circle, calculate the projected point.  
+        CLLocationCoordinate2D* segment = [seg getSegment];
+        CLLocationCoordinate2D point = [self getProjectedPoint:(CLLocationCoordinate2D*)spot A:&segment[0] B:&segment[1]];
+        //determine from that, what side of the street a point lays.  
+        
+        //add it to the left or right value depending
+        if(isLeftSide){
+            left_coords[0] = 
+            left_count++;
+        }else{
+            
+        }
+    }
+    CLLocationCoordinate2D* averages = malloc(sizeof(CLLocationCoordinate2D)*2);
+    averages[0] = CLLocationCoordinate2DMake(0, 0);
+    averages[1] = CLLocationCoordinate2DMake(1, 1);
+    return averages;
 }
 
 - (NSArray *)calloutBubblePlacement:(CLLocationCoordinate2D *)selectionCenter withR:(CLLocationDistance) radius{
     //using the street information, snap to the street via geometric projection 
-    
     
     CLLocation* center = [[CLLocation alloc] initWithLatitude:(*selectionCenter).latitude longitude:(*selectionCenter).longitude];
     
@@ -240,8 +300,8 @@ typedef enum {
                 }
             }
             NSDictionary* add = [[NSDictionary alloc] initWithObjectsAndKeys:[[CalloutMapAnnotation alloc] initWithLatitude:callout_lat                                         andLongitude:callout_lon
-                    andTitle:[point objectAtIndex:3]
-                   andCorner:corner], @"callout",spot_loc, @"spot", nil];
+                                                                                                                   andTitle:[point objectAtIndex:3]
+                                                                                                                  andCorner:corner], @"callout",spot_loc, @"spot", nil];
             
             [results addObject:add];
         }
@@ -436,7 +496,7 @@ typedef enum {
     [self clearStreets];
     [self clearGrids];
     [self clearSpots];
-
+    
     NSArray* data = [self loadSpotData];
     if(spots==NULL){
         spots = [[NSMutableArray alloc] init];
@@ -478,18 +538,24 @@ typedef enum {
 
 - (void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated {
     //no longer getting called after user taps callout bubble....
-
-    double currentSpan = mapView.region.span.latitudeDelta;
     
+    double currentSpan = mapView.region.span.latitudeDelta;
+    CLLocationCoordinate2D center = mapView.centerCoordinate;
     if (currentSpan>=STREET_MAP_SPAN) {
-        NSLog(@"GRID:currSpan: %f\n", mapView.region.span.latitudeDelta);
+        //NSLog(@"GRID:currSpan: %f\n", mapView.region.span.latitudeDelta);
         zoomState = kGridZoomLevel;
+        [self showGridLevelWithCoordinates:&center];
+        [self showAvailabilitySelectionView];
     } else if (currentSpan>=SPOT_MAP_SPAN) {
-        NSLog(@"Block:currSpan: %f\n", mapView.region.span.latitudeDelta);
+        //NSLog(@"Block:currSpan: %f\n", mapView.region.span.latitudeDelta);
         zoomState = kStreetZoomLevel;
+        [self showStreetLevelWithCoordinates:&center];
+        [self showAvailabilitySelectionView];
     } else {        
         //NSLog(@"currSpan: %f\n", mapView.region.span.latitudeDelta);
         zoomState = kSpotZoomLevel;
+        [self showSpotLevelWithCoordinates:&center];
+        [self showSpotSelectionViews];
         
     }
 }
@@ -609,8 +675,9 @@ typedef enum {
     double new_x = (m*y3 + x3 - m*y1 + m*m*x1) / (m*m+1);
     double new_y = m*new_x + b1;
     //check validity of projected point.  
+    
     if((new_y > y1 && new_y > y2) || (new_y < y1 && new_y < y2)){
-        new_x = -1;
+        new_x = 99;
     }
     return CLLocationCoordinate2DMake(new_x, new_y);
 }
@@ -636,26 +703,20 @@ typedef enum {
 -(void)handlePanGesture:(UIGestureRecognizer*)gestureRecognizer{
     if(gestureRecognizer.state != UIGestureRecognizerStateEnded)
         return;
-    CLLocationCoordinate2D center = [map centerCoordinate];
     if(zoomState == kGridZoomLevel){
-        [self showGridLevelWithCoordinates:&center];
-        [self showAvailabilitySelectionView];
         //ping server for new data with coordinates.  
     }else if(zoomState == kStreetZoomLevel){
-        [self showStreetLevelWithCoordinates:&center];
-        [self showAvailabilitySelectionView];
+        
         //ping server for new street data with coordinates
     }else{
         if(callouts.count >0){
             //remove overlays on pan
             [self clearCallouts]; 
         }
-
+        
         //ping server for new spot data
         
         //load the new data to the map
-        [self showSpotLevelWithCoordinates:&center];
-        [self showSpotSelectionViews];
         //asynchronously ping server for street data
         [self.map removeOverlay:gCircle];
     }
@@ -693,32 +754,12 @@ typedef enum {
     } else if (zoomState==kSpotZoomLevel) {
         if([gestureRecognizer numberOfTouches]==1){
             //snap the circle to the closest polyline.
-            
-            /* 
-             SnapToLine(coordinates, segment) returns coordinates to snap to. 
-             Should look in core data for all segments associated with few nearby spots, then
-             run calculations, and compare distance.  
-             */
-            NSArray* data = [self loadBlockData];
-            NSMutableArray* segList = [[NSMutableArray alloc] initWithCapacity:2];
-            for(id line in data){
-                NSArray *raw_waypoints = [[line objectForKey:@"line"] componentsSeparatedByString:@";"];
-                CLLocationCoordinate2D waypoints[raw_waypoints.count];
-                int i=0;
-                for (id raw_waypoint in raw_waypoints) {
-                    NSArray *coordinates = [raw_waypoint componentsSeparatedByString:@","];
-                    CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake([[coordinates objectAtIndex:0] floatValue], [[coordinates objectAtIndex:1] floatValue]);
-                    waypoints[i++] = coordinate;
-                }
-                Segment* x =[[Segment alloc] initWithPointsA:&waypoints[0] andB:&waypoints[1]];
-                [segList addObject:x];
-            }
-            
+            NSArray* segList = [self loadBlockData];
             CLLocationCoordinate2D snaploc = [self snapFromCoord:&coord toSegments:segList];
             /* end snap stuff */
             if([self tappedCalloutAtCoords:&coord]){
             }else{
-                if(snaploc.latitude>0){
+                if(snaploc.latitude<90){
                     //if the result returned is valid
                     [self showSelectionCircle:&snaploc];                
                 }
@@ -835,7 +876,7 @@ typedef enum {
     [self showSpotLevelWithCoordinates:&point];
 }
 - (IBAction)noneButtonPressed:(id)sender {
-        
+    
 }
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {   
     return YES;
