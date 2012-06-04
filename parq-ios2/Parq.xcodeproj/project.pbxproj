@@ -19,6 +19,11 @@
 		8703ACCA1513FB46002FE357 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8703ACC91513FB46002FE357 /* CoreLocation.framework */; };
 		8703ACD81513FC32002FE357 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 8703ACD71513FC32002FE357 /* icon.png */; };
 		8703ACDA1513FC36002FE357 /* icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8703ACD91513FC36002FE357 /* icon@2x.png */; };
+		8705F843157D43530013DF29 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8705F842157D43530013DF29 /* CoreData.framework */; };
+		8705F84B157D44A30013DF29 /* DataLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8705F846157D43A60013DF29 /* DataLayer.m */; };
+		8705F84C157D44A30013DF29 /* Segment.m in Sources */ = {isa = PBXBuildFile; fileRef = 8705F848157D43A60013DF29 /* Segment.m */; };
+		8705F84D157D44A30013DF29 /* NetworkLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8705F84A157D44640013DF29 /* NetworkLayer.m */; };
+		8705F850157D44C00013DF29 /* Grid.m in Sources */ = {isa = PBXBuildFile; fileRef = 8705F84F157D44C00013DF29 /* Grid.m */; };
 		871E20FE152CD54C00D9452A /* UIColor+Parq.m in Sources */ = {isa = PBXBuildFile; fileRef = 871E20FD152CD54C00D9452A /* UIColor+Parq.m */; };
 		871E2104152CE02100D9452A /* settings.png in Resources */ = {isa = PBXBuildFile; fileRef = 871E2103152CE02100D9452A /* settings.png */; };
 		871E2106152CF22A00D9452A /* avail_gradient.png in Resources */ = {isa = PBXBuildFile; fileRef = 871E2105152CF22A00D9452A /* avail_gradient.png */; };
@@ -61,6 +66,15 @@
 		8703ACC91513FB46002FE357 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		8703ACD71513FC32002FE357 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
 		8703ACD91513FC36002FE357 /* icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon@2x.png"; sourceTree = "<group>"; };
+		8705F842157D43530013DF29 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		8705F845157D43A60013DF29 /* DataLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataLayer.h; sourceTree = "<group>"; };
+		8705F846157D43A60013DF29 /* DataLayer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DataLayer.m; sourceTree = "<group>"; };
+		8705F847157D43A60013DF29 /* Segment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Segment.h; sourceTree = "<group>"; };
+		8705F848157D43A60013DF29 /* Segment.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Segment.m; sourceTree = "<group>"; };
+		8705F849157D44640013DF29 /* NetworkLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkLayer.h; sourceTree = "<group>"; };
+		8705F84A157D44640013DF29 /* NetworkLayer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NetworkLayer.m; sourceTree = "<group>"; };
+		8705F84E157D44C00013DF29 /* Grid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Grid.h; sourceTree = "<group>"; };
+		8705F84F157D44C00013DF29 /* Grid.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Grid.m; sourceTree = "<group>"; };
 		871E20FC152CD54C00D9452A /* UIColor+Parq.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+Parq.h"; sourceTree = "<group>"; };
 		871E20FD152CD54C00D9452A /* UIColor+Parq.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Parq.m"; sourceTree = "<group>"; };
 		871E2103152CE02100D9452A /* settings.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = settings.png; sourceTree = "<group>"; };
@@ -98,6 +112,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8705F843157D43530013DF29 /* CoreData.framework in Frameworks */,
 				8730EB23151BBD1500E7A7F8 /* libobjc.A.dylib in Frameworks */,
 				8703ACCA1513FB46002FE357 /* CoreLocation.framework in Frameworks */,
 				8703ACC81513F9D5002FE357 /* MapKit.framework in Frameworks */,
@@ -132,6 +147,7 @@
 		8703ACA91513F841002FE357 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8705F842157D43530013DF29 /* CoreData.framework */,
 				8730EB22151BBD1500E7A7F8 /* libobjc.A.dylib */,
 				8703ACC91513FB46002FE357 /* CoreLocation.framework */,
 				8703ACC71513F9D5002FE357 /* MapKit.framework */,
@@ -145,6 +161,14 @@
 		8703ACB01513F841002FE357 /* parq-ios2 */ = {
 			isa = PBXGroup;
 			children = (
+				8705F845157D43A60013DF29 /* DataLayer.h */,
+				8705F846157D43A60013DF29 /* DataLayer.m */,
+				8705F84E157D44C00013DF29 /* Grid.h */,
+				8705F84F157D44C00013DF29 /* Grid.m */,
+				8705F847157D43A60013DF29 /* Segment.h */,
+				8705F848157D43A60013DF29 /* Segment.m */,
+				8705F849157D44640013DF29 /* NetworkLayer.h */,
+				8705F84A157D44640013DF29 /* NetworkLayer.m */,
 				87AE9EFA152F918300069153 /* MKShape+Color.h */,
 				87AE9EFB152F918300069153 /* MKShape+Color.m */,
 				8703ACB91513F841002FE357 /* PQAppDelegate.h */,
@@ -325,6 +349,10 @@
 				87E1BE67154A08D80095E92D /* PQParkingViewController.m in Sources */,
 				87418A881577D31500CACCCA /* PQParkedCarMapViewController.m in Sources */,
 				87418A9715780B1C00CACCCA /* PQParkedCarAnnotation.m in Sources */,
+				8705F84B157D44A30013DF29 /* DataLayer.m in Sources */,
+				8705F84C157D44A30013DF29 /* Segment.m in Sources */,
+				8705F84D157D44A30013DF29 /* NetworkLayer.m in Sources */,
+				8705F850157D44C00013DF29 /* Grid.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
