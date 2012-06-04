@@ -13,6 +13,7 @@
 #import "CalloutMapAnnotation.h"
 #import "CalloutMapAnnotationView.h"
 #import "NetworkLayer.h"
+#import "Segment.h"
 
 //calculation constants
 #define METERS_PER_MILE 1609.344
@@ -477,24 +478,19 @@ typedef enum {
 
 - (void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated {
     //no longer getting called after user taps callout bubble....
-    CLLocationCoordinate2D coord = mapView.centerCoordinate;
+
     double currentSpan = mapView.region.span.latitudeDelta;
     
     if (currentSpan>=STREET_MAP_SPAN) {
         NSLog(@"GRID:currSpan: %f\n", mapView.region.span.latitudeDelta);
         zoomState = kGridZoomLevel;
-        [self showGridLevelWithCoordinates:&coord];
-        [self showAvailabilitySelectionView];
     } else if (currentSpan>=SPOT_MAP_SPAN) {
         NSLog(@"Block:currSpan: %f\n", mapView.region.span.latitudeDelta);
         zoomState = kStreetZoomLevel;
-        [self showStreetLevelWithCoordinates:&coord];
-        [self showAvailabilitySelectionView];
     } else {        
-        NSLog(@"currSpan: %f\n", mapView.region.span.latitudeDelta);
+        //NSLog(@"currSpan: %f\n", mapView.region.span.latitudeDelta);
         zoomState = kSpotZoomLevel;
-        [self showSpotLevelWithCoordinates:&coord];
-        [self showSpotSelectionViews];
+        
     }
 }
 
@@ -600,37 +596,68 @@ typedef enum {
 -(CLLocationCoordinate2D) getProjectedPoint: (CLLocationCoordinate2D*) p A:(CLLocationCoordinate2D*)a B:(CLLocationCoordinate2D*) b{
     double x1 = (*b).latitude;
     double y1 = (*b).longitude;
-    double dy = y1 - (*a).longitude;
-    double dx = x1- (*a).latitude;
+    double x2 = (*a).latitude;
+    double y2 = (*a).longitude;
+    double dy = y1 - y2;
+    double dx = x1- x2;
+    double x3 = (*p).latitude;
+    double y3 = (*p).longitude;
+    
     double m = dy/dx; 
     double b1 = y1 - x1*m;
-    double x2 = (*p).latitude;
-    double y2 = (*p).longitude;
-    double new_x = (m*y2 + x2 - m*y1 + m*m*x1) / (m*m+1);
+    
+    double new_x = (m*y3 + x3 - m*y1 + m*m*x1) / (m*m+1);
     double new_y = m*new_x + b1;
+    //check validity of projected point.  
+    if((new_y > y1 && new_y > y2) || (new_y < y1 && new_y < y2)){
+        new_x = -1;
+    }
     return CLLocationCoordinate2DMake(new_x, new_y);
+}
+
+-(CLLocationCoordinate2D) snapFromCoord:(CLLocationCoordinate2D*) coord toSegments:(NSArray*) segments{
+    // each segment is CLLocationCoordinate2D points[2];
+    double min_dist = 180*180;
+    CLLocationCoordinate2D ret_coord;
+    for(id line in segments){
+        CLLocationCoordinate2D* seg = [line getSegment];
+        CLLocationCoordinate2D snaploc = [self getProjectedPoint:coord A:&seg[0] B:&seg[1]];
+        double d_lat = snaploc.latitude - (*coord).latitude;
+        double d_lon = snaploc.longitude - (*coord).longitude;
+        double dist = d_lat*d_lat + d_lon*d_lon;
+        if(dist < min_dist){
+            min_dist = dist;
+            ret_coord = snaploc;
+        }
+    }
+    return ret_coord;
 }
 
 -(void)handlePanGesture:(UIGestureRecognizer*)gestureRecognizer{
     if(gestureRecognizer.state != UIGestureRecognizerStateEnded)
         return;
+    CLLocationCoordinate2D center = [map centerCoordinate];
     if(zoomState == kGridZoomLevel){
-        
+        [self showGridLevelWithCoordinates:&center];
+        [self showAvailabilitySelectionView];
         //ping server for new data with coordinates.  
     }else if(zoomState == kStreetZoomLevel){
-    
+        [self showStreetLevelWithCoordinates:&center];
+        [self showAvailabilitySelectionView];
         //ping server for new street data with coordinates
     }else{
         if(callouts.count >0){
             //remove overlays on pan
             [self clearCallouts]; 
         }
-        [self.map removeOverlay:gCircle];
+
         //ping server for new spot data
         
         //load the new data to the map
-        
+        [self showSpotLevelWithCoordinates:&center];
+        [self showSpotSelectionViews];
         //asynchronously ping server for street data
+        [self.map removeOverlay:gCircle];
     }
     
     
@@ -673,21 +700,28 @@ typedef enum {
              run calculations, and compare distance.  
              */
             NSArray* data = [self loadBlockData];
-            NSDictionary* line = [data objectAtIndex:1];
-            NSArray *raw_waypoints = [[line objectForKey:@"line"] componentsSeparatedByString:@";"];
-            CLLocationCoordinate2D waypoints[raw_waypoints.count];
-            int i=0;
-            for (id raw_waypoint in raw_waypoints) {
-                NSArray *coordinates = [raw_waypoint componentsSeparatedByString:@","];
-                CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake([[coordinates objectAtIndex:0] floatValue], [[coordinates objectAtIndex:1] floatValue]);
-                waypoints[i++] = coordinate;
+            NSMutableArray* segList = [[NSMutableArray alloc] initWithCapacity:2];
+            for(id line in data){
+                NSArray *raw_waypoints = [[line objectForKey:@"line"] componentsSeparatedByString:@";"];
+                CLLocationCoordinate2D waypoints[raw_waypoints.count];
+                int i=0;
+                for (id raw_waypoint in raw_waypoints) {
+                    NSArray *coordinates = [raw_waypoint componentsSeparatedByString:@","];
+                    CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake([[coordinates objectAtIndex:0] floatValue], [[coordinates objectAtIndex:1] floatValue]);
+                    waypoints[i++] = coordinate;
+                }
+                Segment* x =[[Segment alloc] initWithPointsA:&waypoints[0] andB:&waypoints[1]];
+                [segList addObject:x];
             }
-            CLLocationCoordinate2D snaploc = [self getProjectedPoint:&coord A:&waypoints[0] B:&waypoints[1]];
-            /* end snap stuff */
             
+            CLLocationCoordinate2D snaploc = [self snapFromCoord:&coord toSegments:segList];
+            /* end snap stuff */
             if([self tappedCalloutAtCoords:&coord]){
             }else{
-                [self showSelectionCircle:&snaploc];                
+                if(snaploc.latitude>0){
+                    //if the result returned is valid
+                    [self showSelectionCircle:&snaploc];                
+                }
             }
             
         }
@@ -801,8 +835,7 @@ typedef enum {
     [self showSpotLevelWithCoordinates:&point];
 }
 - (IBAction)noneButtonPressed:(id)sender {
-    NSArray* test = [NetworkLayer callGridWithNW:nil SE:nil];
-    [managedObjectContext insertObject:test.lastObject];    
+        
 }
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {   
     return YES;
