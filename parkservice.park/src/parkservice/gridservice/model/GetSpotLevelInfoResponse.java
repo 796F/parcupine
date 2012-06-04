@@ -6,12 +6,12 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class GetStreetInfoResponse {
+public class GetSpotLevelInfoResponse {
 	private long streetId;
 	private double fillRate;
 	private List<ParkingSpaceWithStatus> parkingSpace;
 
-	public GetStreetInfoResponse() {
+	public GetSpotLevelInfoResponse() {
 		parkingSpace = new ArrayList<ParkingSpaceWithStatus>();
 	}
 	

@@ -10,13 +10,13 @@ import com.parq.server.dao.model.object.ParkingSpace;
 public class ParkingSpaceDao extends AbstractParqDaoParent {
 
 	private static final String sqlGetParkingSpaceBySpaceId =
-		"SELECT space_id, space_identifier, location_id, parking_level, space_name, space_order, latitude, longitude " +
+		"SELECT space_id, space_identifier, location_id, parking_level, space_name, segment, latitude, longitude " +
 		" FROM parkingspace " +
 		" WHERE space_id = ? " +
 		" AND is_deleted IS NOT TRUE"; 
 	
 	private static final String sqlGetParkingSpaceBySpaceIdentifier = 
-		"SELECT s.space_id, s.space_identifier, s.location_id, s.parking_level, s.space_name, s.space_order, s.latitude, s.longitude " +
+		"SELECT s.space_id, s.space_identifier, s.location_id, s.parking_level, s.space_name, s.segment, s.latitude, s.longitude " +
 		" FROM parkingspace s, parkinglocation l " +
 		" WHERE s.location_id = l.location_id " +
 		" AND location_identifier = ? " +
@@ -25,7 +25,7 @@ public class ParkingSpaceDao extends AbstractParqDaoParent {
 		" AND l.is_deleted IS NOT TRUE "; 
 	
 	private static final String sqlInsertParkingSpace = 
-		"INSERT INTO parkingspace (location_id, space_identifier, space_name, parking_level, latitude, longitude, space_order) " + 
+		"INSERT INTO parkingspace (location_id, space_identifier, space_name, parking_level, latitude, longitude, segment) " + 
 		" VALUE (?, ?, ?, ?, ?, ?, ?)";
 	
 	
@@ -94,7 +94,7 @@ public class ParkingSpaceDao extends AbstractParqDaoParent {
 		curSpace.setSpaceName(rs.getString("space_name"));
 		curSpace.setLatitude(rs.getDouble("latitude"));
 		curSpace.setLongitude(rs.getDouble("longitude"));
-		curSpace.setOrdering(rs.getInt("space_order"));
+		curSpace.setSegment(rs.getInt("segment"));
 		return curSpace;
 	}
 	
@@ -112,7 +112,7 @@ public class ParkingSpaceDao extends AbstractParqDaoParent {
 			pstmt.setString(4, newSpace.getParkingLevel());
 			pstmt.setDouble(5, newSpace.getLatitude());
 			pstmt.setDouble(6, newSpace.getLongitude());
-			pstmt.setInt(7, newSpace.getOrdering());
+			pstmt.setInt(7, newSpace.getSegment());
 			// System.out.println(pstmt);
 			
 			insertSuccessful = pstmt.executeUpdate() == 1;

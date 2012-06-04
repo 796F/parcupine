@@ -20,7 +20,7 @@ public class ParkingSpace implements Serializable {
 	private String spaceName;
 	private double latitude = -10000.00;
 	private double longitude = -10000.00;
-	private int ordering = 999000;
+	private int segment = -1;
 	
 	/**
 	 * @return the id
@@ -110,14 +110,14 @@ public class ParkingSpace implements Serializable {
 	/**
 	 * @return
 	 */
-	public int getOrdering() {
-		return ordering ;
+	public int getSegment() {
+		return segment ;
 	}
 	
 	/**
 	 * @param ordering
 	 */
-	public void setOrdering(int ordering) {
-		this.ordering = ordering;
+	public void setSegment(int segment) {
+		this.segment = segment;
 	}
 }

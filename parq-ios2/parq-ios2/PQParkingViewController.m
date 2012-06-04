@@ -7,6 +7,7 @@
 //
 
 #import "PQParkingViewController.h"
+#import "PQParkedCarMapViewController.h"
 #import "UIColor+Parq.h"
 
 @interface PQParkingViewController ()
@@ -59,6 +60,7 @@
 }
 
 - (IBAction)unparkNow:(id)sender {
+    /*
     timerStarted = NO;
     paygView.hidden = NO;
     addressView.hidden = YES;
@@ -69,6 +71,7 @@
     [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]].userInteractionEnabled = YES;
     [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0]].accessoryType = UITableViewCellAccessoryNone;
     [self.tableView reloadData];
+    */
     [self dismissModalViewControllerAnimated:YES];
 }
 
@@ -142,6 +145,17 @@
     prepaidFlag.hidden = NO;
     prepaidAmount.textColor = [UIColor whiteColor];
     [self activatePicker];
+}
+
+- (void)showParkedCar {
+    [self performSegueWithIdentifier:@"showParkedCar" sender:self];
+}
+
+#pragma mark - UIViewController
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.identifier isEqualToString:@"showParkedCar"]) {
+        PQParkedCarMapViewController *parkedCarVC = [segue destinationViewController];
+    }
 }
 
 #pragma mark - Bar Button actions
@@ -293,6 +307,10 @@
         limitValue.text = @"1";
         limitUnit.text = @"hour";
     }
+
+    // Gesture recognizer for "See map" table view cell
+    UITapGestureRecognizer *seeMapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showParkedCar)];
+    [self.seeMapView addGestureRecognizer:seeMapRecognizer];
 }
 
 - (void)viewDidUnload

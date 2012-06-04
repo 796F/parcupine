@@ -19,12 +19,19 @@
 		8703ACCA1513FB46002FE357 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8703ACC91513FB46002FE357 /* CoreLocation.framework */; };
 		8703ACD81513FC32002FE357 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 8703ACD71513FC32002FE357 /* icon.png */; };
 		8703ACDA1513FC36002FE357 /* icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8703ACD91513FC36002FE357 /* icon@2x.png */; };
+		8705F843157D43530013DF29 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8705F842157D43530013DF29 /* CoreData.framework */; };
+		8705F84B157D44A30013DF29 /* DataLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8705F846157D43A60013DF29 /* DataLayer.m */; };
+		8705F84C157D44A30013DF29 /* Segment.m in Sources */ = {isa = PBXBuildFile; fileRef = 8705F848157D43A60013DF29 /* Segment.m */; };
+		8705F84D157D44A30013DF29 /* NetworkLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8705F84A157D44640013DF29 /* NetworkLayer.m */; };
+		8705F850157D44C00013DF29 /* Grid.m in Sources */ = {isa = PBXBuildFile; fileRef = 8705F84F157D44C00013DF29 /* Grid.m */; };
 		871E20FE152CD54C00D9452A /* UIColor+Parq.m in Sources */ = {isa = PBXBuildFile; fileRef = 871E20FD152CD54C00D9452A /* UIColor+Parq.m */; };
 		871E2104152CE02100D9452A /* settings.png in Resources */ = {isa = PBXBuildFile; fileRef = 871E2103152CE02100D9452A /* settings.png */; };
 		871E2106152CF22A00D9452A /* avail_gradient.png in Resources */ = {isa = PBXBuildFile; fileRef = 871E2105152CF22A00D9452A /* avail_gradient.png */; };
 		8730EB23151BBD1500E7A7F8 /* libobjc.A.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8730EB22151BBD1500E7A7F8 /* libobjc.A.dylib */; };
 		873F8F2F154F257F002FB511 /* check_empty.png in Resources */ = {isa = PBXBuildFile; fileRef = 873F8F2D154F257F002FB511 /* check_empty.png */; };
 		873F8F30154F257F002FB511 /* check.png in Resources */ = {isa = PBXBuildFile; fileRef = 873F8F2E154F257F002FB511 /* check.png */; };
+		87418A881577D31500CACCCA /* PQParkedCarMapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 87418A871577D31500CACCCA /* PQParkedCarMapViewController.m */; };
+		87418A9715780B1C00CACCCA /* PQParkedCarAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 87418A9615780B1C00CACCCA /* PQParkedCarAnnotation.m */; };
 		876702E41550667700318941 /* prepaid.png in Resources */ = {isa = PBXBuildFile; fileRef = 876702E31550667700318941 /* prepaid.png */; };
 		8791F9C11533804000525267 /* PQCallout.m in Sources */ = {isa = PBXBuildFile; fileRef = 8791F9C01533804000525267 /* PQCallout.m */; };
 		8791F9CE153383E500525267 /* CalloutMapAnnotationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8791F9CD153383E500525267 /* CalloutMapAnnotationView.m */; };
@@ -68,6 +75,15 @@
 		8703ACC91513FB46002FE357 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		8703ACD71513FC32002FE357 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
 		8703ACD91513FC36002FE357 /* icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon@2x.png"; sourceTree = "<group>"; };
+		8705F842157D43530013DF29 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		8705F845157D43A60013DF29 /* DataLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataLayer.h; sourceTree = "<group>"; };
+		8705F846157D43A60013DF29 /* DataLayer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DataLayer.m; sourceTree = "<group>"; };
+		8705F847157D43A60013DF29 /* Segment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Segment.h; sourceTree = "<group>"; };
+		8705F848157D43A60013DF29 /* Segment.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Segment.m; sourceTree = "<group>"; };
+		8705F849157D44640013DF29 /* NetworkLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkLayer.h; sourceTree = "<group>"; };
+		8705F84A157D44640013DF29 /* NetworkLayer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NetworkLayer.m; sourceTree = "<group>"; };
+		8705F84E157D44C00013DF29 /* Grid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Grid.h; sourceTree = "<group>"; };
+		8705F84F157D44C00013DF29 /* Grid.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Grid.m; sourceTree = "<group>"; };
 		871E20FC152CD54C00D9452A /* UIColor+Parq.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+Parq.h"; sourceTree = "<group>"; };
 		871E20FD152CD54C00D9452A /* UIColor+Parq.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Parq.m"; sourceTree = "<group>"; };
 		871E2103152CE02100D9452A /* settings.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = settings.png; sourceTree = "<group>"; };
@@ -75,6 +91,10 @@
 		8730EB22151BBD1500E7A7F8 /* libobjc.A.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libobjc.A.dylib; path = usr/lib/libobjc.A.dylib; sourceTree = SDKROOT; };
 		873F8F2D154F257F002FB511 /* check_empty.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = check_empty.png; sourceTree = "<group>"; };
 		873F8F2E154F257F002FB511 /* check.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = check.png; sourceTree = "<group>"; };
+		87418A861577D31500CACCCA /* PQParkedCarMapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PQParkedCarMapViewController.h; sourceTree = "<group>"; };
+		87418A871577D31500CACCCA /* PQParkedCarMapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PQParkedCarMapViewController.m; sourceTree = "<group>"; };
+		87418A9515780B1C00CACCCA /* PQParkedCarAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PQParkedCarAnnotation.h; sourceTree = "<group>"; };
+		87418A9615780B1C00CACCCA /* PQParkedCarAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PQParkedCarAnnotation.m; sourceTree = "<group>"; };
 		876702E31550667700318941 /* prepaid.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = prepaid.png; sourceTree = "<group>"; };
 		8791F9BF1533804000525267 /* PQCallout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PQCallout.h; sourceTree = "<group>"; };
 		8791F9C01533804000525267 /* PQCallout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PQCallout.m; sourceTree = "<group>"; };
@@ -117,7 +137,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FC48560A1577B9F4002C4479 /* CoreData.framework in Frameworks */,
+				8705F843157D43530013DF29 /* CoreData.framework in Frameworks */,
 				8730EB23151BBD1500E7A7F8 /* libobjc.A.dylib in Frameworks */,
 				8703ACCA1513FB46002FE357 /* CoreLocation.framework in Frameworks */,
 				8703ACC81513F9D5002FE357 /* MapKit.framework in Frameworks */,
@@ -152,7 +172,7 @@
 		8703ACA91513F841002FE357 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				FC4856091577B9F4002C4479 /* CoreData.framework */,
+				8705F842157D43530013DF29 /* CoreData.framework */,
 				8730EB22151BBD1500E7A7F8 /* libobjc.A.dylib */,
 				8703ACC91513FB46002FE357 /* CoreLocation.framework */,
 				8703ACC71513F9D5002FE357 /* MapKit.framework */,
@@ -166,7 +186,14 @@
 		8703ACB01513F841002FE357 /* parq-ios2 */ = {
 			isa = PBXGroup;
 			children = (
-				FC48560C1577C222002C4479 /* Parq.xcdatamodeld */,
+				8705F845157D43A60013DF29 /* DataLayer.h */,
+				8705F846157D43A60013DF29 /* DataLayer.m */,
+				8705F84E157D44C00013DF29 /* Grid.h */,
+				8705F84F157D44C00013DF29 /* Grid.m */,
+				8705F847157D43A60013DF29 /* Segment.h */,
+				8705F848157D43A60013DF29 /* Segment.m */,
+				8705F849157D44640013DF29 /* NetworkLayer.h */,
+				8705F84A157D44640013DF29 /* NetworkLayer.m */,
 				87AE9EFA152F918300069153 /* MKShape+Color.h */,
 				87AE9EFB152F918300069153 /* MKShape+Color.m */,
 				8703ACB91513F841002FE357 /* PQAppDelegate.h */,
@@ -174,10 +201,14 @@
 				8791F9BF1533804000525267 /* PQCallout.h */,
 				8791F9C01533804000525267 /* PQCallout.m */,
 				8703ACBC1513F841002FE357 /* MainStoryboard.storyboard */,
+				87418A861577D31500CACCCA /* PQParkedCarMapViewController.h */,
+				87418A871577D31500CACCCA /* PQParkedCarMapViewController.m */,
 				87E1BE65154A08D70095E92D /* PQParkingViewController.h */,
 				87E1BE66154A08D80095E92D /* PQParkingViewController.m */,
 				8703ACBF1513F841002FE357 /* PQMapViewController.h */,
 				8703ACC01513F841002FE357 /* PQMapViewController.m */,
+				87418A9515780B1C00CACCCA /* PQParkedCarAnnotation.h */,
+				87418A9615780B1C00CACCCA /* PQParkedCarAnnotation.m */,
 				871E20FC152CD54C00D9452A /* UIColor+Parq.h */,
 				871E20FD152CD54C00D9452A /* UIColor+Parq.m */,
 				8703ACB11513F841002FE357 /* Supporting Files */,
@@ -363,14 +394,12 @@
 				8791F9CE153383E500525267 /* CalloutMapAnnotationView.m in Sources */,
 				8791F9D415338DD300525267 /* CalloutMapAnnotation.m in Sources */,
 				87E1BE67154A08D80095E92D /* PQParkingViewController.m in Sources */,
-				FC48560E1577C222002C4479 /* Parq.xcdatamodeld in Sources */,
-				FC4856301577FD37002C4479 /* DataLayer.m in Sources */,
-				FC7CE865157943630059EE43 /* NetworkLayer.m in Sources */,
-				FC77275A157C2C8C005DEBEA /* Segment.m in Sources */,
-				FCF937A7157D30F10062A5A1 /* Grid.m in Sources */,
-				FCF937AA157D31030062A5A1 /* Street.m in Sources */,
-				FCF937AD157D31180062A5A1 /* Spot.m in Sources */,
-				FCF937B0157D31350062A5A1 /* Waypoint.m in Sources */,
+				87418A881577D31500CACCCA /* PQParkedCarMapViewController.m in Sources */,
+				87418A9715780B1C00CACCCA /* PQParkedCarAnnotation.m in Sources */,
+				8705F84B157D44A30013DF29 /* DataLayer.m in Sources */,
+				8705F84C157D44A30013DF29 /* Segment.m in Sources */,
+				8705F84D157D44A30013DF29 /* NetworkLayer.m in Sources */,
+				8705F850157D44C00013DF29 /* Grid.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
