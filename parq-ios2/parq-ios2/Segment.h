@@ -15,7 +15,8 @@
 
 @property (nonatomic) CLLocationCoordinate2D A;
 @property (nonatomic) CLLocationCoordinate2D B;
+@property (nonatomic) int color;
 
--(CLLocationCoordinate2D*) getSegment;
--(Segment*) initWithPointsA:(CLLocationCoordinate2D*) a andB:(CLLocationCoordinate2D*) b;
+-(Segment*) initWithPointsA:(CLLocationCoordinate2D*) a andB:(CLLocationCoordinate2D*) b andColor:(int) colorIn;
+
 @end

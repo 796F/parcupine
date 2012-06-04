@@ -8,6 +8,7 @@
 
 #import "Street.h"
 #import "Spot.h"
+#import "Waypoint.h"
 
 
 @implementation Street

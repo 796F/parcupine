@@ -20,10 +20,6 @@
 		8703ACD81513FC32002FE357 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 8703ACD71513FC32002FE357 /* icon.png */; };
 		8703ACDA1513FC36002FE357 /* icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8703ACD91513FC36002FE357 /* icon@2x.png */; };
 		8705F843157D43530013DF29 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8705F842157D43530013DF29 /* CoreData.framework */; };
-		8705F84B157D44A30013DF29 /* DataLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8705F846157D43A60013DF29 /* DataLayer.m */; };
-		8705F84C157D44A30013DF29 /* Segment.m in Sources */ = {isa = PBXBuildFile; fileRef = 8705F848157D43A60013DF29 /* Segment.m */; };
-		8705F84D157D44A30013DF29 /* NetworkLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8705F84A157D44640013DF29 /* NetworkLayer.m */; };
-		8705F850157D44C00013DF29 /* Grid.m in Sources */ = {isa = PBXBuildFile; fileRef = 8705F84F157D44C00013DF29 /* Grid.m */; };
 		871E20FE152CD54C00D9452A /* UIColor+Parq.m in Sources */ = {isa = PBXBuildFile; fileRef = 871E20FD152CD54C00D9452A /* UIColor+Parq.m */; };
 		871E2104152CE02100D9452A /* settings.png in Resources */ = {isa = PBXBuildFile; fileRef = 871E2103152CE02100D9452A /* settings.png */; };
 		871E2106152CF22A00D9452A /* avail_gradient.png in Resources */ = {isa = PBXBuildFile; fileRef = 871E2105152CF22A00D9452A /* avail_gradient.png */; };
@@ -46,15 +42,14 @@
 		87E1BE64154888CE0095E92D /* grey_tabs_bar.png in Resources */ = {isa = PBXBuildFile; fileRef = 87E1BE63154888CE0095E92D /* grey_tabs_bar.png */; };
 		87E1BE67154A08D80095E92D /* PQParkingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 87E1BE66154A08D80095E92D /* PQParkingViewController.m */; };
 		87E1BE69154B35270095E92D /* payg.png in Resources */ = {isa = PBXBuildFile; fileRef = 87E1BE68154B35270095E92D /* payg.png */; };
-		FC48560A1577B9F4002C4479 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC4856091577B9F4002C4479 /* CoreData.framework */; };
-		FC48560E1577C222002C4479 /* Parq.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = FC48560C1577C222002C4479 /* Parq.xcdatamodeld */; };
-		FC4856301577FD37002C4479 /* DataLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = FC48562F1577FD37002C4479 /* DataLayer.m */; };
-		FC77275A157C2C8C005DEBEA /* Segment.m in Sources */ = {isa = PBXBuildFile; fileRef = FC772759157C2C8C005DEBEA /* Segment.m */; };
-		FC7CE865157943630059EE43 /* NetworkLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = FC7CE864157943630059EE43 /* NetworkLayer.m */; };
-		FCF937A7157D30F10062A5A1 /* Grid.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF937A6157D30F10062A5A1 /* Grid.m */; };
-		FCF937AA157D31030062A5A1 /* Street.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF937A9157D31030062A5A1 /* Street.m */; };
-		FCF937AD157D31180062A5A1 /* Spot.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF937AC157D31180062A5A1 /* Spot.m */; };
-		FCF937B0157D31350062A5A1 /* Waypoint.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF937AF157D31350062A5A1 /* Waypoint.m */; };
+		FCF937C4157D497F0062A5A1 /* parq.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = FCF937BE157D49190062A5A1 /* parq.xcdatamodeld */; };
+		FCF937C5157D4A780062A5A1 /* DataLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = FC48562F1577FD37002C4479 /* DataLayer.m */; };
+		FCF937C6157D4A780062A5A1 /* NetworkLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = FC7CE864157943630059EE43 /* NetworkLayer.m */; };
+		FCF937C7157D4A780062A5A1 /* Segment.m in Sources */ = {isa = PBXBuildFile; fileRef = FC772759157C2C8C005DEBEA /* Segment.m */; };
+		FCF937CA157D4A970062A5A1 /* Grid.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF937C9157D4A970062A5A1 /* Grid.m */; };
+		FCF937CD157D4AA50062A5A1 /* Street.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF937CC157D4AA50062A5A1 /* Street.m */; };
+		FCF937D0157D4AB30062A5A1 /* Spot.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF937CF157D4AB20062A5A1 /* Spot.m */; };
+		FCF937D3157D4ABF0062A5A1 /* Waypoint.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF937D2157D4ABF0062A5A1 /* Waypoint.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -76,14 +71,6 @@
 		8703ACD71513FC32002FE357 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
 		8703ACD91513FC36002FE357 /* icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon@2x.png"; sourceTree = "<group>"; };
 		8705F842157D43530013DF29 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
-		8705F845157D43A60013DF29 /* DataLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataLayer.h; sourceTree = "<group>"; };
-		8705F846157D43A60013DF29 /* DataLayer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DataLayer.m; sourceTree = "<group>"; };
-		8705F847157D43A60013DF29 /* Segment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Segment.h; sourceTree = "<group>"; };
-		8705F848157D43A60013DF29 /* Segment.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Segment.m; sourceTree = "<group>"; };
-		8705F849157D44640013DF29 /* NetworkLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkLayer.h; sourceTree = "<group>"; };
-		8705F84A157D44640013DF29 /* NetworkLayer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NetworkLayer.m; sourceTree = "<group>"; };
-		8705F84E157D44C00013DF29 /* Grid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Grid.h; sourceTree = "<group>"; };
-		8705F84F157D44C00013DF29 /* Grid.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Grid.m; sourceTree = "<group>"; };
 		871E20FC152CD54C00D9452A /* UIColor+Parq.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+Parq.h"; sourceTree = "<group>"; };
 		871E20FD152CD54C00D9452A /* UIColor+Parq.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Parq.m"; sourceTree = "<group>"; };
 		871E2103152CE02100D9452A /* settings.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = settings.png; sourceTree = "<group>"; };
@@ -114,22 +101,21 @@
 		87E1BE65154A08D70095E92D /* PQParkingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PQParkingViewController.h; sourceTree = "<group>"; };
 		87E1BE66154A08D80095E92D /* PQParkingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PQParkingViewController.m; sourceTree = "<group>"; };
 		87E1BE68154B35270095E92D /* payg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = payg.png; sourceTree = "<group>"; };
-		FC4856091577B9F4002C4479 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
-		FC48560D1577C222002C4479 /* parq.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = parq.xcdatamodel; sourceTree = "<group>"; };
 		FC48562E1577FD37002C4479 /* DataLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataLayer.h; sourceTree = "<group>"; };
 		FC48562F1577FD37002C4479 /* DataLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataLayer.m; sourceTree = "<group>"; };
 		FC772758157C2C8C005DEBEA /* Segment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Segment.h; sourceTree = "<group>"; };
 		FC772759157C2C8C005DEBEA /* Segment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Segment.m; sourceTree = "<group>"; };
 		FC7CE863157943620059EE43 /* NetworkLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkLayer.h; sourceTree = "<group>"; };
 		FC7CE864157943630059EE43 /* NetworkLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NetworkLayer.m; sourceTree = "<group>"; };
-		FCF937A5157D30F10062A5A1 /* Grid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Grid.h; path = "parq-ios2/Grid.h"; sourceTree = "<group>"; };
-		FCF937A6157D30F10062A5A1 /* Grid.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Grid.m; path = "parq-ios2/Grid.m"; sourceTree = "<group>"; };
-		FCF937A8157D31030062A5A1 /* Street.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Street.h; path = "parq-ios2/Street.h"; sourceTree = "<group>"; };
-		FCF937A9157D31030062A5A1 /* Street.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Street.m; path = "parq-ios2/Street.m"; sourceTree = "<group>"; };
-		FCF937AB157D31180062A5A1 /* Spot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Spot.h; path = "parq-ios2/Spot.h"; sourceTree = "<group>"; };
-		FCF937AC157D31180062A5A1 /* Spot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Spot.m; path = "parq-ios2/Spot.m"; sourceTree = "<group>"; };
-		FCF937AE157D31350062A5A1 /* Waypoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Waypoint.h; path = "parq-ios2/Waypoint.h"; sourceTree = "<group>"; };
-		FCF937AF157D31350062A5A1 /* Waypoint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Waypoint.m; path = "parq-ios2/Waypoint.m"; sourceTree = "<group>"; };
+		FCF937BF157D49190062A5A1 /* parq.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = parq.xcdatamodel; sourceTree = "<group>"; };
+		FCF937C8157D4A970062A5A1 /* Grid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Grid.h; path = "parq-ios2/Grid.h"; sourceTree = "<group>"; };
+		FCF937C9157D4A970062A5A1 /* Grid.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Grid.m; path = "parq-ios2/Grid.m"; sourceTree = "<group>"; };
+		FCF937CB157D4AA50062A5A1 /* Street.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Street.h; path = "parq-ios2/Street.h"; sourceTree = "<group>"; };
+		FCF937CC157D4AA50062A5A1 /* Street.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Street.m; path = "parq-ios2/Street.m"; sourceTree = "<group>"; };
+		FCF937CE157D4AB20062A5A1 /* Spot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Spot.h; path = "parq-ios2/Spot.h"; sourceTree = "<group>"; };
+		FCF937CF157D4AB20062A5A1 /* Spot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Spot.m; path = "parq-ios2/Spot.m"; sourceTree = "<group>"; };
+		FCF937D1157D4ABF0062A5A1 /* Waypoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Waypoint.h; path = "parq-ios2/Waypoint.h"; sourceTree = "<group>"; };
+		FCF937D2157D4ABF0062A5A1 /* Waypoint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Waypoint.m; path = "parq-ios2/Waypoint.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -153,10 +139,10 @@
 		8703AC9B1513F841002FE357 = {
 			isa = PBXGroup;
 			children = (
+				8703ACDF1513FC84002FE357 /* Resources */,
 				8703ACB01513F841002FE357 /* parq-ios2 */,
 				8703ACA91513F841002FE357 /* Frameworks */,
 				8703ACA71513F841002FE357 /* Products */,
-				8703ACDF1513FC84002FE357 /* Resources */,
 				8791F9CA153383BA00525267 /* Shared */,
 			);
 			sourceTree = "<group>";
@@ -186,14 +172,7 @@
 		8703ACB01513F841002FE357 /* parq-ios2 */ = {
 			isa = PBXGroup;
 			children = (
-				8705F845157D43A60013DF29 /* DataLayer.h */,
-				8705F846157D43A60013DF29 /* DataLayer.m */,
-				8705F84E157D44C00013DF29 /* Grid.h */,
-				8705F84F157D44C00013DF29 /* Grid.m */,
-				8705F847157D43A60013DF29 /* Segment.h */,
-				8705F848157D43A60013DF29 /* Segment.m */,
-				8705F849157D44640013DF29 /* NetworkLayer.h */,
-				8705F84A157D44640013DF29 /* NetworkLayer.m */,
+				FCF937BE157D49190062A5A1 /* parq.xcdatamodeld */,
 				87AE9EFA152F918300069153 /* MKShape+Color.h */,
 				87AE9EFB152F918300069153 /* MKShape+Color.m */,
 				8703ACB91513F841002FE357 /* PQAppDelegate.h */,
@@ -295,14 +274,14 @@
 		FC7CE851157902630059EE43 /* Model Class */ = {
 			isa = PBXGroup;
 			children = (
-				FCF937AE157D31350062A5A1 /* Waypoint.h */,
-				FCF937AF157D31350062A5A1 /* Waypoint.m */,
-				FCF937AB157D31180062A5A1 /* Spot.h */,
-				FCF937AC157D31180062A5A1 /* Spot.m */,
-				FCF937A8157D31030062A5A1 /* Street.h */,
-				FCF937A9157D31030062A5A1 /* Street.m */,
-				FCF937A5157D30F10062A5A1 /* Grid.h */,
-				FCF937A6157D30F10062A5A1 /* Grid.m */,
+				FCF937C8157D4A970062A5A1 /* Grid.h */,
+				FCF937C9157D4A970062A5A1 /* Grid.m */,
+				FCF937D1157D4ABF0062A5A1 /* Waypoint.h */,
+				FCF937D2157D4ABF0062A5A1 /* Waypoint.m */,
+				FCF937CE157D4AB20062A5A1 /* Spot.h */,
+				FCF937CF157D4AB20062A5A1 /* Spot.m */,
+				FCF937CB157D4AA50062A5A1 /* Street.h */,
+				FCF937CC157D4AA50062A5A1 /* Street.m */,
 			);
 			name = "Model Class";
 			sourceTree = "<group>";
@@ -385,6 +364,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FCF937C5157D4A780062A5A1 /* DataLayer.m in Sources */,
+				FCF937C6157D4A780062A5A1 /* NetworkLayer.m in Sources */,
+				FCF937C7157D4A780062A5A1 /* Segment.m in Sources */,
+				FCF937C4157D497F0062A5A1 /* parq.xcdatamodeld in Sources */,
 				8703ACB71513F841002FE357 /* main.m in Sources */,
 				8703ACBB1513F841002FE357 /* PQAppDelegate.m in Sources */,
 				8703ACC11513F841002FE357 /* PQMapViewController.m in Sources */,
@@ -396,10 +379,10 @@
 				87E1BE67154A08D80095E92D /* PQParkingViewController.m in Sources */,
 				87418A881577D31500CACCCA /* PQParkedCarMapViewController.m in Sources */,
 				87418A9715780B1C00CACCCA /* PQParkedCarAnnotation.m in Sources */,
-				8705F84B157D44A30013DF29 /* DataLayer.m in Sources */,
-				8705F84C157D44A30013DF29 /* Segment.m in Sources */,
-				8705F84D157D44A30013DF29 /* NetworkLayer.m in Sources */,
-				8705F850157D44C00013DF29 /* Grid.m in Sources */,
+				FCF937CA157D4A970062A5A1 /* Grid.m in Sources */,
+				FCF937CD157D4AA50062A5A1 /* Street.m in Sources */,
+				FCF937D0157D4AB30062A5A1 /* Spot.m in Sources */,
+				FCF937D3157D4ABF0062A5A1 /* Waypoint.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -516,14 +499,13 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		FC48560C1577C222002C4479 /* Parq.xcdatamodeld */ = {
+		FCF937BE157D49190062A5A1 /* parq.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				FC48560D1577C222002C4479 /* parq.xcdatamodel */,
+				FCF937BF157D49190062A5A1 /* parq.xcdatamodel */,
 			);
-			currentVersion = FC48560D1577C222002C4479 /* parq.xcdatamodel */;
-			name = Parq.xcdatamodeld;
-			path = ../parq.xcdatamodeld;
+			currentVersion = FCF937BF157D49190062A5A1 /* parq.xcdatamodel */;
+			path = parq.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};

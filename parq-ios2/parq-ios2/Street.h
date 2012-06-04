@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class Spot;
+@class Spot, Waypoint;
 
 @interface Street : NSManagedObject
 
@@ -26,14 +26,14 @@
 - (void)addChildrenSpots:(NSSet *)values;
 - (void)removeChildrenSpots:(NSSet *)values;
 
-- (void)insertObject:(NSManagedObject *)value inChildrenWaypointsAtIndex:(NSUInteger)idx;
+- (void)insertObject:(Waypoint *)value inChildrenWaypointsAtIndex:(NSUInteger)idx;
 - (void)removeObjectFromChildrenWaypointsAtIndex:(NSUInteger)idx;
 - (void)insertChildrenWaypoints:(NSArray *)value atIndexes:(NSIndexSet *)indexes;
 - (void)removeChildrenWaypointsAtIndexes:(NSIndexSet *)indexes;
-- (void)replaceObjectInChildrenWaypointsAtIndex:(NSUInteger)idx withObject:(NSManagedObject *)value;
+- (void)replaceObjectInChildrenWaypointsAtIndex:(NSUInteger)idx withObject:(Waypoint *)value;
 - (void)replaceChildrenWaypointsAtIndexes:(NSIndexSet *)indexes withChildrenWaypoints:(NSArray *)values;
-- (void)addChildrenWaypointsObject:(NSManagedObject *)value;
-- (void)removeChildrenWaypointsObject:(NSManagedObject *)value;
+- (void)addChildrenWaypointsObject:(Waypoint *)value;
+- (void)removeChildrenWaypointsObject:(Waypoint *)value;
 - (void)addChildrenWaypoints:(NSOrderedSet *)values;
 - (void)removeChildrenWaypoints:(NSOrderedSet *)values;
 @end

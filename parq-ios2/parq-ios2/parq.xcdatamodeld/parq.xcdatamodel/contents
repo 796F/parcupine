@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1171" systemVersion="11E53" minimumToolsVersion="Xcode 4.1" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="Grid" representedClassName="Grid" syncable="YES">
+        <attribute name="gridId" optional="YES" attributeType="Integer 64" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="lat" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="lon" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+    </entity>
+    <entity name="Spot" representedClassName="Spot" syncable="YES">
+        <attribute name="lat" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="lon" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="segNumber" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="spotId" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="spotNumber" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <relationship name="parentStreet" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Street" inverseName="childrenSpots" inverseEntity="Street" syncable="YES"/>
+    </entity>
+    <entity name="Street" representedClassName="Street" syncable="YES">
+        <attribute name="streetId" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="streetName" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="childrenSpots" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Spot" inverseName="parentStreet" inverseEntity="Spot" syncable="YES"/>
+        <relationship name="childrenWaypoints" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Waypoint" inverseName="parentStreet" inverseEntity="Waypoint" syncable="YES"/>
+    </entity>
+    <entity name="Waypoint" representedClassName="Waypoint" syncable="YES">
+        <attribute name="lat" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="lon" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <relationship name="parentStreet" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Street" inverseName="childrenWaypoints" inverseEntity="Street" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="Grid" positionX="72" positionY="-270" width="128" height="90"/>
+        <element name="Spot" positionX="-162" positionY="9" width="128" height="135"/>
+        <element name="Street" positionX="54" positionY="-135" width="144" height="90"/>
+        <element name="Waypoint" positionX="54" positionY="45" width="128" height="90"/>
+    </elements>
+</model>

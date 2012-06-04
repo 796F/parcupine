@@ -11,17 +11,12 @@
 @implementation Segment
 @synthesize A;
 @synthesize B;
+@synthesize color;
 
--(CLLocationCoordinate2D*) getSegment{
-    CLLocationCoordinate2D* points = malloc(sizeof(CLLocationCoordinate2D)*2);
-    points[0] = A;
-    points[1] = B;
-    return points;
-}
-
--(id) initWithPointsA:(CLLocationCoordinate2D*) a andB:(CLLocationCoordinate2D*) b{
+-(Segment*) initWithPointsA:(CLLocationCoordinate2D*) a andB:(CLLocationCoordinate2D*) b andColor:(int) colorIn{
     A = *a;
     B = *b;
+    color = colorIn;
     return self;
 }
 

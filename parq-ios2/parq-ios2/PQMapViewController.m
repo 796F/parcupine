@@ -112,14 +112,15 @@ typedef struct{
             CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake([[coordinates objectAtIndex:0] floatValue], [[coordinates objectAtIndex:1] floatValue]);
             waypoints[i++] = coordinate;
         }
-        Segment* x =[[Segment alloc] initWithPointsA:&waypoints[0] andB:&waypoints[1]];
+        Segment* x =[[Segment alloc] initWithPointsA:&waypoints[0] andB:&waypoints[1] andColor:[[line objectForKey:@"color"] intValue]];
         [segList addObject:x];
     }
     return segList;
 }
 
 -(NSArray*) loadSpotData {
-    NSArray* data= [NSArray arrayWithObjects:
+    return [NSArray arrayWithObjects:
+    //NSArray* data= [NSArray arrayWithObjects:
             @"42.365354,-71.110843,1,1410",
             @"42.365292,-71.110835,1,1412",
             @"42.365239,-71.110825,1,1414",
@@ -146,13 +147,13 @@ typedef struct{
             @"42.364846,-71.110835,0,1431",
             @"42.364799,-71.110830,1,1433",
             nil];
-    NSMutableArray* spotList = [[NSMutableArray alloc] initWithCapacity:data.count];
-    for(id spot in data){
-        
-        
-        
-    }
-    return spotList;
+//    NSMutableArray* spotList = [[NSMutableArray alloc] initWithCapacity:data.count];
+//    for(id spot in data){
+//        
+//        
+//        
+//    }
+//    return spotList;
 }
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
@@ -201,7 +202,7 @@ typedef struct{
     bool isLeftSide = false;
     for(id spot in spotList){
         //for each spot inside the grey circle, calculate the projected point.  
-        CLLocationCoordinate2D* segment = [seg getSegment];
+        CLLocationCoordinate2D segment[2] = {[seg A], [seg B]};
         CLLocationCoordinate2D point = [self getProjectedPoint:(CLLocationCoordinate2D*)spot A:&segment[0] B:&segment[1]];
         //determine from that, what side of the street a point lays.  
         
@@ -472,18 +473,19 @@ typedef struct{
     }
     
     for (id line in data) {
-        NSArray *raw_waypoints = [[line objectForKey:@"line"] componentsSeparatedByString:@";"];
-        CLLocationCoordinate2D waypoints[raw_waypoints.count];
-        int i=0;
-        for (id raw_waypoint in raw_waypoints) {
-            NSArray *coordinates = [raw_waypoint componentsSeparatedByString:@","];
-            CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake([[coordinates objectAtIndex:0] floatValue], [[coordinates objectAtIndex:1] floatValue]);
-            waypoints[i++] = coordinate;
-        }
+//        NSArray *raw_waypoints = [[line objectForKey:@"line"] componentsSeparatedByString:@";"];
+        CLLocationCoordinate2D waypoints[2] = {[line A], [line B]};
         
-        MKPolyline *routeLine = [MKPolyline polylineWithCoordinates:waypoints count:raw_waypoints.count];
-        
-        int color = [[line objectForKey:@"color"] intValue];
+//        int i=0;
+//        for (id raw_waypoint in raw_waypoints) {
+//            NSArray *coordinates = [raw_waypoint componentsSeparatedByString:@","];
+//            CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake([[coordinates objectAtIndex:0] floatValue], [[coordinates objectAtIndex:1] floatValue]);
+//            waypoints[i++] = coordinate;
+//        }
+//        
+        MKPolyline *routeLine = [MKPolyline polylineWithCoordinates:waypoints count:2];
+
+        int color = [((Segment*)line) color];
         [routeLine setColor:color];
         [streets addObject:routeLine];
         
@@ -687,7 +689,7 @@ typedef struct{
     double min_dist = 180*180;
     CLLocationCoordinate2D ret_coord;
     for(id line in segments){
-        CLLocationCoordinate2D* seg = [line getSegment];
+        CLLocationCoordinate2D seg[2] = {[line A], [line B]};
         CLLocationCoordinate2D snaploc = [self getProjectedPoint:coord A:&seg[0] B:&seg[1]];
         double d_lat = snaploc.latitude - (*coord).latitude;
         double d_lon = snaploc.longitude - (*coord).longitude;
