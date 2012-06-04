@@ -30,7 +30,7 @@ public class GridDao extends AbstractParqDaoParent {
 
 	private final String sqlGetAllGrids = "SELECT g.grid_id, g.latitude, g.longitude, "
 			+ " pl.location_id, pl.location_identifier, pl.location_type, pl.client_id, "
-			+ " s.space_id, s.space_identifier, s.parking_level, s.space_name, s.space_order, s.latitude, s.longitude "
+			+ " s.space_id, s.space_identifier, s.parking_level, s.space_name, s.segment, s.latitude, s.longitude "
 			+ " FROM parkinggrid AS g, parkinglocation AS pl, parkingspace AS s "
 			+ " WHERE g.grid_id = pl.grid_id AND pl.location_id = s.location_id"
 			+ " AND g.is_deleted IS NOT TRUE AND pl.is_deleted IS NOT TRUE AND s.is_deleted IS NOT TRUE"
@@ -295,7 +295,7 @@ public class GridDao extends AbstractParqDaoParent {
 			curSpace.setSpaceName(rs.getString("space_name"));
 			curSpace.setLatitude(rs.getDouble("s.latitude"));
 			curSpace.setLongitude(rs.getDouble("s.longitude"));
-			curSpace.setOrdering(rs.getInt("space_order"));
+			curSpace.setSegment(rs.getInt("segment"));
 			// add the space to the parking location
 			spaces.add(curSpace);
 

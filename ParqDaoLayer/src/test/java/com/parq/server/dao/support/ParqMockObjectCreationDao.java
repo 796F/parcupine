@@ -66,7 +66,7 @@ public class ParqMockObjectCreationDao extends DaoForTestingPurposes {
 
 	public boolean insertParkingSpace(String locationIdentifier,
 			String spaceIdentifier, String spaceName, String parkingLevel, 
-			double latitude, double longitude, int spaceOrder) {
+			double latitude, double longitude, int segment) {
 		
 		ParkingSpace newSpaceRequest = new ParkingSpace();
 		newSpaceRequest.setSpaceName(spaceName);
@@ -74,7 +74,7 @@ public class ParqMockObjectCreationDao extends DaoForTestingPurposes {
 		newSpaceRequest.setParkingLevel(parkingLevel);
 		newSpaceRequest.setLatitude(latitude);
 		newSpaceRequest.setLongitude(longitude);
-		newSpaceRequest.setOrdering(spaceOrder);
+		newSpaceRequest.setSegment(segment);
 		
 		ParkingLocation location = 
 			new ParkingLocationDao().getParkingLocationByLocationIdentifier(locationIdentifier);

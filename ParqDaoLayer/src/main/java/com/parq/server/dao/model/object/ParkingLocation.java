@@ -111,5 +111,29 @@ public class ParkingLocation implements Serializable {
 	public void setGridId(long gridId) {
 		this.gridId = gridId;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (locationId ^ (locationId >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ParkingLocation other = (ParkingLocation) obj;
+		if (locationId != other.locationId)
+			return false;
+		return true;
+	}
+	
+	
 	
 }

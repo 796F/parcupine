@@ -14,8 +14,10 @@ import com.parq.server.grid.GridManagementService;
 
 import parkservice.gridservice.model.FindGridsByGPSCoordinateRequest;
 import parkservice.gridservice.model.FindGridsByGPSCoordinateResponse;
-import parkservice.gridservice.model.GetStreetInfoRequest;
-import parkservice.gridservice.model.GetStreetInfoResponse;
+import parkservice.gridservice.model.GetSpotLevelInfoRequest;
+import parkservice.gridservice.model.GetSpotLevelInfoResponse;
+import parkservice.gridservice.model.GetUpdatedSpotLevelInfoRequest;
+import parkservice.gridservice.model.GetUpdatedSpotLevelInfoResponse;
 import parkservice.gridservice.model.GetUpdatedStreetInfoRequest;
 import parkservice.gridservice.model.GetUpdatedStreetInfoResponse;
 import parkservice.gridservice.model.GpsCoordinate;
@@ -143,7 +145,7 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 	public void testBasicGetStreetInfo() {
 		ParkResource parkResource = new ParkResource();
 		
-		GetStreetInfoRequest getStreetInfoRequest = new GetStreetInfoRequest();
+		GetSpotLevelInfoRequest getStreetInfoRequest = new GetSpotLevelInfoRequest();
 		GpsCoordinate topLeft = new GpsCoordinate();
 		topLeft.setLatitude(-180);
 		topLeft.setLongitude(-180);
@@ -151,23 +153,26 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		bottomRight.setLatitude(180);
 		bottomRight.setLongitude(180);
 		
-		getStreetInfoRequest.setTopLeftCorner(topLeft);
-		getStreetInfoRequest.setBottomRightCorner(bottomRight);
-		JAXBElement<GetStreetInfoRequest> jaxbTestRequest = new JAXBElement<GetStreetInfoRequest>(
-				new QName("Test"), GetStreetInfoRequest.class, getStreetInfoRequest);
+		getStreetInfoRequest.setNumberOfSearchBox(1);
+		getStreetInfoRequest.setTopLeftCorner1(topLeft);
+		getStreetInfoRequest.setBottomRightCorner1(bottomRight);
+		JAXBElement<GetSpotLevelInfoRequest> jaxbTestRequest = new JAXBElement<GetSpotLevelInfoRequest>(
+				new QName("Test"), GetSpotLevelInfoRequest.class, getStreetInfoRequest);
 		
-		GetStreetInfoResponse[] response = parkResource.getStreetInfo(jaxbTestRequest);
+		GetSpotLevelInfoResponse[] response = parkResource.getStreetInfo(jaxbTestRequest);
 		assertNotNull(response);
 		assertTrue(response.length > 0);
-		assertTrue(response[0].getParkingSpace().get(0).getSpaceOrder() > -1);
-		assertTrue(response[0].getParkingSpace().get(0).getSpaceOrder() < 100);
+		assertTrue(response[0].getParkingSpace().get(0).getSegment() > 0);
+		assertTrue(response[0].getParkingSpace().get(0).getSegment() < 100);
+		assertNotNull(response[0].getParkingSpace().get(0).getSpaceName());
+		assertNotNull(response[0].getParkingSpace().get(0).getSpaceName().length() > 0);
 		
 		// test for search with no result
 		topLeft.setLatitude(0.0);
 		topLeft.setLongitude(0.0);
 		bottomRight.setLatitude(0.001);
 		bottomRight.setLongitude(0.001);
-		GetStreetInfoResponse[] response1 = parkResource.getStreetInfo(jaxbTestRequest);
+		GetSpotLevelInfoResponse[] response1 = parkResource.getStreetInfo(jaxbTestRequest);
 		assertNotNull(response1);
 		assertEquals(response1.length, 0);
 	}
@@ -242,6 +247,29 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		assertTrue(responseStreet.length >= 1);
 		assertEquals(testStreetId, responseStreet[0].getStreetId());
 	}
+
+	public void testGetUpdatedSpotLevelInfoResponse() {
+		// search for streets in gps coor
+		ParkResource parkResource = new ParkResource();
+		GpsCoordinate topLeft = new GpsCoordinate();
+		topLeft.setLatitude(-180);
+		topLeft.setLongitude(-180);
+		GpsCoordinate bottomRight = new GpsCoordinate();
+		bottomRight.setLatitude(180);
+		bottomRight.setLongitude(180);
+		
+		GetUpdatedSpotLevelInfoRequest getStreetInfoRequest = new GetUpdatedSpotLevelInfoRequest();
+		getStreetInfoRequest.setTopLeftCorner(topLeft);
+		getStreetInfoRequest.setBottomRightCorner(bottomRight);
+		JAXBElement<GetUpdatedSpotLevelInfoRequest> jaxbTestStreetRequest = new JAXBElement<GetUpdatedSpotLevelInfoRequest>(
+				new QName("Test"), GetUpdatedSpotLevelInfoRequest.class, getStreetInfoRequest);
+		
+		GetUpdatedSpotLevelInfoResponse[] responseStreet = parkResource.getUpdatedSpotLevelInfo(jaxbTestStreetRequest);
+		assertNotNull(responseStreet);
+		assertFalse(responseStreet.length == 0);
+		assertNotNull(responseStreet[0].getParkingSpace());
+		assertFalse(responseStreet[0].getParkingSpace().size() == 0);
+	}
 	
 	public void testFillRateUpdate() {
 		// search for streets in gps coor
@@ -252,13 +280,15 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		GpsCoordinate bottomRight = new GpsCoordinate();
 		bottomRight.setLatitude(180);
 		bottomRight.setLongitude(180);
-		GetStreetInfoRequest getStreetInfoRequest = new GetStreetInfoRequest();
-		getStreetInfoRequest.setTopLeftCorner(topLeft);
-		getStreetInfoRequest.setBottomRightCorner(bottomRight);
+		
+		GetSpotLevelInfoRequest getStreetInfoRequest = new GetSpotLevelInfoRequest();
+		getStreetInfoRequest.setNumberOfSearchBox(1);
+		getStreetInfoRequest.setTopLeftCorner1(topLeft);
+		getStreetInfoRequest.setBottomRightCorner1(bottomRight);
 	
-		JAXBElement<GetStreetInfoRequest> jaxbTestRequest = new JAXBElement<GetStreetInfoRequest>(
-				new QName("Test"), GetStreetInfoRequest.class, getStreetInfoRequest);
-		GetStreetInfoResponse[] responseStreet = parkResource.getStreetInfo(jaxbTestRequest);
+		JAXBElement<GetSpotLevelInfoRequest> jaxbTestRequest = new JAXBElement<GetSpotLevelInfoRequest>(
+				new QName("Test"), GetSpotLevelInfoRequest.class, getStreetInfoRequest);
+		GetSpotLevelInfoResponse[] responseStreet = parkResource.getStreetInfo(jaxbTestRequest);
 		assertNotNull(responseStreet);
 		
 		// park at the first street's first space for 5 second
@@ -268,6 +298,8 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		
 		responseStreet = parkResource.getStreetInfo(jaxbTestRequest);
 		assertTrue(responseStreet[0].getFillRate() > 0.01);
+		assertTrue(responseStreet[0].getParkingSpace().get(0).getSegment() > 0);
+		assertNotNull(responseStreet[0].getParkingSpace().get(0).getSpaceName());
 		
 		// make sure the grid data also is updated
 		FindGridsByGPSCoordinateRequest findGridByGPSCoordinateRequest = new FindGridsByGPSCoordinateRequest();
@@ -302,11 +334,12 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		bottomRight.setLatitude(180);
 		bottomRight.setLongitude(180);
 		
-		GetStreetInfoRequest getStreetInfoRequest = new GetStreetInfoRequest();
-		getStreetInfoRequest.setTopLeftCorner(topLeft);
-		getStreetInfoRequest.setBottomRightCorner(bottomRight);
-		JAXBElement<GetStreetInfoRequest> jaxbTestStreetRequest = new JAXBElement<GetStreetInfoRequest>(
-				new QName("Test"), GetStreetInfoRequest.class, getStreetInfoRequest);
+		GetSpotLevelInfoRequest getStreetInfoRequest = new GetSpotLevelInfoRequest();
+		getStreetInfoRequest.setNumberOfSearchBox(1);
+		getStreetInfoRequest.setTopLeftCorner1(topLeft);
+		getStreetInfoRequest.setBottomRightCorner1(bottomRight);
+		JAXBElement<GetSpotLevelInfoRequest> jaxbTestStreetRequest = new JAXBElement<GetSpotLevelInfoRequest>(
+				new QName("Test"), GetSpotLevelInfoRequest.class, getStreetInfoRequest);
 		
 		FindGridsByGPSCoordinateRequest findGridByGPSCoordinateRequest = new FindGridsByGPSCoordinateRequest();
 		findGridByGPSCoordinateRequest.setLastUpdateTime(0);
@@ -316,7 +349,7 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 				new QName("Test"), FindGridsByGPSCoordinateRequest.class, findGridByGPSCoordinateRequest);
 		
 		FindGridsByGPSCoordinateResponse[] responseGrid = parkResource.findGridByGPSCoor(jaxbTestGridRequest);
-		GetStreetInfoResponse[] responseStreet = parkResource.getStreetInfo(jaxbTestStreetRequest);
+		GetSpotLevelInfoResponse[] responseStreet = parkResource.getStreetInfo(jaxbTestStreetRequest);
 		long spaceToParkAtId = responseStreet[0].getParkingSpace().get(0).getSpaceId();
 		//long streetToParkAtId = responseStreet[0].getStreetId();
 		//long gridToParkAtId = responseGrid[0].getGridId();
@@ -388,7 +421,7 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 	}
 	
 	
-	public void _testGridServiceUpdateThreadIsRunning() {
+	public void testGridServiceUpdateThreadIsRunning() {
 		try {
 			Thread.sleep(61000);
 		} catch (InterruptedException ie) {}

@@ -6,11 +6,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class ParkingSpaceWithStatus {
 
 	private long spaceId;
+	private String spaceName;
+	private int segment = -1;
 	private String status;
 	private double longitude;
 	private double latitude;
 	private long streetId;
-	private int spaceOrder;
 
 	/**
 	 * @return the spaceId
@@ -90,15 +91,23 @@ public class ParkingSpaceWithStatus {
 	/**
 	 * @return
 	 */
-	public int getSpaceOrder() {
-		return spaceOrder;
+	public int getSegment() {
+		return segment;
 	}
 
 	/**
 	 * @param spaceOrder
 	 */
-	public void setSpaceOrder(int spaceOrder) {
-		this.spaceOrder = spaceOrder;
+	public void setSegment(int segment) {
+		this.segment = segment;
+	}
+
+	public String getSpaceName() {
+		return spaceName;
+	}
+
+	public void setSpaceName(String spaceName) {
+		this.spaceName = spaceName;
 	}
 
 }
