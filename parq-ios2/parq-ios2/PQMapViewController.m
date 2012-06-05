@@ -14,6 +14,7 @@
 #import "CalloutMapAnnotationView.h"
 #import "NetworkLayer.h"
 #import "Segment.h"
+#import "Spot.h"
 
 //calculation constants
 #define METERS_PER_MILE 1609.344
@@ -120,40 +121,33 @@ typedef struct{
 
 -(NSArray*) loadSpotData {
     return [NSArray arrayWithObjects:
-    //NSArray* data= [NSArray arrayWithObjects:
-            @"42.365354,-71.110843,1,1410",
-            @"42.365292,-71.110835,1,1412",
-            @"42.365239,-71.110825,1,1414",
-            @"42.365187,-71.110811,0,1416",
-            @"42.365140,-71.110806,1,1418",
-            @"42.365092,-71.110798,0,1420",
-            @"42.365045,-71.110790,1,1422",
-            @"42.364995,-71.110782,0,1424",
-            @"42.364947,-71.110768,0,1426",
-            @"42.364896,-71.110766,0,1428",
-            @"42.364846,-71.110752,0,1430",
-            @"42.364797,-71.110739,0,1432",
+            @"42.365354,-71.110843,1,1410,0,1",
+            @"42.365292,-71.110835,1,1412,0,2",
+            @"42.365239,-71.110825,1,1414,0,3",
+            @"42.365187,-71.110811,0,1416,0,4",
+            @"42.365140,-71.110806,1,1418,0,5",
+            @"42.365092,-71.110798,0,1420,0,6",
+            @"42.365045,-71.110790,1,1422,0,7",
+            @"42.364995,-71.110782,0,1424,0,8",
+            @"42.364947,-71.110768,0,1426,0,9",
+            @"42.364896,-71.110766,0,1428,0,10",
+            @"42.364846,-71.110752,0,1430,0,11",
+            @"42.364797,-71.110739,0,1432,0,12",
             
-            @"42.365348,-71.110924,1,1411",
-            @"42.365300,-71.110916,0,1413",
-            @"42.365251,-71.110905,0,1415",
-            @"42.365203,-71.110900,0,1417",
-            @"42.365154,-71.110892,1,1419",
-            @"42.365104,-71.110876,0,1421",
-            @"42.365049,-71.110868,1,1423",
-            @"42.364993,-71.110860,1,1425",
-            @"42.364943,-71.110849,1,1427",
-            @"42.364894,-71.110846,1,1429",
-            @"42.364846,-71.110835,0,1431",
-            @"42.364799,-71.110830,1,1433",
+            @"42.365348,-71.110924,1,1411,0,13",
+            @"42.365300,-71.110916,0,1413,0,14",
+            @"42.365251,-71.110905,0,1415,0,15",
+            @"42.365203,-71.110900,0,1417,0,16",
+            @"42.365154,-71.110892,1,1419,0,17",
+            @"42.365104,-71.110876,0,1421,0,18",
+            @"42.365049,-71.110868,1,1423,0,19",
+            @"42.364993,-71.110860,1,1425,0,20",
+            @"42.364943,-71.110849,1,1427,0,21",
+            @"42.364894,-71.110846,1,1429,0,22",
+            @"42.364846,-71.110835,0,1431,0,23",
+            @"42.364799,-71.110830,1,1433,0,24",
             nil];
-//    NSMutableArray* spotList = [[NSMutableArray alloc] initWithCapacity:data.count];
-//    for(id spot in data){
-//        
-//        
-//        
-//    }
-//    return spotList;
+    
 }
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
@@ -193,31 +187,86 @@ typedef struct{
 //    + ((*v).longitude - (*w).longitude)*((*v).longitude - (*w).longitude);
 //}
 
+-(bool)A:(double)a sameSignAsB:(double) b{
+    if(a>0){
+        return b>0 ? true : false;
+    }else{
+        return b<0 ? true : false;
+    }
+}
+
 //separates points for a segment to left and right, uses first segment if multiple exist.  
--(CLLocationCoordinate2D*) getLeftAndRightAveragesForSegment:(Segment*)seg andSpots:(NSArray*)spotList{
+-(NSArray*) newCalloutPlacementWithSegment:(Segment*)seg andSpots:(NSArray*)spotList{
     double left_coords[2] = {0,0};
     double right_coords[2] = {0,0};
     int left_count = 0;
     int right_count = 0;
-    bool isLeftSide = false;
+    bool error = false;
+    double reference_dy = 0;
+    double reference_dx = 0;
+//    NSLog(@"TOTAL OF %d IN CIRCLE\n", spotList.count);
+    NSMutableArray* leftSide = [[NSMutableArray alloc] init];
+    NSMutableArray* rightSide = [[NSMutableArray alloc] init];
+    
     for(id spot in spotList){
+        bool isRightSide = false;
+        NSArray* spotArray = [spot componentsSeparatedByString:@","];
+        CLLocationCoordinate2D x= CLLocationCoordinate2DMake([[spotArray objectAtIndex:0] doubleValue], [[spotArray objectAtIndex:1] doubleValue]);
+        
         //for each spot inside the grey circle, calculate the projected point.  
         CLLocationCoordinate2D segment[2] = {[seg A], [seg B]};
-        CLLocationCoordinate2D point = [self getProjectedPoint:(CLLocationCoordinate2D*)spot A:&segment[0] B:&segment[1]];
+        CLLocationCoordinate2D point = [self getProjectedPoint:&x A:&segment[0] B:&segment[1] error:&error];
+        //don't care about errors in this case.  known to be localized.  
         //determine from that, what side of the street a point lays.  
-        
-        //add it to the left or right value depending
-        if(isLeftSide){
-            left_coords[0] = 
-            left_count++;
+        if(reference_dy == 0){
+            //first one, assign to a side, keep it's sign. 
+            reference_dy = x.latitude - point.latitude;
+            reference_dx = x.longitude - point.longitude;
+            isRightSide = true;
+            //NSLog(@"%d is right side!\n", [[spotArray objectAtIndex:3] intValue]);
+            [rightSide addObject:spot];
         }else{
-            
+            //do a check to see if it's the same side as ref_sign
+            //compare latitudes, if useful, go on.  
+            double spot_dy = x.latitude - point.latitude;
+            double spot_dx = x.longitude - point.longitude;
+            if([self A:reference_dx sameSignAsB:spot_dx] && [self A:reference_dy sameSignAsB:spot_dy]){
+                //same side as reference.  
+                //NSLog(@"%d is right side!\n", [[spotArray objectAtIndex:3] intValue]);
+                isRightSide = true;
+                [rightSide addObject:spot];
+            }else{
+                //NSLog(@"%d is left side!\n", [[spotArray objectAtIndex:3] intValue]);
+                //different side as reference.  
+                isRightSide = false;
+                [leftSide addObject:spot];
+            }
+        }
+        //add it to the left or right value depending
+        if(isRightSide){
+            right_coords[0] += point.latitude;
+            right_coords[1] += point.longitude;
+            right_count++;
+        }else{
+            left_coords[0] += point.latitude;
+            left_coords[1] += point.longitude;
+            left_count++;
         }
     }
-    CLLocationCoordinate2D* averages = malloc(sizeof(CLLocationCoordinate2D)*2);
-    averages[0] = CLLocationCoordinate2DMake(0, 0);
-    averages[1] = CLLocationCoordinate2DMake(1, 1);
-    return averages;
+    right_coords[0] /= right_count;
+    right_coords[1] /= right_count;
+    left_coords[0] /= left_count;
+    left_coords[1] /= left_count;
+    CLLocationCoordinate2D averages[2];
+    averages[0] = CLLocationCoordinate2DMake(left_coords[0], left_coords[1]);
+    averages[1] = CLLocationCoordinate2DMake(right_coords[0], right_coords[1]);
+    
+    //now have averages for both left and right, as well as arrays.  
+    NSMutableArray* calloutArr = [[NSMutableArray alloc] initWithCapacity:right_count+left_count];
+    [calloutArr addObjectsFromArray:[self test:leftSide aLat:averages[0].latitude aLon:averages[0].longitude]];
+    [ calloutArr addObjectsFromArray:[self test:rightSide aLat:averages[1].latitude aLon:averages[1].longitude]];
+    
+    return calloutArr;
 }
 
 - (NSArray *)calloutBubblePlacement:(CLLocationCoordinate2D *)selectionCenter withR:(CLLocationDistance) radius{
@@ -228,8 +277,8 @@ typedef struct{
     //look through list of points, check spot distanceFromLocation (coord) vs radius.  
     NSArray* data = [self loadSpotData];
     //keep track of some stuff
+    NSMutableArray* insideCircle = [[NSMutableArray alloc] init];
     float avgLat=0, avgLon=0, count=0;
-    
     for(id spot in data){
         NSArray* point = [spot componentsSeparatedByString:@","];
         CLLocation* spot_loc = [[CLLocation alloc] initWithLatitude:[[point objectAtIndex:0] floatValue] longitude:[[point objectAtIndex:1] floatValue]];
@@ -238,34 +287,30 @@ typedef struct{
         int status = [[point objectAtIndex:2] intValue];
         if(dist<radius-2 && status == 1){
             //inside the circle
+            [insideCircle addObject:spot];
             avgLat += spot_loc.coordinate.latitude;
             avgLon += spot_loc.coordinate.longitude;   
             count++;
         }
     }
-    //Average of points on one side, projected onto the segment, then use that point to shoot out
+    /* CALCULATE AVERAGES FOR BOTH SIDES */
+    NSArray* segData = [self loadBlockData];
+    return [self newCalloutPlacementWithSegment:[segData objectAtIndex:1] andSpots:insideCircle];
     
-    //compute the average point of those inside the selection circle.  
-    avgLat /= count;
-    avgLon /= count;
-    NSMutableArray* results = [[NSMutableArray alloc] initWithCapacity:count];
-    if(count==1){
-        //if only one circle was within radius, do not callout.  
-        //as it breaks the callout line algorithm.  
-        return results;
-    }
+}
+
+-(NSArray*) test:(NSArray*)spotList aLat:(double)avgLat aLon:(double)avgLon{
+    NSMutableArray* results = [[NSMutableArray alloc] initWithCapacity:spots.count];
+    
     //project bubbles using this average and the spot's coordinates.  
-    for(id spot in data){
+    for(id spot in spotList){
         NSArray* point = [spot componentsSeparatedByString:@","];
         CLLocation* spot_loc = [[CLLocation alloc] initWithLatitude:[[point objectAtIndex:0] floatValue] longitude:[[point objectAtIndex:1] floatValue]];
-        
-        CLLocationDistance dist = [spot_loc distanceFromLocation:center];
-        int status = [[point objectAtIndex:2] intValue];
         //controls how far the callouts go.  
         double rsq = CALLOUT_LINE_LENGTH;
         
         //only make callout for those clearly in circle
-        if(dist<radius-2 && status==1){ 
+        
             
             double mdx = avgLat - [[point objectAtIndex:0] floatValue];
             double mdy = avgLon - [[point objectAtIndex:1] floatValue];
@@ -305,13 +350,13 @@ typedef struct{
                                                                                                                   andCorner:corner], @"callout",spot_loc, @"spot", nil];
             
             [results addObject:add];
-        }
+        
         
     }
     
     return results;
-    
 }
+
 
 - (bool) tappedCalloutAtCoords:(CLLocationCoordinate2D*) coords{
     for(int i=0; i< callouts.count; i++){
@@ -661,7 +706,7 @@ typedef struct{
 }
 
 //given a point p, and a segment a to b, find the orthogonally projected point on the segment.
--(CLLocationCoordinate2D) getProjectedPoint: (CLLocationCoordinate2D*) p A:(CLLocationCoordinate2D*)a B:(CLLocationCoordinate2D*) b{
+-(CLLocationCoordinate2D) getProjectedPoint: (CLLocationCoordinate2D*) p A:(CLLocationCoordinate2D*)a B:(CLLocationCoordinate2D*) b error:(bool*)err{
     double x1 = (*b).latitude;
     double y1 = (*b).longitude;
     double x2 = (*a).latitude;
@@ -679,7 +724,7 @@ typedef struct{
     //check validity of projected point.  
     
     if((new_y > y1 && new_y > y2) || (new_y < y1 && new_y < y2)){
-        new_x = 99;
+        *err = true;
     }
     return CLLocationCoordinate2DMake(new_x, new_y);
 }
@@ -688,9 +733,14 @@ typedef struct{
     // each segment is CLLocationCoordinate2D points[2];
     double min_dist = 180*180;
     CLLocationCoordinate2D ret_coord;
+
     for(id line in segments){
+        bool error = false;
         CLLocationCoordinate2D seg[2] = {[line A], [line B]};
-        CLLocationCoordinate2D snaploc = [self getProjectedPoint:coord A:&seg[0] B:&seg[1]];
+        CLLocationCoordinate2D snaploc = [self getProjectedPoint:coord A:&seg[0] B:&seg[1] error:&error];
+        if(error){
+            continue;
+        }
         double d_lat = snaploc.latitude - (*coord).latitude;
         double d_lon = snaploc.longitude - (*coord).longitude;
         double dist = d_lat*d_lat + d_lon*d_lon;
@@ -761,10 +811,8 @@ typedef struct{
             /* end snap stuff */
             if([self tappedCalloutAtCoords:&coord]){
             }else{
-                if(snaploc.latitude<90){
                     //if the result returned is valid
                     [self showSelectionCircle:&snaploc];                
-                }
             }
             
         }
@@ -816,9 +864,9 @@ typedef struct{
     
     [geocoder geocodeAddressString:searchBar.text inRegion:nil completionHandler:^(NSArray *placemarks, NSError * error){
         CLLocation* locationObject = [[placemarks objectAtIndex:0] location];
-        
-        MKCoordinateRegion viewRegion = [self.map regionThatFits:MKCoordinateRegionMakeWithDistance(locationObject.coordinate, 0.5*METERS_PER_MILE, 0.5*METERS_PER_MILE)];
-        [self.map setRegion:viewRegion animated:YES];
+        [self.map setCenterCoordinate:locationObject.coordinate animated:YES];
+//        MKCoordinateRegion viewRegion = [self.map regionThatFits:MKCoordinateRegionMakeWithDistance(locationObject.coordinate, 0.5*METERS_PER_MILE, 0.5*METERS_PER_MILE)];
+//        [self.map setRegion:viewRegion animated:YES];
     }];
     
     [self setSearchBar:searchBar active:NO];
