@@ -258,7 +258,7 @@
                                     <color key="shadowColor" white="0.0" alpha="0.40000000000000002" colorSpace="calibratedWhite"/>
                                 </label>
                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="hours" lineBreakMode="tailTruncation" minimumFontSize="10" id="gLO-bZ-CXq">
-                                    <rect key="frame" x="243" y="155" width="54" height="25"/>
+                                    <rect key="frame" x="242" y="155" width="54" height="25"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                     <color key="textColor" red="0.76078431369999999" green="0.75294117650000003" blue="0.75294117650000003" alpha="1" colorSpace="calibratedRGB"/>
@@ -312,6 +312,22 @@
                                         <action selector="unparkNow:" destination="Hs3-94-mR9" eventType="touchUpInside" id="1My-KB-kLc"/>
                                     </connections>
                                 </button>
+                                <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="Iac-kZ-gJO">
+                                    <rect key="frame" x="10" y="10" width="145" height="52"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="21.5"/>
+                                    <size key="titleShadowOffset" width="0.0" height="-1"/>
+                                    <state key="normal" title="Extend">
+                                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <color key="titleShadowColor" white="0.0" alpha="0.40000000000000002" colorSpace="calibratedWhite"/>
+                                    </state>
+                                    <state key="highlighted">
+                                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    </state>
+                                    <connections>
+                                        <action selector="extend:" destination="Hs3-94-mR9" eventType="touchUpInside" id="enl-5h-HvC"/>
+                                    </connections>
+                                </button>
                                 <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="countDownTimer" minuteInterval="5" id="TKm-MG-65C">
                                     <rect key="frame" x="0.0" y="89" width="320" height="216"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
@@ -340,6 +356,9 @@ AQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEAAQABAAEA
 AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
 </data>
                                     </timeZone>
+                                    <connections>
+                                        <action selector="durationChanged:" destination="Hs3-94-mR9" eventType="valueChanged" id="0nJ-hc-Njh"/>
+                                    </connections>
                                 </datePicker>
                             </subviews>
                             <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
@@ -382,6 +401,27 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                             <color key="textColor" red="0.34509803921568627" green="0.34509803921568627" blue="0.34509803921568627" alpha="1" colorSpace="calibratedRGB"/>
                                                             <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                        </label>
+                                                    </subviews>
+                                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                </view>
+                                                <view hidden="YES" autoresizesSubviews="NO" opaque="NO" contentMode="scaleToFill" id="s8E-UE-7e3">
+                                                    <rect key="frame" x="0.0" y="-1" width="300" height="46"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <subviews>
+                                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" text="Time remaining" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="4JI-dl-137">
+                                                            <rect key="frame" x="10" y="2" width="280" height="43"/>
+                                                            <autoresizingMask key="autoresizingMask"/>
+                                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                                                            <color key="textColor" red="0.34509803919999998" green="0.34509803919999998" blue="0.34509803919999998" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                        </label>
+                                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="0:00" textAlignment="right" lineBreakMode="tailTruncation" minimumFontSize="10" id="rbS-cg-GYy">
+                                                            <rect key="frame" x="113" y="13" width="170" height="21"/>
+                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                            <color key="textColor" red="0.34509803919999998" green="0.34509803919999998" blue="0.34509803919999998" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <nil key="highlightedColor"/>
                                                         </label>
                                                     </subviews>
                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -437,6 +477,27 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                                                     </subviews>
                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                 </view>
+                                                <view hidden="YES" autoresizesSubviews="NO" opaque="NO" contentMode="scaleToFill" id="aHK-T2-CCv">
+                                                    <rect key="frame" x="0.0" y="-1" width="300" height="46"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <subviews>
+                                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" text="Time to add" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="86O-GA-zXx">
+                                                            <rect key="frame" x="10" y="2" width="235" height="43"/>
+                                                            <autoresizingMask key="autoresizingMask"/>
+                                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                            <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                        </label>
+                                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="0:00" textAlignment="right" lineBreakMode="tailTruncation" minimumFontSize="10" id="Rht-jq-mAB">
+                                                            <rect key="frame" x="113" y="13" width="170" height="21"/>
+                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                    </subviews>
+                                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                </view>
                                             </subviews>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
@@ -452,24 +513,29 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                     </tableView>
                     <navigationItem key="navigationItem" title="1106, Cambridge, MA" id="TEM-wm-Rmy"/>
                     <connections>
+                        <outlet property="addressCellView" destination="oM8-I2-p1a" id="ZX0-if-LlS"/>
                         <outlet property="addressLabel" destination="t6o-Xy-Eni" id="AYF-fq-PLi"/>
-                        <outlet property="addressView" destination="oM8-I2-p1a" id="0u5-Bq-WHW"/>
                         <outlet property="datePicker" destination="TKm-MG-65C" id="55h-uS-UH8"/>
+                        <outlet property="extendAmount" destination="Rht-jq-mAB" id="sEf-xI-fHT"/>
+                        <outlet property="extendButton" destination="Iac-kZ-gJO" id="4nZ-mt-8Qv"/>
                         <outlet property="hours" destination="A8E-fm-VSP" id="H36-Qb-Hn7"/>
                         <outlet property="limitUnit" destination="gLO-bZ-CXq" id="iI1-Ba-fSH"/>
                         <outlet property="limitValue" destination="kqk-Hd-aM9" id="9Pb-Em-Q07"/>
                         <outlet property="minutes" destination="Y6q-af-rFO" id="Mkg-0h-abd"/>
+                        <outlet property="paygCellView" destination="pyS-oV-YAr" id="CHx-O6-Msz"/>
                         <outlet property="paygCheck" destination="iLf-wM-LbY" id="8g8-4F-iZc"/>
                         <outlet property="paygFlag" destination="oH6-bD-6fX" id="o93-c4-5oS"/>
-                        <outlet property="paygView" destination="pyS-oV-YAr" id="1HL-gb-B3O"/>
                         <outlet property="prepaidAmount" destination="v5T-9w-4wz" id="LqN-O4-XBQ"/>
+                        <outlet property="prepaidCellView" destination="w60-Sc-7sv" id="nEn-FX-xYm"/>
                         <outlet property="prepaidCheck" destination="ZxQ-hL-3De" id="joM-Na-eC1"/>
                         <outlet property="prepaidFlag" destination="9Fx-qN-c0G" id="JtG-pT-hgq"/>
-                        <outlet property="prepaidView" destination="w60-Sc-7sv" id="n3E-Xm-cbA"/>
                         <outlet property="rateDenominator" destination="eBk-Ue-TxC" id="jd4-8B-TXe"/>
                         <outlet property="rateNumerator" destination="96y-AS-O0j" id="gjV-6b-yae"/>
-                        <outlet property="seeMapView" destination="U83-uB-5Jz" id="Tty-SX-Ms2"/>
+                        <outlet property="remainingAmount" destination="rbS-cg-GYy" id="RjK-pg-Crh"/>
+                        <outlet property="seeMapCellView" destination="U83-uB-5Jz" id="PMC-F0-TkP"/>
                         <outlet property="startButton" destination="T3R-6P-VeW" id="lys-gJ-Yz9"/>
+                        <outlet property="timeRemainingCellView" destination="s8E-UE-7e3" id="94v-ji-FLx"/>
+                        <outlet property="timeToAddCellView" destination="aHK-T2-CCv" id="7Hm-yV-AbL"/>
                         <outlet property="unparkButton" destination="qoH-ki-1qF" id="BcL-6S-hCA"/>
                         <segue destination="eWa-cd-w1P" kind="push" identifier="showParkedCar" id="fHc-DB-qhz"/>
                     </connections>
@@ -558,24 +624,29 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         <class className="PQParkingViewController" superclassName="UITableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/PQParkingViewController.h"/>
             <relationships>
+                <relationship kind="outlet" name="addressCellView" candidateClass="UIView"/>
                 <relationship kind="outlet" name="addressLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="addressView" candidateClass="UIView"/>
                 <relationship kind="outlet" name="datePicker" candidateClass="UIDatePicker"/>
+                <relationship kind="outlet" name="extendAmount" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="extendButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="hours" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="limitUnit" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="limitValue" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="minutes" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="paygCellView" candidateClass="UIView"/>
                 <relationship kind="outlet" name="paygCheck" candidateClass="UIImageView"/>
                 <relationship kind="outlet" name="paygFlag" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="paygView" candidateClass="UIView"/>
                 <relationship kind="outlet" name="prepaidAmount" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="prepaidCellView" candidateClass="UIView"/>
                 <relationship kind="outlet" name="prepaidCheck" candidateClass="UIImageView"/>
                 <relationship kind="outlet" name="prepaidFlag" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="prepaidView" candidateClass="UIView"/>
                 <relationship kind="outlet" name="rateDenominator" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="rateNumerator" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="seeMapView" candidateClass="UIView"/>
+                <relationship kind="outlet" name="remainingAmount" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="seeMapCellView" candidateClass="UIView"/>
                 <relationship kind="outlet" name="startButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="timeRemainingCellView" candidateClass="UIView"/>
+                <relationship kind="outlet" name="timeToAddCellView" candidateClass="UIView"/>
                 <relationship kind="outlet" name="unparkButton" candidateClass="UIButton"/>
             </relationships>
         </class>
