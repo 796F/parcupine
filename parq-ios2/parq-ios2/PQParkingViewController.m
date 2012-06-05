@@ -210,7 +210,7 @@ typedef enum {
 #pragma mark - UIViewController
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"showParkedCar"]) {
-        PQParkedCarMapViewController *parkedCarVC = [segue destinationViewController];
+//        PQParkedCarMapViewController *parkedCarVC = [segue destinationViewController];
     }
 }
 
