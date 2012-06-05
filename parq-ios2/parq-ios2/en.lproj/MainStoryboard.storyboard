@@ -229,6 +229,10 @@
                                     <fontDescription key="fontDescription" type="system" pointSize="60"/>
                                     <nil key="highlightedColor"/>
                                 </label>
+                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="colon.png" id="8la-rh-70J">
+                                    <rect key="frame" x="156" y="45" width="8" height="27"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                </imageView>
                                 <imageView hidden="YES" autoresizesSubviews="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="TopLeft" image="prepaid.png" id="9Fx-qN-c0G">
                                     <rect key="frame" x="69" y="73" width="141" height="56"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -515,6 +519,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                     <connections>
                         <outlet property="addressCellView" destination="oM8-I2-p1a" id="ZX0-if-LlS"/>
                         <outlet property="addressLabel" destination="t6o-Xy-Eni" id="AYF-fq-PLi"/>
+                        <outlet property="colon" destination="8la-rh-70J" id="3E0-nv-ngK"/>
                         <outlet property="datePicker" destination="TKm-MG-65C" id="55h-uS-UH8"/>
                         <outlet property="extendAmount" destination="Rht-jq-mAB" id="sEf-xI-fHT"/>
                         <outlet property="extendButton" destination="Iac-kZ-gJO" id="4nZ-mt-8Qv"/>
@@ -593,6 +598,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         <image name="avail_gradient.png" width="58" height="59"/>
         <image name="check.png" width="29" height="30"/>
         <image name="check_empty.png" width="30" height="30"/>
+        <image name="colon.png" width="8" height="27"/>
         <image name="grey_tabs_bar.png" width="603" height="94"/>
         <image name="left_arrow.png" width="20" height="20"/>
         <image name="meter.png" width="320" height="131"/>

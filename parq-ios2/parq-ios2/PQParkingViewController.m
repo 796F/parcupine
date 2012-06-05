@@ -20,7 +20,9 @@ typedef enum {
 
 @interface PQParkingViewController ()
 @property (nonatomic) ParkState parkState;
-@property (strong, nonatomic) NSDate *expirationTime;
+@property (strong, nonatomic) NSTimer *timer;
+@property (strong, nonatomic) NSDate *prepaidEndTime;
+@property (strong, nonatomic) NSDate *paygStartTime;
 @property (strong, nonatomic) UIBarButtonItem *cancelButton;
 @property (strong, nonatomic) UIBarButtonItem *doneButton;
 @end
@@ -40,6 +42,7 @@ typedef enum {
 @synthesize prepaidFlag;
 @synthesize hours;
 @synthesize minutes;
+@synthesize colon;
 @synthesize paygCheck;
 @synthesize prepaidCheck;
 @synthesize prepaidAmount;
@@ -56,7 +59,9 @@ typedef enum {
 @synthesize rateDenominator;
 @synthesize limitValue;
 @synthesize parkState;
-@synthesize expirationTime;
+@synthesize prepaidEndTime;
+@synthesize paygStartTime;
+@synthesize timer;
 @synthesize cancelButton;
 @synthesize doneButton;
 @synthesize parent;
@@ -108,17 +113,47 @@ typedef enum {
 #pragma mark - Main button actions
 - (IBAction)startTimer:(id)sender {
     if (!prepaidFlag.hidden) {
-        expirationTime = [NSDate dateWithTimeIntervalSinceNow:datePicker.countDownDuration];
+        prepaidEndTime = [NSDate dateWithTimeIntervalSinceNow:datePicker.countDownDuration];
+        timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updatePrepaidTimer) userInfo:nil repeats:YES];
+    } else {
+        paygStartTime = [NSDate date];
+        timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updatePaygTimer) userInfo:nil repeats:YES];
     }
     [self parkedAfterParking];
 }
 
 - (IBAction)unparkNow:(id)sender {
+    [timer invalidate];
     [self dismissModalViewControllerAnimated:YES];
 }
 
 - (IBAction)extend:(id)sender {
     [self extendingAfterParked];
+}
+
+#pragma mark - Timer update methods
+- (void)updatePrepaidTimer {
+    if (parkState == kParkedParkState) {
+        int totalMinutes = ([prepaidEndTime timeIntervalSinceNow]-1)/60+1;
+        hours.text = [NSString stringWithFormat:@"%02d", totalMinutes/60];
+        minutes.text = [NSString stringWithFormat:@"%02d", totalMinutes%60];
+        colon.hidden = !colon.hidden;
+    } else {
+        int totalSeconds = round([prepaidEndTime timeIntervalSinceNow]);
+        int totalMinutes = (totalSeconds-1)/60+1;
+        if (totalSeconds%2 == 0) {
+            remainingAmount.text = [NSString stringWithFormat:@"%02d:%02d", totalMinutes/60, totalMinutes%60];
+        } else {
+            remainingAmount.text = [NSString stringWithFormat:@"%02d %02d", totalMinutes/60, totalMinutes%60];
+        }
+    }
+}
+
+- (void)updatePaygTimer {
+    int totalMinutes = (-[paygStartTime timeIntervalSinceNow]-1)/60+1;
+    hours.text = [NSString stringWithFormat:@"%02d", totalMinutes/60];
+    minutes.text = [NSString stringWithFormat:@"%02d", totalMinutes%60];
+    colon.hidden = !colon.hidden;
 }
 
 #pragma mark - Date Picker control
@@ -237,7 +272,7 @@ typedef enum {
         NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
         [formatter setDateFormat:@"h:mm a"];
         int totalCents = self.rate * (datePicker.countDownDuration/60);
-        UIAlertView* extendAlertView = [[UIAlertView alloc] initWithTitle:@"Extend parking" message:[NSString stringWithFormat:@"After extending, you will be charged $%d.%02d and your parking will expire at %@.", totalCents/100, totalCents%100, [formatter stringFromDate:[NSDate dateWithTimeInterval:datePicker.countDownDuration sinceDate:expirationTime]], nil] delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Extend", nil];
+        UIAlertView* extendAlertView = [[UIAlertView alloc] initWithTitle:@"Extend parking" message:[NSString stringWithFormat:@"After extending, you will be charged $%d.%02d and your parking will expire at %@.", totalCents/100, totalCents%100, [formatter stringFromDate:[NSDate dateWithTimeInterval:datePicker.countDownDuration sinceDate:prepaidEndTime]], nil] delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Extend", nil];
         extendAlertView.tag = ALERTVIEW_EXTEND;
         [extendAlertView show];
     }
@@ -246,8 +281,8 @@ typedef enum {
 #pragma mark - UIAlertViewDelegate
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (alertView.tag == ALERTVIEW_EXTEND && buttonIndex == alertView.firstOtherButtonIndex) {
-        expirationTime = [NSDate dateWithTimeInterval:datePicker.countDownDuration sinceDate:expirationTime];
-        int totalMinutes = ([expirationTime timeIntervalSinceNow]-1)/60+1;
+        prepaidEndTime = [NSDate dateWithTimeInterval:datePicker.countDownDuration sinceDate:prepaidEndTime];
+        int totalMinutes = ([prepaidEndTime timeIntervalSinceNow]-1)/60+1;
         hours.text = [NSString stringWithFormat:@"%02d", totalMinutes/60];
         minutes.text = [NSString stringWithFormat:@"%02d", totalMinutes%60];
         [self parkedAfterExtending];
@@ -422,6 +457,7 @@ typedef enum {
     [self setTimeToAddCellView:nil];
     [self setExtendAmount:nil];
     [self setRemainingAmount:nil];
+    [self setColon:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
