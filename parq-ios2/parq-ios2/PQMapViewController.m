@@ -27,6 +27,9 @@
 #define CALLOUT_HEIGHT 0.00015
 #define STREET_MAP_SPAN 0.0132
 #define SPOT_MAP_SPAN 0.0017
+#define ACCURACY_LIMIT 200
+#define USER_DISTANCE_FROM_SPOT_THRESHOLD 0.01
+
 
 //alert view tags
 #define GPS_LAUNCH_ALERT 0
@@ -69,7 +72,9 @@ typedef struct{
 @synthesize streets;
 @synthesize spots;
 @synthesize managedObjectContext;
-
+@synthesize user_loc;
+@synthesize user_loc_isGood;
+@synthesize desired_spot;
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     NSLog(@"hello\n");
 }
@@ -86,23 +91,22 @@ typedef struct{
             [[NSDictionary alloc] initWithObjectsAndKeys:@"42.370393,-71.114159", @"nw_corner", @"42.380393,-71.124159", @"se_corner", [NSNumber numberWithInt:0], @"color",nil], 
             [[NSDictionary alloc] initWithObjectsAndKeys:@"42.350393,-71.124159", @"nw_corner", @"42.360393,-71.134159", @"se_corner", [NSNumber numberWithInt:1], @"color",nil],
             [[NSDictionary alloc] initWithObjectsAndKeys:@"42.360393,-71.124159", @"nw_corner", @"42.370393,-71.134159", @"se_corner", [NSNumber numberWithInt:2], @"color",nil],
-            [[NSDictionary alloc] initWithObjectsAndKeys:@"42.370393,-71.124159", @"nw_corner", @"42.380393,-71.134159", @"se_corner", [NSNumber numberWithInt:3], @"color",nil], nil];
-    
+            [[NSDictionary alloc] initWithObjectsAndKeys:@"42.370393,-71.124159", @"nw_corner", @"42.380393,-71.134159", @"se_corner", [NSNumber numberWithInt:3], @"color",nil], nil];    
 }
 
 - (NSArray*)loadBlockData {
     NSArray* data = [NSArray arrayWithObjects:
-            [[NSDictionary alloc] initWithObjectsAndKeys:@"42.364551,-71.113099;42.364753,-71.110776", @"line", [NSNumber numberWithInt:0], @"color", nil],
-            [[NSDictionary alloc] initWithObjectsAndKeys:@"42.36643,-71.111047;42.363285,-71.110543", @"line", [NSNumber numberWithInt:1], @"color", nil],
-            [[NSDictionary alloc] initWithObjectsAndKeys:@"42.365352,-71.112211;42.364904,-71.112343", @"line", [NSNumber numberWithInt:2], @"color", nil],
-            [[NSDictionary alloc] initWithObjectsAndKeys:@"42.364904,-71.112343;42.364618,-71.112311", @"line", [NSNumber numberWithInt:0], @"color", nil],
-            [[NSDictionary alloc] initWithObjectsAndKeys:@"42.365352,-71.112211;42.365294,-71.111857", @"line", [NSNumber numberWithInt:4], @"color", nil],
-            [[NSDictionary alloc] initWithObjectsAndKeys:@"42.365294,-71.111857;42.365383,-71.110889", @"line", [NSNumber numberWithInt:1], @"color", nil],
-            [[NSDictionary alloc] initWithObjectsAndKeys:@"42.36532,-71.111565;42.366043,-71.111667", @"line", [NSNumber numberWithInt:3], @"color", nil],
-            [[NSDictionary alloc] initWithObjectsAndKeys:@"42.366043,-71.111667;42.36622,-71.111839", @"line", [NSNumber numberWithInt:3], @"color", nil],
-            [[NSDictionary alloc] initWithObjectsAndKeys:@"42.36622,-71.111839;42.366392,-71.112826", @"line", [NSNumber numberWithInt:3], @"color", nil],
-            [[NSDictionary alloc] initWithObjectsAndKeys:@"42.366788,-71.11193;42.366412,-71.111031", @"line", [NSNumber numberWithInt:0], @"color", nil],nil];
-
+                     [[NSDictionary alloc] initWithObjectsAndKeys:@"42.364551,-71.113099;42.364753,-71.110776", @"line", [NSNumber numberWithInt:0], @"color", nil],
+                     [[NSDictionary alloc] initWithObjectsAndKeys:@"42.36643,-71.111047;42.363285,-71.110543", @"line", [NSNumber numberWithInt:1], @"color", nil],
+                     [[NSDictionary alloc] initWithObjectsAndKeys:@"42.365352,-71.112211;42.364904,-71.112343", @"line", [NSNumber numberWithInt:2], @"color", nil],
+                     [[NSDictionary alloc] initWithObjectsAndKeys:@"42.364904,-71.112343;42.364618,-71.112311", @"line", [NSNumber numberWithInt:0], @"color", nil],
+                     [[NSDictionary alloc] initWithObjectsAndKeys:@"42.365352,-71.112211;42.365294,-71.111857", @"line", [NSNumber numberWithInt:4], @"color", nil],
+                     [[NSDictionary alloc] initWithObjectsAndKeys:@"42.365294,-71.111857;42.365383,-71.110889", @"line", [NSNumber numberWithInt:1], @"color", nil],
+                     [[NSDictionary alloc] initWithObjectsAndKeys:@"42.36532,-71.111565;42.366043,-71.111667", @"line", [NSNumber numberWithInt:3], @"color", nil],
+                     [[NSDictionary alloc] initWithObjectsAndKeys:@"42.366043,-71.111667;42.36622,-71.111839", @"line", [NSNumber numberWithInt:3], @"color", nil],
+                     [[NSDictionary alloc] initWithObjectsAndKeys:@"42.36622,-71.111839;42.366392,-71.112826", @"line", [NSNumber numberWithInt:3], @"color", nil],
+                     [[NSDictionary alloc] initWithObjectsAndKeys:@"42.366788,-71.11193;42.366412,-71.111031", @"line", [NSNumber numberWithInt:0], @"color", nil],nil];
+    
     NSMutableArray* segList = [[NSMutableArray alloc] initWithCapacity:2];
     for(id line in data){
         NSArray *raw_waypoints = [[line objectForKey:@"line"] componentsSeparatedByString:@";"];
@@ -153,12 +157,10 @@ typedef struct{
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     if(alertView.tag==GPS_LAUNCH_ALERT && alertView.firstOtherButtonIndex==buttonIndex){
         //this URL kinda works.  http://maps.google.com/maps?daddr=Spot+1412@42,-73&saddr=Current+Location@42,-72
-        
         //if yes, store the destination's lat/lon for return launch and start gps app.  
-        NSString* destination =[NSString stringWithFormat:@"http://maps.google.com/maps?daddr=Spot+%d@%1.2f,%1.2f&saddr=Current+Location@%1.2f,%1.2f", 1412, 41.343, -74.115, 43.124, -72.31552];
+        NSString* destination =[NSString stringWithFormat:@"http://maps.google.com/maps?daddr=Spot+%d@%1.2f,%1.2f&saddr=Current+Location@%1.2f,%1.2f", desired_spot.name, user_loc.latitude, user_loc.longitude, desired_spot.coordinate.latitude, desired_spot.coordinate.longitude];
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:destination]];
-    
-    
+        
     }else if(alertView.tag == CALLOUT_TAPPED && alertView.firstOtherButtonIndex==buttonIndex){
         
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
@@ -186,7 +188,7 @@ typedef struct{
 //    return ((*v).latitude-(*w).latitude)*((*v).latitude-(*w).latitude) 
 //    + ((*v).longitude - (*w).longitude)*((*v).longitude - (*w).longitude);
 //}
-
+#pragma mark - CALLOUT PLACEMENT
 -(bool)A:(double)a sameSignAsB:(double) b{
     if(a>0){
         return b>0 ? true : false;
@@ -204,16 +206,14 @@ typedef struct{
     bool error = false;
     double reference_dy = 0;
     double reference_dx = 0;
-//    NSLog(@"TOTAL OF %d IN CIRCLE\n", spotList.count);
+    //    NSLog(@"TOTAL OF %d IN CIRCLE\n", spotList.count);
     NSMutableArray* leftSide = [[NSMutableArray alloc] init];
     NSMutableArray* rightSide = [[NSMutableArray alloc] init];
     
-    for(id spot in spotList){
-        bool isRightSide = false;
-        NSArray* spotArray = [spot componentsSeparatedByString:@","];
-        CLLocationCoordinate2D x= CLLocationCoordinate2DMake([[spotArray objectAtIndex:0] doubleValue], [[spotArray objectAtIndex:1] doubleValue]);
-        
+    for(MKCircle* spot in spotList){
+        bool isRightSide = false;        
         //for each spot inside the grey circle, calculate the projected point.  
+        CLLocationCoordinate2D x = spot.coordinate;
         CLLocationCoordinate2D segment[2] = {[seg A], [seg B]};
         CLLocationCoordinate2D point = [self getProjectedPoint:&x A:&segment[0] B:&segment[1] error:&error];
         //don't care about errors in this case.  known to be localized.  
@@ -275,17 +275,13 @@ typedef struct{
     CLLocation* center = [[CLLocation alloc] initWithLatitude:(*selectionCenter).latitude longitude:(*selectionCenter).longitude];
     
     //look through list of points, check spot distanceFromLocation (coord) vs radius.  
-    NSArray* data = [self loadSpotData];
     //keep track of some stuff
     NSMutableArray* insideCircle = [[NSMutableArray alloc] init];
     float avgLat=0, avgLon=0, count=0;
-    for(id spot in data){
-        NSArray* point = [spot componentsSeparatedByString:@","];
-        CLLocation* spot_loc = [[CLLocation alloc] initWithLatitude:[[point objectAtIndex:0] floatValue] longitude:[[point objectAtIndex:1] floatValue]];
-        
+    for(MKCircle* spot in spots){
+        CLLocation* spot_loc = [[CLLocation alloc] initWithLatitude:        spot.coordinate.latitude longitude: spot.coordinate.longitude];
         CLLocationDistance dist = [spot_loc distanceFromLocation:center];
-        int status = [[point objectAtIndex:2] intValue];
-        if(dist<radius-2 && status == 1){
+        if(dist<radius-2 && spot.color == 1){
             //inside the circle
             [insideCircle addObject:spot];
             avgLat += spot_loc.coordinate.latitude;
@@ -303,60 +299,70 @@ typedef struct{
     NSMutableArray* results = [[NSMutableArray alloc] initWithCapacity:spots.count];
     
     //project bubbles using this average and the spot's coordinates.  
-    for(id spot in spotList){
-        NSArray* point = [spot componentsSeparatedByString:@","];
-        CLLocation* spot_loc = [[CLLocation alloc] initWithLatitude:[[point objectAtIndex:0] floatValue] longitude:[[point objectAtIndex:1] floatValue]];
+    for(MKCircle* spot in spotList){
+        CLLocation* spot_loc = [[CLLocation alloc] initWithLatitude:spot.coordinate.latitude longitude:spot.coordinate.longitude];
         //controls how far the callouts go.  
         double rsq = CALLOUT_LINE_LENGTH;
         
         //only make callout for those clearly in circle
         
-            
-            double mdx = avgLat - [[point objectAtIndex:0] floatValue];
-            double mdy = avgLon - [[point objectAtIndex:1] floatValue];
-            double dx = sqrt(rsq / (1 + (mdy * mdy)/(mdx * mdx)));
-            double dy = sqrt(rsq / (1 + (mdx * mdx)/(mdy * mdy)));
-            double callout_lat;
-            double callout_lon;
-            CalloutCorner corner;
-            if(mdy>0){
-                if(mdx>0){
-                    //bottom left of avg
-                    callout_lat = avgLat - dx;
-                    callout_lon = avgLon - dy;
-                    corner = kTopRightCorner;
-                }else{
-                    //bottom right of avg
-                    callout_lat = avgLat + dx;
-                    callout_lon = avgLon - dy;
-                    corner = kBottomRightCorner;
-                }
+        
+        double mdx = avgLat - spot_loc.coordinate.latitude;
+        double mdy = avgLon - spot_loc.coordinate.longitude;
+        double dx = sqrt(rsq / (1 + (mdy * mdy)/(mdx * mdx)));
+        double dy = sqrt(rsq / (1 + (mdx * mdx)/(mdy * mdy)));
+        double callout_lat;
+        double callout_lon;
+        CalloutCorner corner;
+        if(mdy>0){
+            if(mdx>0){
+                //bottom left of avg
+                callout_lat = avgLat - dx;
+                callout_lon = avgLon - dy;
+                corner = kTopRightCorner;
             }else{
-                if(mdx>0){
-                    //top Left of avg
-                    callout_lat = avgLat - dx;
-                    callout_lon = avgLon + dy;
-                    corner = kTopLeftCorner;
-                }else{
-                    //top right of avg
-                    callout_lat = avgLat + dx;
-                    callout_lon = avgLon + dy;
-                    corner = kBottomLeftCorner;
-                    
-                }
+                //bottom right of avg
+                callout_lat = avgLat + dx;
+                callout_lon = avgLon - dy;
+                corner = kBottomRightCorner;
             }
-            NSDictionary* add = [[NSDictionary alloc] initWithObjectsAndKeys:[[CalloutMapAnnotation alloc] initWithLatitude:callout_lat                                         andLongitude:callout_lon
-                                                                                                                   andTitle:[point objectAtIndex:3]
-                                                                                                                  andCorner:corner], @"callout",spot_loc, @"spot", nil];
-            
-            [results addObject:add];
+        }else{
+            if(mdx>0){
+                //top Left of avg
+                callout_lat = avgLat - dx;
+                callout_lon = avgLon + dy;
+                corner = kTopLeftCorner;
+            }else{
+                //top right of avg
+                callout_lat = avgLat + dx;
+                callout_lon = avgLon + dy;
+                corner = kBottomLeftCorner;
+                
+            }
+        }
+        NSString* title = [NSString stringWithFormat:@"%d", spot.name];
+        NSDictionary* add = [[NSDictionary alloc] initWithObjectsAndKeys:[[CalloutMapAnnotation alloc] initWithLatitude:callout_lat                                         andLongitude:callout_lon
+                                                                                                               andTitle:title
+                                                                                                              andCorner:corner
+                                                                                                              andCircle:spot], @"callout",spot_loc, @"spot", nil];
         
-        
+        [results addObject:add];
     }
-    
     return results;
 }
 
+-(bool) pointA:(CLLocationCoordinate2D*)a isCloseToB:(CLLocationCoordinate2D*)b{
+    double dx = (*a).longitude - (*b).longitude;
+    double dy = (*a).latitude - (*b).longitude;
+    double hsq = dx*dx+dy*dy;
+    NSLog(@"user distance from spot is %f\n", hsq);
+    if(hsq < USER_DISTANCE_FROM_SPOT_THRESHOLD ){
+        return true;
+    }else{
+        return false;
+    }
+    
+}
 
 - (bool) tappedCalloutAtCoords:(CLLocationCoordinate2D*) coords{
     for(int i=0; i< callouts.count; i++){
@@ -364,12 +370,25 @@ typedef struct{
         double dx = c.latitude-(*coords).latitude; 
         double dy = c.longitude-(*coords).longitude;
         if(fabs(dx) < CALLOUT_WIDTH && fabs(dy) < CALLOUT_HEIGHT){
-            //ask user if that's desired destination
-            NSString* destination =[NSString stringWithFormat:@"Park at %s?",     [c.title UTF8String]];
-            UIAlertView* warningAlertView = [[UIAlertView alloc] initWithTitle:destination message:nil delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Park" , nil];
-            warningAlertView.tag = CALLOUT_TAPPED;
-            [warningAlertView show];
-            return true;
+            //check where user's location is.  
+            CLLocationCoordinate2D spot_loc = c.circle.coordinate;
+            desired_spot = c.circle;
+            if(user_loc_isGood && [self pointA:&spot_loc isCloseToB:&user_loc]){
+
+                    //if user is close to location, ask user if that's desired destination
+                    NSString* destination =[NSString stringWithFormat:@"Park at %s?",     [c.title UTF8String]];
+                    UIAlertView* warningAlertView = [[UIAlertView alloc] initWithTitle:destination message:nil delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Park" , nil];
+                    warningAlertView.tag = CALLOUT_TAPPED;
+                    [warningAlertView show];
+                    return true;
+            }else{
+                //location isn't good, OR we're far away.  launch gps.  
+                NSString* destination =[NSString stringWithFormat:@"Launch GPS to %s?",     [c.title UTF8String]];
+                UIAlertView* warningAlertView = [[UIAlertView alloc] initWithTitle:destination message:nil delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Launch" , nil];
+                warningAlertView.tag = GPS_LAUNCH_ALERT;
+                [warningAlertView show];
+                return true;
+            }
         }
     }
     return false;
@@ -518,18 +537,18 @@ typedef struct{
     }
     
     for (id line in data) {
-//        NSArray *raw_waypoints = [[line objectForKey:@"line"] componentsSeparatedByString:@";"];
+        //        NSArray *raw_waypoints = [[line objectForKey:@"line"] componentsSeparatedByString:@";"];
         CLLocationCoordinate2D waypoints[2] = {[line A], [line B]};
         
-//        int i=0;
-//        for (id raw_waypoint in raw_waypoints) {
-//            NSArray *coordinates = [raw_waypoint componentsSeparatedByString:@","];
-//            CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake([[coordinates objectAtIndex:0] floatValue], [[coordinates objectAtIndex:1] floatValue]);
-//            waypoints[i++] = coordinate;
-//        }
-//        
+        //        int i=0;
+        //        for (id raw_waypoint in raw_waypoints) {
+        //            NSArray *coordinates = [raw_waypoint componentsSeparatedByString:@","];
+        //            CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake([[coordinates objectAtIndex:0] floatValue], [[coordinates objectAtIndex:1] floatValue]);
+        //            waypoints[i++] = coordinate;
+        //        }
+        //        
         MKPolyline *routeLine = [MKPolyline polylineWithCoordinates:waypoints count:2];
-
+        
         int color = [((Segment*)line) color];
         [routeLine setColor:color];
         [streets addObject:routeLine];
@@ -558,6 +577,7 @@ typedef struct{
         }else if(color==1){
             circle = [MKCircle circleWithCenterCoordinate:coord radius:3];   
         }
+        [circle setName:[[point objectAtIndex:3] intValue]];
         [circle setColor:color];
         [spots addObject:circle];
     }
@@ -705,6 +725,8 @@ typedef struct{
 	return nil;
 }
 
+#pragma mark - LINE PROJECTION
+
 //given a point p, and a segment a to b, find the orthogonally projected point on the segment.
 -(CLLocationCoordinate2D) getProjectedPoint: (CLLocationCoordinate2D*) p A:(CLLocationCoordinate2D*)a B:(CLLocationCoordinate2D*) b error:(bool*)err{
     double x1 = (*b).latitude;
@@ -733,7 +755,7 @@ typedef struct{
     // each segment is CLLocationCoordinate2D points[2];
     double min_dist = 180*180;
     CLLocationCoordinate2D ret_coord;
-
+    
     for(id line in segments){
         bool error = false;
         CLLocationCoordinate2D seg[2] = {[line A], [line B]};
@@ -751,6 +773,8 @@ typedef struct{
     }
     return ret_coord;
 }
+
+#pragma mark - GESTURE HANDLERS
 
 -(void)handlePanGesture:(UIGestureRecognizer*)gestureRecognizer{
     if(gestureRecognizer.state != UIGestureRecognizerStateEnded)
@@ -811,13 +835,14 @@ typedef struct{
             /* end snap stuff */
             if([self tappedCalloutAtCoords:&coord]){
             }else{
-                    //if the result returned is valid
-                    [self showSelectionCircle:&snaploc];                
+                //if the result returned is valid
+                [self showSelectionCircle:&snaploc];                
             }
             
         }
     }
 }
+
 
 #pragma mark - Search bar and UISearchBarDelegate methods
 
@@ -865,8 +890,8 @@ typedef struct{
     [geocoder geocodeAddressString:searchBar.text inRegion:nil completionHandler:^(NSArray *placemarks, NSError * error){
         CLLocation* locationObject = [[placemarks objectAtIndex:0] location];
         [self.map setCenterCoordinate:locationObject.coordinate animated:YES];
-//        MKCoordinateRegion viewRegion = [self.map regionThatFits:MKCoordinateRegionMakeWithDistance(locationObject.coordinate, 0.5*METERS_PER_MILE, 0.5*METERS_PER_MILE)];
-//        [self.map setRegion:viewRegion animated:YES];
+        //        MKCoordinateRegion viewRegion = [self.map regionThatFits:MKCoordinateRegionMakeWithDistance(locationObject.coordinate, 0.5*METERS_PER_MILE, 0.5*METERS_PER_MILE)];
+        //        [self.map setRegion:viewRegion animated:YES];
     }];
     
     [self setSearchBar:searchBar active:NO];
@@ -931,23 +956,14 @@ typedef struct{
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {   
     return YES;
 }
+
+#pragma mark - LOCATION
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation{
-    if (MAX(newLocation.horizontalAccuracy, newLocation.verticalAccuracy) < 100) {
-        //One location is obtained.. just zoom to that location
-        /*
-         MKCoordinateRegion region;
-         region.center=newLocation.coordinate;
-         //Set Zoom level using Span
-         MKCoordinateSpan span;
-         span.latitudeDelta=.005;
-         span.longitudeDelta=.005;
-         region.span=span;
-         
-         [map setRegion:region animated:TRUE];
-         */
-        
-        [self spotButtonPressed:nil];
-        
+    
+    user_loc = newLocation.coordinate;
+    if (MAX(newLocation.horizontalAccuracy, newLocation.verticalAccuracy) < ACCURACY_LIMIT) {
+        //if we get a decent read store it and stop updating.  
+        user_loc_isGood = true;
         [locationManager stopUpdatingLocation];
     }
 }
@@ -1022,7 +1038,9 @@ typedef struct{
     locationManager.desiredAccuracy=kCLLocationAccuracyNearestTenMeters;
     
     [locationManager startUpdatingLocation];
+    user_loc_isGood = false;
 }
+
 
 - (void)viewDidUnload
 {

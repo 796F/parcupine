@@ -14,5 +14,6 @@
 @interface MKShape (Color)
 
 @property (nonatomic) int color;
+@property (nonatomic) int name;
 
 @end

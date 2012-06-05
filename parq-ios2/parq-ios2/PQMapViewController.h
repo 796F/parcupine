@@ -36,5 +36,8 @@
 @property (nonatomic, retain) NSMutableArray* streets;
 @property (nonatomic, retain) NSMutableArray* spots;
 @property (nonatomic, retain) CLGeocoder* geocoder;
+@property (nonatomic) CLLocationCoordinate2D user_loc;
+@property (nonatomic) bool user_loc_isGood;
+@property (nonatomic, retain) MKCircle* desired_spot;
 
 @end
