@@ -237,7 +237,7 @@ typedef enum {
         NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
         [formatter setDateFormat:@"h:mm a"];
         int totalCents = self.rate * (datePicker.countDownDuration/60);
-        UIAlertView* extendAlertView = [[UIAlertView alloc] initWithTitle:@"Extend parking" message:[NSString stringWithFormat:@"After extending, your parking will expire at %@ and will cost $%d.%02d.", [formatter stringFromDate:[NSDate dateWithTimeInterval:datePicker.countDownDuration sinceDate:expirationTime]], totalCents/100, totalCents%100, nil] delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Extend", nil];
+        UIAlertView* extendAlertView = [[UIAlertView alloc] initWithTitle:@"Extend parking" message:[NSString stringWithFormat:@"After extending, you will be charged $%d.%02d and your parking will expire at %@.", totalCents/100, totalCents%100, [formatter stringFromDate:[NSDate dateWithTimeInterval:datePicker.countDownDuration sinceDate:expirationTime]], nil] delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Extend", nil];
         extendAlertView.tag = ALERTVIEW_EXTEND;
         [extendAlertView show];
     }
@@ -274,7 +274,7 @@ typedef enum {
     } else if (parkState == kParkedParkState) {
         return @"Your car\u2019s parking location";
     } else {
-        return @"Select additional time";
+        return @"Specify amount of additional time";
     }
 }
 
