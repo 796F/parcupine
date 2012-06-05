@@ -123,7 +123,7 @@
     }
 }
 
-- (NSArray*)loadGridData {
++ (NSArray*)loadGridData {
     
     
     return [NSArray arrayWithObjects:
@@ -139,7 +139,7 @@
     
 }
 
-- (NSArray*)loadBlockData {
++ (NSArray*)loadBlockData {
     NSArray* data = [NSArray arrayWithObjects:
                      [[NSDictionary alloc] initWithObjectsAndKeys:@"42.364551,-71.113099;42.364753,-71.110776", @"line", [NSNumber numberWithInt:0], @"color", nil],
                      [[NSDictionary alloc] initWithObjectsAndKeys:@"42.36643,-71.111047;42.363285,-71.110543", @"line", [NSNumber numberWithInt:1], @"color", nil],

@@ -10,8 +10,17 @@
 #import "PQParkedCarMapViewController.h"
 #import "UIColor+Parq.h"
 
+#define ALERTVIEW_EXTEND 1
+
+typedef enum {
+    kParkingParkState=0,
+    kParkedParkState,
+    kExtendingParkState
+} ParkState;
+
 @interface PQParkingViewController ()
-@property (nonatomic) BOOL timerStarted;
+@property (nonatomic) ParkState parkState;
+@property (strong, nonatomic) NSDate *expirationTime;
 @property (strong, nonatomic) UIBarButtonItem *cancelButton;
 @property (strong, nonatomic) UIBarButtonItem *doneButton;
 @end
@@ -26,6 +35,7 @@
 @synthesize addressLabel;
 @synthesize startButton;
 @synthesize unparkButton;
+@synthesize extendButton;
 @synthesize paygFlag;
 @synthesize prepaidFlag;
 @synthesize hours;
@@ -33,68 +43,112 @@
 @synthesize paygCheck;
 @synthesize prepaidCheck;
 @synthesize prepaidAmount;
-@synthesize paygView;
-@synthesize addressView;
-@synthesize prepaidView;
-@synthesize seeMapView;
+@synthesize remainingAmount;
+@synthesize extendAmount;
+@synthesize paygCellView;
+@synthesize addressCellView;
+@synthesize prepaidCellView;
+@synthesize seeMapCellView;
+@synthesize timeRemainingCellView;
+@synthesize timeToAddCellView;
 @synthesize datePicker;
 @synthesize rateNumerator;
 @synthesize rateDenominator;
 @synthesize limitValue;
+@synthesize parkState;
+@synthesize expirationTime;
 @synthesize cancelButton;
 @synthesize doneButton;
-@synthesize timerStarted;
 @synthesize parent;
-#pragma mark - Main button actions
-- (IBAction)startTimer:(id)sender {
-    timerStarted = YES;
-    paygView.hidden = YES;
-    addressView.hidden = NO;
-    prepaidView.hidden = YES;
-    seeMapView.hidden = NO;
-    ((UIButton *)sender).hidden = YES;
+
+#pragma mark - Park state transitions
+- (void)parkedAfterParking {
+    parkState = kParkedParkState;
+    addressCellView.hidden = NO;
+    seeMapCellView.hidden = NO;
+    paygCellView.hidden = YES;
+    prepaidCellView.hidden = YES;
+    startButton.hidden = YES;
     unparkButton.hidden = NO;
+    extendButton.hidden = prepaidFlag.hidden;
     [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]].userInteractionEnabled = NO;
     [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0]].accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     [self.tableView reloadData];
+    datePicker.countDownDuration = 0;
+}
+
+- (void)extendingAfterParked {
+    parkState = kExtendingParkState;
+    timeRemainingCellView.hidden = NO;
+    timeToAddCellView.hidden = NO;
+    addressCellView.hidden = YES;
+    seeMapCellView.hidden = YES;
+    UITableViewCell *secondCell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0]];
+    secondCell.userInteractionEnabled = NO;
+    secondCell.accessoryType = UITableViewCellAccessoryNone;
+    remainingAmount.text = [NSString stringWithFormat:@"%@:%@", hours.text, minutes.text, nil];
+    [self.tableView reloadData];
+    [self activatePicker];
+}
+
+- (void)parkedAfterExtending {
+    parkState = kParkedParkState;
+    addressCellView.hidden = NO;
+    seeMapCellView.hidden = NO;
+    timeRemainingCellView.hidden = YES;
+    timeToAddCellView.hidden = YES;
+    UITableViewCell *secondCell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0]];
+    secondCell.userInteractionEnabled = YES;
+    secondCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    [self.tableView reloadData];
+    [self resignPicker];
+    datePicker.countDownDuration = 0;
+}
+
+#pragma mark - Main button actions
+- (IBAction)startTimer:(id)sender {
+    if (!prepaidFlag.hidden) {
+        expirationTime = [NSDate dateWithTimeIntervalSinceNow:datePicker.countDownDuration];
+    }
+    [self parkedAfterParking];
 }
 
 - (IBAction)unparkNow:(id)sender {
-    /*
-    timerStarted = NO;
-    paygView.hidden = NO;
-    addressView.hidden = YES;
-    prepaidView.hidden = NO;
-    seeMapView.hidden = YES;
-    startButton.hidden = NO;
-    ((UIButton *)sender).hidden = YES;
-    [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]].userInteractionEnabled = YES;
-    [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0]].accessoryType = UITableViewCellAccessoryNone;
-    [self.tableView reloadData];
-    */
     [self dismissModalViewControllerAnimated:YES];
 }
 
+- (IBAction)extend:(id)sender {
+    [self extendingAfterParked];
+}
+
 #pragma mark - Date Picker control
-- (void)durationChanged {
-    int totalMinutes = (datePicker.countDownDuration-1)/60+1;
+- (IBAction)durationChanged:(id)sender {
+    int totalMinutes = datePicker.countDownDuration/60;
     if (totalMinutes > limit) {
         datePicker.countDownDuration = limit*60;
         totalMinutes = limit;
     }
     int hoursPart = totalMinutes/60;
     int minutesPart = totalMinutes%60;
-    hours.text = [NSString stringWithFormat:@"%02d", hoursPart];
-    minutes.text = [NSString stringWithFormat:@"%02d", minutesPart];
 
     int totalCents = self.rate * totalMinutes;
     int dollarsPart = totalCents/100;
     int centsPart = totalCents%100;
 
-    if (hoursPart == 0) {
-        prepaidAmount.text = [NSString stringWithFormat:@"%dm ($%d.%02d)", minutesPart, dollarsPart, centsPart];
+    if (parkState == kParkingParkState) {
+        hours.text = [NSString stringWithFormat:@"%02d", hoursPart];
+        minutes.text = [NSString stringWithFormat:@"%02d", minutesPart];
+        if (hoursPart == 0) {
+            prepaidAmount.text = [NSString stringWithFormat:@"%dm ($%d.%02d)", minutesPart, dollarsPart, centsPart];
+        } else {
+            prepaidAmount.text = [NSString stringWithFormat:@"%dh %02dm ($%d.%02d)", hoursPart, minutesPart, dollarsPart, centsPart];
+        }
     } else {
-        prepaidAmount.text = [NSString stringWithFormat:@"%dh %02dm ($%d.%02d)", hoursPart, minutesPart, dollarsPart, centsPart];
+        if (hoursPart == 0) {
+            extendAmount.text = [NSString stringWithFormat:@"%dm ($%d.%02d)", minutesPart, dollarsPart, centsPart];
+        } else {
+            extendAmount.text = [NSString stringWithFormat:@"%dh %02dm ($%d.%02d)", hoursPart, minutesPart, dollarsPart, centsPart];
+        }
     }
 }
 
@@ -112,7 +166,7 @@
     }
     self.navigationItem.leftBarButtonItem = cancelButton;
     self.navigationItem.rightBarButtonItem = doneButton;
-    [self durationChanged];
+    [self durationChanged:nil];
 }
 
 - (void)resignPicker {
@@ -133,6 +187,7 @@
     prepaidFlag.hidden = YES;
     prepaidAmount.text = @"Enter Amount";
     prepaidAmount.textColor = [UIColor disabledTextColor];
+    unparkButton.frame = CGRectMake(10, 10, 300, 52);
     hours.text = @"00";
     minutes.text = @"00";
     [self resignPicker];
@@ -144,6 +199,7 @@
     paygFlag.hidden = YES;
     prepaidFlag.hidden = NO;
     prepaidAmount.textColor = [UIColor whiteColor];
+    unparkButton.frame = CGRectMake(165, 10, 145, 52);
     [self activatePicker];
 }
 
@@ -154,27 +210,51 @@
 #pragma mark - UIViewController
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"showParkedCar"]) {
-        PQParkedCarMapViewController *parkedCarVC = [segue destinationViewController];
+//        PQParkedCarMapViewController *parkedCarVC = [segue destinationViewController];
     }
 }
 
 #pragma mark - Bar Button actions
 - (void)cancelPicker {
-    NSIndexPath *paygIndexPath = [NSIndexPath indexPathForRow:0 inSection:0];
-    [self.tableView selectRowAtIndexPath:paygIndexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
-    [self paygSelected];
-    [self.tableView deselectRowAtIndexPath:paygIndexPath animated:YES];
+    if (parkState == kParkingParkState) {
+        NSIndexPath *paygIndexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+        [self.tableView selectRowAtIndexPath:paygIndexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
+        [self paygSelected];
+        [self.tableView deselectRowAtIndexPath:paygIndexPath animated:YES];
+    } else {
+        [self parkedAfterExtending];
+    }
 }
 
 - (void)doneWithPicker {
-    [self.tableView deselectRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0] animated:YES];
-    prepaidAmount.textColor = [UIColor activeTextColor];
-    [self resignPicker];
+    if (parkState == kParkingParkState) {
+        [self.tableView deselectRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0] animated:YES];
+        prepaidAmount.textColor = [UIColor activeTextColor];
+        [self resignPicker];
+    } else {
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        [formatter setDateFormat:@"h:mm a"];
+        int totalCents = self.rate * (datePicker.countDownDuration/60);
+        UIAlertView* extendAlertView = [[UIAlertView alloc] initWithTitle:@"Extend parking" message:[NSString stringWithFormat:@"After extending, your parking will expire at %@ and will cost $%d.%02d.", [formatter stringFromDate:[NSDate dateWithTimeInterval:datePicker.countDownDuration sinceDate:expirationTime]], totalCents/100, totalCents%100, nil] delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Extend", nil];
+        extendAlertView.tag = ALERTVIEW_EXTEND;
+        [extendAlertView show];
+    }
+}
+
+#pragma mark - UIAlertViewDelegate
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (alertView.tag == ALERTVIEW_EXTEND && buttonIndex == alertView.firstOtherButtonIndex) {
+        expirationTime = [NSDate dateWithTimeInterval:datePicker.countDownDuration sinceDate:expirationTime];
+        int totalMinutes = ([expirationTime timeIntervalSinceNow]-1)/60+1;
+        hours.text = [NSString stringWithFormat:@"%02d", totalMinutes/60];
+        minutes.text = [NSString stringWithFormat:@"%02d", totalMinutes%60];
+        [self parkedAfterExtending];
+    }
 }
 
 #pragma mark - UITableViewDelegate
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (!timerStarted) {
+    if (parkState == kParkingParkState) {
         if (indexPath.section == 0) {
             if (indexPath.row == 0) {
                 [self paygSelected];
@@ -183,16 +263,16 @@
                 [self prepaidSelected];
             }
         }
-    } else {
-        [tableView deselectRowAtIndexPath:indexPath animated:YES];
     }
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    if (!timerStarted) {
+    if (parkState == kParkingParkState) {
         return @"Select payment method";
-    } else {
+    } else if (parkState == kParkedParkState) {
         return @"Your car\u2019s parking location";
+    } else {
+        return @"Select additional time";
     }
 }
 
@@ -209,7 +289,7 @@
 	label.text = [self tableView:tableView titleForHeaderInSection:section];
 	[containerView addSubview:label];
 
-    if (!timerStarted) {
+    if (parkState == kParkingParkState) {
         UIButton *abutton = [UIButton buttonWithType: UIButtonTypeInfoDark];
         abutton.frame = CGRectMake(288, 12, 14, 14);
         //    [abutton addTarget: self action: @selector(addPage:)
@@ -254,12 +334,13 @@
     rateDenominatorMinutes = 30;
     limit = 600; // 10 hours * 60 min/hr
 
-    timerStarted = NO;
+    // Initialize variables
+    parkState = kParkingParkState;
 
+    // Set values not settable in IB (resizeable backgrounds, fonts, etc)
     [startButton setBackgroundImage:[[UIImage imageNamed:@"green_button.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 14, 0, 14)] forState:UIControlStateNormal];
     [unparkButton setBackgroundImage:[[UIImage imageNamed:@"red_button.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 14, 0, 14)] forState:UIControlStateNormal];
-
-    [datePicker addTarget:self action:@selector(durationChanged) forControlEvents:UIControlEventValueChanged];
+    [extendButton setBackgroundImage:[[UIImage imageNamed:@"green_button.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 14, 0, 14)] forState:UIControlStateNormal];
 
     hours.font = [UIFont fontWithName:@"OCR B Std" size:60];
     minutes.font = [UIFont fontWithName:@"OCR B Std" size:60];
@@ -310,7 +391,7 @@
 
     // Gesture recognizer for "See map" table view cell
     UITapGestureRecognizer *seeMapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showParkedCar)];
-    [self.seeMapView addGestureRecognizer:seeMapRecognizer];
+    [seeMapCellView addGestureRecognizer:seeMapRecognizer];
 }
 
 - (void)viewDidUnload
@@ -323,17 +404,22 @@
     [self setPaygCheck:nil];
     [self setPrepaidCheck:nil];
     [self setPrepaidAmount:nil];
-    [self setPaygView:nil];
-    [self setAddressView:nil];
-    [self setPrepaidView:nil];
-    [self setSeeMapView:nil];
+    [self setPaygCellView:nil];
+    [self setAddressCellView:nil];
+    [self setPrepaidCellView:nil];
+    [self setSeeMapCellView:nil];
     [self setUnparkButton:nil];
+    [self setExtendButton:nil];
     [self setDatePicker:nil];
     [self setRateNumerator:nil];
     [self setRateDenominator:nil];
     [self setLimitValue:nil];
     [self setLimitUnit:nil];
     [self setAddressLabel:nil];
+    [self setTimeRemainingCellView:nil];
+    [self setTimeToAddCellView:nil];
+    [self setExtendAmount:nil];
+    [self setRemainingAmount:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
