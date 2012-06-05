@@ -11,7 +11,14 @@
 
 @class Street;
 
-@interface Spot : NSManagedObject
+@interface Spot : NSManagedObject{
+    NSNumber * lat;
+    NSNumber * lon;
+    NSNumber * segNumber;
+    NSNumber * spotId;
+    NSNumber * spotNumber;
+    Street *parentStreet;
+}
 
 @property (nonatomic, retain) NSNumber * lat;
 @property (nonatomic, retain) NSNumber * lon;
