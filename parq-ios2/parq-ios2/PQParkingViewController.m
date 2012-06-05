@@ -188,6 +188,7 @@ typedef enum {
     prepaidAmount.text = @"Enter Amount";
     prepaidAmount.textColor = [UIColor disabledTextColor];
     unparkButton.frame = CGRectMake(10, 10, 300, 52);
+    unparkButton.titleLabel.font = [UIFont boldSystemFontOfSize:21.5];
     hours.text = @"00";
     minutes.text = @"00";
     [self resignPicker];
@@ -200,6 +201,7 @@ typedef enum {
     prepaidFlag.hidden = NO;
     prepaidAmount.textColor = [UIColor whiteColor];
     unparkButton.frame = CGRectMake(165, 10, 145, 52);
+    unparkButton.titleLabel.font = [UIFont boldSystemFontOfSize:19];
     [self activatePicker];
 }
 
