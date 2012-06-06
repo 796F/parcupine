@@ -9,6 +9,7 @@
 #import "PQParkingViewController.h"
 #import "PQParkedCarMapViewController.h"
 #import "UIColor+Parq.h"
+#import <QuartzCore/QuartzCore.h>
 
 #define ALERTVIEW_EXTEND 1
 
@@ -218,8 +219,10 @@ typedef enum {
 - (void)paygSelected {
     paygCheck.image = [UIImage imageNamed:@"check.png"];
     prepaidCheck.image = [UIImage imageNamed:@"check_empty.png"];
-    paygFlag.hidden = NO;
-    prepaidFlag.hidden = YES;
+    if (paygFlag.hidden) {
+        [self animateFlagIn:paygFlag];
+        [self animateFlagOut:prepaidFlag];
+    }
     prepaidAmount.text = @"Enter Amount";
     prepaidAmount.textColor = [UIColor disabledTextColor];
     unparkButton.frame = CGRectMake(10, 10, 300, 52);
@@ -232,8 +235,10 @@ typedef enum {
 - (void)prepaidSelected {
     paygCheck.image = [UIImage imageNamed:@"check_empty.png"];
     prepaidCheck.image = [UIImage imageNamed:@"check.png"];
-    paygFlag.hidden = YES;
-    prepaidFlag.hidden = NO;
+    if (prepaidFlag.hidden) {
+        [self animateFlagOut:paygFlag];
+        [self animateFlagIn:prepaidFlag];
+    }
     prepaidAmount.textColor = [UIColor whiteColor];
     unparkButton.frame = CGRectMake(165, 10, 145, 52);
     unparkButton.titleLabel.font = [UIFont boldSystemFontOfSize:19];
@@ -329,8 +334,8 @@ typedef enum {
     if (parkState == kParkingParkState) {
         UIButton *abutton = [UIButton buttonWithType: UIButtonTypeInfoDark];
         abutton.frame = CGRectMake(288, 12, 14, 14);
-        //    [abutton addTarget: self action: @selector(addPage:)
-        //      forControlEvents: UIControlEventTouchUpInside];
+        [abutton addTarget:self action:nil
+          forControlEvents: UIControlEventTouchUpInside];
         [containerView addSubview:abutton];
     }
 	return containerView;
@@ -338,6 +343,30 @@ typedef enum {
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
     return 36;
+}
+
+#pragma mark - Animations
+- (void)animateFlagIn:(UIView *)flag {
+    flag.hidden = NO;
+    [UIView animateWithDuration:0.3 delay:0.15 options:UIViewAnimationCurveEaseOut animations:^{
+        flag.transform = CGAffineTransformRotate(CGAffineTransformIdentity, -M_PI/24);
+    } completion:^(BOOL s){
+        [UIView animateWithDuration:0.25 animations:^{
+            flag.transform = CGAffineTransformRotate(CGAffineTransformIdentity, M_PI/64);
+        } completion:^(BOOL t) {
+            [UIView animateWithDuration:0.2 animations:^{
+                flag.transform = CGAffineTransformIdentity;
+            }];
+        }];
+    }];
+}
+
+- (void)animateFlagOut:(UIView *)flag {
+    [UIView animateWithDuration:0.3 delay:0.2 options:UIViewAnimationCurveEaseIn animations:^{
+        flag.transform = CGAffineTransformRotate(CGAffineTransformIdentity, M_PI/4);
+    } completion:^(BOOL s) {
+        flag.hidden = YES;
+    }];
 }
 
 #pragma mark - Dynamic properties
@@ -429,6 +458,14 @@ typedef enum {
     // Gesture recognizer for "See map" table view cell
     UITapGestureRecognizer *seeMapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showParkedCar)];
     [seeMapCellView addGestureRecognizer:seeMapRecognizer];
+
+    // Set anchor points for flag animations and begin first animation
+    paygFlag.layer.anchorPoint = CGPointMake(0.0,1.0);
+    paygFlag.center = CGPointMake(0, 99);
+    prepaidFlag.layer.anchorPoint = CGPointMake(0.0,1.0);
+    prepaidFlag.center = CGPointMake(0, 102);
+    paygFlag.transform = CGAffineTransformRotate(CGAffineTransformIdentity, M_PI/4);
+    [self animateFlagIn:paygFlag];
 }
 
 - (void)viewDidUnload

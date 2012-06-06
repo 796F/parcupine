@@ -233,14 +233,21 @@
                                     <rect key="frame" x="156" y="45" width="8" height="27"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 </imageView>
-                                <imageView hidden="YES" autoresizesSubviews="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="TopLeft" image="prepaid.png" id="9Fx-qN-c0G">
-                                    <rect key="frame" x="69" y="73" width="141" height="56"/>
+                                <view opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" id="sx5-N9-2NA">
+                                    <rect key="frame" x="69.5" y="73" width="141" height="56"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                </imageView>
-                                <imageView autoresizesSubviews="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="TopLeft" image="payg.png" id="oH6-bD-6fX">
-                                    <rect key="frame" x="70" y="74" width="139" height="55"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                </imageView>
+                                    <subviews>
+                                        <imageView hidden="YES" autoresizesSubviews="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="TopLeft" image="prepaid.png" id="9Fx-qN-c0G">
+                                            <rect key="frame" x="-0.5" y="0.0" width="141" height="102"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        </imageView>
+                                        <imageView autoresizesSubviews="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="TopLeft" image="payg.png" id="oH6-bD-6fX">
+                                            <rect key="frame" x="0.5" y="0.0" width="139" height="99"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        </imageView>
+                                    </subviews>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                </view>
                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="grey_tabs_bar.png" id="UYi-er-iTv">
                                     <rect key="frame" x="9" y="144" width="301" height="47"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
