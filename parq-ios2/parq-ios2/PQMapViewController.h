@@ -43,6 +43,7 @@
 @property (weak, nonatomic) IBOutlet UIView *availabilitySelectionView;
 @property (weak, nonatomic) IBOutlet UIView *bottomSpotSelectionView;
 @property (weak, nonatomic) IBOutlet UIView *topSpotSelectionView;
+@property (weak, nonatomic) IBOutlet UIImageView *gradientIcon;
 
 //internal management stuff
 @property (weak, nonatomic) MKCircle* gCircle;

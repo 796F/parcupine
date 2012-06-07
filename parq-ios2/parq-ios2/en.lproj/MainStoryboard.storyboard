@@ -108,13 +108,13 @@
                                                     </segments>
                                                     <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                                     <connections>
-                                                        <action selector="availabilitySegControlIndexChanged" destination="4" eventType="valueChanged" id="0CS-N8-lpv"/>
+                                                        <action selector="availabilityBarTapped" destination="2" eventType="valueChanged" id="WbM-Zj-y0b"/>
                                                     </connections>
                                                 </segmentedControl>
                                             </barButtonItem>
                                         </items>
                                     </toolbar>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="avail_gradient.png" id="lAn-ft-Xqs">
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="gradient_avail.png" id="lAn-ft-Xqs">
                                         <rect key="frame" x="8" y="7" width="30" height="30"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     </imageView>
@@ -200,6 +200,7 @@
                         <outlet property="availabilitySelectionView" destination="xax-VC-fGh" id="u5e-Ry-nzm"/>
                         <outlet property="bottomSpotSelectionBar" destination="kda-6o-i24" id="7id-xr-AH0"/>
                         <outlet property="bottomSpotSelectionView" destination="3zE-go-tx2" id="IVz-bI-W59"/>
+                        <outlet property="gradientIcon" destination="lAn-ft-Xqs" id="ixZ-vV-ZRl"/>
                         <outlet property="map" destination="VpP-MP-pHv" id="LAh-bw-Q42"/>
                         <outlet property="navigationBar" destination="Rp5-eY-6wq" id="bu7-6i-bM5"/>
                         <outlet property="topSearchBar" destination="ZNG-Ah-8CZ" id="Xa3-LA-cBz"/>
@@ -627,10 +628,10 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         </scene>
     </scenes>
     <resources>
-        <image name="avail_gradient.png" width="58" height="59"/>
         <image name="check.png" width="29" height="30"/>
         <image name="check_empty.png" width="30" height="30"/>
         <image name="colon.png" width="8" height="27"/>
+        <image name="gradient_avail.png" width="58" height="59"/>
         <image name="grey_tabs_bar.png" width="603" height="94"/>
         <image name="left_arrow.png" width="20" height="20"/>
         <image name="meter.png" width="320" height="131"/>
@@ -647,6 +648,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                 <relationship kind="outlet" name="availabilitySelectionView" candidateClass="UIView"/>
                 <relationship kind="outlet" name="bottomSpotSelectionBar" candidateClass="UISegmentedControl"/>
                 <relationship kind="outlet" name="bottomSpotSelectionView" candidateClass="UIView"/>
+                <relationship kind="outlet" name="gradientIcon" candidateClass="UIImageView"/>
                 <relationship kind="outlet" name="map" candidateClass="MKMapView"/>
                 <relationship kind="outlet" name="navigationBar" candidateClass="UINavigationItem"/>
                 <relationship kind="outlet" name="topSearchBar" candidateClass="UISearchBar"/>

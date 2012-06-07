@@ -41,6 +41,12 @@ typedef enum {
     kSpotZoomLevel
 } ZoomLevel;
 
+typedef enum {
+    kAvailabilityData,
+    kPriceData,
+    kNoneData
+} DataType;
+
 typedef struct{
     CLLocationCoordinate2D A;
     CLLocationCoordinate2D B;
@@ -50,6 +56,7 @@ typedef struct{
 @property (strong, nonatomic) UIView *disableViewOverlay;
 @property (strong, nonatomic) UIBarButtonItem *leftBarButton;
 @property (nonatomic) ZoomLevel zoomState;
+@property (nonatomic) DataType displayedData;
 @end
 
 @implementation PQMapViewController
@@ -61,6 +68,7 @@ typedef struct{
 @synthesize availabilitySelectionView;
 @synthesize bottomSpotSelectionView;
 @synthesize topSpotSelectionView;
+@synthesize gradientIcon;
 @synthesize navigationBar;
 @synthesize bottomSpotSelectionBar;
 @synthesize topSpotSelectionBar;
@@ -68,6 +76,7 @@ typedef struct{
 @synthesize disableViewOverlay;
 @synthesize leftBarButton;
 @synthesize zoomState;
+@synthesize displayedData;
 @synthesize grids;
 @synthesize streets;
 @synthesize spots;
@@ -586,11 +595,12 @@ typedef struct{
 }
 
 - (void)clearMap {
-    [self clearGrids];
-    [self clearStreets];
-    [self clearSpots];
-    [self clearCallouts];
-    [self.map removeOverlay:gCircle];
+    [map removeOverlays:map.overlays];
+    [map removeAnnotations:callouts];
+    [grids removeAllObjects];
+    [callouts removeAllObjects];
+    [streets removeAllObjects];
+    [spots removeAllObjects];
 }
 
 - (void)clearGrids {
@@ -623,12 +633,8 @@ typedef struct{
         callouts = [[NSMutableArray alloc] initWithCapacity:MAX_CALLOUTS];
         
     }else{
-        [self.map removeAnnotations:callouts];
-        [self.map removeOverlays:calloutLines];
+        [self clearCallouts];
         [self.map removeOverlay:gCircle];
-        
-        [calloutLines removeAllObjects];
-        [callouts removeAllObjects];
     }
     gCircle = greyCircle;
     
@@ -794,25 +800,26 @@ typedef struct{
 - (void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated {
     //no longer getting called after user taps callout bubble....
     
-    double currentSpan = mapView.region.span.latitudeDelta;
-    CLLocationCoordinate2D center = mapView.centerCoordinate;
-    NSLog(@"currSpan: %f\n", mapView.region.span.latitudeDelta);
-    if (currentSpan>=GRID_TO_STREET_SPAN) {
-        //NSLog(@"GRID:currSpan: %f\n", mapView.region.span.latitudeDelta);
-        zoomState = kGridZoomLevel;
-        [self showGridLevelWithCoordinates:&center];
-        [self showAvailabilitySelectionView];
-    } else if (currentSpan>=STREET_TO_SPOT_SPAN) {
-        //NSLog(@"Block:currSpan: %f\n", mapView.region.span.latitudeDelta);
-        zoomState = kStreetZoomLevel;
-        [self showStreetLevelWithCoordinates:&center];
-        [self showAvailabilitySelectionView];
-    } else {        
-        //NSLog(@"currSpan: %f\n", mapView.region.span.latitudeDelta);
-        zoomState = kSpotZoomLevel;
-        [self showSpotLevelWithCoordinates:&center];
-        [self showSpotSelectionViews];
-        
+    if (displayedData != kNoneData) {
+        double currentSpan = mapView.region.span.latitudeDelta;
+        CLLocationCoordinate2D center = mapView.centerCoordinate;
+        NSLog(@"currSpan: %f\n", mapView.region.span.latitudeDelta);
+        if (currentSpan>=GRID_TO_STREET_SPAN) {
+            //NSLog(@"GRID:currSpan: %f\n", mapView.region.span.latitudeDelta);
+            zoomState = kGridZoomLevel;
+            [self showGridLevelWithCoordinates:&center];
+            [self showAvailabilitySelectionView];
+        } else if (currentSpan>=STREET_TO_SPOT_SPAN) {
+            //NSLog(@"Block:currSpan: %f\n", mapView.region.span.latitudeDelta);
+            zoomState = kStreetZoomLevel;
+            [self showStreetLevelWithCoordinates:&center];
+            [self showAvailabilitySelectionView];
+        } else {
+            //NSLog(@"currSpan: %f\n", mapView.region.span.latitudeDelta);
+            zoomState = kSpotZoomLevel;
+            [self showSpotLevelWithCoordinates:&center];
+            [self showSpotSelectionViews];
+        }
     }
 }
 
@@ -822,48 +829,102 @@ typedef struct{
         MKPolygonView *view = [[MKPolygonView alloc] initWithOverlay:polygon];
         view.lineWidth=1;
         view.strokeColor = [UIColor whiteColor];
-        switch (polygon.color) {
-            case 0:
-                view.fillColor = [[UIColor veryLowAvailabilityColor] colorWithAlphaComponent:0.2];
+        switch (displayedData) {
+            case kAvailabilityData:
+                switch (polygon.color) {
+                    case 0:
+                        view.fillColor = [[UIColor veryLowAvailabilityColor] colorWithAlphaComponent:0.2];
+                        break;
+                    case 1:
+                        view.fillColor = [[UIColor lowAvailabilityColor] colorWithAlphaComponent:0.2];
+                        break;
+                    case 2:
+                        view.fillColor = [[UIColor mediumAvailabilityColor] colorWithAlphaComponent:0.2];
+                        break;
+                    case 3:
+                        view.fillColor = [[UIColor highAvailabilityColor] colorWithAlphaComponent:0.2];
+                        break;
+                    case 4:
+                        view.fillColor = [[UIColor veryHighAvailabilityColor] colorWithAlphaComponent:0.2];
+                        break;
+                }
                 break;
-            case 1:
-                view.fillColor = [[UIColor lowAvailabilityColor] colorWithAlphaComponent:0.2];
+            case kPriceData:
+                switch (polygon.color) {
+                    case 0:
+                        view.fillColor = [[UIColor veryHighPriceColor] colorWithAlphaComponent:0.2];
+                        break;
+                    case 1:
+                        view.fillColor = [[UIColor highPriceColor] colorWithAlphaComponent:0.2];
+                        break;
+                    case 2:
+                        view.fillColor = [[UIColor mediumPriceColor] colorWithAlphaComponent:0.2];
+                        break;
+                    case 3:
+                        view.fillColor = [[UIColor lowPriceColor] colorWithAlphaComponent:0.2];
+                        break;
+                    case 4:
+                        view.fillColor = [[UIColor veryLowPriceColor] colorWithAlphaComponent:0.2];
+                        break;
+                }
                 break;
-            case 2:
-                view.fillColor = [[UIColor mediumAvailabilityColor] colorWithAlphaComponent:0.2];
-                break;
-            case 3:
-                view.fillColor = [[UIColor highAvailabilityColor] colorWithAlphaComponent:0.2];
-                break;
-            case 4:
-                view.fillColor = [[UIColor veryHighAvailabilityColor] colorWithAlphaComponent:0.2];
-                break;
+            case kNoneData:
+                return nil;
         }
         return view;
     } else if ([overlay isKindOfClass:[MKPolyline class]]) {
         MKPolylineView *view = [[MKPolylineView alloc] initWithOverlay:overlay];
         view.lineWidth = 8;
         MKPolyline *polyline = (MKPolyline *)overlay;
-        switch (polyline.color) {
-            case -1:
-                view.strokeColor = [UIColor blackColor];
-                view.lineWidth = 1;
+        switch (displayedData) {
+            case kAvailabilityData:
+                switch (polyline.color) {
+                    case -1:
+                        view.strokeColor = [UIColor blackColor];
+                        view.lineWidth = 1;
+                        break;
+                    case 0:
+                        view.strokeColor = [UIColor veryLowAvailabilityColor];
+                        break;
+                    case 1:
+                        view.strokeColor = [UIColor lowAvailabilityColor];
+                        break;
+                    case 2:
+                        view.strokeColor = [UIColor mediumAvailabilityColor];
+                        break;
+                    case 3:
+                        view.strokeColor = [UIColor highAvailabilityColor];
+                        break;
+                    case 4:
+                        view.strokeColor = [UIColor veryHighAvailabilityColor];
+                        break;
+                }
                 break;
-            case 0:
-                view.strokeColor = [UIColor veryLowAvailabilityColor];
+            case kPriceData:
+                switch (polyline.color) {
+                    case -1:
+                        view.strokeColor = [UIColor blackColor];
+                        view.lineWidth = 1;
+                        break;
+                    case 0:
+                        view.strokeColor = [UIColor veryHighPriceColor];
+                        break;
+                    case 1:
+                        view.strokeColor = [UIColor highPriceColor];
+                        break;
+                    case 2:
+                        view.strokeColor = [UIColor mediumPriceColor];
+                        break;
+                    case 3:
+                        view.strokeColor = [UIColor lowPriceColor];
+                        break;
+                    case 4:
+                        view.strokeColor = [UIColor veryLowPriceColor];
+                        break;
+                }
                 break;
-            case 1:
-                view.strokeColor = [UIColor lowAvailabilityColor];
-                break;
-            case 2:
-                view.strokeColor = [UIColor mediumAvailabilityColor];
-                break;
-            case 3:
-                view.strokeColor = [UIColor highAvailabilityColor];
-                break;
-            case 4:
-                view.strokeColor = [UIColor veryHighAvailabilityColor];
-                break;
+            case kNoneData:
+                return nil;
         }
         return view;
     } else if ([overlay isKindOfClass:[MKCircle class]]) {
@@ -1120,22 +1181,22 @@ typedef struct{
 }
 
 #pragma mark - TOOLBAR BUTTON ACTIONS
--(IBAction) availabilitySegControlIndexChanged{
+- (IBAction)availabilityBarTapped {
     switch (self.availabilitySelectionBar.selectedSegmentIndex) {
         case 0:
-            //availability selected
-            //change the colors to availability colors
+            gradientIcon.image = [UIImage imageNamed:@"gradient_avail"];
+            displayedData = kAvailabilityData;
+            [self mapView:map regionDidChangeAnimated:NO];
             break;
         case 1:
-            //price selected
-            //change the colors to price colors
+            gradientIcon.image = [UIImage imageNamed:@"gradient_price"];
+            displayedData = kPriceData;
+            [self mapView:map regionDidChangeAnimated:NO];
             break;
         case 2:
-            //none selected
-            //set color clear?  remove all overlays?
-            break;
-        default:
-            NSLog(@"error, pressed something funny\n");
+            gradientIcon.image = [UIImage imageNamed:@"gradient_none"];
+            displayedData = kNoneData;
+            [self clearMap];
             break;
     }
 }
@@ -1165,7 +1226,6 @@ typedef struct{
     MKCoordinateRegion adjustedRegion = [map regionThatFits:viewRegion];
     
     [self.map setRegion:adjustedRegion animated:YES];
-    [self showGridLevelWithCoordinates:&point];
 }
 
 - (IBAction)streetButtonPressed:(id)sender {
@@ -1173,7 +1233,6 @@ typedef struct{
     
     MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(point, STREET_LEVEL_REGION_METERS, STREET_LEVEL_REGION_METERS);
     [self.map setRegion:[self.map regionThatFits:viewRegion] animated:YES];
-    [self showStreetLevelWithCoordinates:&point];
 }
 
 - (IBAction)spotButtonPressed:(id)sender {
@@ -1182,8 +1241,8 @@ typedef struct{
     MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(point, SPOT_LEVEL_REGION_METERS, SPOT_LEVEL_REGION_METERS);
     [map setRegion:[map regionThatFits:viewRegion] animated:YES];
     
-    [self showSpotLevelWithCoordinates:&point];
 }
+
 - (IBAction)noneButtonPressed:(id)sender {
 for( MKPolygon* overlay in grids){
     MKPolygonView* view = (MKPolygonView*) [map viewForOverlay:overlay];
@@ -1306,6 +1365,7 @@ for( MKPolygon* overlay in grids){
     [self setAvailabilitySelectionView:nil];
     [self setBottomSpotSelectionView:nil];
     [self setTopSpotSelectionView:nil];
+    [self setGradientIcon:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
