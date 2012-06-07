@@ -12,7 +12,7 @@
 #import <QuartzCore/QuartzCore.h>
 
 #define ALERTVIEW_EXTEND 1
-
+#define ALERTVIEW_UNPARK 2
 typedef enum {
     kParkingParkState=0,
     kParkedParkState,
@@ -123,8 +123,9 @@ typedef enum {
 }
 
 - (IBAction)unparkNow:(id)sender {
-    [timer invalidate];
-    [self dismissModalViewControllerAnimated:YES];
+    UIAlertView* unparkAlertView = [[UIAlertView alloc] initWithTitle:@"Are you sure you want to Unpark?" message:nil delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Unpark", nil];
+    unparkAlertView.tag = ALERTVIEW_UNPARK;
+    [unparkAlertView show];
 }
 
 - (IBAction)extend:(id)sender {
@@ -281,12 +282,17 @@ typedef enum {
 
 #pragma mark - UIAlertViewDelegate
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+
     if (alertView.tag == ALERTVIEW_EXTEND && buttonIndex == alertView.firstOtherButtonIndex) {
         prepaidEndTime = [NSDate dateWithTimeInterval:datePicker.countDownDuration sinceDate:prepaidEndTime];
         int totalMinutes = ([prepaidEndTime timeIntervalSinceNow]-1)/60+1;
         hours.text = [NSString stringWithFormat:@"%02d", totalMinutes/60];
         minutes.text = [NSString stringWithFormat:@"%02d", totalMinutes%60];
         [self parkedAfterExtending];
+    }else if(alertView.tag == ALERTVIEW_UNPARK && buttonIndex == alertView.firstOtherButtonIndex){
+        //prompt user if they want to unpark.  
+        [timer invalidate];
+        [self dismissModalViewControllerAnimated:YES];
     }
 }
 

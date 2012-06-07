@@ -375,6 +375,9 @@ typedef struct{
         UINavigationController *vc = [storyboard instantiateViewControllerWithIdentifier:@"ParkingController"];
         [vc setModalPresentationStyle:UIModalPresentationFullScreen];
         PQParkingViewController *vcTop = [[vc viewControllers] objectAtIndex:0];
+        
+        //package information as an organized object, and then pass it to the controller.  
+        
         vcTop.parent = (PQMapViewController*)self;
         [self presentModalViewController:vc animated:YES];
         
@@ -1034,17 +1037,23 @@ typedef struct{
     NSLog(@"%d\n", t);
 }
 
+-(void) updateOldStreetLevelRegion:(CGPoint)touchPoint{
+    oldStreetLevelRegion.center = [self.map convertPoint:touchPoint toCoordinateFromView:self.map];
+}
+
 
 -(void)handlePanGesture:(UIGestureRecognizer*)gestureRecognizer{
     if(gestureRecognizer.state != UIGestureRecognizerStateEnded)
         return;
     if(zoomState == kGridZoomLevel){
         //ping server for new data with coordinates.  
-
-    }else if(zoomState == kStreetZoomLevel){
-        
+    }else if(zoomState == kStreetZoomLevel){        
         //ping server for new street data with coordinates
+        //[self updateOldStreetLevelRegion:[gestureRecognizer locationInView:self.map]];
+        oldStreetLevelRegion.center = map.centerCoordinate;
     }else{
+//        [self updateOldStreetLevelRegion:[gestureRecognizer locationInView:self.map]];
+          oldStreetLevelRegion.center = map.centerCoordinate;
         if(callouts.count >0){
             //remove overlays on pan
             [self clearCallouts]; 
