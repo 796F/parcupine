@@ -14,6 +14,11 @@
 + (UIColor *)mediumAvailabilityColor;
 + (UIColor *)highAvailabilityColor;
 + (UIColor *)veryHighAvailabilityColor;
++ (UIColor *)veryHighPriceColor;
++ (UIColor *)highPriceColor;
++ (UIColor *)mediumPriceColor;
++ (UIColor *)lowPriceColor;
++ (UIColor *)veryLowPriceColor;
 + (UIColor *)disabledTextColor;
 + (UIColor *)activeTextColor;
 @end

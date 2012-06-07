@@ -25,6 +25,21 @@
 + (UIColor *)veryHighAvailabilityColor {
     return [UIColor colorWithRed:0.224 green:0.71 blue:0.29 alpha:0.75]; /*#39b54a*/
 }
++ (UIColor *)veryHighPriceColor {
+    return [UIColor colorWithRed:0.925 green:0.004 blue:0.91 alpha:0.75]; /*#ec01e8*/
+}
++ (UIColor *)highPriceColor {
+    return [UIColor colorWithRed:0.753 green:0.161 blue:0.918 alpha:0.75]; /*#c029ea*/
+}
++ (UIColor *)mediumPriceColor {
+    return [UIColor colorWithRed:0.494 green:0.416 blue:0.953 alpha:0.75]; /*#7e6af3*/
+}
++ (UIColor *)lowPriceColor {
+    return [UIColor colorWithRed:0.188 green:0.675 blue:0.937 alpha:0.75]; /*#30acef*/
+}
++ (UIColor *)veryLowPriceColor {
+    return [UIColor colorWithRed:0.004 green:0.89 blue:1 alpha:0.75]; /*#01e3ff*/
+}
 + (UIColor *)disabledTextColor {
     return [UIColor colorWithRed:0.761 green:0.753 blue:0.753 alpha:1]; /*#c2c0c0*/
 }
