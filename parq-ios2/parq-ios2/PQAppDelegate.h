@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "DataLayer.h"
+#import "NetworkLayer.h"
 
 @interface PQAppDelegate : UIResponder <UIApplicationDelegate>{
     NSManagedObjectModel *managedObjectModel;
@@ -22,6 +23,7 @@
 
 
 - (DataLayer*) getDataLayer;
+-(NetworkLayer*) getNetworkLayerWithDataLayer:(DataLayer*) dl;
 - (void)saveContext;
 - (NSURL *)applicationDocumentsDirectory;
 @end

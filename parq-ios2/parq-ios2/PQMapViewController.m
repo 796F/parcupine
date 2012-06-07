@@ -8,13 +8,6 @@
 
 #import "PQMapViewController.h"
 #import "PQParkingViewController.h"
-#import "MKShape+Color.h"
-#import "UIColor+Parq.h"
-#import "CalloutMapAnnotation.h"
-#import "CalloutMapAnnotationView.h"
-#import "NetworkLayer.h"
-#import "Segment.h"
-#import "Spot.h"
 
 //calculation constants
 #define METERS_PER_MILE 1609.344
@@ -25,10 +18,17 @@
 #define CALLOUT_LINE_LENGTH 0.00000023
 #define CALLOUT_WIDTH 0.00008
 #define CALLOUT_HEIGHT 0.00015
-#define STREET_MAP_SPAN 0.0132
-#define SPOT_MAP_SPAN 0.0017
-#define ACCURACY_LIMIT 200
+
+#define GRID_TO_STREET_SPAN 0.0126  
+#define STREET_TO_SPOT_SPAN 0.003
+
+#define ACCURACY_LIMIT 100
 #define USER_DISTANCE_FROM_SPOT_THRESHOLD 0.01
+#define GRID_LENGTH 0.005
+#define GRID_LEVEL_REGION_METERS 1150
+#define STREET_LEVEL_REGION_METERS 500
+#define SPOT_LEVEL_REGION_METERS 100
+
 
 
 //alert view tags
@@ -75,23 +75,213 @@ typedef struct{
 @synthesize user_loc;
 @synthesize user_loc_isGood;
 @synthesize desired_spot;
+@synthesize availabilitySelectionBar;
+
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     NSLog(@"hello\n");
 }
 
-- (NSArray*)loadGridData {
-    
-    
-    return [NSArray arrayWithObjects:
-            [[NSDictionary alloc] initWithObjectsAndKeys:@"42.350393,-71.104159", @"nw_corner", @"42.360393,-71.114159", @"se_corner", [NSNumber numberWithInt:0], @"color", nil],
-            [[NSDictionary alloc] initWithObjectsAndKeys:@"42.360393,-71.104159", @"nw_corner", @"42.370393,-71.114159", @"se_corner", [NSNumber numberWithInt:4], @"color",nil],
-            [[NSDictionary alloc] initWithObjectsAndKeys:@"42.370393,-71.104159", @"nw_corner", @"42.380393,-71.114159", @"se_corner", [NSNumber numberWithInt:2], @"color",nil],
-            [[NSDictionary alloc] initWithObjectsAndKeys:@"42.350393,-71.114159", @"nw_corner", @"42.360393,-71.124159", @"se_corner", [NSNumber numberWithInt:3], @"color",nil],
-            [[NSDictionary alloc] initWithObjectsAndKeys:@"42.360393,-71.114159", @"nw_corner", @"42.370393,-71.124159", @"se_corner", [NSNumber numberWithInt:3], @"color",nil],
-            [[NSDictionary alloc] initWithObjectsAndKeys:@"42.370393,-71.114159", @"nw_corner", @"42.380393,-71.124159", @"se_corner", [NSNumber numberWithInt:0], @"color",nil], 
-            [[NSDictionary alloc] initWithObjectsAndKeys:@"42.350393,-71.124159", @"nw_corner", @"42.360393,-71.134159", @"se_corner", [NSNumber numberWithInt:1], @"color",nil],
-            [[NSDictionary alloc] initWithObjectsAndKeys:@"42.360393,-71.124159", @"nw_corner", @"42.370393,-71.134159", @"se_corner", [NSNumber numberWithInt:2], @"color",nil],
-            [[NSDictionary alloc] initWithObjectsAndKeys:@"42.370393,-71.124159", @"nw_corner", @"42.380393,-71.134159", @"se_corner", [NSNumber numberWithInt:3], @"color",nil], nil];    
+-(NSArray*)loadCambridgeBlockData{
+        NSArray* data = [NSArray arrayWithObjects:
+                         
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.377235,-71.11056;42.37505,-71.11112", @"line", [NSNumber numberWithInt:3], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.374928,-71.11007;42.377625,-71.109436", @"line", [NSNumber numberWithInt:5], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.374775,-71.10885;42.37763,-71.10812", @"line", [NSNumber numberWithInt:4], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.372772,-71.109726;42.374706,-71.10835", @"line", [NSNumber numberWithInt:3], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.375122,-71.11163;42.374706,-71.10835", @"line", [NSNumber numberWithInt:3], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.37439,-71.105896;42.374706,-71.10835", @"line", [NSNumber numberWithInt:3], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.37738,-71.11063;42.3779,-71.10813;42.377975,-71.10781", @"line", [NSNumber numberWithInt:5], @"color", nil],
+                         
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.376755,-71.10657;42.377975,-71.10781", @"line", [NSNumber numberWithInt:5], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.378284,-71.10638;42.378235,-71.106316;42.377125,-71.10495", @"line", [NSNumber numberWithInt:5], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.377125,-71.10495;42.374928,-71.10229", @"line", [NSNumber numberWithInt:5], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.375214,-71.10415;42.37417,-71.103035", @"line", [NSNumber numberWithInt:3], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.37439,-71.105896;42.37624,-71.105446;42.376278,-71.10542", @"line", [NSNumber numberWithInt:5], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.372902,-71.108215;42.374527,-71.10706", @"line", [NSNumber numberWithInt:4], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.37268,-71.107506;42.37441,-71.10612", @"line", [NSNumber numberWithInt:4], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.37718,-71.104866;42.377632,-71.10418;42.3776,-71.104225", @"line", [NSNumber numberWithInt:4], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.376625,-71.10436;42.377186,-71.10354", @"line", [NSNumber numberWithInt:3], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.376747,-71.102776;42.376114,-71.10372", @"line", [NSNumber numberWithInt:3], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.37323,-71.10557;42.373863,-71.105", @"line", [NSNumber numberWithInt:3], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.373417,-71.103935;42.374065,-71.103424", @"line", [NSNumber numberWithInt:5], @"color", nil],
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.372925,-71.106316;42.37326,-71.10702", @"line", [NSNumber numberWithInt:5], @"color", nil],
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.372986,-71.10499;42.37371,-71.10665", @"line", [NSNumber numberWithInt:3], @"color", nil],                   
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.372772,-71.109726;42.373196,-71.110825", @"line", [NSNumber numberWithInt:4], @"color", nil],
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.3779,-71.10813;42.37738,-71.11063", @"line", [NSNumber numberWithInt:5], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.37738,-71.11063;42.37695,-71.112656", @"line", [NSNumber numberWithInt:4], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.37695,-71.112656", @"line", [NSNumber numberWithInt:4], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.37695,-71.112656;42.376312,-71.11561", @"line", [NSNumber numberWithInt:4], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.3791,-71.11478;42.37669,-71.11379", @"line", [NSNumber numberWithInt:4], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.37637,-71.11573;42.378574,-71.11655", @"line", [NSNumber numberWithInt:3], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.378315,-71.113106;42.37695,-71.112656", @"line", [NSNumber numberWithInt:3], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.374928,-71.11007;42.377625,-71.109436", @"line", [NSNumber numberWithInt:3], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.37505,-71.11112;42.377235,-71.11056", @"line", [NSNumber numberWithInt:4], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.375263,-71.11274;42.377007,-71.11236", @"line", [NSNumber numberWithInt:4], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.374928,-71.11007;42.37536,-71.11342", @"line", [NSNumber numberWithInt:5], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.374775,-71.10885;42.374928,-71.11007", @"line", [NSNumber numberWithInt:5], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.372894,-71.11496;42.374832,-71.11446", @"line", [NSNumber numberWithInt:5], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.372692,-71.11407;42.374348,-71.1136", @"line", [NSNumber numberWithInt:3], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.37384,-71.11245;42.37282,-71.112946", @"line", [NSNumber numberWithInt:3], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.372772,-71.109726;42.374706,-71.10835", @"line", [NSNumber numberWithInt:4], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.37397,-71.11278;42.37451,-71.11239;42.375202,-71.11227;42.3752,-71.11224", @"line", [NSNumber numberWithInt:4], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.374348,-71.1136;42.37536,-71.11342", @"line", [NSNumber numberWithInt:4], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.376625,-71.11409;42.37585,-71.11429", @"line", [NSNumber numberWithInt:3], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.374775,-71.10885;42.37763,-71.10812", @"line", [NSNumber numberWithInt:4], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.372772,-71.109726;42.37416,-71.11327", @"line", [NSNumber numberWithInt:5], @"color", nil],
+                         
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.373196,-71.110825;42.371445,-71.11201", @"line", [NSNumber numberWithInt:5], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.372772,-71.109726;42.371117,-71.11081", @"line", [NSNumber numberWithInt:3], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.37232,-71.10861;42.370808,-71.10961", @"line", [NSNumber numberWithInt:4], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.372772,-71.109726;42.372055,-71.10795", @"line", [NSNumber numberWithInt:3], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.372055,-71.10795;42.37119,-71.105736", @"line", [NSNumber numberWithInt:5], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.371445,-71.11201;42.37005,-71.10692", @"line", [NSNumber numberWithInt:4], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.369576,-71.11186;42.371117,-71.11081", @"line", [NSNumber numberWithInt:4], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.374706,-71.10835;42.372772,-71.109726", @"line", [NSNumber numberWithInt:5], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.374527,-71.10706;42.37232,-71.10861", @"line", [NSNumber numberWithInt:4], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.37441,-71.10612;42.373062,-71.10718;42.37268,-71.107506;42.372055,-71.10795", @"line", [NSNumber numberWithInt:5], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.371613,-71.106834;42.37162,-71.10683;42.37323,-71.10557;42.373863,-71.105;42.374233,-71.10471", @"line", [NSNumber numberWithInt:3], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.37119,-71.105736;42.373417,-71.103935;42.374065,-71.103424", @"line", [NSNumber numberWithInt:3], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.37381,-71.10213;42.37133,-71.10429;42.370815,-71.10479", @"line", [NSNumber numberWithInt:3], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.37151,-71.109024;42.370678,-71.10649", @"line", [NSNumber numberWithInt:5], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.372055,-71.10795;42.37133,-71.108444", @"line", [NSNumber numberWithInt:5], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.37184,-71.1074;42.37115,-71.107895", @"line", [NSNumber numberWithInt:5], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.371613,-71.106834;42.37162,-71.10683;42.37094,-71.10728", @"line", [NSNumber numberWithInt:5], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.3704,-71.103745;42.373707,-71.10126", @"line", [NSNumber numberWithInt:5], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.37371,-71.10665;42.37323,-71.10557;42.373276,-71.10552", @"line", [NSNumber numberWithInt:4], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.369995,-71.110176;42.370808,-71.10961", @"line", [NSNumber numberWithInt:5], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.369205,-71.10783;42.37005,-71.10692", @"line", [NSNumber numberWithInt:4], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.36975,-71.10586;42.369164,-71.1042", @"line", [NSNumber numberWithInt:4], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.3694,-71.1034;42.369865,-71.10471", @"line", [NSNumber numberWithInt:5], @"color", nil],
+                         
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.374706,-71.10835;42.372772,-71.109726", @"line", [NSNumber numberWithInt:3], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.37232,-71.10861;42.370808,-71.10961", @"line", [NSNumber numberWithInt:5], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.370808,-71.10961;42.369175,-71.11073", @"line", [NSNumber numberWithInt:3], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.371117,-71.11081;42.372772,-71.109726", @"line", [NSNumber numberWithInt:5], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.373196,-71.110825;42.371445,-71.11201;42.371517,-71.11195", @"line", [NSNumber numberWithInt:4], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.371834,-71.11337;42.37384,-71.11245", @"line", [NSNumber numberWithInt:5], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.372074,-71.11425;42.374348,-71.1136", @"line", [NSNumber numberWithInt:4], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.372894,-71.11496;42.374832,-71.11446", @"line", [NSNumber numberWithInt:4], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.372074,-71.11425;42.3715,-71.112206;42.370808,-71.10961", @"line", [NSNumber numberWithInt:3], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.37232,-71.10861;42.373196,-71.110825", @"line", [NSNumber numberWithInt:4], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.370808,-71.10961;42.37053,-71.108665", @"line", [NSNumber numberWithInt:4], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.371086,-71.1161;42.369957,-71.11677", @"line", [NSNumber numberWithInt:4], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.371414,-71.11706;42.370266,-71.11775", @"line", [NSNumber numberWithInt:3], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.370495,-71.11448;42.37165,-71.1177", @"line", [NSNumber numberWithInt:3], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.369366,-71.11465;42.370495,-71.11448", @"line", [NSNumber numberWithInt:5], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.372604,-71.11723", @"line", [NSNumber numberWithInt:5], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.372524,-71.11727;42.37165,-71.1177", @"line", [NSNumber numberWithInt:4], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.37159,-71.11692;42.372326,-71.11656", @"line", [NSNumber numberWithInt:3], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.370266,-71.11775;42.3704,-71.11826;42.370632,-71.119286", @"line", [NSNumber numberWithInt:5], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.369583,-71.11812;42.370266,-71.11775", @"line", [NSNumber numberWithInt:5], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.370266,-71.11775;42.369957,-71.11677", @"line", [NSNumber numberWithInt:4], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.37013,-71.11558;42.370754,-71.11518", @"line", [NSNumber numberWithInt:5], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.370495,-71.11448;42.3701,-71.11335;42.36986,-71.11258;42.369045,-71.110374", @"line", [NSNumber numberWithInt:4], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.374348,-71.1136;42.37536,-71.11342", @"line", [NSNumber numberWithInt:5], @"color", nil],
+                         
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.374832,-71.11446;42.37547,-71.114296", @"line", [NSNumber numberWithInt:3], @"color", nil],nil];
+    NSMutableArray* segList = [[NSMutableArray alloc] initWithCapacity:data.count];
+    for(id line in data){
+        NSArray *raw_waypoints = [[line objectForKey:@"line"] componentsSeparatedByString:@";"];
+        CLLocationCoordinate2D waypoints[raw_waypoints.count];
+        int i=0;
+        for (id raw_waypoint in raw_waypoints) {
+            NSArray *coordinates = [raw_waypoint componentsSeparatedByString:@","];
+            CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake([[coordinates objectAtIndex:0] floatValue], [[coordinates objectAtIndex:1] floatValue]);
+            waypoints[i++] = coordinate;
+        }
+        for(i=0; i<raw_waypoints.count-1; i++){
+            Segment* x =[[Segment alloc] initWithPointsA:&waypoints[i] andB:&waypoints[i+1] andColor:[[line objectForKey:@"color"] intValue]];
+            [segList addObject:x];
+        }
+        
+    }
+    return segList;
 }
 
 - (NSArray*)loadBlockData {
@@ -105,7 +295,11 @@ typedef struct{
                      [[NSDictionary alloc] initWithObjectsAndKeys:@"42.36532,-71.111565;42.366043,-71.111667", @"line", [NSNumber numberWithInt:3], @"color", nil],
                      [[NSDictionary alloc] initWithObjectsAndKeys:@"42.366043,-71.111667;42.36622,-71.111839", @"line", [NSNumber numberWithInt:3], @"color", nil],
                      [[NSDictionary alloc] initWithObjectsAndKeys:@"42.36622,-71.111839;42.366392,-71.112826", @"line", [NSNumber numberWithInt:3], @"color", nil],
-                     [[NSDictionary alloc] initWithObjectsAndKeys:@"42.366788,-71.11193;42.366412,-71.111031", @"line", [NSNumber numberWithInt:0], @"color", nil],nil];
+                     [[NSDictionary alloc] initWithObjectsAndKeys:@"42.366788,-71.11193;42.366412,-71.111031", @"line", [NSNumber numberWithInt:0], @"color", nil],
+                     [[NSDictionary alloc] initWithObjectsAndKeys:@"42.360075,-71.094794;42.359591,-71.094086", @"line", [NSNumber numberWithInt:3], @"color", nil],
+                     [[NSDictionary alloc] initWithObjectsAndKeys:@"42.359591,-71.094086;42.358925,-71.093528", @"line", [NSNumber numberWithInt:3], @"color", nil],
+                     [[NSDictionary alloc] initWithObjectsAndKeys:@"42.358925,-71.093528;42.357253,-71.092616", @"line", [NSNumber numberWithInt:3], @"color", nil],
+                     nil];
     
     NSMutableArray* segList = [[NSMutableArray alloc] initWithCapacity:2];
     for(id line in data){
@@ -150,6 +344,10 @@ typedef struct{
             @"42.364894,-71.110846,1,1429,0,22",
             @"42.364846,-71.110835,0,1431,0,23",
             @"42.364799,-71.110830,1,1433,0,24",
+            
+            @"42.359087,-71.093586,1,1333,0,25",
+            @"42.359054,-71.093554,1,1555,0,27",
+            @"42.359012,-71.093519,1,1444,0,26",
             nil];
     
 }
@@ -158,7 +356,7 @@ typedef struct{
     if(alertView.tag==GPS_LAUNCH_ALERT && alertView.firstOtherButtonIndex==buttonIndex){
         //this URL kinda works.  http://maps.google.com/maps?daddr=Spot+1412@42,-73&saddr=Current+Location@42,-72
         //if yes, store the destination's lat/lon for return launch and start gps app.  
-        NSString* destination =[NSString stringWithFormat:@"http://maps.google.com/maps?daddr=Spot+%d@%1.2f,%1.2f&saddr=Current+Location@%1.2f,%1.2f", desired_spot.name, user_loc.latitude, user_loc.longitude, desired_spot.coordinate.latitude, desired_spot.coordinate.longitude];
+        NSString* destination =[NSString stringWithFormat:@"http://maps.google.com/maps?daddr=Spot+%d@%1.2f,%1.2f&saddr=Current+Location@%1.2f,%1.2f", desired_spot.name, desired_spot.coordinate.latitude, desired_spot.coordinate.longitude,user_loc.latitude, user_loc.longitude];
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:destination]];
         
     }else if(alertView.tag == CALLOUT_TAPPED && alertView.firstOtherButtonIndex==buttonIndex){
@@ -167,28 +365,14 @@ typedef struct{
         UINavigationController *vc = [storyboard instantiateViewControllerWithIdentifier:@"ParkingController"];
         [vc setModalPresentationStyle:UIModalPresentationFullScreen];
         PQParkingViewController *vcTop = [[vc viewControllers] objectAtIndex:0];
-        vcTop.parent = self;
+        vcTop.parent = (PQMapViewController*)self;
         [self presentModalViewController:vc animated:YES];
         
     }
 }
-// unused now.  originally intended for snap to street.  
-//- (double) dot_prodX1:(double)x1 Y1:(double)y1 X2:(double)x2 Y2:(double)y2 {
-//    return x1*x2 + y1*y2;
-//}
-//
-//-(double) dot_relative_to_P:(CLLocationCoordinate2D*)p V:(CLLocationCoordinate2D*)v W:(CLLocationCoordinate2D*)w{
-//    return [self dot_prodX1:(*p).latitude - (*v).latitude 
-//                         Y1:(*p).longitude - (*v).longitude 
-//                         X2:(*v).latitude - (*w).latitude 
-//                         Y2:(*v).longitude - (*w).longitude];
-//}
-//
-//- (double) l_sqrdV:(CLLocationCoordinate2D*)v W:(CLLocationCoordinate2D*) w{
-//    return ((*v).latitude-(*w).latitude)*((*v).latitude-(*w).latitude) 
-//    + ((*v).longitude - (*w).longitude)*((*v).longitude - (*w).longitude);
-//}
+
 #pragma mark - CALLOUT PLACEMENT
+
 -(bool)A:(double)a sameSignAsB:(double) b{
     if(a>0){
         return b>0 ? true : false;
@@ -263,8 +447,8 @@ typedef struct{
     
     //now have averages for both left and right, as well as arrays.  
     NSMutableArray* calloutArr = [[NSMutableArray alloc] initWithCapacity:right_count+left_count];
-    [calloutArr addObjectsFromArray:[self test:leftSide aLat:averages[0].latitude aLon:averages[0].longitude]];
-    [ calloutArr addObjectsFromArray:[self test:rightSide aLat:averages[1].latitude aLon:averages[1].longitude]];
+    [calloutArr addObjectsFromArray:[self oneSidedCallout:leftSide aLat:averages[0].latitude aLon:averages[0].longitude]];
+    [ calloutArr addObjectsFromArray:[self oneSidedCallout:rightSide aLat:averages[1].latitude aLon:averages[1].longitude]];
     
     return calloutArr;
 }
@@ -295,7 +479,7 @@ typedef struct{
     
 }
 
--(NSArray*) test:(NSArray*)spotList aLat:(double)avgLat aLon:(double)avgLon{
+-(NSArray*) oneSidedCallout:(NSArray*)spotList aLat:(double)avgLat aLon:(double)avgLon{
     NSMutableArray* results = [[NSMutableArray alloc] initWithCapacity:spots.count];
     
     //project bubbles using this average and the spot's coordinates.  
@@ -352,8 +536,8 @@ typedef struct{
 }
 
 -(bool) pointA:(CLLocationCoordinate2D*)a isCloseToB:(CLLocationCoordinate2D*)b{
-    double dx = (*a).longitude - (*b).longitude;
-    double dy = (*a).latitude - (*b).longitude;
+    double dx = a->longitude - b->longitude;
+    double dy = a->latitude - b->latitude;
     double hsq = dx*dx+dy*dy;
     NSLog(@"user distance from spot is %f\n", hsq);
     if(hsq < USER_DISTANCE_FROM_SPOT_THRESHOLD ){
@@ -373,7 +557,7 @@ typedef struct{
             //check where user's location is.  
             CLLocationCoordinate2D spot_loc = c.circle.coordinate;
             desired_spot = c.circle;
-            if(user_loc_isGood && [self pointA:&spot_loc isCloseToB:&user_loc]){
+            if(!user_loc_isGood || [self pointA:&spot_loc isCloseToB:&user_loc]){
 
                     //if user is close to location, ask user if that's desired destination
                     NSString* destination =[NSString stringWithFormat:@"Park at %s?",     [c.title UTF8String]];
@@ -496,31 +680,35 @@ typedef struct{
     }
 }
 
+-(CLLocationCoordinate2D)topLeftOfMap{
+    return CLLocationCoordinate2DMake(map.centerCoordinate.latitude + map.region.span.latitudeDelta/2,
+                                      map.centerCoordinate.longitude - map.region.span.longitudeDelta/2);
+}
+
+-(CLLocationCoordinate2D)botRightOfMap{
+    return CLLocationCoordinate2DMake(map.centerCoordinate.latitude - map.region.span.latitudeDelta/2,
+                                      map.centerCoordinate.longitude + map.region.span.longitudeDelta/2);
+}
+
 - (void)showGridLevelWithCoordinates:(CLLocationCoordinate2D *)coord {
     [self clearMap];
-    
-    NSArray* data = [self loadGridData];
-    if(grids==NULL){
-        grids = [[NSMutableArray alloc] init];
-    }
-    
-    for (id element in data) {
-        NSArray *array = [[element objectForKey:@"se_corner"] componentsSeparatedByString:@","];
-        
-        CLLocationCoordinate2D nw_point = CLLocationCoordinate2DMake([[array objectAtIndex:0] floatValue], [[array objectAtIndex:1] floatValue]);    
-        array = [[element objectForKey:@"nw_corner"]componentsSeparatedByString:@","];
-        CLLocationCoordinate2D se_point = CLLocationCoordinate2DMake([[array objectAtIndex:0] floatValue], [[array objectAtIndex:1] floatValue]);
-        
+    CLLocationCoordinate2D ref = CLLocationCoordinate2DMake(42.412079, -71.168098);
+    MKCircle* reference_point = [MKCircle circleWithCenterCoordinate:ref radius:20];
+    [self.map addOverlay:reference_point];
+    //NSArray* data = [self loadGridData];
+    CLLocationCoordinate2D NW = [self topLeftOfMap];
+    CLLocationCoordinate2D SE = [self botRightOfMap];
+    NSArray* gridList = [networkLayer callGridWithNW:&NW SE:&SE];
+    for (Grid* grid in gridList) {
         //calculate actual se_point using haversine.  
-        
-        int color = [[element objectForKey:@"color"] intValue];
-        
+        int color = [[grid status] intValue];
+
+        CLLocationCoordinate2D nw_point = CLLocationCoordinate2DMake(grid.lat.doubleValue, grid.lon.doubleValue);
+        CLLocationCoordinate2D se_point = CLLocationCoordinate2DMake(nw_point.latitude - GRID_LENGTH, nw_point.longitude + GRID_LENGTH);
         CLLocationCoordinate2D ne_point = CLLocationCoordinate2DMake(nw_point.latitude ,se_point.longitude);
         CLLocationCoordinate2D sw_point = CLLocationCoordinate2DMake(se_point.latitude ,nw_point.longitude);
-        
-        
         CLLocationCoordinate2D testLotCoords[5]={nw_point, ne_point, se_point, sw_point, nw_point};
-        
+
         MKPolygon *commuterPoly1 = [MKPolygon polygonWithCoordinates:testLotCoords count:5];
         [commuterPoly1 setColor:color];
         [grids addObject:commuterPoly1];
@@ -531,7 +719,7 @@ typedef struct{
 - (void)showStreetLevelWithCoordinates:(CLLocationCoordinate2D *)coord {
     [self clearMap];
     
-    NSArray* data = [self loadBlockData];
+    NSArray* data = [self loadCambridgeBlockData];
     if(streets==NULL){
         streets = [[NSMutableArray alloc] init];
     }
@@ -608,12 +796,13 @@ typedef struct{
     
     double currentSpan = mapView.region.span.latitudeDelta;
     CLLocationCoordinate2D center = mapView.centerCoordinate;
-    if (currentSpan>=STREET_MAP_SPAN) {
+    NSLog(@"currSpan: %f\n", mapView.region.span.latitudeDelta);
+    if (currentSpan>=GRID_TO_STREET_SPAN) {
         //NSLog(@"GRID:currSpan: %f\n", mapView.region.span.latitudeDelta);
         zoomState = kGridZoomLevel;
         [self showGridLevelWithCoordinates:&center];
         [self showAvailabilitySelectionView];
-    } else if (currentSpan>=SPOT_MAP_SPAN) {
+    } else if (currentSpan>=STREET_TO_SPOT_SPAN) {
         //NSLog(@"Block:currSpan: %f\n", mapView.region.span.latitudeDelta);
         zoomState = kStreetZoomLevel;
         [self showStreetLevelWithCoordinates:&center];
@@ -729,14 +918,14 @@ typedef struct{
 
 //given a point p, and a segment a to b, find the orthogonally projected point on the segment.
 -(CLLocationCoordinate2D) getProjectedPoint: (CLLocationCoordinate2D*) p A:(CLLocationCoordinate2D*)a B:(CLLocationCoordinate2D*) b error:(bool*)err{
-    double x1 = (*b).latitude;
-    double y1 = (*b).longitude;
-    double x2 = (*a).latitude;
-    double y2 = (*a).longitude;
+    double x1 = b->latitude;
+    double y1 = b->longitude;
+    double x2 = a->latitude;
+    double y2 = a->longitude;
     double dy = y1 - y2;
     double dx = x1- x2;
-    double x3 = (*p).latitude;
-    double y3 = (*p).longitude;
+    double x3 = p->latitude;
+    double y3 = p->longitude;
     
     double m = dy/dx; 
     double b1 = y1 - x1*m;
@@ -781,6 +970,7 @@ typedef struct{
         return;
     if(zoomState == kGridZoomLevel){
         //ping server for new data with coordinates.  
+
     }else if(zoomState == kStreetZoomLevel){
         
         //ping server for new street data with coordinates
@@ -802,45 +992,54 @@ typedef struct{
 
 - (void)handleTapGesture:(UIGestureRecognizer *)gestureRecognizer
 {
-    
+
     if (gestureRecognizer.state != UIGestureRecognizerStateEnded)
         return;
     
     CGPoint touchPoint = [gestureRecognizer locationInView:self.map];
     CLLocationCoordinate2D coord = [self.map convertPoint:touchPoint toCoordinateFromView:self.map];
     MKMapPoint mapPoint = MKMapPointForCoordinate(coord);
-    
-    if (zoomState==kGridZoomLevel) {
-        for (id gridOverlay in self.map.overlays) {
-            MKPolygonView *polyView = (MKPolygonView*)[self.map viewForOverlay:gridOverlay];
-            CGPoint polygonViewPoint = [polyView pointForMapPoint:mapPoint];
+    int taps = gestureRecognizer.numberOfTouches;
+    NSLog(@"taps %d\n", taps);
+    switch (taps) {
+        case 1:
+            //blah
+            break;
+        case 2:
             
-            
-            if (CGPathContainsPoint(polyView.path, NULL, polygonViewPoint, NO)) {
-                MKCoordinateRegion reg = [self.map convertRect:polyView.bounds toRegionFromView:polyView];
-                [self.map setRegion:[self.map regionThatFits:reg] animated:YES];
-                [self showStreetLevelWithCoordinates:&(reg.center)];
+            if (zoomState==kGridZoomLevel) {
+                for (id gridOverlay in self.map.overlays) {
+                    MKPolygonView *polyView = (MKPolygonView*)[self.map viewForOverlay:gridOverlay];
+                    CGPoint polygonViewPoint = [polyView pointForMapPoint:mapPoint];
+                    
+                    if (CGPathContainsPoint(polyView.path, NULL, polygonViewPoint, NO)) {
+                        MKCoordinateRegion reg = [self.map convertRect:polyView.bounds toRegionFromView:polyView];
+                        [self.map setRegion:[self.map regionThatFits:reg] animated:YES];
+                        [self showStreetLevelWithCoordinates:&(reg.center)];
+                    }
+                }
+            } else if (zoomState==kStreetZoomLevel) { 
+                MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(coord,SPOT_LEVEL_REGION_METERS ,SPOT_LEVEL_REGION_METERS);
+                [self.map setRegion:[self.map regionThatFits:viewRegion] animated:YES];
+                [self showSpotLevelWithCoordinates:&coord];
+            } else if (zoomState==kSpotZoomLevel) {
+                                    //snap the circle to the closest polyline.
+                    NSArray* segList = [self loadBlockData];
+                    CLLocationCoordinate2D snaploc = [self snapFromCoord:&coord toSegments:segList];
+                    /* end snap stuff */
+                    if([self tappedCalloutAtCoords:&coord]){
+                    }else{
+                        //if the result returned is valid
+                        [self showSelectionCircle:&snaploc];                
+                    }
+                    
+                
             }
-        }
-    } else if (zoomState==kStreetZoomLevel) { 
-        MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(coord, METERS_PER_MILE/16, METERS_PER_MILE/16);
-        [self.map setRegion:[self.map regionThatFits:viewRegion] animated:YES];
-        [self showSpotLevelWithCoordinates:&coord];
-        
-    } else if (zoomState==kSpotZoomLevel) {
-        if([gestureRecognizer numberOfTouches]==1){
-            //snap the circle to the closest polyline.
-            NSArray* segList = [self loadBlockData];
-            CLLocationCoordinate2D snaploc = [self snapFromCoord:&coord toSegments:segList];
-            /* end snap stuff */
-            if([self tappedCalloutAtCoords:&coord]){
-            }else{
-                //if the result returned is valid
-                [self showSelectionCircle:&snaploc];                
-            }
             
-        }
+        default:
+            break;
     }
+    
 }
 
 
@@ -920,14 +1119,48 @@ typedef struct{
     [self setSearchBar:searchBar active:NO];
 }
 
+#pragma mark - TOOLBAR BUTTON ACTIONS
+-(IBAction) availabilitySegControlIndexChanged{
+    switch (self.availabilitySelectionBar.selectedSegmentIndex) {
+        case 0:
+            //availability selected
+            //change the colors to availability colors
+            break;
+        case 1:
+            //price selected
+            //change the colors to price colors
+            break;
+        case 2:
+            //none selected
+            //set color clear?  remove all overlays?
+            break;
+        default:
+            NSLog(@"error, pressed something funny\n");
+            break;
+    }
+}
+
+-(IBAction)topSpotSegControlIndexChanged:(id)sender{
+    int index = self.topSpotSelectionBar.selectedSegmentIndex;
+    NSString* test = [sender titleForSegmentAtIndex:index];
+    NSLog(@"%s\n", test.UTF8String );
+}
+
+-(IBAction)botSpotSegControlIndexChanged:(id)sender{
+    int index = self.bottomSpotSelectionBar.selectedSegmentIndex;
+    NSString* test = [sender titleForSegmentAtIndex:index];
+    NSLog(@"%s\n", test.UTF8String );
+}
+
 #pragma mark - Debug button actions
 - (IBAction)gridButtonPressed:(id)sender {
     zoomState = kGridZoomLevel;
     
     //set the zoom to fit 12 grids perfectly
-    CLLocationCoordinate2D point = CLLocationCoordinate2DMake(42.365045,-71.118965);
+    CLLocationCoordinate2D point = CLLocationCoordinate2DMake(42.37369,-71.10976);
     
-    MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(point, METERS_PER_MILE, METERS_PER_MILE);  //this is essentially zoom level in android
+    MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(point, GRID_LEVEL_REGION_METERS, GRID_LEVEL_REGION_METERS);  
+    //this is essentially zoom level in android
     
     MKCoordinateRegion adjustedRegion = [map regionThatFits:viewRegion];
     
@@ -936,21 +1169,30 @@ typedef struct{
 }
 
 - (IBAction)streetButtonPressed:(id)sender {
-    CLLocationCoordinate2D point = {42.364854,-71.109438};
+    CLLocationCoordinate2D point = {42.37369,-71.10976};
     
-    MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(point, METERS_PER_MILE/2, METERS_PER_MILE/2);
+    MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(point, STREET_LEVEL_REGION_METERS, STREET_LEVEL_REGION_METERS);
     [self.map setRegion:[self.map regionThatFits:viewRegion] animated:YES];
     [self showStreetLevelWithCoordinates:&point];
 }
+
 - (IBAction)spotButtonPressed:(id)sender {
-    CLLocationCoordinate2D point = {42.365077, -71.110838};
+    CLLocationCoordinate2D point = {42.37369,-71.10976};
     
-    MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(point, METERS_PER_MILE/16, METERS_PER_MILE/16);
+    MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(point, SPOT_LEVEL_REGION_METERS, SPOT_LEVEL_REGION_METERS);
     [map setRegion:[map regionThatFits:viewRegion] animated:YES];
     
     [self showSpotLevelWithCoordinates:&point];
 }
 - (IBAction)noneButtonPressed:(id)sender {
+for( MKPolygon* overlay in grids){
+    MKPolygonView* view = (MKPolygonView*) [map viewForOverlay:overlay];
+    view.fillColor = [[UIColor veryLowAvailabilityColor] colorWithAlphaComponent:0.2];
+    //we can edit already existing overlays, so NO need to remove them.  
+    
+    //maintain a hash map of ID to OVERLAY object, server responds with ID's, find and modify the color.  EZ.
+}
+    
     
 }
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {   
@@ -964,6 +1206,14 @@ typedef struct{
     if (MAX(newLocation.horizontalAccuracy, newLocation.verticalAccuracy) < ACCURACY_LIMIT) {
         //if we get a decent read store it and stop updating.  
         user_loc_isGood = true;
+        //zoom to user
+        
+        MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(newLocation.coordinate, METERS_PER_MILE, METERS_PER_MILE);  //this is essentially zoom level in android
+        
+        MKCoordinateRegion adjustedRegion = [map regionThatFits:viewRegion];
+        
+        [self.map setRegion:adjustedRegion animated:YES];
+
         [locationManager stopUpdatingLocation];
     }
 }
@@ -982,17 +1232,21 @@ typedef struct{
     [super viewDidLoad];
     if(!dataLayer){
         //prepare the data layer for fetching from core data
-        NSLog(@"setting data layer...\n");    
         dataLayer = [((PQAppDelegate*)[[UIApplication sharedApplication] delegate]) getDataLayer];
     }
-    if(dataLayer.managedObjectContext.persistentStoreCoordinator.managedObjectModel!=nil){
-        NSLog(@"dl set complete.\n");
+    if(!networkLayer){
+        networkLayer = [((PQAppDelegate*)[[UIApplication sharedApplication] delegate])  getNetworkLayerWithDataLayer:dataLayer];
     }
+    
+    grids = [[NSMutableArray alloc] init];
+    spots = [[NSMutableArray alloc] init];
+    streets = [[NSMutableArray alloc] init];
+    
     //check the current zoom level to set the ZOOM_STATE integer.  
-    if (self.map.bounds.size.width > STREET_MAP_SPAN) {
+    if (self.map.bounds.size.width > GRID_TO_STREET_SPAN) {
         zoomState = kGridZoomLevel;
         //above middle zoom level        
-    } else if (self.map.bounds.size.width > SPOT_MAP_SPAN) {
+    } else if (self.map.bounds.size.width > STREET_TO_SPOT_SPAN) {
         //above spot zoom level
         zoomState = kStreetZoomLevel;
     } else {
@@ -1020,10 +1274,11 @@ typedef struct{
     // Do any additional setup after loading the view, typically from a nib.
     self.map.delegate=self;
     self.map.showsUserLocation = YES;
-    
     //setup gesture recognizer for grids and blocks and spots.  
     UITapGestureRecognizer *tgr = [[UITapGestureRecognizer alloc]
                                    initWithTarget:self action:@selector(handleTapGesture:)];
+    [tgr setCancelsTouchesInView:YES];
+    [tgr setNumberOfTapsRequired:2];
     [self.map addGestureRecognizer:tgr];
     
     //add a pan gesture to map on TOP of already existing one.  
@@ -1069,6 +1324,7 @@ typedef struct{
     if(geocoder ==nil){
         geocoder = [[CLGeocoder alloc] init];
     }
+    
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -1090,3 +1346,12 @@ typedef struct{
 }
 
 @end
+
+#pragma mark - IDEA DUMP
+//for( MKPolygon* overlay in grids){
+//    MKPolygonView* view = (MKPolygonView*) [map viewForOverlay:overlay];
+//    view.fillColor = [[UIColor veryLowAvailabilityColor] colorWithAlphaComponent:0.2];
+//    //we can edit already existing overlays, so NO need to remove them.  
+//    
+//    //maintain a hash map of ID to OVERLAY object, server responds with ID's, find and modify the color.  EZ.
+//}

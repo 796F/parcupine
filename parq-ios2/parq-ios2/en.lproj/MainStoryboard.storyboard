@@ -107,6 +107,9 @@
                                                         <segment title="none"/>
                                                     </segments>
                                                     <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <connections>
+                                                        <action selector="availabilitySegControlIndexChanged" destination="4" eventType="valueChanged" id="0CS-N8-lpv"/>
+                                                    </connections>
                                                 </segmentedControl>
                                             </barButtonItem>
                                         </items>
@@ -139,6 +142,9 @@
                                                         <segment title="" image="right_arrow.png"/>
                                                     </segments>
                                                     <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <connections>
+                                                        <action selector="botSpotSegControlIndexChanged:" destination="4" eventType="valueChanged" id="f0p-3K-wmI"/>
+                                                    </connections>
                                                 </segmentedControl>
                                             </barButtonItem>
                                         </items>
@@ -167,6 +173,9 @@
                                                         <segment title="" image="right_arrow.png"/>
                                                     </segments>
                                                     <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <connections>
+                                                        <action selector="topSpotSegControlIndexChanged:" destination="4" eventType="valueChanged" id="ZYn-AQ-MxY"/>
+                                                    </connections>
                                                 </segmentedControl>
                                             </barButtonItem>
                                         </items>
@@ -187,6 +196,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="qJk-cT-Tj6"/>
                     <connections>
+                        <outlet property="availabilitySelectionBar" destination="YVc-xp-fRh" id="6lT-mk-D86"/>
                         <outlet property="availabilitySelectionView" destination="xax-VC-fGh" id="u5e-Ry-nzm"/>
                         <outlet property="bottomSpotSelectionBar" destination="kda-6o-i24" id="7id-xr-AH0"/>
                         <outlet property="bottomSpotSelectionView" destination="3zE-go-tx2" id="IVz-bI-W59"/>
@@ -605,6 +615,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         <class className="PQMapViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/PQMapViewController.h"/>
             <relationships>
+                <relationship kind="outlet" name="availabilitySelectionBar" candidateClass="UISegmentedControl"/>
                 <relationship kind="outlet" name="availabilitySelectionView" candidateClass="UIView"/>
                 <relationship kind="outlet" name="bottomSpotSelectionBar" candidateClass="UISegmentedControl"/>
                 <relationship kind="outlet" name="bottomSpotSelectionView" candidateClass="UIView"/>

@@ -8,7 +8,7 @@
 
 #import "PQAppDelegate.h"
 #import "DataLayer.h"
-
+#import "NetworkLayer.h"
 
 @implementation PQAppDelegate
 
@@ -22,6 +22,11 @@
     DataLayer* dl = [[DataLayer alloc] init];
     dl.managedObjectContext = __managedObjectContext;
     return dl;
+}
+-(NetworkLayer*) getNetworkLayerWithDataLayer:(DataLayer*) dl{
+    NetworkLayer* nl = [[NetworkLayer alloc] init];
+    nl.dataLayer = dl;
+    return nl;
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions

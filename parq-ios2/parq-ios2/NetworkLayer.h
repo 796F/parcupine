@@ -8,11 +8,15 @@
 
 #import <MapKit/MapKit.h>
 #import <Foundation/Foundation.h>
+#import "DataLayer.h"
 
-@interface NetworkLayer : NSObject
+@interface NetworkLayer : NSObject{
+    DataLayer* dataLayer;
+}
 
-+(NSArray*) callGridWithNW:(CLLocationCoordinate2D*) topLeft SE:(CLLocationCoordinate2D*) botRight;
-+(NSArray*) callSpotWithNW:(CLLocationCoordinate2D*) topLeft SE:(CLLocationCoordinate2D*) botRight;
-+(NSArray*) callStreetWithNW:(CLLocationCoordinate2D*) topLeft SE:(CLLocationCoordinate2D*) botRight;
+@property (nonatomic,retain) DataLayer* dataLayer;
+-(NSArray*) callGridWithNW:(CLLocationCoordinate2D*) topLeft SE:(CLLocationCoordinate2D*) botRight;
+-(NSArray*) callSpotWithNW:(CLLocationCoordinate2D*) topLeft SE:(CLLocationCoordinate2D*) botRight;
+-(NSArray*) callStreetWithNW:(CLLocationCoordinate2D*) topLeft SE:(CLLocationCoordinate2D*) botRight;
 
 @end
