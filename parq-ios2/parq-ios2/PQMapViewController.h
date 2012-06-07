@@ -55,6 +55,6 @@
 @property (nonatomic) CLLocationCoordinate2D user_loc;
 @property (nonatomic) bool user_loc_isGood;
 @property (nonatomic, retain) MKCircle* desired_spot;
-
+@property (nonatomic) MKCoordinateRegion oldStreetLevelRegion;
 
 @end

@@ -76,6 +76,7 @@ typedef struct{
 @synthesize user_loc_isGood;
 @synthesize desired_spot;
 @synthesize availabilitySelectionBar;
+@synthesize oldStreetLevelRegion;
 
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     NSLog(@"hello\n");
@@ -965,6 +966,14 @@ typedef struct{
 
 #pragma mark - GESTURE HANDLERS
 
+
+-(void) touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
+    NSLog(@"testing!!\n");
+    int t = [touches count];
+    NSLog(@"%d\n", t);
+}
+
+
 -(void)handlePanGesture:(UIGestureRecognizer*)gestureRecognizer{
     if(gestureRecognizer.state != UIGestureRecognizerStateEnded)
         return;
@@ -989,8 +998,38 @@ typedef struct{
     
     
 }
+-(void)handleDoubleTapGesture:(UIGestureRecognizer *)gestureRecognizer{
+    if (gestureRecognizer.state != UIGestureRecognizerStateEnded)
+        return;
+    
+    CGPoint touchPoint = [gestureRecognizer locationInView:self.map];
+    CLLocationCoordinate2D coord = [self.map convertPoint:touchPoint toCoordinateFromView:self.map];
+    MKMapPoint mapPoint = MKMapPointForCoordinate(coord);
+    if (zoomState==kGridZoomLevel) {
+        for (id gridOverlay in self.map.overlays) {
+            MKPolygonView *polyView = (MKPolygonView*)[self.map viewForOverlay:gridOverlay];
+            CGPoint polygonViewPoint = [polyView pointForMapPoint:mapPoint];
+            
+            if (CGPathContainsPoint(polyView.path, NULL, polygonViewPoint, NO)) {
+                MKCoordinateRegion reg = [self.map convertRect:polyView.bounds toRegionFromView:polyView];
+                //save this for when user wants to zoom out of spot level.  
+                oldStreetLevelRegion = [self.map regionThatFits:reg];
+                [self.map setRegion:oldStreetLevelRegion animated:YES];
+                [self showStreetLevelWithCoordinates:&(reg.center)];
+            }
+        }
+    } else if (zoomState==kStreetZoomLevel) { 
+        MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(coord,SPOT_LEVEL_REGION_METERS ,SPOT_LEVEL_REGION_METERS);
+        [self.map setRegion:[self.map regionThatFits:viewRegion] animated:YES];
+        [self showSpotLevelWithCoordinates:&coord];
+    } else if (zoomState==kSpotZoomLevel) {
+        [self.map setRegion:oldStreetLevelRegion animated:YES];
+        [self showStreetLevelWithCoordinates:&(oldStreetLevelRegion.center)];
+    }
 
-- (void)handleTapGesture:(UIGestureRecognizer *)gestureRecognizer
+}
+
+- (void)handleSingleTapGesture:(UIGestureRecognizer *)gestureRecognizer
 {
 
     if (gestureRecognizer.state != UIGestureRecognizerStateEnded)
@@ -998,48 +1037,17 @@ typedef struct{
     
     CGPoint touchPoint = [gestureRecognizer locationInView:self.map];
     CLLocationCoordinate2D coord = [self.map convertPoint:touchPoint toCoordinateFromView:self.map];
-    MKMapPoint mapPoint = MKMapPointForCoordinate(coord);
-    int taps = gestureRecognizer.numberOfTouches;
-    NSLog(@"taps %d\n", taps);
-    switch (taps) {
-        case 1:
-            //blah
-            break;
-        case 2:
-            
-            if (zoomState==kGridZoomLevel) {
-                for (id gridOverlay in self.map.overlays) {
-                    MKPolygonView *polyView = (MKPolygonView*)[self.map viewForOverlay:gridOverlay];
-                    CGPoint polygonViewPoint = [polyView pointForMapPoint:mapPoint];
-                    
-                    if (CGPathContainsPoint(polyView.path, NULL, polygonViewPoint, NO)) {
-                        MKCoordinateRegion reg = [self.map convertRect:polyView.bounds toRegionFromView:polyView];
-                        [self.map setRegion:[self.map regionThatFits:reg] animated:YES];
-                        [self showStreetLevelWithCoordinates:&(reg.center)];
-                    }
-                }
-            } else if (zoomState==kStreetZoomLevel) { 
-                MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(coord,SPOT_LEVEL_REGION_METERS ,SPOT_LEVEL_REGION_METERS);
-                [self.map setRegion:[self.map regionThatFits:viewRegion] animated:YES];
-                [self showSpotLevelWithCoordinates:&coord];
-            } else if (zoomState==kSpotZoomLevel) {
-                                    //snap the circle to the closest polyline.
-                    NSArray* segList = [self loadBlockData];
-                    CLLocationCoordinate2D snaploc = [self snapFromCoord:&coord toSegments:segList];
-                    /* end snap stuff */
-                    if([self tappedCalloutAtCoords:&coord]){
-                    }else{
-                        //if the result returned is valid
-                        [self showSelectionCircle:&snaploc];                
-                    }
-                    
-                
-            }
-            
-        default:
-            break;
+    if(zoomState == kSpotZoomLevel){
+        //snap the circle to the closest polyline.
+        NSArray* segList = [self loadBlockData];
+        CLLocationCoordinate2D snaploc = [self snapFromCoord:&coord toSegments:segList];
+        /* end snap stuff */
+        if([self tappedCalloutAtCoords:&coord]){
+        }else{
+            //if the result returned is valid
+            [self showSelectionCircle:&snaploc];                
+        }
     }
-    
 }
 
 
@@ -1153,6 +1161,7 @@ typedef struct{
 }
 
 #pragma mark - Debug button actions
+
 - (IBAction)gridButtonPressed:(id)sender {
     zoomState = kGridZoomLevel;
     
@@ -1274,11 +1283,18 @@ for( MKPolygon* overlay in grids){
     self.map.delegate=self;
     self.map.showsUserLocation = YES;
     //setup gesture recognizer for grids and blocks and spots.  
-    UITapGestureRecognizer *tgr = [[UITapGestureRecognizer alloc]
-                                   initWithTarget:self action:@selector(handleTapGesture:)];
-    [tgr setCancelsTouchesInView:YES];
-    [tgr setNumberOfTapsRequired:2];
-    [self.map addGestureRecognizer:tgr];
+    UITapGestureRecognizer *doubleTapRecognizer = [[UITapGestureRecognizer alloc]
+                                   initWithTarget:self action:@selector(handleDoubleTapGesture:)];
+    UITapGestureRecognizer * singleTapRecognizer = [[UITapGestureRecognizer alloc]
+                                                    initWithTarget:self action:@selector(handleSingleTapGesture:)];
+
+    [doubleTapRecognizer setNumberOfTapsRequired:2];
+    [singleTapRecognizer setNumberOfTapsRequired:1];
+    
+    [singleTapRecognizer requireGestureRecognizerToFail:doubleTapRecognizer];
+
+    [self.map addGestureRecognizer:singleTapRecognizer];
+    [self.map addGestureRecognizer:doubleTapRecognizer];
     
     //add a pan gesture to map on TOP of already existing one.  
     UIPanGestureRecognizer* pgr = [[UIPanGestureRecognizer alloc]
