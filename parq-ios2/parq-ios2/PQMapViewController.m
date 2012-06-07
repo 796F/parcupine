@@ -536,6 +536,7 @@ typedef struct{
 }
 
 -(bool) pointA:(CLLocationCoordinate2D*)a isCloseToB:(CLLocationCoordinate2D*)b{
+
     double dx = a->longitude - b->longitude;
     double dy = a->latitude - b->latitude;
     double hsq = dx*dx+dy*dy;
@@ -557,19 +558,18 @@ typedef struct{
             //check where user's location is.  
             CLLocationCoordinate2D spot_loc = c.circle.coordinate;
             desired_spot = c.circle;
-            if(!user_loc_isGood || [self pointA:&spot_loc isCloseToB:&user_loc]){
-
-                    //if user is close to location, ask user if that's desired destination
-                    NSString* destination =[NSString stringWithFormat:@"Park at %s?",     [c.title UTF8String]];
-                    UIAlertView* warningAlertView = [[UIAlertView alloc] initWithTitle:destination message:nil delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Park" , nil];
-                    warningAlertView.tag = CALLOUT_TAPPED;
-                    [warningAlertView show];
-                    return true;
-            }else{
+            if(user_loc_isGood && ![self pointA:&spot_loc isCloseToB:&user_loc]){
                 //location isn't good, OR we're far away.  launch gps.  
                 NSString* destination =[NSString stringWithFormat:@"Launch GPS to %s?",     [c.title UTF8String]];
                 UIAlertView* warningAlertView = [[UIAlertView alloc] initWithTitle:destination message:nil delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Launch" , nil];
                 warningAlertView.tag = GPS_LAUNCH_ALERT;
+                [warningAlertView show];
+                return true;
+            }else{
+                //if user is close to location, ask user if that's desired destination
+                NSString* destination =[NSString stringWithFormat:@"Park at %s?",     [c.title UTF8String]];
+                UIAlertView* warningAlertView = [[UIAlertView alloc] initWithTitle:destination message:nil delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Park" , nil];
+                warningAlertView.tag = CALLOUT_TAPPED;
                 [warningAlertView show];
                 return true;
             }
@@ -1204,7 +1204,6 @@ for( MKPolygon* overlay in grids){
     
     user_loc = newLocation.coordinate;
     if (MAX(newLocation.horizontalAccuracy, newLocation.verticalAccuracy) < ACCURACY_LIMIT) {
-        //if we get a decent read store it and stop updating.  
         user_loc_isGood = true;
         //zoom to user
         

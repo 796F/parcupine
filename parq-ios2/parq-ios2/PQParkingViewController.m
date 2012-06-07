@@ -9,6 +9,7 @@
 #import "PQParkingViewController.h"
 #import "PQParkedCarMapViewController.h"
 #import "UIColor+Parq.h"
+#import <QuartzCore/QuartzCore.h>
 
 #define ALERTVIEW_EXTEND 1
 
@@ -20,9 +21,9 @@ typedef enum {
 
 @interface PQParkingViewController ()
 @property (nonatomic) ParkState parkState;
-@property (strong, nonatomic) NSDate *expirationTime;
-@property (strong, nonatomic) UIBarButtonItem *cancelButton;
-@property (strong, nonatomic) UIBarButtonItem *doneButton;
+@property (strong, nonatomic) NSTimer *timer;
+@property (strong, nonatomic) NSDate *prepaidEndTime;
+@property (strong, nonatomic) NSDate *paygStartTime;
 @end
 
 @implementation PQParkingViewController
@@ -33,6 +34,8 @@ typedef enum {
 @synthesize limit;
 @synthesize limitUnit;
 @synthesize addressLabel;
+@synthesize cancelButton;
+@synthesize doneButton;
 @synthesize startButton;
 @synthesize unparkButton;
 @synthesize extendButton;
@@ -40,6 +43,7 @@ typedef enum {
 @synthesize prepaidFlag;
 @synthesize hours;
 @synthesize minutes;
+@synthesize colon;
 @synthesize paygCheck;
 @synthesize prepaidCheck;
 @synthesize prepaidAmount;
@@ -56,9 +60,9 @@ typedef enum {
 @synthesize rateDenominator;
 @synthesize limitValue;
 @synthesize parkState;
-@synthesize expirationTime;
-@synthesize cancelButton;
-@synthesize doneButton;
+@synthesize prepaidEndTime;
+@synthesize paygStartTime;
+@synthesize timer;
 @synthesize parent;
 
 #pragma mark - Park state transitions
@@ -71,6 +75,7 @@ typedef enum {
     startButton.hidden = YES;
     unparkButton.hidden = NO;
     extendButton.hidden = prepaidFlag.hidden;
+    self.navigationItem.leftBarButtonItem = nil;
     [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]].userInteractionEnabled = NO;
     [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0]].accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     [self.tableView reloadData];
@@ -108,17 +113,47 @@ typedef enum {
 #pragma mark - Main button actions
 - (IBAction)startTimer:(id)sender {
     if (!prepaidFlag.hidden) {
-        expirationTime = [NSDate dateWithTimeIntervalSinceNow:datePicker.countDownDuration];
+        prepaidEndTime = [NSDate dateWithTimeIntervalSinceNow:datePicker.countDownDuration];
+        timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updatePrepaidTimer) userInfo:nil repeats:YES];
+    } else {
+        paygStartTime = [NSDate date];
+        timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updatePaygTimer) userInfo:nil repeats:YES];
     }
     [self parkedAfterParking];
 }
 
 - (IBAction)unparkNow:(id)sender {
+    [timer invalidate];
     [self dismissModalViewControllerAnimated:YES];
 }
 
 - (IBAction)extend:(id)sender {
     [self extendingAfterParked];
+}
+
+#pragma mark - Timer update methods
+- (void)updatePrepaidTimer {
+    if (parkState == kParkedParkState) {
+        int totalMinutes = ([prepaidEndTime timeIntervalSinceNow]-1)/60+1;
+        hours.text = [NSString stringWithFormat:@"%02d", totalMinutes/60];
+        minutes.text = [NSString stringWithFormat:@"%02d", totalMinutes%60];
+        colon.hidden = !colon.hidden;
+    } else {
+        int totalSeconds = round([prepaidEndTime timeIntervalSinceNow]);
+        int totalMinutes = (totalSeconds-1)/60+1;
+        if (totalSeconds%2 == 0) {
+            remainingAmount.text = [NSString stringWithFormat:@"%02d:%02d", totalMinutes/60, totalMinutes%60];
+        } else {
+            remainingAmount.text = [NSString stringWithFormat:@"%02d %02d", totalMinutes/60, totalMinutes%60];
+        }
+    }
+}
+
+- (void)updatePaygTimer {
+    int totalMinutes = (-[paygStartTime timeIntervalSinceNow]-1)/60+1;
+    hours.text = [NSString stringWithFormat:@"%02d", totalMinutes/60];
+    minutes.text = [NSString stringWithFormat:@"%02d", totalMinutes%60];
+    colon.hidden = !colon.hidden;
 }
 
 #pragma mark - Date Picker control
@@ -158,12 +193,6 @@ typedef enum {
         datePicker.frame = CGRectMake(0, 2, 320, 216);
     }];
     self.navigationItem.title = @"Enter Amount";
-    if (cancelButton == nil) {
-        cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelPicker)];
-    }
-    if (doneButton == nil) {
-        doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(doneWithPicker)];
-    }
     self.navigationItem.leftBarButtonItem = cancelButton;
     self.navigationItem.rightBarButtonItem = doneButton;
     [self durationChanged:nil];
@@ -175,7 +204,6 @@ typedef enum {
         datePicker.frame = CGRectMake(0, 89, 320, 216);
     }];
     self.navigationItem.title = @"1106, Cambridge, MA";
-    self.navigationItem.leftBarButtonItem = nil;
     self.navigationItem.rightBarButtonItem = nil;
 }
 
@@ -183,11 +211,14 @@ typedef enum {
 - (void)paygSelected {
     paygCheck.image = [UIImage imageNamed:@"check.png"];
     prepaidCheck.image = [UIImage imageNamed:@"check_empty.png"];
-    paygFlag.hidden = NO;
-    prepaidFlag.hidden = YES;
+    if (paygFlag.hidden) {
+        [self animateFlagIn:paygFlag];
+        [self animateFlagOut:prepaidFlag];
+    }
     prepaidAmount.text = @"Enter Amount";
     prepaidAmount.textColor = [UIColor disabledTextColor];
     unparkButton.frame = CGRectMake(10, 10, 300, 52);
+    unparkButton.titleLabel.font = [UIFont boldSystemFontOfSize:21.5];
     hours.text = @"00";
     minutes.text = @"00";
     [self resignPicker];
@@ -196,10 +227,13 @@ typedef enum {
 - (void)prepaidSelected {
     paygCheck.image = [UIImage imageNamed:@"check_empty.png"];
     prepaidCheck.image = [UIImage imageNamed:@"check.png"];
-    paygFlag.hidden = YES;
-    prepaidFlag.hidden = NO;
+    if (prepaidFlag.hidden) {
+        [self animateFlagOut:paygFlag];
+        [self animateFlagIn:prepaidFlag];
+    }
     prepaidAmount.textColor = [UIColor whiteColor];
     unparkButton.frame = CGRectMake(165, 10, 145, 52);
+    unparkButton.titleLabel.font = [UIFont boldSystemFontOfSize:19];
     [self activatePicker];
 }
 
@@ -215,18 +249,22 @@ typedef enum {
 }
 
 #pragma mark - Bar Button actions
-- (void)cancelPicker {
+- (IBAction)cancelButtonPressed:(id)sender {
     if (parkState == kParkingParkState) {
         NSIndexPath *paygIndexPath = [NSIndexPath indexPathForRow:0 inSection:0];
-        [self.tableView selectRowAtIndexPath:paygIndexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
-        [self paygSelected];
-        [self.tableView deselectRowAtIndexPath:paygIndexPath animated:YES];
+        if ([self.tableView indexPathForSelectedRow] != nil) {
+            [self.tableView selectRowAtIndexPath:paygIndexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
+            [self paygSelected];
+            [self.tableView deselectRowAtIndexPath:paygIndexPath animated:YES];
+        } else {
+            [self dismissModalViewControllerAnimated:YES];
+        }
     } else {
         [self parkedAfterExtending];
     }
 }
 
-- (void)doneWithPicker {
+- (IBAction)doneWithPicker:(id)sender {
     if (parkState == kParkingParkState) {
         [self.tableView deselectRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0] animated:YES];
         prepaidAmount.textColor = [UIColor activeTextColor];
@@ -235,7 +273,7 @@ typedef enum {
         NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
         [formatter setDateFormat:@"h:mm a"];
         int totalCents = self.rate * (datePicker.countDownDuration/60);
-        UIAlertView* extendAlertView = [[UIAlertView alloc] initWithTitle:@"Extend parking" message:[NSString stringWithFormat:@"After extending, your parking will expire at %@ and will cost $%d.%02d.", [formatter stringFromDate:[NSDate dateWithTimeInterval:datePicker.countDownDuration sinceDate:expirationTime]], totalCents/100, totalCents%100, nil] delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Extend", nil];
+        UIAlertView* extendAlertView = [[UIAlertView alloc] initWithTitle:@"Extend parking" message:[NSString stringWithFormat:@"After extending, you will be charged $%d.%02d and your parking will expire at %@.", totalCents/100, totalCents%100, [formatter stringFromDate:[NSDate dateWithTimeInterval:datePicker.countDownDuration sinceDate:prepaidEndTime]], nil] delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Extend", nil];
         extendAlertView.tag = ALERTVIEW_EXTEND;
         [extendAlertView show];
     }
@@ -244,8 +282,8 @@ typedef enum {
 #pragma mark - UIAlertViewDelegate
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (alertView.tag == ALERTVIEW_EXTEND && buttonIndex == alertView.firstOtherButtonIndex) {
-        expirationTime = [NSDate dateWithTimeInterval:datePicker.countDownDuration sinceDate:expirationTime];
-        int totalMinutes = ([expirationTime timeIntervalSinceNow]-1)/60+1;
+        prepaidEndTime = [NSDate dateWithTimeInterval:datePicker.countDownDuration sinceDate:prepaidEndTime];
+        int totalMinutes = ([prepaidEndTime timeIntervalSinceNow]-1)/60+1;
         hours.text = [NSString stringWithFormat:@"%02d", totalMinutes/60];
         minutes.text = [NSString stringWithFormat:@"%02d", totalMinutes%60];
         [self parkedAfterExtending];
@@ -272,7 +310,7 @@ typedef enum {
     } else if (parkState == kParkedParkState) {
         return @"Your car\u2019s parking location";
     } else {
-        return @"Select additional time";
+        return @"Specify amount of additional time";
     }
 }
 
@@ -292,8 +330,8 @@ typedef enum {
     if (parkState == kParkingParkState) {
         UIButton *abutton = [UIButton buttonWithType: UIButtonTypeInfoDark];
         abutton.frame = CGRectMake(288, 12, 14, 14);
-        //    [abutton addTarget: self action: @selector(addPage:)
-        //      forControlEvents: UIControlEventTouchUpInside];
+        [abutton addTarget:self action:nil
+          forControlEvents: UIControlEventTouchUpInside];
         [containerView addSubview:abutton];
     }
 	return containerView;
@@ -301,6 +339,30 @@ typedef enum {
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
     return 36;
+}
+
+#pragma mark - Animations
+- (void)animateFlagIn:(UIView *)flag {
+    flag.hidden = NO;
+    [UIView animateWithDuration:0.5 delay:0.15 options:UIViewAnimationCurveEaseOut animations:^{
+        flag.transform = CGAffineTransformRotate(CGAffineTransformIdentity, -M_PI/24);
+    } completion:^(BOOL s){
+        [UIView animateWithDuration:0.4 animations:^{
+            flag.transform = CGAffineTransformRotate(CGAffineTransformIdentity, M_PI/64);
+        } completion:^(BOOL t) {
+            [UIView animateWithDuration:0.3 animations:^{
+                flag.transform = CGAffineTransformIdentity;
+            }];
+        }];
+    }];
+}
+
+- (void)animateFlagOut:(UIView *)flag {
+    [UIView animateWithDuration:0.5 delay:0.2 options:UIViewAnimationCurveEaseIn animations:^{
+        flag.transform = CGAffineTransformRotate(CGAffineTransformIdentity, M_PI/4);
+    } completion:^(BOOL s) {
+        flag.hidden = YES;
+    }];
 }
 
 #pragma mark - Dynamic properties
@@ -392,6 +454,14 @@ typedef enum {
     // Gesture recognizer for "See map" table view cell
     UITapGestureRecognizer *seeMapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showParkedCar)];
     [seeMapCellView addGestureRecognizer:seeMapRecognizer];
+
+    // Set anchor points for flag animations and begin first animation
+    paygFlag.layer.anchorPoint = CGPointMake(0.0,1.0);
+    paygFlag.center = CGPointMake(0, 99);
+    prepaidFlag.layer.anchorPoint = CGPointMake(0.0,1.0);
+    prepaidFlag.center = CGPointMake(0, 102);
+    paygFlag.transform = CGAffineTransformRotate(CGAffineTransformIdentity, M_PI/4);
+    [self animateFlagIn:paygFlag];
 }
 
 - (void)viewDidUnload
@@ -420,6 +490,9 @@ typedef enum {
     [self setTimeToAddCellView:nil];
     [self setExtendAmount:nil];
     [self setRemainingAmount:nil];
+    [self setColon:nil];
+    [self setCancelButton:nil];
+    [self setDoneButton:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;

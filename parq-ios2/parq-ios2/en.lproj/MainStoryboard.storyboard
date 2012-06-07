@@ -216,7 +216,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FS1-UQ-dAB" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <tableViewController id="Hs3-94-mR9" customClass="PQParkingViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" scrollEnabled="NO" dataMode="static" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="7GZ-k1-0Zr">
-                        <rect key="frame" x="0.0" y="64" width="320" height="416"/>
+                        <rect key="frame" x="0.0" y="64" width="320" height="372"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <view key="tableHeaderView" opaque="NO" contentMode="scaleToFill" id="7gu-Tr-hfr">
@@ -239,14 +239,25 @@
                                     <fontDescription key="fontDescription" type="system" pointSize="60"/>
                                     <nil key="highlightedColor"/>
                                 </label>
-                                <imageView hidden="YES" autoresizesSubviews="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="TopLeft" image="prepaid.png" id="9Fx-qN-c0G">
-                                    <rect key="frame" x="69" y="73" width="141" height="56"/>
+                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="colon.png" id="8la-rh-70J">
+                                    <rect key="frame" x="156" y="45" width="8" height="27"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 </imageView>
-                                <imageView autoresizesSubviews="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="TopLeft" image="payg.png" id="oH6-bD-6fX">
-                                    <rect key="frame" x="70" y="74" width="139" height="55"/>
+                                <view opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" id="sx5-N9-2NA">
+                                    <rect key="frame" x="69.5" y="73" width="141" height="56"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                </imageView>
+                                    <subviews>
+                                        <imageView hidden="YES" autoresizesSubviews="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="TopLeft" image="prepaid.png" id="9Fx-qN-c0G">
+                                            <rect key="frame" x="-0.5" y="0.0" width="141" height="102"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        </imageView>
+                                        <imageView autoresizesSubviews="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="TopLeft" image="payg.png" id="oH6-bD-6fX">
+                                            <rect key="frame" x="0.5" y="0.0" width="139" height="99"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        </imageView>
+                                    </subviews>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                </view>
                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="grey_tabs_bar.png" id="UYi-er-iTv">
                                     <rect key="frame" x="9" y="144" width="301" height="47"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -325,7 +336,7 @@
                                 <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="Iac-kZ-gJO">
                                     <rect key="frame" x="10" y="10" width="145" height="52"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="21.5"/>
+                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="19"/>
                                     <size key="titleShadowOffset" width="0.0" height="-1"/>
                                     <state key="normal" title="Extend">
                                         <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -521,11 +532,27 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                             <outlet property="delegate" destination="Hs3-94-mR9" id="b3s-FH-fto"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="1106, Cambridge, MA" id="TEM-wm-Rmy"/>
+                    <toolbarItems>
+                        <barButtonItem systemItem="done" id="0oW-Am-bRA">
+                            <connections>
+                                <action selector="doneWithPicker:" destination="Hs3-94-mR9" id="ZFp-dj-Qev"/>
+                            </connections>
+                        </barButtonItem>
+                    </toolbarItems>
+                    <navigationItem key="navigationItem" title="1106, Cambridge, MA" id="8Al-Uy-QqE">
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="LbR-zi-dS6">
+                            <connections>
+                                <action selector="cancelButtonPressed:" destination="Hs3-94-mR9" id="ufl-jN-0CB"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="addressCellView" destination="oM8-I2-p1a" id="ZX0-if-LlS"/>
                         <outlet property="addressLabel" destination="t6o-Xy-Eni" id="AYF-fq-PLi"/>
+                        <outlet property="colon" destination="8la-rh-70J" id="3E0-nv-ngK"/>
                         <outlet property="datePicker" destination="TKm-MG-65C" id="55h-uS-UH8"/>
+                        <outlet property="doneButton" destination="0oW-Am-bRA" id="arO-5b-Elf"/>
                         <outlet property="extendAmount" destination="Rht-jq-mAB" id="sEf-xI-fHT"/>
                         <outlet property="extendButton" destination="Iac-kZ-gJO" id="4nZ-mt-8Qv"/>
                         <outlet property="hours" destination="A8E-fm-VSP" id="H36-Qb-Hn7"/>
@@ -559,11 +586,11 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                 <placeholder placeholderIdentifier="IBFirstResponder" id="8Wf-yJ-9h2" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController id="eWa-cd-w1P" customClass="PQParkedCarMapViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="xLT-Qv-YGJ">
-                        <rect key="frame" x="0.0" y="64" width="320" height="416"/>
+                        <rect key="frame" x="0.0" y="64" width="320" height="372"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" id="iAb-jH-VUr">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="416"/>
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="372"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <connections>
                                     <outlet property="delegate" destination="eWa-cd-w1P" id="YYL-3x-Tec"/>
@@ -603,6 +630,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         <image name="avail_gradient.png" width="58" height="59"/>
         <image name="check.png" width="29" height="30"/>
         <image name="check_empty.png" width="30" height="30"/>
+        <image name="colon.png" width="8" height="27"/>
         <image name="grey_tabs_bar.png" width="603" height="94"/>
         <image name="left_arrow.png" width="20" height="20"/>
         <image name="meter.png" width="320" height="131"/>
@@ -637,7 +665,10 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
             <relationships>
                 <relationship kind="outlet" name="addressCellView" candidateClass="UIView"/>
                 <relationship kind="outlet" name="addressLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="cancelButton" candidateClass="UIBarButtonItem"/>
+                <relationship kind="outlet" name="colon" candidateClass="UIImageView"/>
                 <relationship kind="outlet" name="datePicker" candidateClass="UIDatePicker"/>
+                <relationship kind="outlet" name="doneButton" candidateClass="UIBarButtonItem"/>
                 <relationship kind="outlet" name="extendAmount" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="extendButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="hours" candidateClass="UILabel"/>
