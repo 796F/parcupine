@@ -348,13 +348,13 @@ typedef enum {
 #pragma mark - Animations
 - (void)animateFlagIn:(UIView *)flag {
     flag.hidden = NO;
-    [UIView animateWithDuration:0.3 delay:0.15 options:UIViewAnimationCurveEaseOut animations:^{
+    [UIView animateWithDuration:0.5 delay:0.15 options:UIViewAnimationCurveEaseOut animations:^{
         flag.transform = CGAffineTransformRotate(CGAffineTransformIdentity, -M_PI/24);
     } completion:^(BOOL s){
-        [UIView animateWithDuration:0.25 animations:^{
+        [UIView animateWithDuration:0.4 animations:^{
             flag.transform = CGAffineTransformRotate(CGAffineTransformIdentity, M_PI/64);
         } completion:^(BOOL t) {
-            [UIView animateWithDuration:0.2 animations:^{
+            [UIView animateWithDuration:0.3 animations:^{
                 flag.transform = CGAffineTransformIdentity;
             }];
         }];
@@ -362,7 +362,7 @@ typedef enum {
 }
 
 - (void)animateFlagOut:(UIView *)flag {
-    [UIView animateWithDuration:0.3 delay:0.2 options:UIViewAnimationCurveEaseIn animations:^{
+    [UIView animateWithDuration:0.5 delay:0.2 options:UIViewAnimationCurveEaseIn animations:^{
         flag.transform = CGAffineTransformRotate(CGAffineTransformIdentity, M_PI/4);
     } completion:^(BOOL s) {
         flag.hidden = YES;
