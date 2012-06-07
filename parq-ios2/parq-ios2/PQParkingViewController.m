@@ -24,8 +24,6 @@ typedef enum {
 @property (strong, nonatomic) NSTimer *timer;
 @property (strong, nonatomic) NSDate *prepaidEndTime;
 @property (strong, nonatomic) NSDate *paygStartTime;
-@property (strong, nonatomic) UIBarButtonItem *cancelButton;
-@property (strong, nonatomic) UIBarButtonItem *doneButton;
 @end
 
 @implementation PQParkingViewController
@@ -36,6 +34,8 @@ typedef enum {
 @synthesize limit;
 @synthesize limitUnit;
 @synthesize addressLabel;
+@synthesize cancelButton;
+@synthesize doneButton;
 @synthesize startButton;
 @synthesize unparkButton;
 @synthesize extendButton;
@@ -63,8 +63,6 @@ typedef enum {
 @synthesize prepaidEndTime;
 @synthesize paygStartTime;
 @synthesize timer;
-@synthesize cancelButton;
-@synthesize doneButton;
 @synthesize parent;
 
 #pragma mark - Park state transitions
@@ -77,6 +75,7 @@ typedef enum {
     startButton.hidden = YES;
     unparkButton.hidden = NO;
     extendButton.hidden = prepaidFlag.hidden;
+    self.navigationItem.leftBarButtonItem = nil;
     [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]].userInteractionEnabled = NO;
     [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0]].accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     [self.tableView reloadData];
@@ -194,12 +193,6 @@ typedef enum {
         datePicker.frame = CGRectMake(0, 2, 320, 216);
     }];
     self.navigationItem.title = @"Enter Amount";
-    if (cancelButton == nil) {
-        cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelPicker)];
-    }
-    if (doneButton == nil) {
-        doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(doneWithPicker)];
-    }
     self.navigationItem.leftBarButtonItem = cancelButton;
     self.navigationItem.rightBarButtonItem = doneButton;
     [self durationChanged:nil];
@@ -211,7 +204,6 @@ typedef enum {
         datePicker.frame = CGRectMake(0, 89, 320, 216);
     }];
     self.navigationItem.title = @"1106, Cambridge, MA";
-    self.navigationItem.leftBarButtonItem = nil;
     self.navigationItem.rightBarButtonItem = nil;
 }
 
@@ -257,18 +249,22 @@ typedef enum {
 }
 
 #pragma mark - Bar Button actions
-- (void)cancelPicker {
+- (IBAction)cancelButtonPressed:(id)sender {
     if (parkState == kParkingParkState) {
         NSIndexPath *paygIndexPath = [NSIndexPath indexPathForRow:0 inSection:0];
-        [self.tableView selectRowAtIndexPath:paygIndexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
-        [self paygSelected];
-        [self.tableView deselectRowAtIndexPath:paygIndexPath animated:YES];
+        if ([self.tableView indexPathForSelectedRow] != nil) {
+            [self.tableView selectRowAtIndexPath:paygIndexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
+            [self paygSelected];
+            [self.tableView deselectRowAtIndexPath:paygIndexPath animated:YES];
+        } else {
+            [self dismissModalViewControllerAnimated:YES];
+        }
     } else {
         [self parkedAfterExtending];
     }
 }
 
-- (void)doneWithPicker {
+- (IBAction)doneWithPicker:(id)sender {
     if (parkState == kParkingParkState) {
         [self.tableView deselectRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0] animated:YES];
         prepaidAmount.textColor = [UIColor activeTextColor];
@@ -495,6 +491,8 @@ typedef enum {
     [self setExtendAmount:nil];
     [self setRemainingAmount:nil];
     [self setColon:nil];
+    [self setCancelButton:nil];
+    [self setDoneButton:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;

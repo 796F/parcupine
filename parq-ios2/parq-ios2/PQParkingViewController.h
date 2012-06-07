@@ -39,5 +39,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *limitValue;
 @property (weak, nonatomic) IBOutlet UILabel *limitUnit;
 @property (weak, nonatomic) IBOutlet UILabel *addressLabel;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *cancelButton;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *doneButton;
 @property (weak, nonatomic) PQMapViewController *parent;
 @end
