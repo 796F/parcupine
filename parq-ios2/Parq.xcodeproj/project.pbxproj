@@ -144,14 +144,6 @@
 		8703AC9B1513F841002FE357 = {
 			isa = PBXGroup;
 			children = (
-				FC2B2B65157EB93800ED0B52 /* Spot.h */,
-				FC2B2B66157EB93800ED0B52 /* Spot.m */,
-				FC2B2B68157EB94300ED0B52 /* Street.h */,
-				FC2B2B69157EB94300ED0B52 /* Street.m */,
-				FC2B2B6B157EB94D00ED0B52 /* Waypoint.h */,
-				FC2B2B6C157EB94D00ED0B52 /* Waypoint.m */,
-				FC2B2B62157EB92A00ED0B52 /* Grid.h */,
-				FC2B2B63157EB92A00ED0B52 /* Grid.m */,
 				8703ACDF1513FC84002FE357 /* Resources */,
 				8703ACB01513F841002FE357 /* parq-ios2 */,
 				8703ACA91513F841002FE357 /* Frameworks */,
@@ -289,6 +281,14 @@
 		FC7CE851157902630059EE43 /* Model Class */ = {
 			isa = PBXGroup;
 			children = (
+				FC2B2B65157EB93800ED0B52 /* Spot.h */,
+				FC2B2B66157EB93800ED0B52 /* Spot.m */,
+				FC2B2B68157EB94300ED0B52 /* Street.h */,
+				FC2B2B69157EB94300ED0B52 /* Street.m */,
+				FC2B2B6B157EB94D00ED0B52 /* Waypoint.h */,
+				FC2B2B6C157EB94D00ED0B52 /* Waypoint.m */,
+				FC2B2B62157EB92A00ED0B52 /* Grid.h */,
+				FC2B2B63157EB92A00ED0B52 /* Grid.m */,
 			);
 			name = "Model Class";
 			sourceTree = "<group>";
