@@ -118,11 +118,11 @@ typedef enum {
 
 #pragma mark - Main button actions
 - (IBAction)startTimer:(id)sender {
-    if (!prepaidFlag.hidden) {
+    if (!prepaidFlag.hidden) { // Prepaid
         [expiresAtTimer invalidate];
         prepaidEndTime = [NSDate dateWithTimeIntervalSinceNow:datePicker.countDownDuration];
         timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updatePrepaidTimer) userInfo:nil repeats:YES];
-    } else {
+    } else { // Pay as you go
         paygStartTime = [NSDate date];
         timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updatePaygTimer) userInfo:nil repeats:YES];
     }
@@ -130,7 +130,7 @@ typedef enum {
 }
 
 - (IBAction)unparkNow:(id)sender {
-    UIAlertView* unparkAlertView = [[UIAlertView alloc] initWithTitle:@"Are you sure you want to Unpark?" message:nil delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Unpark", nil];
+    UIAlertView* unparkAlertView = [[UIAlertView alloc] initWithTitle:@"Are you sure you want to unpark?" message:nil delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Unpark", nil];
     unparkAlertView.tag = ALERTVIEW_UNPARK;
     [unparkAlertView show];
 }
@@ -142,13 +142,14 @@ typedef enum {
 #pragma mark - Timer update methods
 - (void)updatePrepaidTimer {
     if (parkState == kParkedParkState) {
-        int totalMinutes = ([prepaidEndTime timeIntervalSinceNow]-1)/60+1;
+        // Adding 59 seconds rounds 00:04:59 to 00:05 but keeps 00:05:00 as 00:05
+        int totalMinutes = ([prepaidEndTime timeIntervalSinceNow]+59)/60;
         hours.text = [NSString stringWithFormat:@"%02d", totalMinutes/60];
         minutes.text = [NSString stringWithFormat:@"%02d", totalMinutes%60];
         colon.hidden = !colon.hidden;
-    } else {
+    } else { // parkState == kExtendingParkState
         int totalSeconds = round([prepaidEndTime timeIntervalSinceNow]);
-        int totalMinutes = (totalSeconds-1)/60+1;
+        int totalMinutes = (totalSeconds+59)/60;
         if (totalSeconds%2 == 0) {
             remainingAmount.text = [NSString stringWithFormat:@"%02d:%02d", totalMinutes/60, totalMinutes%60];
         } else {
@@ -158,7 +159,7 @@ typedef enum {
 }
 
 - (void)updatePaygTimer {
-    int totalMinutes = (-[paygStartTime timeIntervalSinceNow]-1)/60+1;
+    int totalMinutes = (-[paygStartTime timeIntervalSinceNow]+59)/60;
     hours.text = [NSString stringWithFormat:@"%02d", totalMinutes/60];
     minutes.text = [NSString stringWithFormat:@"%02d", totalMinutes%60];
     colon.hidden = !colon.hidden;
@@ -179,7 +180,7 @@ typedef enum {
     int hoursPart = totalMinutes/60;
     int minutesPart = totalMinutes%60;
 
-    int totalCents = self.rate * totalMinutes;
+    int totalCents = ceil(self.rate * totalMinutes);
     int dollarsPart = totalCents/100;
     int centsPart = totalCents%100;
 
@@ -192,7 +193,7 @@ typedef enum {
         } else {
             prepaidAmount.text = [NSString stringWithFormat:@"%dh %02dm ($%d.%02d)", hoursPart, minutesPart, dollarsPart, centsPart];
         }
-    } else {
+    } else { // parkState == kExtendingParkState
         if (hoursPart == 0) {
             extendAmount.text = [NSString stringWithFormat:@"%dm ($%d.%02d)", minutesPart, dollarsPart, centsPart];
         } else {
@@ -274,14 +275,14 @@ typedef enum {
 - (IBAction)cancelButtonPressed:(id)sender {
     if (parkState == kParkingParkState) {
         NSIndexPath *paygIndexPath = [NSIndexPath indexPathForRow:0 inSection:0];
-        if ([self.tableView indexPathForSelectedRow] != nil) {
+        if ([self.tableView indexPathForSelectedRow] != nil) { // Date picker is showing
             [self.tableView selectRowAtIndexPath:paygIndexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
             [self paygSelected];
             [self.tableView deselectRowAtIndexPath:paygIndexPath animated:YES];
-        } else {
+        } else { // Date picker is not showing
             [self dismissModalViewControllerAnimated:YES];
         }
-    } else {
+    } else { // parkState == kExtendingParkState
         [self parkedAfterExtending];
     }
 }
@@ -304,7 +305,7 @@ typedef enum {
 
     if (alertView.tag == ALERTVIEW_EXTEND && buttonIndex == alertView.firstOtherButtonIndex) {
         prepaidEndTime = [NSDate dateWithTimeInterval:datePicker.countDownDuration sinceDate:prepaidEndTime];
-        int totalMinutes = ([prepaidEndTime timeIntervalSinceNow]-1)/60+1;
+        int totalMinutes = ([prepaidEndTime timeIntervalSinceNow]+59)/60;
         hours.text = [NSString stringWithFormat:@"%02d", totalMinutes/60];
         minutes.text = [NSString stringWithFormat:@"%02d", totalMinutes%60];
         expiresAtTime.text = [dateFormatter stringFromDate:prepaidEndTime];
@@ -323,7 +324,7 @@ typedef enum {
             if (indexPath.row == 0) {
                 [self paygSelected];
                 [tableView deselectRowAtIndexPath:indexPath animated:YES];
-            } else if (indexPath.row == 1) {
+            } else { // indexPath.row == 1
                 [self prepaidSelected];
             }
         }
@@ -335,7 +336,7 @@ typedef enum {
         return @"Select payment method";
     } else if (parkState == kParkedParkState) {
         return @"Your car\u2019s parking location";
-    } else {
+    } else { // parkState == kExtendingParkState
         return @"Specify amount of additional time";
     }
 }
@@ -349,7 +350,7 @@ typedef enum {
 	label.font = [UIFont boldSystemFontOfSize:17];
 	label.shadowColor = [UIColor colorWithWhite:1.0 alpha:1];
 	label.shadowOffset = CGSizeMake(0, 1);
-	label.textColor = [UIColor colorWithRed:0.265 green:0.294 blue:0.367 alpha:1.000];
+	label.textColor = [UIColor colorWithRed:0.265 green:0.294 blue:0.367 alpha:1.0];
 	label.text = [self tableView:tableView titleForHeaderInSection:section];
 	[containerView addSubview:label];
 
@@ -424,6 +425,8 @@ typedef enum {
 
     // Initialize variables
     parkState = kParkingParkState;
+    dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"h:mma"];
 
     // Set values not settable in IB (resizeable backgrounds, fonts, etc)
     [startButton setBackgroundImage:[[UIImage imageNamed:@"green_button.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 14, 0, 14)] forState:UIControlStateNormal];
@@ -480,10 +483,6 @@ typedef enum {
     // Gesture recognizer for "See map" table view cell
     UITapGestureRecognizer *seeMapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showParkedCar)];
     [seeMapCellView addGestureRecognizer:seeMapRecognizer];
-
-    // Set up date formatter for use in showing prepaid times
-    dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"h:mma"];
 
     // Set anchor points for flag animations and begin first animation
     paygFlag.layer.anchorPoint = CGPointMake(0.0,1.0);
