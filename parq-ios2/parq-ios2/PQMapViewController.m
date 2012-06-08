@@ -1066,9 +1066,10 @@ typedef struct{
     
 }
 -(void)handleDoubleTapGesture:(UIGestureRecognizer *)gestureRecognizer{
+
     if (gestureRecognizer.state != UIGestureRecognizerStateEnded)
         return;
-    
+
     CGPoint touchPoint = [gestureRecognizer locationInView:self.map];
     CLLocationCoordinate2D coord = [self.map convertPoint:touchPoint toCoordinateFromView:self.map];
     MKMapPoint mapPoint = MKMapPointForCoordinate(coord);
@@ -1081,6 +1082,7 @@ typedef struct{
                 MKCoordinateRegion reg = [self.map convertRect:polyView.bounds toRegionFromView:polyView];
                 //save this for when user wants to zoom out of spot level.  
                 oldStreetLevelRegion = [self.map regionThatFits:reg];
+                
                 [self.map setRegion:oldStreetLevelRegion animated:YES];
                 [self showStreetLevelWithCoordinates:&(reg.center)];
             }
@@ -1090,7 +1092,12 @@ typedef struct{
         [self.map setRegion:[self.map regionThatFits:viewRegion] animated:YES];
         [self showSpotLevelWithCoordinates:&coord];
     } else if (zoomState==kSpotZoomLevel) {
-        [self.map setRegion:oldStreetLevelRegion animated:YES];
+        if(oldStreetLevelRegion.center.longitude==0){
+            oldStreetLevelRegion.center = map.centerCoordinate;
+            oldStreetLevelRegion.span.latitudeDelta = 0.005000;
+            oldStreetLevelRegion.span.longitudeDelta =  0.005000;
+        }
+        [self.map setRegion:oldStreetLevelRegion animated:YES];            
         [self showStreetLevelWithCoordinates:&(oldStreetLevelRegion.center)];
     }
 
@@ -1275,6 +1282,7 @@ for( MKPolygon* overlay in grids){
 
 #pragma mark - LOCATION
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation{
+
     user_loc = newLocation.coordinate;
     if (MAX(newLocation.horizontalAccuracy, newLocation.verticalAccuracy) < ACCURACY_LIMIT) {
         if (!user_loc_isGood) {
