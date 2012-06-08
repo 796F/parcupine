@@ -21,6 +21,7 @@
 
 #define GRID_TO_STREET_SPAN 0.0126  
 #define STREET_TO_SPOT_SPAN 0.003
+#define MIN_SPAN 0.00164
 
 #define ACCURACY_LIMIT 100
 #define USER_DISTANCE_FROM_SPOT_THRESHOLD 0.01
@@ -815,11 +816,13 @@ typedef struct{
             zoomState = kStreetZoomLevel;
             [self showStreetLevelWithCoordinates:&center];
             [self showAvailabilitySelectionView];
-        } else {
+        } else if (currentSpan>=MIN_SPAN) {
             //NSLog(@"currSpan: %f\n", mapView.region.span.latitudeDelta);
             zoomState = kSpotZoomLevel;
             [self showSpotLevelWithCoordinates:&center];
             [self showSpotSelectionViews];
+        } else {
+            [mapView setRegion:MKCoordinateRegionMake(center, MKCoordinateSpanMake(MIN_SPAN, MIN_SPAN)) animated:YES];
         }
     }
 }
