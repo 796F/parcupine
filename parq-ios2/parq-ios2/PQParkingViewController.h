@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "PQMapViewController.h"
-@interface PQParkingViewController : UITableViewController <UIAlertViewDelegate, UITableViewDelegate>
+@interface PQParkingViewController : UITableViewController <UIAlertViewDelegate, UITableViewDelegate, UIActionSheetDelegate>
 @property (nonatomic, readonly) double rate;
 @property (nonatomic) int rateNumeratorCents;
 @property (nonatomic) int rateDenominatorMinutes;

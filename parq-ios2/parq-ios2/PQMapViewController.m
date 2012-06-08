@@ -361,12 +361,19 @@ typedef struct{
     
 }
 
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    if(alertView.tag==GPS_LAUNCH_ALERT && alertView.firstOtherButtonIndex==buttonIndex){
-        //this URL kinda works.  http://maps.google.com/maps?daddr=Spot+1412@42,-73&saddr=Current+Location@42,-72
-        //if yes, store the destination's lat/lon for return launch and start gps app.  
-        NSString* destination =[NSString stringWithFormat:@"http://maps.google.com/maps?daddr=Spot+%d@%1.2f,%1.2f&saddr=Current+Location@%1.2f,%1.2f", desired_spot.name, desired_spot.coordinate.latitude, desired_spot.coordinate.longitude,user_loc.latitude, user_loc.longitude];
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:destination]];
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (actionSheet.tag == GPS_LAUNCH_ALERT) {
+        switch (buttonIndex) {
+            case 0:
+                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://maps.google.com/maps?q=Spot+%d@%f,%f", desired_spot.name, desired_spot.coordinate.latitude, desired_spot.coordinate.longitude]]];
+                break;
+            case 1:
+                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://maps.google.com/maps?daddr=Spot+%d@%f,%f&saddr=Current+Location@%f,%f", desired_spot.name, desired_spot.coordinate.latitude, desired_spot.coordinate.longitude,user_loc.latitude, user_loc.longitude]]];
+                break;
+            case 2:
+                [self parkNow];
+                break;
+        }
     }
 }
 
@@ -558,27 +565,27 @@ typedef struct{
             CLLocationCoordinate2D spot_loc = c.circle.coordinate;
             desired_spot = c.circle;
             if(user_loc_isGood && ![self pointA:&spot_loc isCloseToB:&user_loc]){
-                //location isn't good, OR we're far away.  launch gps.  
-                NSString* destination =[NSString stringWithFormat:@"Launch GPS to %s?",     [c.title UTF8String]];
-                UIAlertView* warningAlertView = [[UIAlertView alloc] initWithTitle:destination message:nil delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Launch" , nil];
-                warningAlertView.tag = GPS_LAUNCH_ALERT;
-                [warningAlertView show];
+                UIActionSheet *directionsActionSheet = [[UIActionSheet alloc] initWithTitle:[NSString stringWithFormat:@"Spot %@", c.title] delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Open in Maps", @"Get Directions", @"Park Now", nil];
+                directionsActionSheet.tag = GPS_LAUNCH_ALERT;
+                [directionsActionSheet showInView:bottomSpotSelectionView];
                 return true;
             }else{
-                UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
-                UINavigationController *vc = [storyboard instantiateViewControllerWithIdentifier:@"ParkingController"];
-                [vc setModalPresentationStyle:UIModalPresentationFullScreen];
-                PQParkingViewController *vcTop = [[vc viewControllers] objectAtIndex:0];
-
-                //package information as an organized object, and then pass it to the controller.  
-
-                vcTop.parent = (PQMapViewController*)self;
-                [self presentModalViewController:vc animated:YES];
+                [self parkNow];
                 return true;
             }
         }
     }
     return false;
+}
+
+- (void)parkNow {
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
+    UINavigationController *vc = [storyboard instantiateViewControllerWithIdentifier:@"ParkingController"];
+    [vc setModalPresentationStyle:UIModalPresentationFullScreen];
+    PQParkingViewController *vcTop = [[vc viewControllers] objectAtIndex:0];
+
+    vcTop.parent = (PQMapViewController*)self;
+    [self presentModalViewController:vc animated:YES];
 }
 
 -(void) clearCallouts{
@@ -1268,19 +1275,16 @@ for( MKPolygon* overlay in grids){
 
 #pragma mark - LOCATION
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation{
-    
     user_loc = newLocation.coordinate;
     if (MAX(newLocation.horizontalAccuracy, newLocation.verticalAccuracy) < ACCURACY_LIMIT) {
-        user_loc_isGood = true;
-        //zoom to user
-        
-        MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(newLocation.coordinate, METERS_PER_MILE, METERS_PER_MILE);  //this is essentially zoom level in android
-        
-        MKCoordinateRegion adjustedRegion = [map regionThatFits:viewRegion];
-        
-        [self.map setRegion:adjustedRegion animated:YES];
+        if (!user_loc_isGood) {
+            manager.distanceFilter = 30.0;
 
-        [locationManager stopUpdatingLocation];
+            MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(newLocation.coordinate, SPOT_LEVEL_REGION_METERS, SPOT_LEVEL_REGION_METERS);
+            [self.map setRegion:[map regionThatFits:viewRegion] animated:YES];
+
+            user_loc_isGood = true;
+        }
     }
 }
 
@@ -1359,14 +1363,6 @@ for( MKPolygon* overlay in grids){
                                    initWithTarget:self action:@selector(handlePanGesture:)];
     pgr.delegate = self;
     [self.map addGestureRecognizer:pgr];
-    
-    //SETUP LOCATION manager
-    locationManager=[[CLLocationManager alloc] init];
-    locationManager.delegate=self;
-    locationManager.desiredAccuracy=kCLLocationAccuracyNearestTenMeters;
-    
-    [locationManager startUpdatingLocation];
-    user_loc_isGood = false;
 }
 
 
@@ -1389,6 +1385,13 @@ for( MKPolygon* overlay in grids){
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+
+    locationManager=[[CLLocationManager alloc] init];
+    locationManager.delegate=self;
+    locationManager.desiredAccuracy=kCLLocationAccuracyNearestTenMeters;
+
+    [locationManager startUpdatingLocation];
+    user_loc_isGood = false;
 }
 
 - (void)viewDidAppear:(BOOL)animated

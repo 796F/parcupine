@@ -11,8 +11,9 @@
 #import "UIColor+Parq.h"
 #import <QuartzCore/QuartzCore.h>
 
-#define ALERTVIEW_EXTEND 1
-#define ALERTVIEW_UNPARK 2
+#define ACTIONSHEET_EXTEND 1
+#define ACTIONSHEET_UNPARK 2
+#define ALERTVIEW_INFO 1
 typedef enum {
     kParkingParkState=0,
     kParkedParkState,
@@ -130,13 +131,42 @@ typedef enum {
 }
 
 - (IBAction)unparkNow:(id)sender {
-    UIAlertView* unparkAlertView = [[UIAlertView alloc] initWithTitle:@"Are you sure you want to unpark?" message:nil delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Unpark", nil];
-    unparkAlertView.tag = ALERTVIEW_UNPARK;
-    [unparkAlertView show];
+    UIActionSheet *unparkActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Unpark" otherButtonTitles:nil];
+    unparkActionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
+    unparkActionSheet.tag = ACTIONSHEET_UNPARK;
+    [unparkActionSheet showInView:self.tableView];
 }
 
 - (IBAction)extend:(id)sender {
     [self extendingAfterParked];
+}
+
+- (void)infoButtonPressed {
+    UIAlertView *infoAlert = [[UIAlertView alloc] initWithTitle:@"Parking payment methods" message:@"Choose Prepaid if you would like to select how long you will be parking for.\nChoose Pay as you go if you would like to start the timer and pay for whatever you use." delegate:self cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
+    infoAlert.tag = ALERTVIEW_INFO;
+    [infoAlert show];
+}
+
+#pragma mark - UIActionSheetDelegate
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (actionSheet.tag == ACTIONSHEET_UNPARK && buttonIndex == actionSheet.destructiveButtonIndex) {
+        [timer invalidate];
+        [self dismissModalViewControllerAnimated:YES];
+    } else if (actionSheet.tag == ACTIONSHEET_EXTEND && buttonIndex == actionSheet.firstOtherButtonIndex) {
+        prepaidEndTime = [NSDate dateWithTimeInterval:datePicker.countDownDuration sinceDate:prepaidEndTime];
+        int totalMinutes = ([prepaidEndTime timeIntervalSinceNow]+59)/60;
+        hours.text = [NSString stringWithFormat:@"%02d", totalMinutes/60];
+        minutes.text = [NSString stringWithFormat:@"%02d", totalMinutes%60];
+        expiresAtTime.text = [dateFormatter stringFromDate:prepaidEndTime];
+        [self parkedAfterExtending];
+    }
+}
+
+#pragma mark - UIAlertViewDelegate
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (alertView.tag == ALERTVIEW_INFO) {
+        [alertView dismissWithClickedButtonIndex:buttonIndex animated:YES];
+    }
 }
 
 #pragma mark - Timer update methods
@@ -297,26 +327,10 @@ typedef enum {
         [self resignPicker];
     } else {
         int totalCents = ceil(self.rate * (datePicker.countDownDuration/60));
-        UIAlertView *extendAlertView = [[UIAlertView alloc] initWithTitle:@"Extend parking" message:[NSString stringWithFormat:@"After extending, you will be charged $%d.%02d and your parking will expire at %@.", totalCents/100, totalCents%100, [dateFormatter stringFromDate:[NSDate dateWithTimeInterval:datePicker.countDownDuration sinceDate:prepaidEndTime]], nil] delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Extend", nil];
-        extendAlertView.tag = ALERTVIEW_EXTEND;
-        [extendAlertView show];
-    }
-}
-
-#pragma mark - UIAlertViewDelegate
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-
-    if (alertView.tag == ALERTVIEW_EXTEND && buttonIndex == alertView.firstOtherButtonIndex) {
-        prepaidEndTime = [NSDate dateWithTimeInterval:datePicker.countDownDuration sinceDate:prepaidEndTime];
-        int totalMinutes = ([prepaidEndTime timeIntervalSinceNow]+59)/60;
-        hours.text = [NSString stringWithFormat:@"%02d", totalMinutes/60];
-        minutes.text = [NSString stringWithFormat:@"%02d", totalMinutes%60];
-        expiresAtTime.text = [dateFormatter stringFromDate:prepaidEndTime];
-        [self parkedAfterExtending];
-    }else if(alertView.tag == ALERTVIEW_UNPARK && buttonIndex == alertView.firstOtherButtonIndex){
-        //prompt user if they want to unpark.  
-        [timer invalidate];
-        [self dismissModalViewControllerAnimated:YES];
+        UIActionSheet *extendActionSheet = [[UIActionSheet alloc] initWithTitle:[NSString stringWithFormat:@"After extending, you will be charged $%d.%02d and your parking will expire at %@.", totalCents/100, totalCents%100, [dateFormatter stringFromDate:[NSDate dateWithTimeInterval:datePicker.countDownDuration sinceDate:prepaidEndTime]]] delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Extend", nil];
+        extendActionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
+        extendActionSheet.tag = ACTIONSHEET_EXTEND;
+        [extendActionSheet showInView:self.tableView];
     }
 }
 
@@ -358,11 +372,11 @@ typedef enum {
 	[containerView addSubview:label];
 
     if (parkState == kParkingParkState) {
-        UIButton *abutton = [UIButton buttonWithType: UIButtonTypeInfoDark];
-        abutton.frame = CGRectMake(288, 12, 14, 14);
-        [abutton addTarget:self action:nil
+        UIButton *infoButton = [UIButton buttonWithType: UIButtonTypeInfoDark];
+        infoButton.frame = CGRectMake(288, 12, 14, 14);
+        [infoButton addTarget:self action:@selector(infoButtonPressed)
           forControlEvents: UIControlEventTouchUpInside];
-        [containerView addSubview:abutton];
+        [containerView addSubview:infoButton];
     }
 	return containerView;
 }
