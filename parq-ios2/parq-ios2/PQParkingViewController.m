@@ -219,6 +219,9 @@ typedef enum {
         datePicker.frame = CGRectMake(0, 89, 320, 216);
     }];
     self.navigationItem.title = @"1106, Cambridge, MA";
+    if (parkState == kParkedParkState) {
+        self.navigationItem.leftBarButtonItem = nil;
+    }
     self.navigationItem.rightBarButtonItem = nil;
 }
 
