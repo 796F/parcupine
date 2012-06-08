@@ -33,7 +33,6 @@
 
 //alert view tags
 #define GPS_LAUNCH_ALERT 0
-#define CALLOUT_TAPPED 1
 
 typedef enum {
     kGridZoomLevel,
@@ -368,19 +367,6 @@ typedef struct{
         //if yes, store the destination's lat/lon for return launch and start gps app.  
         NSString* destination =[NSString stringWithFormat:@"http://maps.google.com/maps?daddr=Spot+%d@%1.2f,%1.2f&saddr=Current+Location@%1.2f,%1.2f", desired_spot.name, desired_spot.coordinate.latitude, desired_spot.coordinate.longitude,user_loc.latitude, user_loc.longitude];
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:destination]];
-        
-    }else if(alertView.tag == CALLOUT_TAPPED && alertView.firstOtherButtonIndex==buttonIndex){
-        
-        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
-        UINavigationController *vc = [storyboard instantiateViewControllerWithIdentifier:@"ParkingController"];
-        [vc setModalPresentationStyle:UIModalPresentationFullScreen];
-        PQParkingViewController *vcTop = [[vc viewControllers] objectAtIndex:0];
-        
-        //package information as an organized object, and then pass it to the controller.  
-        
-        vcTop.parent = (PQMapViewController*)self;
-        [self presentModalViewController:vc animated:YES];
-        
     }
 }
 
@@ -579,11 +565,15 @@ typedef struct{
                 [warningAlertView show];
                 return true;
             }else{
-                //if user is close to location, ask user if that's desired destination
-                NSString* destination =[NSString stringWithFormat:@"Park at %s?",     [c.title UTF8String]];
-                UIAlertView* warningAlertView = [[UIAlertView alloc] initWithTitle:destination message:nil delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Park" , nil];
-                warningAlertView.tag = CALLOUT_TAPPED;
-                [warningAlertView show];
+                UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
+                UINavigationController *vc = [storyboard instantiateViewControllerWithIdentifier:@"ParkingController"];
+                [vc setModalPresentationStyle:UIModalPresentationFullScreen];
+                PQParkingViewController *vcTop = [[vc viewControllers] objectAtIndex:0];
+
+                //package information as an organized object, and then pass it to the controller.  
+
+                vcTop.parent = (PQMapViewController*)self;
+                [self presentModalViewController:vc animated:YES];
                 return true;
             }
         }
