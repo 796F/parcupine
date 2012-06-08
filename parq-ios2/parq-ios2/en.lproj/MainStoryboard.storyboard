@@ -224,7 +224,7 @@
                             <rect key="frame" x="0.0" y="0.0" width="320" height="191"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
-                                <imageView userInteractionEnabled="NO" contentMode="TopLeft" image="meter.png" id="nZj-d2-r3b">
+                                <imageView userInteractionEnabled="NO" contentMode="TopLeft" image="meter_payg.png" id="nZj-d2-r3b">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="131"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                 </imageView>
@@ -294,6 +294,13 @@
                                     <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                     <nil key="highlightedColor"/>
                                     <color key="shadowColor" white="0.0" alpha="0.40000000000000002" colorSpace="calibratedWhite"/>
+                                </label>
+                                <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="12:00AM" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="9" id="Sne-z9-osh">
+                                    <rect key="frame" x="196" y="16" width="42" height="21"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="9"/>
+                                    <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                    <nil key="highlightedColor"/>
                                 </label>
                             </subviews>
                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -551,14 +558,17 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                     <connections>
                         <outlet property="addressCellView" destination="oM8-I2-p1a" id="ZX0-if-LlS"/>
                         <outlet property="addressLabel" destination="t6o-Xy-Eni" id="AYF-fq-PLi"/>
+                        <outlet property="cancelButton" destination="LbR-zi-dS6" id="5AA-ss-6qj"/>
                         <outlet property="colon" destination="8la-rh-70J" id="3E0-nv-ngK"/>
                         <outlet property="datePicker" destination="TKm-MG-65C" id="55h-uS-UH8"/>
                         <outlet property="doneButton" destination="0oW-Am-bRA" id="arO-5b-Elf"/>
+                        <outlet property="expiresAtTime" destination="Sne-z9-osh" id="gwN-2h-mB2"/>
                         <outlet property="extendAmount" destination="Rht-jq-mAB" id="sEf-xI-fHT"/>
                         <outlet property="extendButton" destination="Iac-kZ-gJO" id="4nZ-mt-8Qv"/>
                         <outlet property="hours" destination="A8E-fm-VSP" id="H36-Qb-Hn7"/>
                         <outlet property="limitUnit" destination="gLO-bZ-CXq" id="iI1-Ba-fSH"/>
                         <outlet property="limitValue" destination="kqk-Hd-aM9" id="9Pb-Em-Q07"/>
+                        <outlet property="meter" destination="nZj-d2-r3b" id="vTR-94-VG9"/>
                         <outlet property="minutes" destination="Y6q-af-rFO" id="Mkg-0h-abd"/>
                         <outlet property="paygCellView" destination="pyS-oV-YAr" id="CHx-O6-Msz"/>
                         <outlet property="paygCheck" destination="iLf-wM-LbY" id="8g8-4F-iZc"/>
@@ -634,7 +644,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         <image name="gradient_avail.png" width="58" height="59"/>
         <image name="grey_tabs_bar.png" width="603" height="94"/>
         <image name="left_arrow.png" width="20" height="20"/>
-        <image name="meter.png" width="320" height="131"/>
+        <image name="meter_payg.png" width="320" height="131"/>
         <image name="payg.png" width="139" height="99"/>
         <image name="prepaid.png" width="141" height="102"/>
         <image name="right_arrow.png" width="20" height="20"/>
@@ -671,11 +681,13 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                 <relationship kind="outlet" name="colon" candidateClass="UIImageView"/>
                 <relationship kind="outlet" name="datePicker" candidateClass="UIDatePicker"/>
                 <relationship kind="outlet" name="doneButton" candidateClass="UIBarButtonItem"/>
+                <relationship kind="outlet" name="expiresAtTime" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="extendAmount" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="extendButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="hours" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="limitUnit" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="limitValue" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="meter" candidateClass="UIImageView"/>
                 <relationship kind="outlet" name="minutes" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="paygCellView" candidateClass="UIView"/>
                 <relationship kind="outlet" name="paygCheck" candidateClass="UIImageView"/>

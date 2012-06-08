@@ -22,8 +22,10 @@ typedef enum {
 @interface PQParkingViewController ()
 @property (nonatomic) ParkState parkState;
 @property (strong, nonatomic) NSTimer *timer;
+@property (strong, nonatomic) NSTimer *expiresAtTimer;
 @property (strong, nonatomic) NSDate *prepaidEndTime;
 @property (strong, nonatomic) NSDate *paygStartTime;
+@property (strong, nonatomic) NSDateFormatter *dateFormatter;
 @end
 
 @implementation PQParkingViewController
@@ -34,11 +36,13 @@ typedef enum {
 @synthesize limit;
 @synthesize limitUnit;
 @synthesize addressLabel;
+@synthesize expiresAtTime;
 @synthesize cancelButton;
 @synthesize doneButton;
 @synthesize startButton;
 @synthesize unparkButton;
 @synthesize extendButton;
+@synthesize meter;
 @synthesize paygFlag;
 @synthesize prepaidFlag;
 @synthesize hours;
@@ -60,9 +64,11 @@ typedef enum {
 @synthesize rateDenominator;
 @synthesize limitValue;
 @synthesize parkState;
+@synthesize timer;
+@synthesize expiresAtTimer;
 @synthesize prepaidEndTime;
 @synthesize paygStartTime;
-@synthesize timer;
+@synthesize dateFormatter;
 @synthesize parent;
 
 #pragma mark - Park state transitions
@@ -113,6 +119,7 @@ typedef enum {
 #pragma mark - Main button actions
 - (IBAction)startTimer:(id)sender {
     if (!prepaidFlag.hidden) {
+        [expiresAtTimer invalidate];
         prepaidEndTime = [NSDate dateWithTimeIntervalSinceNow:datePicker.countDownDuration];
         timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updatePrepaidTimer) userInfo:nil repeats:YES];
     } else {
@@ -157,6 +164,11 @@ typedef enum {
     colon.hidden = !colon.hidden;
 }
 
+- (void)updateExpiresAtTime {
+    // Adding 30 seconds to the timer because sometimes the timer fires a few milliseconds before the target time, causing the Expire At time to be a minute off
+    expiresAtTime.text = [dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSinceReferenceDate:[[NSDate date] timeIntervalSinceReferenceDate]+datePicker.countDownDuration+30.0]];
+}
+
 #pragma mark - Date Picker control
 - (IBAction)durationChanged:(id)sender {
     int totalMinutes = datePicker.countDownDuration/60;
@@ -174,6 +186,7 @@ typedef enum {
     if (parkState == kParkingParkState) {
         hours.text = [NSString stringWithFormat:@"%02d", hoursPart];
         minutes.text = [NSString stringWithFormat:@"%02d", minutesPart];
+        expiresAtTime.text = [dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSinceNow:datePicker.countDownDuration]];
         if (hoursPart == 0) {
             prepaidAmount.text = [NSString stringWithFormat:@"%dm ($%d.%02d)", minutesPart, dollarsPart, centsPart];
         } else {
@@ -210,6 +223,9 @@ typedef enum {
 
 #pragma mark - Table View actions
 - (void)paygSelected {
+    meter.image = [UIImage imageNamed:@"meter_payg.png"];
+    [expiresAtTimer invalidate];
+    expiresAtTime.hidden = YES;
     paygCheck.image = [UIImage imageNamed:@"check.png"];
     prepaidCheck.image = [UIImage imageNamed:@"check_empty.png"];
     if (paygFlag.hidden) {
@@ -226,6 +242,8 @@ typedef enum {
 }
 
 - (void)prepaidSelected {
+    meter.image = [UIImage imageNamed:@"meter_prepaid.png"];
+    expiresAtTime.hidden = NO;
     paygCheck.image = [UIImage imageNamed:@"check_empty.png"];
     prepaidCheck.image = [UIImage imageNamed:@"check.png"];
     if (prepaidFlag.hidden) {
@@ -235,6 +253,9 @@ typedef enum {
     prepaidAmount.textColor = [UIColor whiteColor];
     unparkButton.frame = CGRectMake(165, 10, 145, 52);
     unparkButton.titleLabel.font = [UIFont boldSystemFontOfSize:19];
+    NSTimeInterval nextMinute = ceil([[NSDate date] timeIntervalSinceReferenceDate]/60.0)*60.0;
+    expiresAtTimer = [[NSTimer alloc] initWithFireDate:[NSDate dateWithTimeIntervalSinceReferenceDate:nextMinute] interval:60.0 target:self selector:@selector(updateExpiresAtTime) userInfo:nil repeats:YES];
+    [[NSRunLoop currentRunLoop] addTimer:expiresAtTimer forMode:NSDefaultRunLoopMode];
     [self activatePicker];
 }
 
@@ -271,10 +292,8 @@ typedef enum {
         prepaidAmount.textColor = [UIColor activeTextColor];
         [self resignPicker];
     } else {
-        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-        [formatter setDateFormat:@"h:mm a"];
-        int totalCents = self.rate * (datePicker.countDownDuration/60);
-        UIAlertView* extendAlertView = [[UIAlertView alloc] initWithTitle:@"Extend parking" message:[NSString stringWithFormat:@"After extending, you will be charged $%d.%02d and your parking will expire at %@.", totalCents/100, totalCents%100, [formatter stringFromDate:[NSDate dateWithTimeInterval:datePicker.countDownDuration sinceDate:prepaidEndTime]], nil] delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Extend", nil];
+        int totalCents = ceil(self.rate * (datePicker.countDownDuration/60));
+        UIAlertView *extendAlertView = [[UIAlertView alloc] initWithTitle:@"Extend parking" message:[NSString stringWithFormat:@"After extending, you will be charged $%d.%02d and your parking will expire at %@.", totalCents/100, totalCents%100, [dateFormatter stringFromDate:[NSDate dateWithTimeInterval:datePicker.countDownDuration sinceDate:prepaidEndTime]], nil] delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Extend", nil];
         extendAlertView.tag = ALERTVIEW_EXTEND;
         [extendAlertView show];
     }
@@ -288,6 +307,7 @@ typedef enum {
         int totalMinutes = ([prepaidEndTime timeIntervalSinceNow]-1)/60+1;
         hours.text = [NSString stringWithFormat:@"%02d", totalMinutes/60];
         minutes.text = [NSString stringWithFormat:@"%02d", totalMinutes%60];
+        expiresAtTime.text = [dateFormatter stringFromDate:prepaidEndTime];
         [self parkedAfterExtending];
     }else if(alertView.tag == ALERTVIEW_UNPARK && buttonIndex == alertView.firstOtherButtonIndex){
         //prompt user if they want to unpark.  
@@ -461,6 +481,10 @@ typedef enum {
     UITapGestureRecognizer *seeMapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showParkedCar)];
     [seeMapCellView addGestureRecognizer:seeMapRecognizer];
 
+    // Set up date formatter for use in showing prepaid times
+    dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"h:mma"];
+
     // Set anchor points for flag animations and begin first animation
     paygFlag.layer.anchorPoint = CGPointMake(0.0,1.0);
     paygFlag.center = CGPointMake(0, 99);
@@ -499,6 +523,8 @@ typedef enum {
     [self setColon:nil];
     [self setCancelButton:nil];
     [self setDoneButton:nil];
+    [self setExpiresAtTime:nil];
+    [self setMeter:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;

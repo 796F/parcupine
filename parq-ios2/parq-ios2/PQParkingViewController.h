@@ -17,6 +17,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *startButton;
 @property (weak, nonatomic) IBOutlet UIButton *unparkButton;
 @property (weak, nonatomic) IBOutlet UIButton *extendButton;
+@property (weak, nonatomic) IBOutlet UIImageView *meter;
 @property (weak, nonatomic) IBOutlet UIImageView *paygFlag;
 @property (weak, nonatomic) IBOutlet UIImageView *prepaidFlag;
 @property (weak, nonatomic) IBOutlet UILabel *hours;
@@ -39,6 +40,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *limitValue;
 @property (weak, nonatomic) IBOutlet UILabel *limitUnit;
 @property (weak, nonatomic) IBOutlet UILabel *addressLabel;
+@property (weak, nonatomic) IBOutlet UILabel *expiresAtTime;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *cancelButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *doneButton;
 @property (weak, nonatomic) PQMapViewController *parent;

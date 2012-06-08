@@ -38,9 +38,10 @@
 		87AE9EFC152F918300069153 /* MKShape+Color.m in Sources */ = {isa = PBXBuildFile; fileRef = 87AE9EFB152F918300069153 /* MKShape+Color.m */; };
 		87C0522515812EC100A64552 /* gradient_none.png in Resources */ = {isa = PBXBuildFile; fileRef = 87C0522315812EC100A64552 /* gradient_none.png */; };
 		87C0522615812EC100A64552 /* gradient_price.png in Resources */ = {isa = PBXBuildFile; fileRef = 87C0522415812EC100A64552 /* gradient_price.png */; };
+		87C05228158152CC00A64552 /* meter_prepaid.png in Resources */ = {isa = PBXBuildFile; fileRef = 87C05227158152CC00A64552 /* meter_prepaid.png */; };
 		87E1BE5A154741190095E92D /* left_arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 87E1BE58154741190095E92D /* left_arrow.png */; };
 		87E1BE5B154741190095E92D /* right_arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 87E1BE59154741190095E92D /* right_arrow.png */; };
-		87E1BE5E1548640E0095E92D /* meter.png in Resources */ = {isa = PBXBuildFile; fileRef = 87E1BE5D1548640E0095E92D /* meter.png */; };
+		87E1BE5E1548640E0095E92D /* meter_payg.png in Resources */ = {isa = PBXBuildFile; fileRef = 87E1BE5D1548640E0095E92D /* meter_payg.png */; };
 		87E1BE61154880700095E92D /* green_button.png in Resources */ = {isa = PBXBuildFile; fileRef = 87E1BE5F1548806E0095E92D /* green_button.png */; };
 		87E1BE62154880700095E92D /* red_button.png in Resources */ = {isa = PBXBuildFile; fileRef = 87E1BE601548806E0095E92D /* red_button.png */; };
 		87E1BE64154888CE0095E92D /* grey_tabs_bar.png in Resources */ = {isa = PBXBuildFile; fileRef = 87E1BE63154888CE0095E92D /* grey_tabs_bar.png */; };
@@ -100,9 +101,10 @@
 		87AE9EFB152F918300069153 /* MKShape+Color.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MKShape+Color.m"; sourceTree = "<group>"; };
 		87C0522315812EC100A64552 /* gradient_none.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = gradient_none.png; sourceTree = "<group>"; };
 		87C0522415812EC100A64552 /* gradient_price.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = gradient_price.png; sourceTree = "<group>"; };
+		87C05227158152CC00A64552 /* meter_prepaid.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = meter_prepaid.png; sourceTree = "<group>"; };
 		87E1BE58154741190095E92D /* left_arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = left_arrow.png; sourceTree = "<group>"; };
 		87E1BE59154741190095E92D /* right_arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = right_arrow.png; sourceTree = "<group>"; };
-		87E1BE5D1548640E0095E92D /* meter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = meter.png; sourceTree = "<group>"; };
+		87E1BE5D1548640E0095E92D /* meter_payg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = meter_payg.png; sourceTree = "<group>"; };
 		87E1BE5F1548806E0095E92D /* green_button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = green_button.png; sourceTree = "<group>"; };
 		87E1BE601548806E0095E92D /* red_button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = red_button.png; sourceTree = "<group>"; };
 		87E1BE63154888CE0095E92D /* grey_tabs_bar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = grey_tabs_bar.png; sourceTree = "<group>"; };
@@ -246,7 +248,8 @@
 				87E1BE63154888CE0095E92D /* grey_tabs_bar.png */,
 				87E1BE5F1548806E0095E92D /* green_button.png */,
 				87E1BE601548806E0095E92D /* red_button.png */,
-				87E1BE5D1548640E0095E92D /* meter.png */,
+				87E1BE5D1548640E0095E92D /* meter_payg.png */,
+				87C05227158152CC00A64552 /* meter_prepaid.png */,
 				87E1BE68154B35270095E92D /* payg.png */,
 				876702E31550667700318941 /* prepaid.png */,
 				87E1BE58154741190095E92D /* left_arrow.png */,
@@ -358,7 +361,7 @@
 				871E2106152CF22A00D9452A /* gradient_avail.png in Resources */,
 				87E1BE5A154741190095E92D /* left_arrow.png in Resources */,
 				87E1BE5B154741190095E92D /* right_arrow.png in Resources */,
-				87E1BE5E1548640E0095E92D /* meter.png in Resources */,
+				87E1BE5E1548640E0095E92D /* meter_payg.png in Resources */,
 				87E1BE61154880700095E92D /* green_button.png in Resources */,
 				87E1BE62154880700095E92D /* red_button.png in Resources */,
 				87E1BE64154888CE0095E92D /* grey_tabs_bar.png in Resources */,
@@ -370,6 +373,7 @@
 				8705F864157E9A6C0013DF29 /* colon.png in Resources */,
 				87C0522515812EC100A64552 /* gradient_none.png in Resources */,
 				87C0522615812EC100A64552 /* gradient_price.png in Resources */,
+				87C05228158152CC00A64552 /* meter_prepaid.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
