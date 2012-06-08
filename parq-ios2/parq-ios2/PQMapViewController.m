@@ -684,7 +684,7 @@ typedef struct{
         
         [self.map addAnnotation:callout];
         [self.map addOverlay:calloutLine];
-        
+        [self showSpotLevelWithCoordinates:coord];
     }
 }
 
@@ -778,13 +778,6 @@ typedef struct{
         [spots addObject:circle];
     }
     [self.map addOverlays:spots];
-    //make circle appear on top.
-    if(gCircle!=NULL){
-        [self.map removeOverlay:gCircle];
-        [self.map removeOverlays:calloutLines];
-        [self.map addOverlay:gCircle];
-        [self.map addOverlays:calloutLines];
-    }
 }
 
 - (void)showAvailabilitySelectionView {
@@ -1112,8 +1105,7 @@ typedef struct{
         NSArray* segList = [self loadBlockData];
         CLLocationCoordinate2D snaploc = [self snapFromCoord:&coord toSegments:segList];
         /* end snap stuff */
-        if([self tappedCalloutAtCoords:&coord]){
-        }else{
+        if(![self tappedCalloutAtCoords:&coord]){
             //if the result returned is valid
             [self showSelectionCircle:&snaploc];                
         }
