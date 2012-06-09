@@ -35,6 +35,9 @@
 		8791F9CE153383E500525267 /* CalloutMapAnnotationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8791F9CD153383E500525267 /* CalloutMapAnnotationView.m */; };
 		8791F9D415338DD300525267 /* CalloutMapAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 8791F9D315338DD300525267 /* CalloutMapAnnotation.m */; };
 		879B298B1550862E00017E2F /* OCRBStd.otf in Resources */ = {isa = PBXBuildFile; fileRef = 879B298A1550862E00017E2F /* OCRBStd.otf */; };
+		87ABC3AB1582BC4400030005 /* PQSpotAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 87ABC3AA1582BC4400030005 /* PQSpotAnnotation.m */; };
+		87ABC3B91582DBF900030005 /* spot_free.png in Resources */ = {isa = PBXBuildFile; fileRef = 87ABC3B71582DBF900030005 /* spot_free.png */; };
+		87ABC3BA1582DBF900030005 /* spot_occupied.png in Resources */ = {isa = PBXBuildFile; fileRef = 87ABC3B81582DBF900030005 /* spot_occupied.png */; };
 		87AE9EFC152F918300069153 /* MKShape+Color.m in Sources */ = {isa = PBXBuildFile; fileRef = 87AE9EFB152F918300069153 /* MKShape+Color.m */; };
 		87C0522515812EC100A64552 /* gradient_none.png in Resources */ = {isa = PBXBuildFile; fileRef = 87C0522315812EC100A64552 /* gradient_none.png */; };
 		87C0522615812EC100A64552 /* gradient_price.png in Resources */ = {isa = PBXBuildFile; fileRef = 87C0522415812EC100A64552 /* gradient_price.png */; };
@@ -97,6 +100,10 @@
 		8791F9D215338DD300525267 /* CalloutMapAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalloutMapAnnotation.h; sourceTree = "<group>"; };
 		8791F9D315338DD300525267 /* CalloutMapAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CalloutMapAnnotation.m; sourceTree = "<group>"; };
 		879B298A1550862E00017E2F /* OCRBStd.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = OCRBStd.otf; sourceTree = "<group>"; };
+		87ABC3A91582BC4400030005 /* PQSpotAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PQSpotAnnotation.h; path = ../PQSpotAnnotation.h; sourceTree = "<group>"; };
+		87ABC3AA1582BC4400030005 /* PQSpotAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PQSpotAnnotation.m; path = ../PQSpotAnnotation.m; sourceTree = "<group>"; };
+		87ABC3B71582DBF900030005 /* spot_free.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spot_free.png; sourceTree = "<group>"; };
+		87ABC3B81582DBF900030005 /* spot_occupied.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spot_occupied.png; sourceTree = "<group>"; };
 		87AE9EFA152F918300069153 /* MKShape+Color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MKShape+Color.h"; sourceTree = "<group>"; };
 		87AE9EFB152F918300069153 /* MKShape+Color.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MKShape+Color.m"; sourceTree = "<group>"; };
 		87C0522315812EC100A64552 /* gradient_none.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = gradient_none.png; sourceTree = "<group>"; };
@@ -209,7 +216,7 @@
 				FC7CE864157943630059EE43 /* NetworkLayer.m */,
 				FC772758157C2C8C005DEBEA /* Segment.h */,
 				FC772759157C2C8C005DEBEA /* Segment.m */,
-				87ABC3A81582B14A00030005 /* Callouts */,
+				87ABC3A81582B14A00030005 /* Annotations */,
 			);
 			path = "parq-ios2";
 			sourceTree = "<group>";
@@ -256,6 +263,8 @@
 				87E1BE58154741190095E92D /* left_arrow.png */,
 				87E1BE59154741190095E92D /* right_arrow.png */,
 				871E2103152CE02100D9452A /* settings.png */,
+				87ABC3B71582DBF900030005 /* spot_free.png */,
+				87ABC3B81582DBF900030005 /* spot_occupied.png */,
 			);
 			name = Images;
 			sourceTree = "<group>";
@@ -268,15 +277,17 @@
 			path = "parq-ios2";
 			sourceTree = "<group>";
 		};
-		87ABC3A81582B14A00030005 /* Callouts */ = {
+		87ABC3A81582B14A00030005 /* Annotations */ = {
 			isa = PBXGroup;
 			children = (
 				8791F9D215338DD300525267 /* CalloutMapAnnotation.h */,
 				8791F9D315338DD300525267 /* CalloutMapAnnotation.m */,
 				8791F9CC153383E500525267 /* CalloutMapAnnotationView.h */,
 				8791F9CD153383E500525267 /* CalloutMapAnnotationView.m */,
+				87ABC3A91582BC4400030005 /* PQSpotAnnotation.h */,
+				87ABC3AA1582BC4400030005 /* PQSpotAnnotation.m */,
 			);
-			name = Callouts;
+			name = Annotations;
 			sourceTree = "<group>";
 		};
 		87E1BE72154B52280095E92D /* Fonts */ = {
@@ -374,6 +385,8 @@
 				87C0522515812EC100A64552 /* gradient_none.png in Resources */,
 				87C0522615812EC100A64552 /* gradient_price.png in Resources */,
 				87C05228158152CC00A64552 /* meter_prepaid.png in Resources */,
+				87ABC3B91582DBF900030005 /* spot_free.png in Resources */,
+				87ABC3BA1582DBF900030005 /* spot_occupied.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -403,6 +416,7 @@
 				FC2B2B67157EB93800ED0B52 /* Spot.m in Sources */,
 				FC2B2B6A157EB94300ED0B52 /* Street.m in Sources */,
 				FC2B2B6D157EB94D00ED0B52 /* Waypoint.m in Sources */,
+				87ABC3AB1582BC4400030005 /* PQSpotAnnotation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

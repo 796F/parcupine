@@ -8,6 +8,7 @@
 
 #import "PQMapViewController.h"
 #import "PQParkingViewController.h"
+#import "PQSpotAnnotation.h"
 
 //calculation constants
 #define METERS_PER_MILE 1609.344
@@ -483,10 +484,10 @@ typedef struct{
     //keep track of some stuff
     NSMutableArray* insideCircle = [[NSMutableArray alloc] init];
     float avgLat=0, avgLon=0, count=0;
-    for(MKCircle* spot in spots){
+    for(PQSpotAnnotation* spot in spots){
         CLLocation* spot_loc = [[CLLocation alloc] initWithLatitude:        spot.coordinate.latitude longitude: spot.coordinate.longitude];
         CLLocationDistance dist = [spot_loc distanceFromLocation:center];
-        if(dist<radius-2 && spot.color == 1){
+        if(dist<radius-2 && spot.available == YES){
             //inside the circle
             [insideCircle addObject:spot];
             avgLat += spot_loc.coordinate.latitude;
@@ -613,6 +614,7 @@ typedef struct{
 - (void)clearMap {
     [map removeOverlays:map.overlays];
     [map removeAnnotations:callouts];
+    [map removeAnnotations:spots];
     [grids removeAllObjects];
     [callouts removeAllObjects];
     [streets removeAllObjects];
@@ -620,8 +622,18 @@ typedef struct{
 }
 
 - (void)clearGrids {
-    [self.map removeOverlays:self.grids];
+    // For some reason, clearing just self.grids
+    // is leaving residual stuff behind on the map.
+    // A hack to get around this is to clear all
+    // overlays and then add back the ones we want.
+//    [self.map removeOverlays:self.grids];
+//    [grids removeAllObjects];
+    [self.map removeOverlays:self.map.overlays];
     [grids removeAllObjects];
+    [self.map addOverlays:calloutLines];
+    if (gCircle != nil) {
+        [self.map addOverlay:gCircle];
+    }
 }
 
 -(void) clearStreets{
@@ -629,7 +641,7 @@ typedef struct{
     [streets removeAllObjects];
 }
 -(void) clearSpots{
-    [self.map removeOverlays:self.spots];
+    [self.map removeAnnotations:self.spots];
     [spots removeAllObjects];
 }
 
@@ -660,7 +672,6 @@ typedef struct{
         double corner_lat = callout.coordinate.latitude;
         double corner_lon = callout.coordinate.longitude;
         
-        
         endpoints[0] = CLLocationCoordinate2DMake(corner_lat, corner_lon);
         endpoints[1] = ((CLLocation *)[bubble objectForKey:@"spot"]).coordinate;
         MKPolyline *calloutLine = [MKPolyline polylineWithCoordinates:endpoints count:2];
@@ -670,7 +681,6 @@ typedef struct{
         
         [self.map addAnnotation:callout];
         [self.map addOverlay:calloutLine];
-        [self showSpotLevelWithCoordinates:coord];
     }
 }
 
@@ -752,18 +762,10 @@ typedef struct{
     for(id spot in data){
         NSArray* point = [spot componentsSeparatedByString:@","];
         CLLocationCoordinate2D coord = CLLocationCoordinate2DMake([[point objectAtIndex:0] floatValue], [[point objectAtIndex:1] floatValue]);
-        int color = [[point objectAtIndex:2] intValue];
-        MKCircle* circle;
-        if(color==0){
-            circle  = [MKCircle circleWithCenterCoordinate:coord radius:2];
-        }else if(color==1){
-            circle = [MKCircle circleWithCenterCoordinate:coord radius:3];   
-        }
-        [circle setName:[[point objectAtIndex:3] intValue]];
-        [circle setColor:color];
-        [spots addObject:circle];
+        PQSpotAnnotation *annotation = [[PQSpotAnnotation alloc] initWithCoordinate:coord available:[[point objectAtIndex:2] intValue] name:[[point objectAtIndex:3] intValue]];
+        [spots addObject:annotation];
     }
-    [self.map addOverlays:spots];
+    [self.map addAnnotations:spots];
 }
 
 - (void)showAvailabilitySelectionView {
@@ -787,6 +789,8 @@ typedef struct{
             zoomState = kGridZoomLevel;
             MKCoordinateRegion reg = MKCoordinateRegionMake(center, MKCoordinateSpanMake(GRID_UPPER_SPAN_LAT, GRID_UPPER_SPAN_LON));
             [mapView setRegion:reg animated:YES];
+            [self showGridLevelWithCoordinates:&center];
+            [self showAvailabilitySelectionView];
         }else if(currentSpan >= UPPER_CANYON_MIDSPAN_LAT && currentSpan <= GRID_LOWER_SPAN_LAT){
             zoomState = kGridZoomLevel;
             [mapView setRegion:MKCoordinateRegionMake(center, MKCoordinateSpanMake(GRID_LOWER_SPAN_LAT, GRID_LOWER_SPAN_LON)) animated:YES];
@@ -810,6 +814,8 @@ typedef struct{
         }else if(currentSpan <= SPOT_SPAN_LAT){
             zoomState = kSpotZoomLevel;
             [mapView setRegion:MKCoordinateRegionMake(center, MKCoordinateSpanMake(SPOT_SPAN_LAT, SPOT_SPAN_LON)) animated:YES];
+            [self showSpotLevelWithCoordinates:&center];
+            [self showSpotSelectionViews];
         }
     }
 }
@@ -920,29 +926,11 @@ typedef struct{
         return view;
     } else if ([overlay isKindOfClass:[MKCircle class]]) {
         MKCircleView *circleView = [[MKCircleView alloc] initWithCircle:(MKCircle *)overlay];
-        MKCircle* circle = (MKCircle*) overlay;
-        switch (circle.color) {
-            case -1:
-                // Grey selection circle
-                circleView.fillColor = [[UIColor blackColor] colorWithAlphaComponent:0.3];
-                circleView.strokeColor = [UIColor whiteColor];
-                //51 204 0
-                
-                circleView.lineWidth = 6;
-                break;
-            case 0:
-                //taken
-                circleView.fillColor = [[UIColor redColor] colorWithAlphaComponent:0.9];
-                circleView.strokeColor = [UIColor whiteColor];
-                circleView.lineWidth = 2;
-                break;
-            case 1:
-                //free
-                circleView.fillColor = [UIColor colorWithRed:51.0/255 green:224.0/255 blue:0 alpha:0.8];;
-                circleView.strokeColor = [UIColor whiteColor];
-                circleView.lineWidth = 2;
-                break;
-        }
+        // Grey selection circle
+        circleView.fillColor = [[UIColor blackColor] colorWithAlphaComponent:0.3];
+        circleView.strokeColor = [UIColor whiteColor];
+
+        circleView.lineWidth = 6;
         return circleView;
     }
     return nil;
@@ -961,7 +949,27 @@ typedef struct{
 		}
 		calloutMapAnnotationView.mapView = self.map;
 		return calloutMapAnnotationView;
-	}
+	} else if ([annotation isKindOfClass:[PQSpotAnnotation class]]) {
+        static NSString *availableSpotIdentifier = @"AvailableSpotIdentifier";
+        static NSString *occupiedSpotIdentifier = @"OccupiedSpotIdentifier";
+        MKAnnotationView *annotationView;
+        if(((PQSpotAnnotation *)annotation).available) {
+            annotationView = [self.map dequeueReusableAnnotationViewWithIdentifier:availableSpotIdentifier];
+            if (!annotationView) {
+                annotationView = [[MKAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:availableSpotIdentifier];
+                annotationView.image = [UIImage imageNamed:@"spot_free.png"];
+                annotationView.opaque = NO;
+            }
+        } else {
+            annotationView = [self.map dequeueReusableAnnotationViewWithIdentifier:occupiedSpotIdentifier];
+            if (!annotationView) {
+                annotationView = [[MKAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:occupiedSpotIdentifier];
+                annotationView.image = [UIImage imageNamed:@"spot_occupied.png"];
+                annotationView.opaque = NO;
+            }
+        }
+        return annotationView;
+    }
     
 	return nil;
 }
@@ -1271,7 +1279,6 @@ typedef struct{
 
 #pragma mark - LOCATION
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation{
-
     user_loc = newLocation.coordinate;
     if (MAX(newLocation.horizontalAccuracy, newLocation.verticalAccuracy) < ACCURACY_LIMIT) {
         if (!user_loc_isGood) {
