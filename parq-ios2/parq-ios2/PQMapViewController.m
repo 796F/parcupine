@@ -19,9 +19,23 @@
 #define CALLOUT_WIDTH 0.00008
 #define CALLOUT_HEIGHT 0.00015
 
-#define GRID_TO_STREET_SPAN 0.0126  
-#define STREET_TO_SPOT_SPAN 0.003
-#define MIN_SPAN 0.00164
+//map level span control constnats.  
+#define GRID_UPPER_SPAN_LAT 0.026377
+#define GRID_UPPER_SPAN_LON 0.027466
+#define GRID_LOWER_SPAN_LAT 0.013190
+#define GRID_LOWER_SPAN_LON 0.013733
+#define UPPER_CANYON_MIDSPAN_LAT (GRID_LOWER_SPAN_LAT+STREET_UPPER_SPAN_LAT)/2
+#define UPPER_CANYON_MIDSPAN_LON (GRID_LOWER_SPAN_LON+STREET_UPPER_SPAN_LON)/2
+#define STREET_UPPER_SPAN_LAT 0.006594
+#define STREET_UPPER_SPAN_LON 0.006866
+#define STREET_LOWER_SPAN_LAT 0.003297
+#define STREET_LOWER_SPAN_LON 0.003433
+#define LOWER_CANYON_MIDSPAN_LAT (STREET_LOWER_SPAN_LAT+SPOT_SPAN_LAT)/2
+#define LOWER_CANYON_MIDSPAN_LON (STREET_LOWER_SPAN_LON+SPOT_SPAN_LON)/2
+#define SPOT_SPAN_LAT 0.001649
+#define SPOT_SPAN_LON 0.001717
+
+
 
 #define ACCURACY_LIMIT 100
 #define USER_DISTANCE_FROM_SPOT_THRESHOLD 0.01
@@ -584,7 +598,7 @@ typedef struct{
     UINavigationController *vc = [storyboard instantiateViewControllerWithIdentifier:@"ParkingController"];
     [vc setModalPresentationStyle:UIModalPresentationFullScreen];
     PQParkingViewController *vcTop = [[vc viewControllers] objectAtIndex:0];
-
+    //also pass rate information for the selected spot here.  
     vcTop.parent = (PQMapViewController*)self;
     [self presentModalViewController:vc animated:YES];
 }
@@ -645,35 +659,7 @@ typedef struct{
         CalloutMapAnnotation *callout = [bubble objectForKey:@"callout"];
         double corner_lat = callout.coordinate.latitude;
         double corner_lon = callout.coordinate.longitude;
-        switch (callout.corner) {
-                /*
-                 The callout Line currently goes to an off-center of annotation, 
-                 for future aesthetics, maybe rearrange?
-                 */
-                
-                //            case kBottomRightCorner:
-                //                NSLog(@"%s has corner bottom right\n", [callout.title cString]);
-                //                corner_lat-=annotation_offset_y;
-                //                corner_lon-=annotation_offset_x;
-                //                break;
-                //            case kBottomLeftCorner:
-                //                corner_lat-=annotation_offset_y;
-                //                corner_lon-=annotation_offset_x;
-                //                break;
-                //            case kTopLeftCorner:
-                //                corner_lat+=annotation_offset_y;
-                //                corner_lon+=annotation_offset_x;
-                //                break;
-                //            case kTopRightCorner:
-                //                corner_lat+=annotation_offset_y;
-                //                corner_lon+=annotation_offset_x;
-                //                break;
-            default:
-                //NSLog(@"error, corner type unknown\n");
-                corner_lat = callout.coordinate.latitude;
-                corner_lon = callout.coordinate.longitude;
-                break;
-        }
+        
         
         endpoints[0] = CLLocationCoordinate2DMake(corner_lat, corner_lon);
         endpoints[1] = ((CLLocation *)[bubble objectForKey:@"spot"]).coordinate;
@@ -800,29 +786,37 @@ typedef struct{
 }
 
 - (void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated {
-    //no longer getting called after user taps callout bubble....
-    
     if (displayedData != kNoneData) {
         double currentSpan = mapView.region.span.latitudeDelta;
         CLLocationCoordinate2D center = mapView.centerCoordinate;
-        NSLog(@"currSpan: %f\n", mapView.region.span.latitudeDelta);
-        if (currentSpan>=GRID_TO_STREET_SPAN) {
-            //NSLog(@"GRID:currSpan: %f\n", mapView.region.span.latitudeDelta);
+        //NSLog(@"currSpan: %f\n", currentSpan);
+        if(currentSpan >= GRID_UPPER_SPAN_LAT){
             zoomState = kGridZoomLevel;
+            MKCoordinateRegion reg = MKCoordinateRegionMake(center, MKCoordinateSpanMake(GRID_UPPER_SPAN_LAT, GRID_UPPER_SPAN_LON));
+            [mapView setRegion:reg animated:YES];
+        }else if(currentSpan >= UPPER_CANYON_MIDSPAN_LAT && currentSpan <= GRID_LOWER_SPAN_LAT){
+            zoomState = kGridZoomLevel;
+            [mapView setRegion:MKCoordinateRegionMake(center, MKCoordinateSpanMake(GRID_LOWER_SPAN_LAT, GRID_LOWER_SPAN_LON)) animated:YES];
             [self showGridLevelWithCoordinates:&center];
             [self showAvailabilitySelectionView];
-        } else if (currentSpan>=STREET_TO_SPOT_SPAN) {
-            //NSLog(@"Block:currSpan: %f\n", mapView.region.span.latitudeDelta);
+        }else if(currentSpan <= UPPER_CANYON_MIDSPAN_LAT && currentSpan >= STREET_UPPER_SPAN_LAT){
             zoomState = kStreetZoomLevel;
+            [mapView setRegion:MKCoordinateRegionMake(center, MKCoordinateSpanMake(STREET_UPPER_SPAN_LAT, STREET_UPPER_SPAN_LON)) animated:YES];
             [self showStreetLevelWithCoordinates:&center];
             [self showAvailabilitySelectionView];
-        } else if (currentSpan>=MIN_SPAN) {
-            //NSLog(@"currSpan: %f\n", mapView.region.span.latitudeDelta);
+        }else if(currentSpan >= LOWER_CANYON_MIDSPAN_LAT && currentSpan <= STREET_LOWER_SPAN_LAT){
+            zoomState = kStreetZoomLevel;
+            [mapView setRegion:MKCoordinateRegionMake(center, MKCoordinateSpanMake(STREET_LOWER_SPAN_LAT, STREET_LOWER_SPAN_LON)) animated:YES];
+            [self showStreetLevelWithCoordinates:&center];
+            [self showAvailabilitySelectionView];
+        }else if(currentSpan <=LOWER_CANYON_MIDSPAN_LAT && currentSpan >= SPOT_SPAN_LAT){
             zoomState = kSpotZoomLevel;
+            [mapView setRegion:MKCoordinateRegionMake(center, MKCoordinateSpanMake(SPOT_SPAN_LAT, SPOT_SPAN_LON)) animated:YES];
             [self showSpotLevelWithCoordinates:&center];
             [self showSpotSelectionViews];
-        } else {
-            [mapView setRegion:MKCoordinateRegionMake(center, MKCoordinateSpanMake(MIN_SPAN, MIN_SPAN)) animated:YES];
+        }else if(currentSpan <= SPOT_SPAN_LAT){
+            zoomState = kSpotZoomLevel;
+            [mapView setRegion:MKCoordinateRegionMake(center, MKCoordinateSpanMake(SPOT_SPAN_LAT, SPOT_SPAN_LON)) animated:YES];
         }
     }
 }
@@ -1037,9 +1031,6 @@ typedef struct{
     NSLog(@"%d\n", t);
 }
 
--(void) updateOldStreetLevelRegion:(CGPoint)touchPoint{
-    oldStreetLevelRegion.center = [self.map convertPoint:touchPoint toCoordinateFromView:self.map];
-}
 
 
 -(void)handlePanGesture:(UIGestureRecognizer*)gestureRecognizer{
@@ -1049,16 +1040,13 @@ typedef struct{
         //ping server for new data with coordinates.  
     }else if(zoomState == kStreetZoomLevel){        
         //ping server for new street data with coordinates
-        //[self updateOldStreetLevelRegion:[gestureRecognizer locationInView:self.map]];
         oldStreetLevelRegion.center = map.centerCoordinate;
     }else{
-//        [self updateOldStreetLevelRegion:[gestureRecognizer locationInView:self.map]];
-          oldStreetLevelRegion.center = map.centerCoordinate;
+        oldStreetLevelRegion.center = map.centerCoordinate;
         if(callouts.count >0){
             //remove overlays on pan
             [self clearCallouts]; 
         }
-        
         //ping server for new spot data
         
         //load the new data to the map
@@ -1251,6 +1239,9 @@ typedef struct{
     MKCoordinateRegion adjustedRegion = [map regionThatFits:viewRegion];
     
     [self.map setRegion:adjustedRegion animated:YES];
+    //DEBUG BELOW
+    [self showGridLevelWithCoordinates:&point];
+    [self showAvailabilitySelectionView];
 }
 
 - (IBAction)streetButtonPressed:(id)sender {
@@ -1258,6 +1249,8 @@ typedef struct{
     
     MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(point, STREET_LEVEL_REGION_METERS, STREET_LEVEL_REGION_METERS);
     [self.map setRegion:[self.map regionThatFits:viewRegion] animated:YES];
+    [self showStreetLevelWithCoordinates:&point];
+    [self showAvailabilitySelectionView];
 }
 
 - (IBAction)spotButtonPressed:(id)sender {
@@ -1265,18 +1258,19 @@ typedef struct{
     
     MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(point, SPOT_LEVEL_REGION_METERS, SPOT_LEVEL_REGION_METERS);
     [map setRegion:[map regionThatFits:viewRegion] animated:YES];
+    [self showSpotLevelWithCoordinates:&point];
+    [self showAvailabilitySelectionView];
     
 }
 
 - (IBAction)noneButtonPressed:(id)sender {
-for( MKPolygon* overlay in grids){
-    MKPolygonView* view = (MKPolygonView*) [map viewForOverlay:overlay];
-    view.fillColor = [[UIColor veryLowAvailabilityColor] colorWithAlphaComponent:0.2];
-    //we can edit already existing overlays, so NO need to remove them.  
-    
-    //maintain a hash map of ID to OVERLAY object, server responds with ID's, find and modify the color.  EZ.
-}
-    
+    for( MKPolygon* overlay in grids){
+        MKPolygonView* view = (MKPolygonView*) [map viewForOverlay:overlay];
+        view.fillColor = [[UIColor veryLowAvailabilityColor] colorWithAlphaComponent:0.2];
+        //we can edit already existing overlays, so NO need to remove them.  
+        
+        //maintain a hash map of ID to OVERLAY object, server responds with ID's, find and modify the color.  EZ.
+    }
     
 }
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {   
@@ -1324,10 +1318,10 @@ for( MKPolygon* overlay in grids){
     streets = [[NSMutableArray alloc] init];
     
     //check the current zoom level to set the ZOOM_STATE integer.  
-    if (self.map.bounds.size.width > GRID_TO_STREET_SPAN) {
+    if (self.map.bounds.size.width >= UPPER_CANYON_MIDSPAN_LAT) {
         zoomState = kGridZoomLevel;
         //above middle zoom level        
-    } else if (self.map.bounds.size.width > STREET_TO_SPOT_SPAN) {
+    } else if (self.map.bounds.size.width >= LOWER_CANYON_MIDSPAN_LAT) {
         //above spot zoom level
         zoomState = kStreetZoomLevel;
     } else {
@@ -1407,6 +1401,7 @@ for( MKPolygon* overlay in grids){
 
 - (void)viewDidAppear:(BOOL)animated
 {
+    
     [super viewDidAppear:animated];
     //prepare geocoder upon view load.  
     if(geocoder ==nil){
@@ -1418,12 +1413,13 @@ for( MKPolygon* overlay in grids){
 - (void)viewWillDisappear:(BOOL)animated
 {
 	[super viewWillDisappear:animated];
-    
+    NSLog(@"viewWillDisaapear\n");
     [locationManager stopUpdatingLocation];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
 {
+        NSLog(@"viewDidDisaapear\n");
 	[super viewDidDisappear:animated];
 }
 
@@ -1436,6 +1432,7 @@ for( MKPolygon* overlay in grids){
 @end
 
 #pragma mark - IDEA DUMP
+////this overwrites the current grid colors, doesn't 
 //for( MKPolygon* overlay in grids){
 //    MKPolygonView* view = (MKPolygonView*) [map viewForOverlay:overlay];
 //    view.fillColor = [[UIColor veryLowAvailabilityColor] colorWithAlphaComponent:0.2];
