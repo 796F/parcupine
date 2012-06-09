@@ -59,7 +59,6 @@
 	CalloutMapAnnotationViewBottomShadowBufferSize;
 	
     frame.size = CGSizeMake(62, height);
-//	frame.size = CGSizeMake(self.mapView.frame.size.width, height);
 	self.frame = frame;
 }
 
@@ -73,30 +72,37 @@
 }
 
 - (void)prepareOffset {
-//	CGPoint parentOrigin = [self.mapView convertPoint:self.parentAnnotationView.frame.origin 
-//											 fromView:self.parentAnnotationView.superview];
-	
-//	CGFloat xOffset =	(self.mapView.frame.size.width / 2) - 
-//						(parentOrigin.x + self.offsetFromParent.x);
-	
-	//Add half our height plus half of the height of the annotation we are tied to so that our bottom lines up to its top
-	//Then take into account its offset and the extra space needed for our drop shadow
-//	CGFloat yOffset = -(self.frame.size.height / 2 + 
-//						self.parentAnnotationView.frame.size.height / 2) + 
-//						self.offsetFromParent.y + 
-//						CalloutMapAnnotationViewBottomShadowBufferSize;
-	
-//	self.centerOffset = CGPointMake(xOffset, yOffset);
-    self.centerOffset = CGPointMake(0,0);
+    switch(((CalloutMapAnnotation *)self.annotation).corner) {
+        case kTopRightCorner:
+            self.centerOffset = CGPointMake(-self.bounds.size.width/2+8.0, self.bounds.size.height/2);
+            break;
+        case kTopLeftCorner:
+            self.centerOffset = CGPointMake(self.bounds.size.width/2-7.0, self.bounds.size.height/2);
+            break;
+        case kBottomLeftCorner:
+            self.centerOffset = CGPointMake(self.bounds.size.width/2-7.0, -self.bounds.size.height/2+7.0);
+            break;
+        case kBottomRightCorner:
+            self.centerOffset = CGPointMake(-self.bounds.size.width/2+8.0, -self.bounds.size.height/2+7.0);
+            break;
+    }
 }
 
 - (CGFloat)xTransformForScale:(CGFloat)scale {
 	CGFloat xDistanceFromCenter = self.endFrame.size.width / 2;
+    const CalloutCorner corner = ((CalloutMapAnnotation *)self.annotation).corner;
+    if (corner == kTopRightCorner || corner == kBottomRightCorner) {
+        xDistanceFromCenter = -xDistanceFromCenter;
+    }
 	return (xDistanceFromCenter * scale) - xDistanceFromCenter;
 }
 
 - (CGFloat)yTransformForScale:(CGFloat)scale {
 	CGFloat yDistanceFromCenter = (((self.endFrame.size.height) / 2) + CalloutMapAnnotationViewBottomShadowBufferSize);
+    const CalloutCorner corner = ((CalloutMapAnnotation *)self.annotation).corner;
+    if (corner == kTopLeftCorner || corner == kTopRightCorner) {
+        yDistanceFromCenter = -yDistanceFromCenter;
+    }
 	return yDistanceFromCenter - yDistanceFromCenter * scale;
 }
 

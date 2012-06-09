@@ -209,6 +209,7 @@
 				FC7CE864157943630059EE43 /* NetworkLayer.m */,
 				FC772758157C2C8C005DEBEA /* Segment.h */,
 				FC772759157C2C8C005DEBEA /* Segment.m */,
+				87ABC3A81582B14A00030005 /* Callouts */,
 			);
 			path = "parq-ios2";
 			sourceTree = "<group>";
@@ -262,13 +263,12 @@
 		8791F9CA153383BA00525267 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				8791F9CB153383D400525267 /* Asynchrony Solutions */,
 			);
 			name = Shared;
 			path = "parq-ios2";
 			sourceTree = "<group>";
 		};
-		8791F9CB153383D400525267 /* Asynchrony Solutions */ = {
+		87ABC3A81582B14A00030005 /* Callouts */ = {
 			isa = PBXGroup;
 			children = (
 				8791F9D215338DD300525267 /* CalloutMapAnnotation.h */,
@@ -276,7 +276,7 @@
 				8791F9CC153383E500525267 /* CalloutMapAnnotationView.h */,
 				8791F9CD153383E500525267 /* CalloutMapAnnotationView.m */,
 			);
-			name = "Asynchrony Solutions";
+			name = Callouts;
 			sourceTree = "<group>";
 		};
 		87E1BE72154B52280095E92D /* Fonts */ = {
