@@ -57,5 +57,6 @@
 @property (nonatomic) bool user_loc_isGood;
 @property (nonatomic, retain) MKCircle* desired_spot;
 @property (nonatomic) MKCoordinateRegion oldStreetLevelRegion;
+@property (atomic) bool shouldNotClearOverlays;
 
 @end

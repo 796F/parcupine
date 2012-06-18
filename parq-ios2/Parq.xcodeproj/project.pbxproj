@@ -54,6 +54,7 @@
 		FC2B2B67157EB93800ED0B52 /* Spot.m in Sources */ = {isa = PBXBuildFile; fileRef = FC2B2B66157EB93800ED0B52 /* Spot.m */; };
 		FC2B2B6A157EB94300ED0B52 /* Street.m in Sources */ = {isa = PBXBuildFile; fileRef = FC2B2B69157EB94300ED0B52 /* Street.m */; };
 		FC2B2B6D157EB94D00ED0B52 /* Waypoint.m in Sources */ = {isa = PBXBuildFile; fileRef = FC2B2B6C157EB94D00ED0B52 /* Waypoint.m */; };
+		FC440332158F9C0B00418963 /* PQSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC440331158F9C0B00418963 /* PQSettingsViewController.m */; };
 		FCF937C4157D497F0062A5A1 /* parq.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = FCF937BE157D49190062A5A1 /* parq.xcdatamodeld */; };
 		FCF937C5157D4A780062A5A1 /* DataLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = FC48562F1577FD37002C4479 /* DataLayer.m */; };
 		FCF937C6157D4A780062A5A1 /* NetworkLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = FC7CE864157943630059EE43 /* NetworkLayer.m */; };
@@ -126,6 +127,8 @@
 		FC2B2B69157EB94300ED0B52 /* Street.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Street.m; path = "parq-ios2/Street.m"; sourceTree = "<group>"; };
 		FC2B2B6B157EB94D00ED0B52 /* Waypoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Waypoint.h; path = "parq-ios2/Waypoint.h"; sourceTree = "<group>"; };
 		FC2B2B6C157EB94D00ED0B52 /* Waypoint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Waypoint.m; path = "parq-ios2/Waypoint.m"; sourceTree = "<group>"; };
+		FC440330158F9C0B00418963 /* PQSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PQSettingsViewController.h; sourceTree = "<group>"; };
+		FC440331158F9C0B00418963 /* PQSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PQSettingsViewController.m; sourceTree = "<group>"; };
 		FC48562E1577FD37002C4479 /* DataLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataLayer.h; sourceTree = "<group>"; };
 		FC48562F1577FD37002C4479 /* DataLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataLayer.m; sourceTree = "<group>"; };
 		FC772758157C2C8C005DEBEA /* Segment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Segment.h; sourceTree = "<group>"; };
@@ -199,6 +202,8 @@
 				8791F9BF1533804000525267 /* PQCallout.h */,
 				8791F9C01533804000525267 /* PQCallout.m */,
 				8703ACBC1513F841002FE357 /* MainStoryboard.storyboard */,
+				FC440330158F9C0B00418963 /* PQSettingsViewController.h */,
+				FC440331158F9C0B00418963 /* PQSettingsViewController.m */,
 				87418A861577D31500CACCCA /* PQParkedCarMapViewController.h */,
 				87418A871577D31500CACCCA /* PQParkedCarMapViewController.m */,
 				87E1BE65154A08D70095E92D /* PQParkingViewController.h */,
@@ -417,6 +422,7 @@
 				FC2B2B6A157EB94300ED0B52 /* Street.m in Sources */,
 				FC2B2B6D157EB94D00ED0B52 /* Waypoint.m in Sources */,
 				87ABC3AB1582BC4400030005 /* PQSpotAnnotation.m in Sources */,
+				FC440332158F9C0B00418963 /* PQSettingsViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
