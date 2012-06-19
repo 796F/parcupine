@@ -1268,9 +1268,12 @@ typedef struct{
 
 -(IBAction)settingsButtonPressed :(id)sender{
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
-    UIViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"SettingsController"];
+    UINavigationController *vc = [storyboard instantiateViewControllerWithIdentifier:@"SettingsController"];
     [vc setModalPresentationStyle:UIModalPresentationFullScreen];
+    PQSettingsViewController *vcTop = [[vc viewControllers] objectAtIndex:0];
+    //also pass rate information for the selected spot here.  
     [self presentModalViewController:vc animated:YES];
+
 }
 
 #pragma mark - Debug button actions

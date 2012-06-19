@@ -231,7 +231,7 @@
                         <sections>
                             <tableViewSection headerTitle="Account Settings" id="9Js-U3-tbS">
                                 <cells>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" indentationWidth="10" id="Qeg-NU-sG6">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="nameCell" id="Qeg-NU-sG6">
                                         <rect key="frame" x="0.0" y="46" width="320" height="45"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -256,7 +256,7 @@
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" indentationWidth="10" id="Ta7-Ia-eK2">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="addrCell" id="Ta7-Ia-eK2">
                                         <rect key="frame" x="0.0" y="91" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -281,7 +281,7 @@
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" indentationWidth="10" id="QxK-EA-6H7">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="plateCell" id="QxK-EA-6H7">
                                         <rect key="frame" x="0.0" y="135" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -306,7 +306,7 @@
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" indentationWidth="10" id="W8h-uZ-H3q">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="ssnCell" id="W8h-uZ-H3q">
                                         <rect key="frame" x="0.0" y="179" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -331,7 +331,7 @@
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="detailDisclosureButton" indentationWidth="10" id="02e-rI-PfW">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="detailDisclosureButton" indentationWidth="10" reuseIdentifier="balanceCell" id="02e-rI-PfW">
                                         <rect key="frame" x="0.0" y="223" width="320" height="45"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -360,7 +360,7 @@
                             </tableViewSection>
                             <tableViewSection headerTitle="Application Settings" id="eKf-Wu-PSw">
                                 <cells>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" indentationWidth="10" id="efg-4e-qbP">
+                                    <tableViewCell tag="1" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="soundCell" id="efg-4e-qbP">
                                         <rect key="frame" x="0.0" y="314" width="320" height="45"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -382,7 +382,7 @@
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" indentationWidth="10" id="Afn-m8-pO2">
+                                    <tableViewCell tag="1" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="vibrateCell" id="Afn-m8-pO2">
                                         <rect key="frame" x="0.0" y="359" width="320" height="45"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -407,12 +407,33 @@
                                 </cells>
                             </tableViewSection>
                         </sections>
+                        <connections>
+                            <outlet property="dataSource" destination="acV-uW-gg5" id="vvw-cf-Pfp"/>
+                            <outlet property="delegate" destination="acV-uW-gg5" id="cPN-0d-nDM"/>
+                        </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Settings" id="uTO-vB-PqV">
                         <barButtonItem key="leftBarButtonItem" title="Done" id="sxe-Aj-Agx">
                             <color key="tintColor" cocoaTouchSystemColor="darkTextColor"/>
+                            <connections>
+                                <action selector="doneButtonPressed:" destination="acV-uW-gg5" id="LdD-dD-1vz"/>
+                            </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <outlet property="addrCellView" destination="Ta7-Ia-eK2" id="k6z-GY-s6O"/>
+                        <outlet property="addrLabel" destination="OGQ-w0-tb5" id="5o0-HY-RuP"/>
+                        <outlet property="balanceCellView" destination="02e-rI-PfW" id="gaz-Lf-OR4"/>
+                        <outlet property="balanceLabel" destination="DSG-Eh-m8c" id="tJu-Qd-7Fc"/>
+                        <outlet property="nameCellView" destination="Qeg-NU-sG6" id="sS9-YJ-IS5"/>
+                        <outlet property="nameLabel" destination="YU5-e7-wqK" id="NMI-qG-Ec0"/>
+                        <outlet property="plateCellView" destination="QxK-EA-6H7" id="B6M-Uu-zEL"/>
+                        <outlet property="plateLabel" destination="1D7-co-Mw5" id="P3E-Rf-edG"/>
+                        <outlet property="soundCellView" destination="efg-4e-qbP" id="bSl-N3-16w"/>
+                        <outlet property="ssnCellView" destination="W8h-uZ-H3q" id="kM6-aJ-0WK"/>
+                        <outlet property="ssnLabel" destination="x2e-DL-ocS" id="B37-to-PST"/>
+                        <outlet property="vibrateCellView" destination="Afn-m8-pO2" id="pb2-Lx-FRS"/>
+                    </connections>
                 </tableViewController>
             </objects>
             <point key="canvasLocation" x="1185" y="884"/>
@@ -1041,6 +1062,20 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         </class>
         <class className="PQSettingsViewController" superclassName="UITableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/PQSettingsViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="addrCellView" candidateClass="UIView"/>
+                <relationship kind="outlet" name="addrLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="balanceCellView" candidateClass="UIView"/>
+                <relationship kind="outlet" name="balanceLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="nameCellView" candidateClass="UIView"/>
+                <relationship kind="outlet" name="nameLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="plateCellView" candidateClass="UIView"/>
+                <relationship kind="outlet" name="plateLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="soundCellView" candidateClass="UIView"/>
+                <relationship kind="outlet" name="ssnCellView" candidateClass="UIView"/>
+                <relationship kind="outlet" name="ssnLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="vibrateCellView" candidateClass="UIView"/>
+            </relationships>
         </class>
     </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
