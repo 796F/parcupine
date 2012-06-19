@@ -1086,11 +1086,10 @@ typedef struct{
 
 -(void)handlePanGesture:(UIGestureRecognizer*)gestureRecognizer{
     if(gestureRecognizer.state != UIGestureRecognizerStateEnded)
-        return;
-    
-    
-    
+        return;    
 }
+
+
 -(void)handleDoubleTapGesture:(UIGestureRecognizer *)gestureRecognizer{
 
     if (gestureRecognizer.state != UIGestureRecognizerStateEnded)

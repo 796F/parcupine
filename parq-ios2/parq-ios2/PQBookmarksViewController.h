@@ -1,5 +1,5 @@
 //
-//  PQSettingsViewController.h
+//  PQBookmarksViewController.h
 //  Parq
 //
 //  Created by Michael Xia on 6/19/12.
@@ -8,8 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
-@interface PQSettingsViewController : UITableViewController < UITableViewDataSource, UITableViewDelegate>{
+@interface PQBookmarksViewController : UIViewController {
     
 }
+@property (weak, nonatomic) IBOutlet UISegmentedControl *bookmarkSelectionBar;
 
 @end
