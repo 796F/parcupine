@@ -95,6 +95,7 @@ typedef struct{
 @synthesize availabilitySelectionBar;
 @synthesize oldStreetLevelRegion;
 @synthesize shouldNotClearOverlays;
+@synthesize numPadParkButton;
 
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     NSLog(@"hello\n");
@@ -1153,6 +1154,9 @@ typedef struct{
     }
 }
 
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {   
+    return YES;
+}
 
 #pragma mark - Search bar and UISearchBarDelegate methods
 
@@ -1210,6 +1214,7 @@ typedef struct{
 - (void)searchBar:(UISearchBar *)searchBar selectedScopeButtonIndexDidChange:(NSInteger)selectedScope {
     if (selectedScope == 1) {
         searchBar.keyboardType = UIKeyboardTypeNumberPad;
+        numPadParkButton.hidden = NO;
     } else {
         searchBar.keyboardType = UIKeyboardTypeDefault;
     }
@@ -1222,11 +1227,18 @@ typedef struct{
     UIViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"BookmarksController"];
     [vc setModalPresentationStyle:UIModalPresentationFullScreen];
     [self presentModalViewController:vc animated:YES];
-    
 }
 
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
     [self setSearchBar:searchBar active:YES];
+}
+
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText{
+    if(searchText.length==4){
+        //WE COULD ENABLE UPON 4 DIGITS
+        
+        //or just let done button do nothing unless 4.  
+    }
 }
 
 - (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
@@ -1328,11 +1340,34 @@ typedef struct{
     
 }
 
+- (void)keyboardWillShow:(NSNotification *)note { 
+    if(topSearchBar.selectedScopeButtonIndex==1){
+        // create custom button
+        UIButton *doneButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        doneButton.frame = CGRectMake(0, 163, 106, 53);
+        doneButton.adjustsImageWhenHighlighted = NO;
+        [doneButton setImage:[UIImage imageNamed:@"doneup.png"] forState:UIControlStateNormal];
+        [doneButton setImage:[UIImage imageNamed:@"donedown.png"] forState:UIControlStateHighlighted];
+        [doneButton addTarget:self action:@selector(numPadSubmit:) forControlEvents:UIControlEventTouchUpInside];
+        // locate keyboard view
+        UIWindow* tempWindow = [[[UIApplication sharedApplication] windows] objectAtIndex:1];
+        UIView* keyboard;
 
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {   
-    return YES;
+        for(int i=0; i<[tempWindow.subviews count]; i++) {
+            keyboard = [tempWindow.subviews objectAtIndex:i];
+            
+            // keyboard view found; add the custom button to it
+            if([[keyboard description] hasPrefix:@"<UIPeripheralHostView"] == YES){
+                [keyboard addSubview:doneButton];
+            }
+        }
+    }
+    
 }
 
+- (IBAction)numPadSubmit:(id)sender {
+    [self setSearchBar:topSearchBar active:NO];
+}
 #pragma mark - LOCATION
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation{
     user_loc = newLocation.coordinate;
@@ -1418,11 +1453,10 @@ typedef struct{
     [self.map addGestureRecognizer:singleTapRecognizer];
     [self.map addGestureRecognizer:doubleTapRecognizer];
     
-    //add a pan gesture to map on TOP of already existing one.  
-    UIPanGestureRecognizer* pgr = [[UIPanGestureRecognizer alloc]
-                                   initWithTarget:self action:@selector(handlePanGesture:)];
-    pgr.delegate = self;
-    //[self.map addGestureRecognizer:pgr];
+    [[NSNotificationCenter defaultCenter] addObserver:self 
+                                             selector:@selector(keyboardWillShow:) 
+                                                 name:UIKeyboardDidShowNotification 
+                                               object:nil];
 }
 
 

@@ -1127,6 +1127,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                 <relationship kind="outlet" name="gradientIcon" candidateClass="UIImageView"/>
                 <relationship kind="outlet" name="map" candidateClass="MKMapView"/>
                 <relationship kind="outlet" name="navigationBar" candidateClass="UINavigationItem"/>
+                <relationship kind="outlet" name="numPadParkButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="topSearchBar" candidateClass="UISearchBar"/>
                 <relationship kind="outlet" name="topSpotSelectionBar" candidateClass="UISegmentedControl"/>
                 <relationship kind="outlet" name="topSpotSelectionView" candidateClass="UIView"/>

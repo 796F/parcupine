@@ -59,4 +59,7 @@
 @property (nonatomic) MKCoordinateRegion oldStreetLevelRegion;
 @property (atomic) bool shouldNotClearOverlays;
 
+//keypad submit button
+@property (weak, nonatomic) IBOutlet UIButton *numPadParkButton;
+
 @end
