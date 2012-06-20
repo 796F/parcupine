@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "UserObject.h"
 
 @interface PQSettingsViewController : UITableViewController < UITableViewDataSource, UITableViewDelegate>{
     
@@ -25,5 +26,7 @@
 @property (weak, nonatomic) IBOutlet UILabel* plateLabel;
 @property (weak, nonatomic) IBOutlet UILabel* ssnLabel;
 @property (weak, nonatomic) IBOutlet UILabel* balanceLabel;
+
+@property (weak, nonatomic) UserObject* user;
 
 @end

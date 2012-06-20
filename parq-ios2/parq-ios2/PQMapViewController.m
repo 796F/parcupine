@@ -1271,6 +1271,10 @@ typedef struct{
     UINavigationController *vc = [storyboard instantiateViewControllerWithIdentifier:@"SettingsController"];
     [vc setModalPresentationStyle:UIModalPresentationFullScreen];
     PQSettingsViewController *vcTop = [[vc viewControllers] objectAtIndex:0];
+    UserObject* ourUser = [[UserObject alloc] initWithUid:nil City:nil SSN:nil Balance:nil Sound:nil Vibrate:nil Name:nil Address:nil Plate:nil];
+
+    //THIS IS A PLACE HOLDER.  USER object is not initialized here, but rather on login.  
+    vcTop.user = ourUser;
     //also pass rate information for the selected spot here.  
     [self presentModalViewController:vc animated:YES];
 

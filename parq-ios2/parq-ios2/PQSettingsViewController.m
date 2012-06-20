@@ -26,6 +26,7 @@
 @synthesize plateCellView;
 @synthesize balanceLabel;
 @synthesize balanceCellView;
+@synthesize user;
 
 #pragma mark - BUTTONS
 

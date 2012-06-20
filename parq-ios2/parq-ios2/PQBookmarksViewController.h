@@ -8,9 +8,16 @@
 
 #import <UIKit/UIKit.h>
 
-@interface PQBookmarksViewController : UIViewController {
+@interface PQBookmarksViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>{
+
     
 }
+
+@property (weak, nonatomic) IBOutlet UITableView *table;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *bookmarkSelectionBar;
+@property (strong, nonatomic) NSArray* bookmarks;
+@property (strong, nonatomic) NSArray* recentSearches;
+@property (strong, nonatomic) NSArray* contacts;
+//@property (atomic) int tableDisplayType;
 
 @end

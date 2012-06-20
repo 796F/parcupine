@@ -436,14 +436,14 @@
                     </connections>
                 </tableViewController>
             </objects>
-            <point key="canvasLocation" x="1185" y="884"/>
+            <point key="canvasLocation" x="1109" y="676"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="Q4b-9g-fqA">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0jX-uZ-pXi" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <navigationController storyboardIdentifier="SettingsController" id="y7v-42-msV" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="xk8-CQ-jwH">
+                    <navigationBar key="navigationBar" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" barStyle="blackOpaque" id="xk8-CQ-jwH">
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
@@ -451,7 +451,7 @@
                     </connections>
                 </navigationController>
             </objects>
-            <point key="canvasLocation" x="651" y="884"/>
+            <point key="canvasLocation" x="615" y="676"/>
         </scene>
         <!--Parking View Controller - 1106, Cambridge, MA-->
         <scene sceneID="aw1-CQ-L6z">
@@ -858,7 +858,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                     </connections>
                 </viewController>
             </objects>
-            <point key="canvasLocation" x="1710" y="58"/>
+            <point key="canvasLocation" x="1608" y="58"/>
         </scene>
         <!--Bookmarks View Controller-->
         <scene sceneID="KQv-S9-RAp">
@@ -928,7 +928,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" indentationWidth="10" reuseIdentifier="bookmarkCell" id="QWM-iJ-2J7">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" indentationWidth="10" reuseIdentifier="bookmarkCell" id="QWM-iJ-2J7" customClass="BookmarkCell">
                                         <rect key="frame" x="0.0" y="66" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -945,8 +945,65 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                                             </subviews>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
+                                        <connections>
+                                            <outlet property="bookmarkName" destination="JVZ-fk-tb4" id="TG0-tn-6ee"/>
+                                        </connections>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" indentationWidth="10" reuseIdentifier="recentCell" id="iPa-0m-GNh" customClass="RecentCell">
+                                        <rect key="frame" x="0.0" y="110" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Recent Search" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="Ga7-4f-vRM">
+                                                    <rect key="frame" x="20" y="0.0" width="249" height="23"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                </label>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Recent Search Description" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="VGs-Tk-uQh">
+                                                    <rect key="frame" x="20" y="20" width="249" height="23"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                </label>
+                                            </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                        <connections>
+                                            <outlet property="recentSearchDescription" destination="VGs-Tk-uQh" id="Cm5-KN-Bje"/>
+                                            <outlet property="recentSearchName" destination="Ga7-4f-vRM" id="CgW-Ni-YKl"/>
+                                        </connections>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" indentationWidth="10" reuseIdentifier="contactCell" id="Kci-pL-pxu" customClass="ContactCell">
+                                        <rect key="frame" x="0.0" y="154" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Contact Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="CYf-9H-Ey5">
+                                                    <rect key="frame" x="20" y="0.0" width="212" height="43"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                </label>
+                                            </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                        <connections>
+                                            <outlet property="contactName" destination="CYf-9H-Ey5" id="apK-fG-Cmu"/>
+                                        </connections>
                                     </tableViewCell>
                                 </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="c5U-oy-y4R" id="qip-Iv-L3g"/>
+                                    <outlet property="delegate" destination="c5U-oy-y4R" id="jNC-Vf-zPQ"/>
+                                </connections>
                             </tableView>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Choose a bookmark to view on the map" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="4" enabled="NO" id="ZKK-BY-kWe">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="21"/>
@@ -961,10 +1018,46 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                     </view>
                     <connections>
                         <outlet property="bookmarkSelectionBar" destination="yvy-md-IRU" id="0Ba-pl-sl0"/>
+                        <outlet property="table" destination="8df-nj-eam" id="89y-1e-Vdk"/>
+                        <segue destination="GmH-aS-nzK" kind="push" identifier="showEditBookmark" id="aER-IS-S1T"/>
                     </connections>
                 </viewController>
             </objects>
             <point key="canvasLocation" x="615" y="-529"/>
+        </scene>
+        <!--Edit Bookmark View Controller-->
+        <scene sceneID="zal-bn-lRR">
+            <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="7d1-fT-yXb" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <viewController id="GmH-aS-nzK" customClass="PQEditBookmarkViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="chy-ym-n6Y">
+                        <rect key="frame" x="0.0" y="20" width="320" height="460"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" id="UDF-xw-aF3">
+                                <rect key="frame" x="0.0" y="44" width="320" height="416"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <connections>
+                                    <outlet property="delegate" destination="GmH-aS-nzK" id="qBG-XA-VO3"/>
+                                </connections>
+                            </mapView>
+                            <navigationBar contentMode="scaleToFill" barStyle="blackOpaque" id="jCl-af-72D">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <items>
+                                    <navigationItem id="m0X-9l-qOC"/>
+                                </items>
+                            </navigationBar>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="DDB-c3-LTe"/>
+                    <connections>
+                        <outlet property="map" destination="UDF-xw-aF3" id="PTE-jY-bv3"/>
+                    </connections>
+                </viewController>
+            </objects>
+            <point key="canvasLocation" x="1109" y="-529"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="D3F-1a-517">
@@ -999,10 +1092,29 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         <image name="settings.png" width="20" height="21"/>
     </resources>
     <classes>
+        <class className="BookmarkCell" superclassName="UITableViewCell">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/BookmarkCell.h"/>
+            <relationships>
+                <relationship kind="outlet" name="bookmarkName" candidateClass="UILabel"/>
+            </relationships>
+        </class>
+        <class className="ContactCell" superclassName="UITableViewCell">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ContactCell.h"/>
+            <relationships>
+                <relationship kind="outlet" name="contactName" candidateClass="UILabel"/>
+            </relationships>
+        </class>
         <class className="PQBookmarksViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/PQBookmarksViewController.h"/>
             <relationships>
                 <relationship kind="outlet" name="bookmarkSelectionBar" candidateClass="UISegmentedControl"/>
+                <relationship kind="outlet" name="table" candidateClass="UITableView"/>
+            </relationships>
+        </class>
+        <class className="PQEditBookmarkViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/PQEditBookmarkViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="map" candidateClass="MKMapView"/>
             </relationships>
         </class>
         <class className="PQMapViewController" superclassName="UIViewController">
@@ -1075,6 +1187,13 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                 <relationship kind="outlet" name="ssnCellView" candidateClass="UIView"/>
                 <relationship kind="outlet" name="ssnLabel" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="vibrateCellView" candidateClass="UIView"/>
+            </relationships>
+        </class>
+        <class className="RecentCell" superclassName="UITableViewCell">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/RecentCell.h"/>
+            <relationships>
+                <relationship kind="outlet" name="recentSearchDescription" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="recentSearchName" candidateClass="UILabel"/>
             </relationships>
         </class>
     </classes>
