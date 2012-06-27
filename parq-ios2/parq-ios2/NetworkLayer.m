@@ -17,6 +17,8 @@
 #import "NetworkLayer.h"
 #import "Grid.h"
 #import "PQMapViewController.h"
+#import "Parser.h"
+#import "AbstractRequestObject.h"
 
 //microblock constants
 #define GRID_MICROBLOCK_REF_LAT 42.283405
@@ -30,20 +32,37 @@
 
 @implementation NetworkLayer
 
-
 @synthesize dataLayer;
 @synthesize parent;
-
-
+-(void) testAsync{
+    NSArray* keys = [NSArray arrayWithObjects:@"email", @"password", nil];
+    NSArray* value = [NSArray arrayWithObjects:@"miguel@parqme.com", @"a", nil];
+    NSDictionary* info = [NSDictionary dictionaryWithObjects:value forKeys:keys];
+    NSError *error;
+    NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
+    AbstractRequestObject* abs = [[AbstractRequestObject alloc] init];
+    [abs setBody:jsonData];
+    [abs setContentType:@"application/json"];
+    [[RKClient sharedClient] post:@"/parkservice.auth" params:abs delegate:parent];
+    NSLog(@"\nREQUEST >>> %@", [info description]);
+    
+}
 
 -(NSDictionary*) requestGridsWithIDs:(NSArray*) newIDs{
     //request from the server overlay information like lat/long etc.  
     NSArray* boundingBoxes = [self convertGridLevelIDs:newIDs];
-    
+    NSNumber* lastUpdateTimeLong = [NSNumber numberWithLong:[[NSDate date] longValue]];
+    NSDictionary* requestDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:boundingBoxes, @"boxes",lastUpdateTimeLong, @"lastUpdateTime", nil];
+    NSError *error;
+    NSData* jsonData = [NSJSONSerialization dataWithJSONObject:requestDictionary options:0 error:&error];
+    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.maps"];
     //send boundingBoxes to server 
-    NSDictionary* results = nil;
+    [request setMethod:RKRequestMethodGET];
+    [request setHTTPBody:jsonData];
+    [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];    
+    RKResponse* result = [request sendSynchronously];
     //create MKPolygons with the results, and then repackage and return.  
-    return results;
+    return [Parser parseGridResponse:[result bodyAsString]];
 }
 
 -(NSDictionary*) addGridsToMapForIDs:(NSArray*) newIDs UpdateForIDs:(NSArray*) updateIDs{

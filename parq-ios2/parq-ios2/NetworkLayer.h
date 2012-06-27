@@ -9,6 +9,8 @@
 #import <MapKit/MapKit.h>
 #import <Foundation/Foundation.h>
 #import "DataLayer.h"
+#import <RestKit/RestKit.h>
+#import "JSONKit.h"
 #import "BoundingBox.h"
 
 //using @class to avoid cycle, which breaks the compiler.  sigh
@@ -35,4 +37,6 @@
 -(NSMutableArray*) getStreetLevelMicroBlockIDListWithNE:(CLLocationCoordinate2D*) topRight SW:(CLLocationCoordinate2D*) botLeft;
 -(NSMutableArray*) getSpotLevelMicroBlockIDListWithNE:(CLLocationCoordinate2D*) topRight SW:(CLLocationCoordinate2D*) botLeft;
 
+//DEBUG
+-(void) testAsync;
 @end

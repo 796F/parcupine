@@ -23,7 +23,14 @@
 
 //user @class to avoid cycles, which breaks the compiler
 @class NetworkLayer;
-@interface PQMapViewController : UIViewController <MKMapViewDelegate, CLLocationManagerDelegate,UISearchBarDelegate,UIGestureRecognizerDelegate, UITableViewDelegate, UIActionSheetDelegate> {
+@interface PQMapViewController : UIViewController 
+<MKMapViewDelegate, 
+CLLocationManagerDelegate,
+UISearchBarDelegate,
+UIGestureRecognizerDelegate, 
+UITableViewDelegate, 
+UIActionSheetDelegate,
+RKRequestDelegate> {
     DataLayer * dataLayer;
     NetworkLayer* networkLayer;
     NSManagedObjectContext* managedObjectContext;

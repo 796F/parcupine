@@ -38,8 +38,10 @@
         //context = [[NSManagedObjectContext alloc] init];
         NSLog(@"null\n");
     }
+    //prepare the RK client for server calls upon load
+    NSURL* url = [NSURL URLWithString:@"http://75.101.132.219:80/"];
+    [RKClient clientWithBaseURL:url];
 
-    
     // Override point for customization after application launch.
     return YES;
 }

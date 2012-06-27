@@ -436,6 +436,13 @@ typedef struct{
             nil];
     
 }
+#pragma mark - RestKit callback
+
+- (void)request:(RKRequest *)request didLoadResponse:(RKResponse *)response{
+    
+    NSLog(@"\nRESULT >>> %@", [response bodyAsString]);
+}
+
 #pragma mark - ACTION SHEET AND ALERTS
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
@@ -1420,6 +1427,7 @@ typedef struct{
 
 - (IBAction)noneButtonPressed:(id)sender {
     NSLog(@"im the none button\n");
+    [networkLayer testAsync];
 }
 
 - (void)keyboardWillShow:(NSNotification *)note { 
@@ -1483,6 +1491,7 @@ typedef struct{
     }
     if(!networkLayer){
         networkLayer = [((PQAppDelegate*)[[UIApplication sharedApplication] delegate])  getNetworkLayerWithDataLayer:dataLayer];
+        [networkLayer setParent:self];
     }
     if(grids==nil) grids = [[NSMutableArray alloc] init];
     if(spots==nil) spots = [[NSMutableArray alloc] init];
