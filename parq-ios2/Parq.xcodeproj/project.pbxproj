@@ -51,6 +51,12 @@
 		87E1BE67154A08D80095E92D /* PQParkingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 87E1BE66154A08D80095E92D /* PQParkingViewController.m */; };
 		87E1BE69154B35270095E92D /* payg.png in Resources */ = {isa = PBXBuildFile; fileRef = 87E1BE68154B35270095E92D /* payg.png */; };
 		FC08BB7B1590D1F40077659C /* PQSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC08BB7A1590D1F40077659C /* PQSettingsViewController.m */; };
+		FC1219E0159B6CAD0072DA85 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC1219DF159B6CAD0072DA85 /* CFNetwork.framework */; };
+		FC1219E2159B6CBE0072DA85 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC1219E1159B6CBE0072DA85 /* MobileCoreServices.framework */; };
+		FC1219E4159B6CC90072DA85 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC1219E3159B6CC90072DA85 /* Security.framework */; };
+		FC1219E6159B6CD10072DA85 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC1219E5159B6CD10072DA85 /* SystemConfiguration.framework */; };
+		FC1219E8159B6CE30072DA85 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FC1219E7159B6CE30072DA85 /* libxml2.dylib */; };
+		FC121A15159B7D910072DA85 /* libRestKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FC121A0A159B6FF00072DA85 /* libRestKit.a */; };
 		FC18F4141595893C00C18286 /* PQPaymentMethodsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC18F4131595893C00C18286 /* PQPaymentMethodsViewController.m */; };
 		FC2B2B64157EB92A00ED0B52 /* Grid.m in Sources */ = {isa = PBXBuildFile; fileRef = FC2B2B63157EB92A00ED0B52 /* Grid.m */; };
 		FC2B2B67157EB93800ED0B52 /* Spot.m in Sources */ = {isa = PBXBuildFile; fileRef = FC2B2B66157EB93800ED0B52 /* Spot.m */; };
@@ -71,6 +77,51 @@
 		FCF937C6157D4A780062A5A1 /* NetworkLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = FC7CE864157943630059EE43 /* NetworkLayer.m */; };
 		FCF937C7157D4A780062A5A1 /* Segment.m in Sources */ = {isa = PBXBuildFile; fileRef = FC772759157C2C8C005DEBEA /* Segment.m */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		FC121A09159B6FF00072DA85 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FC1219FE159B6FF00072DA85 /* RestKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 25160D1614564E810060A5C5;
+			remoteInfo = RestKit;
+		};
+		FC121A0B159B6FF00072DA85 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FC1219FE159B6FF00072DA85 /* RestKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 25160D2614564E820060A5C5;
+			remoteInfo = RestKitTests;
+		};
+		FC121A0D159B6FF00072DA85 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FC1219FE159B6FF00072DA85 /* RestKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 25160E62145651060060A5C5;
+			remoteInfo = RestKitFramework;
+		};
+		FC121A0F159B6FF00072DA85 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FC1219FE159B6FF00072DA85 /* RestKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 25160E78145651060060A5C5;
+			remoteInfo = RestKitFrameworkTests;
+		};
+		FC121A11159B6FF00072DA85 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FC1219FE159B6FF00072DA85 /* RestKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 259C301615128079003066A2;
+			remoteInfo = RestKitResources;
+		};
+		FC121A13159B7D520072DA85 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FC1219FE159B6FF00072DA85 /* RestKit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 25160D1514564E810060A5C5;
+			remoteInfo = RestKit;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		8703ACA61513F841002FE357 /* Parq.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Parq.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -132,6 +183,12 @@
 		87E1BE68154B35270095E92D /* payg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = payg.png; sourceTree = "<group>"; };
 		FC08BB791590D1F40077659C /* PQSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PQSettingsViewController.h; sourceTree = "<group>"; };
 		FC08BB7A1590D1F40077659C /* PQSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PQSettingsViewController.m; sourceTree = "<group>"; };
+		FC1219DF159B6CAD0072DA85 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		FC1219E1159B6CBE0072DA85 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		FC1219E3159B6CC90072DA85 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		FC1219E5159B6CD10072DA85 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		FC1219E7159B6CE30072DA85 /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
+		FC1219FE159B6FF00072DA85 /* RestKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RestKit.xcodeproj; path = RestKit/RestKit.xcodeproj; sourceTree = "<group>"; };
 		FC18F4121595893C00C18286 /* PQPaymentMethodsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PQPaymentMethodsViewController.h; sourceTree = "<group>"; };
 		FC18F4131595893C00C18286 /* PQPaymentMethodsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PQPaymentMethodsViewController.m; sourceTree = "<group>"; };
 		FC2B2B62157EB92A00ED0B52 /* Grid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Grid.h; path = "parq-ios2/Grid.h"; sourceTree = "<group>"; };
@@ -174,8 +231,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FC121A15159B7D910072DA85 /* libRestKit.a in Frameworks */,
+				FC1219E8159B6CE30072DA85 /* libxml2.dylib in Frameworks */,
 				8705F87E157EB9EC0013DF29 /* QuartzCore.framework in Frameworks */,
+				FC1219E6159B6CD10072DA85 /* SystemConfiguration.framework in Frameworks */,
+				FC1219E4159B6CC90072DA85 /* Security.framework in Frameworks */,
+				FC1219E2159B6CBE0072DA85 /* MobileCoreServices.framework in Frameworks */,
 				8705F843157D43530013DF29 /* CoreData.framework in Frameworks */,
+				FC1219E0159B6CAD0072DA85 /* CFNetwork.framework in Frameworks */,
 				8730EB23151BBD1500E7A7F8 /* libobjc.A.dylib in Frameworks */,
 				8703ACCA1513FB46002FE357 /* CoreLocation.framework in Frameworks */,
 				8703ACC81513F9D5002FE357 /* MapKit.framework in Frameworks */,
@@ -210,6 +273,11 @@
 		8703ACA91513F841002FE357 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				FC1219E7159B6CE30072DA85 /* libxml2.dylib */,
+				FC1219E5159B6CD10072DA85 /* SystemConfiguration.framework */,
+				FC1219E3159B6CC90072DA85 /* Security.framework */,
+				FC1219E1159B6CBE0072DA85 /* MobileCoreServices.framework */,
+				FC1219DF159B6CAD0072DA85 /* CFNetwork.framework */,
 				8705F87D157EB9EC0013DF29 /* QuartzCore.framework */,
 				8705F842157D43530013DF29 /* CoreData.framework */,
 				8730EB22151BBD1500E7A7F8 /* libobjc.A.dylib */,
@@ -275,6 +343,7 @@
 		8703ACDF1513FC84002FE357 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				FC1219FE159B6FF00072DA85 /* RestKit.xcodeproj */,
 				FC72148B1592286400D228C6 /* Objects */,
 				FC7CE851157902630059EE43 /* CoreDataObjects */,
 				87E1BE72154B52280095E92D /* Fonts */,
@@ -341,6 +410,18 @@
 			name = Fonts;
 			sourceTree = "<group>";
 		};
+		FC1219FF159B6FF00072DA85 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FC121A0A159B6FF00072DA85 /* libRestKit.a */,
+				FC121A0C159B6FF00072DA85 /* RestKitTests.octest */,
+				FC121A0E159B6FF00072DA85 /* RestKit.framework */,
+				FC121A10159B6FF00072DA85 /* RestKitFrameworkTests.octest */,
+				FC121A12159B6FF00072DA85 /* RestKitResources.bundle */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		FC72148B1592286400D228C6 /* Objects */ = {
 			isa = PBXGroup;
 			children = (
@@ -391,6 +472,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				FC121A14159B7D520072DA85 /* PBXTargetDependency */,
 			);
 			name = Parq;
 			productName = "parq-ios2";
@@ -416,12 +498,56 @@
 			mainGroup = 8703AC9B1513F841002FE357;
 			productRefGroup = 8703ACA71513F841002FE357 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = FC1219FF159B6FF00072DA85 /* Products */;
+					ProjectRef = FC1219FE159B6FF00072DA85 /* RestKit.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				8703ACA51513F841002FE357 /* Parq */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		FC121A0A159B6FF00072DA85 /* libRestKit.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRestKit.a;
+			remoteRef = FC121A09159B6FF00072DA85 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		FC121A0C159B6FF00072DA85 /* RestKitTests.octest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = RestKitTests.octest;
+			remoteRef = FC121A0B159B6FF00072DA85 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		FC121A0E159B6FF00072DA85 /* RestKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = RestKit.framework;
+			remoteRef = FC121A0D159B6FF00072DA85 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		FC121A10159B6FF00072DA85 /* RestKitFrameworkTests.octest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = RestKitFrameworkTests.octest;
+			remoteRef = FC121A0F159B6FF00072DA85 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		FC121A12159B6FF00072DA85 /* RestKitResources.bundle */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = RestKitResources.bundle;
+			remoteRef = FC121A11159B6FF00072DA85 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		8703ACA41513F841002FE357 /* Resources */ = {
@@ -498,6 +624,14 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		FC121A14159B7D520072DA85 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = RestKit;
+			targetProxy = FC121A13159B7D520072DA85 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin PBXVariantGroup section */
 		8703ACB31513F841002FE357 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
@@ -538,7 +672,12 @@
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "\"$(BUILT_PRODUCTS_DIR)/../../Headers\"";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-all_load",
+				);
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -556,8 +695,13 @@
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "\"$(BUILT_PRODUCTS_DIR)/../../Headers\"";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-all_load",
+				);
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -568,7 +712,12 @@
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "parq-ios2/Parq-Prefix.pch";
+				HEADER_SEARCH_PATHS = "\"$(BUILT_PRODUCTS_DIR)/../../Headers\"";
 				INFOPLIST_FILE = "parq-ios2/Parq-Info.plist";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-all_load",
+				);
 				PRODUCT_NAME = Parq;
 				WRAPPER_EXTENSION = app;
 			};
@@ -579,7 +728,12 @@
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "parq-ios2/Parq-Prefix.pch";
+				HEADER_SEARCH_PATHS = "\"$(BUILT_PRODUCTS_DIR)/../../Headers\"";
 				INFOPLIST_FILE = "parq-ios2/Parq-Info.plist";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-all_load",
+				);
 				PRODUCT_NAME = Parq;
 				WRAPPER_EXTENSION = app;
 			};
