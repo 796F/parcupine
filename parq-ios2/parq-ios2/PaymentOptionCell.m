@@ -1,16 +1,19 @@
 //
-//  BookmarkCell.m
+//  PaymentOptionCell.m
 //  Parq
 //
-//  Created by Michael Xia on 6/20/12.
+//  Created by Michael Xia on 6/23/12.
 //  Copyright (c) 2012 Massachusetts Institute of Technology. All rights reserved.
 //
 
-#import "BookmarkCell.h"
+#import "PaymentOptionCell.h"
 
-@implementation BookmarkCell
-@synthesize bookmarkName;
-@synthesize region;
+@implementation PaymentOptionCell
+
+@synthesize name;
+@synthesize paymentType;
+@synthesize pic;
+@synthesize del;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {

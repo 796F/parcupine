@@ -12,49 +12,83 @@
  All pushes to, and fetches from, will go thorugh this layer.  There is a single instance.  
  */
 
+
+
 #import "NetworkLayer.h"
 #import "Grid.h"
+#import "PQMapViewController.h"
+
+//microblock constants
+#define GRID_MICROBLOCK_REF_LAT 42.283405
+#define GRID_MICROBLOCK_REF_LON -71.274834 
+#define GRID_MICROBLOCK_COLUMNS 35
+#define GRID_MICROBLOCK_ROWS 20
+#define GRID_MICROBLOCK_LENGTH_DEGREES 0.01
+#define STREET_MICROBLOCK_LENGTH_DEGREES 0.0025
+#define SPOT_MICROBLOCK_LENGTH_DEGREES 0.000625
+#define MID_BOUNDING_ERROR -1
 
 @implementation NetworkLayer
 
+
 @synthesize dataLayer;
+@synthesize parent;
 
-#define GRID_MICROBLOCK_REF_LAT 42.412079
-#define GRID_MICROBLOCK_REF_LON -71.168098 
-#define GRID_MICROBLOCK_COLUMNS 20
-#define GRID_MICROBLOCK_ROWS 20
-#define GRID_MICROBLOCK_LENGTH_DEGREES 0.1
 
--(NSArray*) getGridLevelMicroBlockIdListWithNW:(CLLocationCoordinate2D*) topLeft SE:(CLLocationCoordinate2D*) botRight{    
-    double dy = topLeft->latitude - GRID_MICROBLOCK_REF_LAT;
-    double dx = topLeft->longitude - GRID_MICROBLOCK_REF_LON;
-    if(dx < 0 || dy > 0 ){
-        NSLog(@"error, past reference point\n");
-        return nil;
-    }
-    double row = fabs(dy/GRID_MICROBLOCK_LENGTH_DEGREES);
-    double col = dx/GRID_MICROBLOCK_LENGTH_DEGREES;
-    if(row> GRID_MICROBLOCK_ROWS || col > GRID_MICROBLOCK_COLUMNS){
-        NSLog(@"error, past bounded area\n");
-        return nil;
-    }
-    double microblock_id = row * GRID_MICROBLOCK_COLUMNS + col;
-    NSLog(@"block id = %d\n", (int)microblock_id);
-    return nil;
-}
--(NSArray*) getStreetLevelMicroBlockIdListWithNW:(CLLocationCoordinate2D*) topLeft SE:(CLLocationCoordinate2D*) botRight{    
- 
-    return nil;
-}
--(NSArray*) getSpotLevelMicroBlockIdListWithNW:(CLLocationCoordinate2D*) topLeft SE:(CLLocationCoordinate2D*) botRight{    
+
+-(NSDictionary*) requestGridsWithIDs:(NSArray*) newIDs{
+    //request from the server overlay information like lat/long etc.  
+    NSArray* boundingBoxes = [self convertGridLevelIDs:newIDs];
     
+    //send boundingBoxes to server 
+    NSDictionary* results = nil;
+    //create MKPolygons with the results, and then repackage and return.  
+    return results;
+}
+
+-(NSDictionary*) addGridsToMapForIDs:(NSArray*) newIDs UpdateForIDs:(NSArray*) updateIDs{
+    NSMutableArray* IDsToRequest = [[NSMutableArray alloc] init];
+    NSMutableArray* temp = [[NSMutableArray alloc] initWithArray:newIDs];
+    //go through the newIDs and check if any aren't in Core Data.  
+    for(NSNumber* gridId in newIDs){
+        if (![dataLayer existsInCoreData:gridId entityType:kGridEntity]){
+            //move to requests array
+            [IDsToRequest addObject:gridId];
+            [temp removeObject:gridId];
+        }
+    }
+    NSMutableDictionary* overlaysToAdd = [[NSMutableDictionary alloc] initWithDictionary:[dataLayer fetchGridsForIDs:temp]];
+    //request for those that aren't to fill in the holes.  
+    [overlaysToAdd addEntriesFromDictionary:[self requestGridsWithIDs:IDsToRequest]];
+    //call update on whole map
+    CLLocationCoordinate2D NE = [parent topRightOfMap];
+    CLLocationCoordinate2D SW = [parent botLeftOfMap];
+    NSDictionary* updatedAvailability = [self updateGridsWithNE:&NE SW:&SW];
+    //nest and return both dictionaries.  
+    NSMutableDictionary* results = [[NSMutableDictionary alloc] initWithObjectsAndKeys:overlaysToAdd , @"new", updatedAvailability, @"update", nil];
+    return results;
+}
+-(NSDictionary*) addStreetsToMapForIDs:(NSArray*) newIDs UpdateForIDs:(NSArray*) updateIDs{
+    return nil;
+}
+-(NSDictionary*) addSpotsToMapForIDs:(NSArray*) newIDs UpdateForIDs:(NSArray*) updateIDs{
     return nil;
 }
 
--(NSArray*) callGridWithNW:(CLLocationCoordinate2D*) topLeft SE:(CLLocationCoordinate2D*) botRight{    
-    //first check core data for grids.  
-    [self getGridLevelMicroBlockIdListWithNW:topLeft SE:botRight];
-    
+
+-(NSDictionary*) updateGridsWithNE:(CLLocationCoordinate2D*) topRight SW:(CLLocationCoordinate2D*) botLeft{
+    return nil;
+}
+-(NSDictionary*) updateStreetsWithNE:(CLLocationCoordinate2D*) topRight SW:(CLLocationCoordinate2D*) botLeft{
+    return nil;    
+}
+-(NSDictionary*) updateSpotsWithNE:(CLLocationCoordinate2D*) topRight SW:(CLLocationCoordinate2D*) botLeft{
+    return nil;
+}
+
+
+
+-(NSArray*) callGridWithNE:(CLLocationCoordinate2D*) topRight SW:(CLLocationCoordinate2D*) botLeft{    
     //if were missing some, get grids json from server
     NSArray* grids = [NSArray arrayWithObjects:                      
                       [[NSDictionary alloc] initWithObjectsAndKeys:@"12", @"gridId", @"42.387981", @"lat", @"-71.132965", @"lon", @"4", @"fillRate" , nil],
@@ -145,15 +179,15 @@
                       
                       [[NSDictionary alloc] initWithObjectsAndKeys:@"55", @"gridId", @"42.372981", @"lat", @"-71.082965", @"lon", @"1", @"fillRate" , nil],
                       
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"56", @"gridId", @"42.367981", @"lat", @"-71.132965", @"lon", @"4", @"fillRate" , nil],
+                      [[NSDictionary alloc] initWithObjectsAndKeys:@"56", @"gridId", @"42.367981", @"lat", @"-71.132965", @"lon", @"1", @"fillRate" , nil],
                       
                       [[NSDictionary alloc] initWithObjectsAndKeys:@"57", @"gridId", @"42.367981", @"lat", @"-71.127965", @"lon", @"1", @"fillRate" , nil],
                       
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"58", @"gridId", @"42.367981", @"lat", @"-71.122965", @"lon", @"2", @"fillRate" , nil],
+                      [[NSDictionary alloc] initWithObjectsAndKeys:@"58", @"gridId", @"42.367981", @"lat", @"-71.122965", @"lon", @"1", @"fillRate" , nil],
                       
                       [[NSDictionary alloc] initWithObjectsAndKeys:@"59", @"gridId", @"42.367981", @"lat", @"-71.117965", @"lon", @"1", @"fillRate" , nil],
                       
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"60", @"gridId", @"42.367981", @"lat", @"-71.112965", @"lon", @"1", @"fillRate" , nil],
+                      [[NSDictionary alloc] initWithObjectsAndKeys:@"60", @"gridId", @"42.367981", @"lat", @"-71.112965", @"lon", @"4", @"fillRate" , nil],
                       
                       [[NSDictionary alloc] initWithObjectsAndKeys:@"61", @"gridId", @"42.367981", @"lat", @"-71.107965", @"lon", @"1", @"fillRate" , nil],
                       
@@ -216,9 +250,11 @@
         //store the grid objects into core data if it doesn't exist yet.  
         if (![dataLayer existsInCoreData:grid entityType:kGridEntity]){
             //if grid isn't yet inside core data, leave it there.  
+            //create the mk polygon and return it.  
         }else{
             //since grid already exists, delete reference in MOC
             //how can we keep the grid, but dont' save it.  
+            //different object here?  perhaps using the same fields.  
         }
         [gridArr addObject:grid];
     }
@@ -230,13 +266,138 @@
     return gridArr; 
 }
 
--(NSArray*) callSpotWithNW:(CLLocationCoordinate2D*) topLeft SE:(CLLocationCoordinate2D*) botRight{
+-(NSArray*) callSpotWithNE:(CLLocationCoordinate2D*) topRight SW:(CLLocationCoordinate2D *) botLeft{
     return nil;
 }
 
--(NSArray*) callStreetWithNW:(CLLocationCoordinate2D*) topLeft SE:(CLLocationCoordinate2D*) botRight{
+-(NSArray*) callStreetWithNE:(CLLocationCoordinate2D *)topRight SW:(CLLocationCoordinate2D *)botLeft{
     return nil;
 }
 
+
+#pragma mark - MICROBLOCK FUNCTIONS
+-(long) gridLevelMicroBlockIDForPoint:(CLLocationCoordinate2D*) coord AndArray:(unsigned long*) RowCol{
+    double dy = coord->latitude - GRID_MICROBLOCK_REF_LAT;
+    double dx = coord->longitude - GRID_MICROBLOCK_REF_LON;
+    if(dx < 0 || dy < 0 ){
+        return MID_BOUNDING_ERROR;
+    }
+    long row = dy/GRID_MICROBLOCK_LENGTH_DEGREES;
+    long col = dx/GRID_MICROBLOCK_LENGTH_DEGREES;
+    RowCol[0] = row;
+    RowCol[1] = col;
+    if(row> GRID_MICROBLOCK_ROWS || col > GRID_MICROBLOCK_COLUMNS){
+        return MID_BOUNDING_ERROR;
+    }    
+    long microblock_id = row * GRID_MICROBLOCK_COLUMNS + col;
+    NSLog(@"row: %lu col %lu gives id: %lu\n", row, col, microblock_id);
+    [self botLeftOfGridID:[NSNumber numberWithLong:microblock_id]];
+    return microblock_id;
+}
+
+-(NSMutableArray*) getGridLevelMicroBlockIDListWithNE:(CLLocationCoordinate2D*) topRight SW:(CLLocationCoordinate2D*) botLeft{    
+    NSMutableArray* microBlockIds = [[NSMutableArray alloc] init];
+    
+    unsigned long topRightRowCol[2]; //ind 0 is row and 1 is col
+    long topRightId = [self gridLevelMicroBlockIDForPoint:topRight AndArray:topRightRowCol];
+    unsigned long botLeftRowCol[2];
+    long botLeftId = [self gridLevelMicroBlockIDForPoint:botLeft AndArray:botLeftRowCol];
+
+    for(int j= botLeftRowCol[0]; j<=topRightRowCol[0]; j++){
+        long tempId = botLeftId;
+        for(int i = botLeftRowCol[1]; i<=topRightRowCol[1]; i++){
+            if(tempId>topRightId){
+                //error, went beyond our limit.  
+                NSLog(@"MICROBLOCK GEN ERROR\n");
+            }
+            [microBlockIds addObject:[NSNumber numberWithLong:tempId]];
+            tempId++;
+        }
+        botLeftId+=GRID_MICROBLOCK_COLUMNS;
+    }
+    //by generating blocks in increasing order, the array is inherently sorted.  
+    return microBlockIds;
+}
+-(long) streetLevelMicroBlockIDForPoint:(CLLocationCoordinate2D*) coord AndArray:(unsigned long*) RowCol{
+    return 0;
+}
+-(NSArray*) getStreetLevelMicroBlockIDListWithNE:(CLLocationCoordinate2D*) topRight SW:(CLLocationCoordinate2D*) botLeft{    
+    
+    return nil;
+}
+
+-(long) spotLevelMicroBlockIDForPoint:(CLLocationCoordinate2D*) coord AndArray:(unsigned long*) RowCol{
+    return 0;
+}
+-(NSArray*) getSpotLevelMicroBlockIDListWithNE:(CLLocationCoordinate2D*) topRight SW:(CLLocationCoordinate2D*) botLeft{    
+    
+    return nil;
+}
+
+//return minimal number of bounding boxes to represent the given microblocks.  
+-(NSArray*) convertGridLevelIDs:(NSArray*) microBlockIds{
+    //this list is pre-sorted, smallest to largest.  
+    NSMutableArray* results = [[NSMutableArray alloc] init];
+    NSMutableArray* temp = [[NSMutableArray alloc] initWithArray:microBlockIds copyItems:YES];
+    //start from the lowest id number, and detect if +1 exists, and if +COLUMNS exists.  
+    while(temp.count>0){
+        //assume index 0 is start,
+        NSNumber* startId = [microBlockIds objectAtIndex:0];
+        NSNumber* nextID = [NSNumber numberWithLong: startId.longValue+1];
+        int rightCount = 1, upCount = 1;
+        while([temp containsObject:nextID]){
+            rightCount++;
+            //try to proceed to right
+            nextID = [NSNumber numberWithLong:nextID.longValue+1];
+        }
+        //return to index 0 as start
+        nextID = [NSNumber numberWithLong:startId.longValue+GRID_MICROBLOCK_COLUMNS];
+        while([microBlockIds containsObject:nextID]){
+            upCount++;
+            //try to proceed upwards
+            nextID = [NSNumber numberWithLong:nextID.longValue+GRID_MICROBLOCK_COLUMNS];
+        }
+        BoundingBox* bb = [[BoundingBox alloc] init];
+        bb.botLeft = [self botLeftOfGridID:startId];
+        if(rightCount > upCount){
+            //create bonding box going right
+            bb.topRight = [self topRightOfGridId:[NSNumber numberWithLong:startId.longValue+rightCount]];
+            //add th bounding box to output
+            [results addObject:bb];
+            //remove indexes 0, 1, 2, ...
+            NSIndexSet* toRemoveList = [[NSIndexSet alloc] initWithIndexesInRange:NSMakeRange(0, rightCount)];
+            [temp removeObjectsAtIndexes:toRemoveList];
+        }else{
+            //create bounding box going up
+            bb.topRight = [self topRightOfGridId:[NSNumber numberWithLong:startId.longValue+upCount*GRID_MICROBLOCK_COLUMNS]];
+            [results addObject:bb];
+            for(int i=0; i<upCount; i++){
+                //removes objects 0, 35, 70, ...
+                [temp removeObject:[NSNumber numberWithLong:startId.longValue+i*GRID_MICROBLOCK_COLUMNS]];
+            }
+        }
+    }
+    //keep track of which side is longer, go with the larger box.  
+    
+    //remove the id's that were consumed, repeat until no more ID's are in the list.  
+    
+    return nil;
+}
+//given a microblock ID for grid, return the bottom left lat/lon
+-(CLLocationCoordinate2D) botLeftOfGridID:(NSNumber*) gridId{
+    int column = gridId.longValue % GRID_MICROBLOCK_COLUMNS;
+    int row = gridId.longValue / GRID_MICROBLOCK_COLUMNS;
+    double lat = GRID_MICROBLOCK_REF_LAT + row * GRID_MICROBLOCK_LENGTH_DEGREES;
+    double lon = GRID_MICROBLOCK_REF_LON + column * GRID_MICROBLOCK_LENGTH_DEGREES;
+    return CLLocationCoordinate2DMake(lat, lon);
+}
+//given a microblock ID for grid, return the top right lat/lon
+-(CLLocationCoordinate2D) topRightOfGridId:(NSNumber*) gridId{
+    int column = gridId.longValue % GRID_MICROBLOCK_COLUMNS;
+    int row = gridId.longValue / GRID_MICROBLOCK_COLUMNS;
+    double lat = GRID_MICROBLOCK_REF_LAT + (row+1) * GRID_MICROBLOCK_LENGTH_DEGREES;
+    double lon = GRID_MICROBLOCK_REF_LON + (column+1) * GRID_MICROBLOCK_LENGTH_DEGREES;
+    return CLLocationCoordinate2DMake(lat, lon);
+}
 
 @end

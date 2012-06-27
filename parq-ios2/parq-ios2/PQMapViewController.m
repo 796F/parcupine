@@ -10,6 +10,7 @@
 #import "PQParkingViewController.h"
 #import "PQSettingsViewController.h"
 #import "PQSpotAnnotation.h"
+#import "NetworkLayer.h"
 
 //calculation constants
 #define METERS_PER_MILE 1609.344
@@ -37,8 +38,6 @@
 #define GRID_LEVEL_REGION_METERS 1150
 #define STREET_LEVEL_REGION_METERS 500
 #define SPOT_LEVEL_REGION_METERS 100
-
-
 
 //alert view tags
 #define GPS_LAUNCH_ALERT 0
@@ -95,7 +94,10 @@ typedef struct{
 @synthesize availabilitySelectionBar;
 @synthesize oldStreetLevelRegion;
 @synthesize shouldNotClearOverlays;
-@synthesize numPadParkButton;
+@synthesize gridMicroBlockMap;
+@synthesize streetMicroBlockMap;
+@synthesize spotMicroBlockMap;
+@synthesize oldMicroBlockIds;
 
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     NSLog(@"hello\n");
@@ -434,17 +436,20 @@ typedef struct{
             nil];
     
 }
+#pragma mark - ACTION SHEET AND ALERTS
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (actionSheet.tag == GPS_LAUNCH_ALERT) {
         switch (buttonIndex) {
+//this one's kind of pointless when we have directions.  
+
+//            case 0:
+//                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://maps.google.com/maps?q=Spot+%d@%f,%f", desired_spot.name, desired_spot.coordinate.latitude, desired_spot.coordinate.longitude]]];
+//                break;
             case 0:
-                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://maps.google.com/maps?q=Spot+%d@%f,%f", desired_spot.name, desired_spot.coordinate.latitude, desired_spot.coordinate.longitude]]];
-                break;
-            case 1:
                 [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://maps.google.com/maps?daddr=Spot+%d@%f,%f&saddr=Current+Location@%f,%f", desired_spot.name, desired_spot.coordinate.latitude, desired_spot.coordinate.longitude,user_loc.latitude, user_loc.longitude]]];
                 break;
-            case 2:
+            case 1:
                 [self parkNow];
                 break;
         }
@@ -638,7 +643,7 @@ typedef struct{
             //user's gps reported accuracy. 
             
             if(user_loc_isGood && ![self pointA:&spot_loc isCloseToB:&user_loc]){
-                UIActionSheet *directionsActionSheet = [[UIActionSheet alloc] initWithTitle:[NSString stringWithFormat:@"Spot %@", c.title] delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Open in Maps", @"Get Directions", @"Park Now", nil];
+                UIActionSheet *directionsActionSheet = [[UIActionSheet alloc] initWithTitle:[NSString stringWithFormat:@"Spot %@", c.title] delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles: @"Get Directions", @"Park Now", nil];
                 directionsActionSheet.tag = GPS_LAUNCH_ALERT;
                 [directionsActionSheet showInView:bottomSpotSelectionView];
                 return true;
@@ -743,25 +748,105 @@ typedef struct{
     }
 }
 
--(CLLocationCoordinate2D)topLeftOfMap{
+-(CLLocationCoordinate2D)topRightOfMap{
     return CLLocationCoordinate2DMake(map.centerCoordinate.latitude + map.region.span.latitudeDelta/2,
-                                      map.centerCoordinate.longitude - map.region.span.longitudeDelta/2);
+                                      map.centerCoordinate.longitude + map.region.span.longitudeDelta/2);
 }
 
--(CLLocationCoordinate2D)botRightOfMap{
+-(CLLocationCoordinate2D)botLeftOfMap{
     return CLLocationCoordinate2DMake(map.centerCoordinate.latitude - map.region.span.latitudeDelta/2,
-                                      map.centerCoordinate.longitude + map.region.span.longitudeDelta/2);
+                                      map.centerCoordinate.longitude - map.region.span.longitudeDelta/2);
 }
 
 - (void)showGridLevelWithCoordinates:(CLLocationCoordinate2D *)coord {
     [self clearMap];
-    CLLocationCoordinate2D ref = CLLocationCoordinate2DMake(42.412079, -71.168098);
-    MKCircle* reference_point = [MKCircle circleWithCenterCoordinate:ref radius:20];
-    [self.map addOverlay:reference_point];
-    //NSArray* data = [self loadGridData];
-    CLLocationCoordinate2D NW = [self topLeftOfMap];
-    CLLocationCoordinate2D SE = [self botRightOfMap];
-    NSArray* gridList = [networkLayer callGridWithNW:&NW SE:&SE];
+    CLLocationCoordinate2D NE = [self topRightOfMap];
+    CLLocationCoordinate2D SW = [self botLeftOfMap];
+    NSMutableArray* newMicroBlockIds = [networkLayer getGridLevelMicroBlockIDListWithNE:&NE SW:&SW];
+    NSMutableArray* updateMicroBlockIds = [[NSMutableArray alloc] init];
+    
+    //see header file for structure of maps.  
+    if (oldMicroBlockIds==nil){
+        //everything needs to be loaded again.  
+    }else{
+        //go through both arrays, from left to right.  
+        int i=0, j=0;
+        while(i<oldMicroBlockIds.count || j< newMicroBlockIds.count){
+            long oldId = [[oldMicroBlockIds objectAtIndex:i] longValue];
+            long newId = [[newMicroBlockIds objectAtIndex:j] longValue];
+            if(oldId < newId){
+                i++;
+            }else if(newId < oldId){
+                j++;
+            }else{
+                //remove both.  
+                [oldMicroBlockIds removeObjectAtIndex:i];
+                [newMicroBlockIds removeObjectAtIndex:j];
+                //add to update list.  
+                [updateMicroBlockIds addObject:[NSNumber numberWithLong:oldId]];
+            }
+        }
+        //remove overlays no longer on map.  
+        for(NSNumber* old in oldMicroBlockIds){
+            //get the dictionary for the microblock id
+            NSDictionary* gridsForMicroBlock = [gridMicroBlockMap objectForKey:old];
+            //remove all objects associated with that micro block
+            [map removeOverlays:[gridsForMicroBlock allValues]];
+            //remove the microblock from the dictionary
+            [gridMicroBlockMap removeObjectForKey:old];
+        }
+        
+        //get results from network layer
+        NSDictionary* results = [networkLayer addGridsToMapForIDs:newMicroBlockIds UpdateForIDs:updateMicroBlockIds];
+        
+        //add the new ones to map and add them to the mb map
+        NSDictionary* newOverlays = [results objectForKey:@"new"];
+        [map addOverlays:[newOverlays allValues]];
+        [gridMicroBlockMap addEntriesFromDictionary:newOverlays];
+        
+        //update everything on map.  
+        NSDictionary* updates = [results objectForKey:@"update"];
+        for(NSNumber* mbId in gridMicroBlockMap){
+            NSDictionary* gridToPointer = [gridMicroBlockMap objectForKey:mbId];
+            for(NSNumber* gridId in gridToPointer){
+                NSNumber* newCapacity = [updates objectForKey:gridId];
+                if(newCapacity!=nil){
+                    MKPolygonView* gridView = (MKPolygonView*)[map viewForOverlay:[gridToPointer objectForKey:gridId]];
+                    switch ([newCapacity intValue]) {
+                        case 0:
+                            gridView.fillColor = [UIColor veryLowAvailabilityColor];                            
+                            break;
+                        case 1:
+                            gridView.fillColor = [UIColor lowAvailabilityColor];
+                            break;
+                        case 2:
+                            gridView.fillColor = [UIColor mediumAvailabilityColor];
+                            break;
+                        case 3:
+                            gridView.fillColor = [UIColor highAvailabilityColor];
+                            break;
+                        case 4:
+                            gridView.fillColor = [UIColor veryHighAvailabilityColor];                            
+                            break;
+                        default:
+                            //error
+                            break;
+                    }
+                }else{
+                    //ERROR, update should have been there.  
+                }
+            }
+        }
+        
+        //assign old to be a combination of new and update.  
+        [newMicroBlockIds addObjectsFromArray:updateMicroBlockIds];
+        oldMicroBlockIds = newMicroBlockIds;
+    }
+    
+    
+        
+    
+    NSArray* gridList = nil;//[networkLayer callGridWithNE:&NE SW:&SW];
     for (Grid* grid in gridList) {
         //calculate actual se_point using haversine.  
         int color = [[grid status] intValue];
@@ -1151,6 +1236,9 @@ typedef struct{
             shouldNotClearOverlays = true;
             
         }
+    }else if(zoomState == kGridZoomLevel){
+        
+        
     }
 }
 
@@ -1214,7 +1302,6 @@ typedef struct{
 - (void)searchBar:(UISearchBar *)searchBar selectedScopeButtonIndexDidChange:(NSInteger)selectedScope {
     if (selectedScope == 1) {
         searchBar.keyboardType = UIKeyboardTypeNumberPad;
-        numPadParkButton.hidden = NO;
     } else {
         searchBar.keyboardType = UIKeyboardTypeDefault;
     }
@@ -1332,12 +1419,7 @@ typedef struct{
 
 
 - (IBAction)noneButtonPressed:(id)sender {
-//    CLLocationCoordinate2D topleft = [self topLeftOfMap];
-//    CLLocationCoordinate2D botright = [self botRightOfMap];
-//    [networkLayer getGridLevelMicroBlockIdListWithNW:&topleft SE:&botright];
-
-    NSLog(@"dlat %f dlon %f\n", map.region.span.latitudeDelta, map.region.span.longitudeDelta);
-    
+    NSLog(@"im the none button\n");
 }
 
 - (void)keyboardWillShow:(NSNotification *)note { 
@@ -1402,10 +1484,9 @@ typedef struct{
     if(!networkLayer){
         networkLayer = [((PQAppDelegate*)[[UIApplication sharedApplication] delegate])  getNetworkLayerWithDataLayer:dataLayer];
     }
-    
-    grids = [[NSMutableArray alloc] init];
-    spots = [[NSMutableArray alloc] init];
-    streets = [[NSMutableArray alloc] init];
+    if(grids==nil) grids = [[NSMutableArray alloc] init];
+    if(spots==nil) spots = [[NSMutableArray alloc] init];
+    if(streets==nil) streets = [[NSMutableArray alloc] init];
     
     //check the current zoom level to set the ZOOM_STATE integer.  
     if (self.map.bounds.size.width >= GRID_TO_STREET_SPAN_LAT) {

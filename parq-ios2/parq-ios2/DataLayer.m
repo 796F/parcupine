@@ -20,6 +20,16 @@
 @implementation DataLayer
 @synthesize managedObjectContext;
 
+
+-(NSDictionary*) fetchGridsForIDs:(NSArray*) microBlockIDs{
+    return nil;
+}
+-(NSDictionary*) fetchStreetsForIDs:(NSArray*) microBlockIDs{
+    return nil;    
+}
+-(NSDictionary*) fetchSpotsForIDs:(NSArray*) microBlockIDs{
+    return nil;
+}
 - (NSSet *)fetchObjectsForEntityName:(NSString *)newEntityName
                        withPredicate:(id)stringOrPredicate {
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:newEntityName];

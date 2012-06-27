@@ -7,9 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <Mapkit/Mapkit.h>
 
-@interface BookmarkCell : UITableViewCell
+@interface BookmarkCell : UITableViewCell{
+
+}
 
 @property (nonatomic, strong) IBOutlet UILabel* bookmarkName;
+@property (nonatomic) MKCoordinateRegion region;
 
 @end

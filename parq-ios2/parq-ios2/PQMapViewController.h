@@ -16,12 +16,13 @@
 #import "UIColor+Parq.h"
 #import "CalloutMapAnnotation.h"
 #import "CalloutMapAnnotationView.h"
-#import "NetworkLayer.h"
+
 #import "Segment.h"
 #import "Spot.h"
 #import "Grid.h"
 
-
+//user @class to avoid cycles, which breaks the compiler
+@class NetworkLayer;
 @interface PQMapViewController : UIViewController <MKMapViewDelegate, CLLocationManagerDelegate,UISearchBarDelegate,UIGestureRecognizerDelegate, UITableViewDelegate, UIActionSheetDelegate> {
     DataLayer * dataLayer;
     NetworkLayer* networkLayer;
@@ -52,6 +53,7 @@
 @property (nonatomic, retain) NSMutableArray* grids;
 @property (nonatomic, retain) NSMutableArray* streets;
 @property (nonatomic, retain) NSMutableArray* spots;
+
 @property (nonatomic, retain) CLGeocoder* geocoder;
 @property (nonatomic) CLLocationCoordinate2D user_loc;
 @property (nonatomic) bool user_loc_isGood;
@@ -59,7 +61,22 @@
 @property (nonatomic) MKCoordinateRegion oldStreetLevelRegion;
 @property (atomic) bool shouldNotClearOverlays;
 
-//keypad submit button
-@property (weak, nonatomic) IBOutlet UIButton *numPadParkButton;
+//microblock organization
+@property (strong, nonatomic) NSMutableArray* oldMicroBlockIds; //list of current blocks
+ /*         _         
+          /   GID - *      
+    MID  ---- GID - * 
+          \_  GID - * 
+ 
+    MID ...
+    MID ...
+    
+    Structure of the following 3 dictionaries.  
+ */
+@property (strong, nonatomic) NSMutableDictionary* gridMicroBlockMap;
+@property (strong, nonatomic) NSMutableDictionary* streetMicroBlockMap;
+@property (strong, nonatomic) NSMutableDictionary* spotMicroBlockMap;
 
+-(CLLocationCoordinate2D)topRightOfMap;
+-(CLLocationCoordinate2D)botLeftOfMap;
 @end

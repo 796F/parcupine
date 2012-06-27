@@ -20,7 +20,17 @@
 @synthesize bookmarks = _bookmarks;
 @synthesize recentSearches = _recentSearches;
 @synthesize contacts = _contacts;
-
+@synthesize leftButton;
+@synthesize midButton;
+@synthesize userIsEditing;
+@synthesize rightButton;
+-(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if(buttonIndex==0){
+        //clear the recents
+    }
+    //else cancel.  
+}
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     int displayType = bookmarkSelectionBar.selectedSegmentIndex;
@@ -123,12 +133,18 @@
 - (IBAction)bottomBarTapped {
     switch (self.bookmarkSelectionBar.selectedSegmentIndex) {
         case 0:
+            leftButton.title = @"Edit";
+            midButton.title = @"Bookmarks";
             [table reloadData];
             break;
         case 1:
+            leftButton.title = @"Clear";
+            midButton.title = @"All Recent";
             [table reloadData];
             break;
         case 2:
+            leftButton.title = @"Edit";
+            midButton.title = @"Contacts";
             [table reloadData];
             break;
     }
@@ -136,7 +152,38 @@
 
 
 -(IBAction)editButtonPressed:(id)sender{
-    NSLog(@"edit pressed");
+    switch(self.bookmarkSelectionBar.selectedSegmentIndex){
+        case 0:
+            //this is all a place holder really, best case is to immitate ios bookmarks.
+            if(userIsEditing){
+                leftButton.title = @"Edit";
+                leftButton.tintColor = [UIColor grayColor];
+                rightButton.title = @"Done";
+                rightButton.tintColor = [UIColor grayColor];
+                userIsEditing = NO;
+            }else{
+                leftButton.title = @"Done";
+                leftButton.tintColor = [UIColor blueColor];
+                rightButton.title = @"Delete";
+                rightButton.tintColor = [UIColor redColor];
+                userIsEditing = YES;
+            }
+            break;
+        case 1:{
+            
+            UIActionSheet *clearRecentActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Clear All Recents", nil];
+            clearRecentActionSheet.tag = 1;
+            [clearRecentActionSheet showInView:self.view];
+            //clear the recent searches
+            break;
+            
+            }
+        case 2:
+            //edit contacts
+            
+            break;
+    }
+    
     //shift all labels to the right a small bit.
     
     //show red minus signs in the shited space
@@ -181,7 +228,7 @@
     }else{
         self.contacts = [self loadContacts];
     }
-
+    userIsEditing = NO;
 	// Do any additional setup after loading the view.
 }
 

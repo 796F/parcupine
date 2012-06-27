@@ -86,10 +86,41 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if(indexPath.section==0){
+    int section = indexPath.section;
+    int row = indexPath.row;
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    if(section == 0){
         //selected one of the account settings.  
-        [tableView deselectRowAtIndexPath:indexPath animated:YES];
+        switch (row) {
+            case 0:
+                //name
+                break;
+            case 1:
+                //addr
+                break;
+            case 2:
+                //license
+                break;
+            case 3:
+                //ssn
+                break;
+            default:
+                //error
+                break;
+        }
+    }else if (section==1){
+        if(row==2){
+            //change city
+        }
+    }else{
+        if(row==0){
+            //payment options
+            [self performSegueWithIdentifier:@"showPaymentOptions" sender:self];
+        }else{
+            //account balance
+        }
     }
+
     //if section isn't 0, dont' do anything.  
 }
 

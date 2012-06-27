@@ -31,4 +31,8 @@ typedef enum {
 -(void) storeStreetData:(NSArray*)streetList;
 -(void) storeGridData:(NSArray*)gridList;
 
+-(NSDictionary*) fetchGridsForIDs:(NSArray*) microBlockIDs;
+-(NSDictionary*) fetchStreetsForIDs:(NSArray*) microBlockIDs;
+-(NSDictionary*) fetchSpotsForIDs:(NSArray*) microBlockIDs;
+
 @end

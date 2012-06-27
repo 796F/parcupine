@@ -15,5 +15,6 @@
 
 @property (nonatomic) int color;
 @property (nonatomic) int name;
+@property (nonatomic) long objId;
 
 @end

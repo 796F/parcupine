@@ -31,13 +31,19 @@
 
 - (void)launchMaps
 {
-    NSString *title = @"title";
+    //NSString *title = @"title";
     float latitude = self.parkedCarCoordinate.latitude;
     float longitude = self.parkedCarCoordinate.longitude;
-    int zoom = 26;
-    NSString *stringURL = [NSString stringWithFormat:@"http://maps.google.com/maps?q=%@@%1.6f,%1.6f&z=%d", title, latitude, longitude, zoom];
-    NSURL *url = [NSURL URLWithString:stringURL];
-    [[UIApplication sharedApplication] openURL:url];
+    //int zoom = 26;
+    float user_lat = 42.359195;
+    float user_lon = -71.093764;
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://maps.google.com/maps?daddr=Spot+%d@%f,%f&saddr=Current+Location@%f,%f", 1106, latitude, longitude,user_lat, user_lon]]];
+    
+    //!!!!  pop this view, so when user returns, it's in the unpark screen.  
+    
+//    NSString *stringURL = [NSString stringWithFormat:@"http://maps.google.com/maps?q=%@@%1.6f,%1.6f&z=%d", title, latitude, longitude, zoom];
+//    NSURL *url = [NSURL URLWithString:stringURL];
+//    [[UIApplication sharedApplication] openURL:url];
 }
 
 #pragma mark - MKMapViewDelegate

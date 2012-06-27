@@ -23,7 +23,7 @@
 
 
 - (DataLayer*) getDataLayer;
--(NetworkLayer*) getNetworkLayerWithDataLayer:(DataLayer*) dl;
+- (NetworkLayer*) getNetworkLayerWithDataLayer:(DataLayer*) dl;
 - (void)saveContext;
 - (NSURL *)applicationDocumentsDirectory;
 @end

@@ -11,6 +11,7 @@
 @implementation MKShape (Color)
 static char colorKey;
 static char nameKey;
+static char objIdKey;
 
 - (void) setColor:(int)color {
     objc_setAssociatedObject(self, &colorKey, [NSNumber numberWithInt:color], OBJC_ASSOCIATION_RETAIN);
@@ -26,5 +27,10 @@ static char nameKey;
     return [objc_getAssociatedObject( self, &nameKey ) intValue];
 }
 
-
+-(void) setObjId:(long)objId{
+    objc_setAssociatedObject(self, &objIdKey, [NSNumber numberWithLong:objId], OBJC_ASSOCIATION_RETAIN);
+}
+-(long) objId{
+    return [objc_getAssociatedObject( self, &objIdKey ) longValue];
+}
 @end

@@ -51,14 +51,19 @@
 		87E1BE67154A08D80095E92D /* PQParkingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 87E1BE66154A08D80095E92D /* PQParkingViewController.m */; };
 		87E1BE69154B35270095E92D /* payg.png in Resources */ = {isa = PBXBuildFile; fileRef = 87E1BE68154B35270095E92D /* payg.png */; };
 		FC08BB7B1590D1F40077659C /* PQSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC08BB7A1590D1F40077659C /* PQSettingsViewController.m */; };
+		FC18F4141595893C00C18286 /* PQPaymentMethodsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC18F4131595893C00C18286 /* PQPaymentMethodsViewController.m */; };
 		FC2B2B64157EB92A00ED0B52 /* Grid.m in Sources */ = {isa = PBXBuildFile; fileRef = FC2B2B63157EB92A00ED0B52 /* Grid.m */; };
 		FC2B2B67157EB93800ED0B52 /* Spot.m in Sources */ = {isa = PBXBuildFile; fileRef = FC2B2B66157EB93800ED0B52 /* Spot.m */; };
 		FC2B2B6A157EB94300ED0B52 /* Street.m in Sources */ = {isa = PBXBuildFile; fileRef = FC2B2B69157EB94300ED0B52 /* Street.m */; };
 		FC2B2B6D157EB94D00ED0B52 /* Waypoint.m in Sources */ = {isa = PBXBuildFile; fileRef = FC2B2B6C157EB94D00ED0B52 /* Waypoint.m */; };
+		FC6C9F6015925D02002C5418 /* donedown.png in Resources */ = {isa = PBXBuildFile; fileRef = FC6C9F5F15925D02002C5418 /* donedown.png */; };
 		FC7214831592144F00D228C6 /* BookmarkCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FC7214821592144F00D228C6 /* BookmarkCell.m */; };
 		FC7214871592179C00D228C6 /* RecentCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FC7214861592179C00D228C6 /* RecentCell.m */; };
 		FC72148A1592267A00D228C6 /* ContactCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FC7214891592267A00D228C6 /* ContactCell.m */; };
+		FC7214951592522100D228C6 /* doneup.png in Resources */ = {isa = PBXBuildFile; fileRef = FC7214941592522100D228C6 /* doneup.png */; };
 		FCD0F07D159120800063D6FA /* PQBookmarksViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FCD0F07C159120800063D6FA /* PQBookmarksViewController.m */; };
+		FCD8FE071598BD57004E38C4 /* BoundingBox.m in Sources */ = {isa = PBXBuildFile; fileRef = FCD8FE061598BD57004E38C4 /* BoundingBox.m */; };
+		FCDECB5E1596691C005AF9B3 /* PaymentOptionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FCDECB5D1596691C005AF9B3 /* PaymentOptionCell.m */; };
 		FCDFE25615913BE900FF6053 /* UserObject.m in Sources */ = {isa = PBXBuildFile; fileRef = FCDFE25515913BE900FF6053 /* UserObject.m */; };
 		FCDFE25A159140BE00FF6053 /* PQEditBookmarkViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FCDFE259159140BE00FF6053 /* PQEditBookmarkViewController.m */; };
 		FCF937C4157D497F0062A5A1 /* parq.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = FCF937BE157D49190062A5A1 /* parq.xcdatamodeld */; };
@@ -127,6 +132,8 @@
 		87E1BE68154B35270095E92D /* payg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = payg.png; sourceTree = "<group>"; };
 		FC08BB791590D1F40077659C /* PQSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PQSettingsViewController.h; sourceTree = "<group>"; };
 		FC08BB7A1590D1F40077659C /* PQSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PQSettingsViewController.m; sourceTree = "<group>"; };
+		FC18F4121595893C00C18286 /* PQPaymentMethodsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PQPaymentMethodsViewController.h; sourceTree = "<group>"; };
+		FC18F4131595893C00C18286 /* PQPaymentMethodsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PQPaymentMethodsViewController.m; sourceTree = "<group>"; };
 		FC2B2B62157EB92A00ED0B52 /* Grid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Grid.h; path = "parq-ios2/Grid.h"; sourceTree = "<group>"; };
 		FC2B2B63157EB92A00ED0B52 /* Grid.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Grid.m; path = "parq-ios2/Grid.m"; sourceTree = "<group>"; };
 		FC2B2B65157EB93800ED0B52 /* Spot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Spot.h; path = "parq-ios2/Spot.h"; sourceTree = "<group>"; };
@@ -137,18 +144,24 @@
 		FC2B2B6C157EB94D00ED0B52 /* Waypoint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Waypoint.m; path = "parq-ios2/Waypoint.m"; sourceTree = "<group>"; };
 		FC48562E1577FD37002C4479 /* DataLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataLayer.h; sourceTree = "<group>"; };
 		FC48562F1577FD37002C4479 /* DataLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataLayer.m; sourceTree = "<group>"; };
+		FC6C9F5F15925D02002C5418 /* donedown.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = donedown.png; sourceTree = "<group>"; };
 		FC7214811592144F00D228C6 /* BookmarkCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BookmarkCell.h; path = "parq-ios2/BookmarkCell.h"; sourceTree = "<group>"; };
 		FC7214821592144F00D228C6 /* BookmarkCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BookmarkCell.m; path = "parq-ios2/BookmarkCell.m"; sourceTree = "<group>"; };
 		FC7214851592179C00D228C6 /* RecentCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RecentCell.h; path = "parq-ios2/RecentCell.h"; sourceTree = "<group>"; };
 		FC7214861592179C00D228C6 /* RecentCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RecentCell.m; path = "parq-ios2/RecentCell.m"; sourceTree = "<group>"; };
 		FC7214881592267A00D228C6 /* ContactCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContactCell.h; path = "parq-ios2/ContactCell.h"; sourceTree = "<group>"; };
 		FC7214891592267A00D228C6 /* ContactCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ContactCell.m; path = "parq-ios2/ContactCell.m"; sourceTree = "<group>"; };
+		FC7214941592522100D228C6 /* doneup.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = doneup.png; sourceTree = "<group>"; };
 		FC772758157C2C8C005DEBEA /* Segment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Segment.h; path = "parq-ios2/Segment.h"; sourceTree = "<group>"; };
 		FC772759157C2C8C005DEBEA /* Segment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Segment.m; path = "parq-ios2/Segment.m"; sourceTree = "<group>"; };
 		FC7CE863157943620059EE43 /* NetworkLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkLayer.h; sourceTree = "<group>"; };
 		FC7CE864157943630059EE43 /* NetworkLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NetworkLayer.m; sourceTree = "<group>"; };
 		FCD0F07B159120800063D6FA /* PQBookmarksViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PQBookmarksViewController.h; sourceTree = "<group>"; };
 		FCD0F07C159120800063D6FA /* PQBookmarksViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PQBookmarksViewController.m; sourceTree = "<group>"; };
+		FCD8FE051598BD57004E38C4 /* BoundingBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoundingBox.h; path = "parq-ios2/BoundingBox.h"; sourceTree = "<group>"; };
+		FCD8FE061598BD57004E38C4 /* BoundingBox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BoundingBox.m; path = "parq-ios2/BoundingBox.m"; sourceTree = "<group>"; };
+		FCDECB5C1596691C005AF9B3 /* PaymentOptionCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PaymentOptionCell.h; path = "parq-ios2/PaymentOptionCell.h"; sourceTree = "<group>"; };
+		FCDECB5D1596691C005AF9B3 /* PaymentOptionCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PaymentOptionCell.m; path = "parq-ios2/PaymentOptionCell.m"; sourceTree = "<group>"; };
 		FCDFE25415913BE900FF6053 /* UserObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UserObject.h; path = "parq-ios2/UserObject.h"; sourceTree = "<group>"; };
 		FCDFE25515913BE900FF6053 /* UserObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UserObject.m; path = "parq-ios2/UserObject.m"; sourceTree = "<group>"; };
 		FCDFE258159140BE00FF6053 /* PQEditBookmarkViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PQEditBookmarkViewController.h; sourceTree = "<group>"; };
@@ -220,6 +233,8 @@
 				8791F9BF1533804000525267 /* PQCallout.h */,
 				8791F9C01533804000525267 /* PQCallout.m */,
 				8703ACBC1513F841002FE357 /* MainStoryboard.storyboard */,
+				FC18F4121595893C00C18286 /* PQPaymentMethodsViewController.h */,
+				FC18F4131595893C00C18286 /* PQPaymentMethodsViewController.m */,
 				FCDFE258159140BE00FF6053 /* PQEditBookmarkViewController.h */,
 				FCDFE259159140BE00FF6053 /* PQEditBookmarkViewController.m */,
 				87418A861577D31500CACCCA /* PQParkedCarMapViewController.h */,
@@ -271,6 +286,8 @@
 		8703ACE01513FC8E002FE357 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				FC7214941592522100D228C6 /* doneup.png */,
+				FC6C9F5F15925D02002C5418 /* donedown.png */,
 				8703ACD91513FC36002FE357 /* icon@2x.png */,
 				8703ACD71513FC32002FE357 /* icon.png */,
 				873F8F2D154F257F002FB511 /* check_empty.png */,
@@ -337,6 +354,10 @@
 				FC7214861592179C00D228C6 /* RecentCell.m */,
 				FC7214811592144F00D228C6 /* BookmarkCell.h */,
 				FC7214821592144F00D228C6 /* BookmarkCell.m */,
+				FCDECB5C1596691C005AF9B3 /* PaymentOptionCell.h */,
+				FCDECB5D1596691C005AF9B3 /* PaymentOptionCell.m */,
+				FCD8FE051598BD57004E38C4 /* BoundingBox.h */,
+				FCD8FE061598BD57004E38C4 /* BoundingBox.m */,
 			);
 			name = Objects;
 			sourceTree = "<group>";
@@ -430,6 +451,8 @@
 				87C05228158152CC00A64552 /* meter_prepaid.png in Resources */,
 				87ABC3B91582DBF900030005 /* spot_free.png in Resources */,
 				87ABC3BA1582DBF900030005 /* spot_occupied.png in Resources */,
+				FC7214951592522100D228C6 /* doneup.png in Resources */,
+				FC6C9F6015925D02002C5418 /* donedown.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -467,6 +490,9 @@
 				FC7214831592144F00D228C6 /* BookmarkCell.m in Sources */,
 				FC7214871592179C00D228C6 /* RecentCell.m in Sources */,
 				FC72148A1592267A00D228C6 /* ContactCell.m in Sources */,
+				FC18F4141595893C00C18286 /* PQPaymentMethodsViewController.m in Sources */,
+				FCDECB5E1596691C005AF9B3 /* PaymentOptionCell.m in Sources */,
+				FCD8FE071598BD57004E38C4 /* BoundingBox.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
