@@ -316,8 +316,8 @@ public class GridDao extends AbstractParqDaoParent {
 	 * 
 	 * @return if no parking grid are found inside the bounding box, a empty list is returned.
 	 */
-	public List<SimpleGrid> findSimpleGridNearBy(double latitudeMin,
-			double longitudeMin, double latitudeMax, double longitudeMax) {
+	public List<SimpleGrid> findSimpleGridNearBy(double latitudeMax,
+			double longitudeMax, double latitudeMin, double longitudeMin) {
 	
 		List<SimpleGrid> simpleGrids = null;
 		// query the DB for the parking grids

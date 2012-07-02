@@ -51,6 +51,7 @@ import parkservice.gridservice.model.GetUpdatedStreetInfoResponse;
 import parkservice.gridservice.model.GpsCoorWithOrder;
 import parkservice.gridservice.model.GpsCoordinate;
 import parkservice.gridservice.model.ParkingSpaceWithStatus;
+import parkservice.gridservice.model.SearchArea;
 import parkservice.gridservice.model.SearchForStreetsRequest;
 import parkservice.gridservice.model.SearchForStreetsResponse;
 import parkservice.gridservice.model.SimpleParkingSpaceWithStatus;
@@ -397,17 +398,12 @@ public class ParkResource {
 	public FindGridsByGPSCoordinateResponse[] findGridByGPSCoor(JAXBElement<FindGridsByGPSCoordinateRequest> jaxbRequest){
 		FindGridsByGPSCoordinateRequest request = jaxbRequest.getValue();
 		long lastUpdateDateTime = request.getLastUpdateTime();
-		GpsCoordinate topLeftCorner = request.getTopLeftCorner();
-		GpsCoordinate bottomRightCorner = request.getBottomRightCorner();
+		List<SearchArea> searchArea = request.getSearchArea();
 		
 		// get all the grids with fill status with in the given bounding box
-		GridManagementService gridService = GridManagementService.getInstance();
-		List<GridWithFillRate> gridWFillRate = gridService.findGridWithFillrateByGPSCoor(
-				topLeftCorner.getLatitude(), topLeftCorner.getLongitude(), 
-				bottomRightCorner.getLatitude(), bottomRightCorner.getLongitude());
+		List<GridWithFillRate> gridWFillRate = getGridWithFillRates(searchArea);
 		
 		List<FindGridsByGPSCoordinateResponse> responseList = new ArrayList<FindGridsByGPSCoordinateResponse>();
-		
 		for (GridWithFillRate grid: gridWFillRate) {
 			// only send the items that has been recently updated
 			if (grid.getLastUpdatedDateTime() > lastUpdateDateTime) {
@@ -424,6 +420,27 @@ public class ParkResource {
 		return responseList.toArray(new FindGridsByGPSCoordinateResponse[0]);
 	}
 	
+	private List<GridWithFillRate> getGridWithFillRates(
+			List<SearchArea> searchArea) {
+		
+		Set<GridWithFillRate> gridWFillRate = new HashSet<GridWithFillRate>();
+		GridManagementService gridService = GridManagementService.getInstance();
+		
+		// go through all the bounding boxes
+		for (SearchArea se : searchArea) {
+			GpsCoordinate northEastCorner = se.getNorthEastCorner();
+			GpsCoordinate southWestCorner = se.getSouthWestCorner();
+			
+			// get all the grids with fill status with in the given bounding box
+			List<GridWithFillRate> tempWithFillRate = gridService.findGridWithFillrateByGPSCoor(
+					northEastCorner.getLatitude(), northEastCorner.getLongitude(), 
+					southWestCorner.getLatitude(), southWestCorner.getLongitude());
+			
+			gridWFillRate.addAll(tempWithFillRate);
+		}
+		return new ArrayList<GridWithFillRate>(gridWFillRate);
+	}
+
 	@POST
 	@Path("/SearchForStreetsRequest")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -431,17 +448,11 @@ public class ParkResource {
 	public SearchForStreetsResponse[] searchForStreets(JAXBElement<SearchForStreetsRequest> jaxbRequest){
 		
 		SearchForStreetsRequest request = jaxbRequest.getValue();
-		GpsCoordinate topLeftCorner = request.getTopLeftCorner();
-		GpsCoordinate bottomRightCorner = request.getBottomRightCorner();
-		
-		List<SearchForStreetsResponse> responseList = new ArrayList<SearchForStreetsResponse>();
-		
+		List<SearchArea> searchArea = request.getSearchArea();
 		// get all the Parking Blocks with fill status within the given gps bounding box
-		GridManagementService gridService = GridManagementService.getInstance();
-		List<ParkingLocationWithFillRate> parkingLocationsWithFillRate = gridService
-			.findStreetByGPSCoor(topLeftCorner.getLatitude(), topLeftCorner.getLongitude(), 
-				bottomRightCorner.getLatitude(), bottomRightCorner.getLongitude());
-		
+		List<ParkingLocationWithFillRate> parkingLocationsWithFillRate = getParkingLocaitonWithFillRate(searchArea);
+
+		List<SearchForStreetsResponse> responseList = new ArrayList<SearchForStreetsResponse>();
 		// create the individual street response
 		for (ParkingLocationWithFillRate pl : parkingLocationsWithFillRate) {
 			SearchForStreetsResponse response = new SearchForStreetsResponse();
@@ -462,6 +473,28 @@ public class ParkResource {
 		return responseList.toArray(new SearchForStreetsResponse[0]);
 	}
 	
+	private List<ParkingLocationWithFillRate> getParkingLocaitonWithFillRate(
+			List<SearchArea> searchArea) {
+		
+		Set<ParkingLocationWithFillRate> resultSet = new HashSet<ParkingLocationWithFillRate>();
+		GridManagementService gridService = GridManagementService.getInstance();
+		
+		// go through all the bounding boxes
+		for (SearchArea se : searchArea) {
+			GpsCoordinate northEastCorner = se.getNorthEastCorner();
+			GpsCoordinate southWestCorner = se.getSouthWestCorner();
+		
+			List<ParkingLocationWithFillRate> parkingLocationsWithFillRate = gridService
+				.findStreetByGPSCoor(					
+						northEastCorner.getLatitude(), northEastCorner.getLongitude(), 
+						southWestCorner.getLatitude(), southWestCorner.getLongitude());
+			
+			resultSet.addAll(parkingLocationsWithFillRate);
+		}
+
+		return new ArrayList<ParkingLocationWithFillRate>(resultSet);
+	}
+
 	@POST
 	@Path("/GetUpdatedStreetInfoRequest")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -469,16 +502,11 @@ public class ParkResource {
 	public GetUpdatedStreetInfoResponse[] getUpdatedStreetInfo(JAXBElement<GetUpdatedStreetInfoRequest> jaxbRequest){
 		GetUpdatedStreetInfoRequest request = jaxbRequest.getValue();
 		long lastUpdateDateTime = request.getLastUpdateTime();
-		GpsCoordinate topLeftCorner = request.getTopLeftCorner();
-		GpsCoordinate bottomRightCorner = request.getBottomRightCorner();
+		List<SearchArea> searchArea = request.getSearchArea();
 		
 		List<GetUpdatedStreetInfoResponse> responseList = new ArrayList<GetUpdatedStreetInfoResponse>();
-		
-		// get all the Parking Blocks with fill status within the given gps bounding box
-		GridManagementService gridService = GridManagementService.getInstance();
-		List<ParkingLocationWithFillRate> parkingLocationsWithFillRate = gridService
-			.findStreetByGPSCoor(topLeftCorner.getLatitude(), topLeftCorner.getLongitude(), 
-				bottomRightCorner.getLatitude(), bottomRightCorner.getLongitude());
+		List<ParkingLocationWithFillRate> parkingLocationsWithFillRate = 
+				getParkingLocaitonWithFillRate(searchArea);
 		
 		// create the individual street response
 		for (ParkingLocationWithFillRate pl : parkingLocationsWithFillRate) {
@@ -501,25 +529,13 @@ public class ParkResource {
 	public GetSpotLevelInfoResponse[] getStreetInfo(JAXBElement<GetSpotLevelInfoRequest> jaxbRequest){
 		
 		GetSpotLevelInfoRequest request = jaxbRequest.getValue();
-		GpsCoordinate topLeftCorner = request.getTopLeftCorner1();
-		GpsCoordinate bottomRightCorner = request.getBottomRightCorner1();
-		GpsCoordinate topLeftCorner2 = request.getTopLeftCorner1();
-		GpsCoordinate bottomRightCorner2 = request.getBottomRightCorner1();
+		List<SearchArea> searchArea = request.getSearchArea();
 		
 		List<GetSpotLevelInfoResponse> responseList = new ArrayList<GetSpotLevelInfoResponse>();
 		
 		// get all the Parking Blocks with fill status within the given gps bounding box
-		GridManagementService gridService = GridManagementService.getInstance();
-		Set<ParkingLocationWithFillRate> parkingLocationsWithFillRate = new HashSet<ParkingLocationWithFillRate>(
-				gridService.findStreetByGPSCoor(topLeftCorner.getLatitude(), topLeftCorner.getLongitude(), 
-				bottomRightCorner.getLatitude(), bottomRightCorner.getLongitude()));
-		
-		// do a second grid search if the request has 2 bounding boxes
-		if (request.getNumberOfSearchBox() > 1) {
-			parkingLocationsWithFillRate.addAll(gridService
-					.findStreetByGPSCoor(topLeftCorner2.getLatitude(), topLeftCorner2.getLongitude(), 
-					bottomRightCorner2.getLatitude(), bottomRightCorner2.getLongitude()));
-		}
+		Set<ParkingLocationWithFillRate> parkingLocationsWithFillRate = 
+			new HashSet<ParkingLocationWithFillRate>(getParkingLocaitonWithFillRate(searchArea));
 		
 		// for each of the parking block, get all the parking space information inside the block
 		for (ParkingLocationWithFillRate pl : parkingLocationsWithFillRate) {
@@ -559,16 +575,13 @@ public class ParkResource {
 			getUpdatedSpotLevelInfo(JAXBElement<GetUpdatedSpotLevelInfoRequest> jaxbRequest) {
 		
 		GetUpdatedSpotLevelInfoRequest request = jaxbRequest.getValue();
-		GpsCoordinate topLeftCorner = request.getTopLeftCorner();
-		GpsCoordinate bottomRightCorner = request.getBottomRightCorner();
+		List<SearchArea> searchArea = request.getSearchArea();
 		
 		List<GetUpdatedSpotLevelInfoResponse> responseList = new ArrayList<GetUpdatedSpotLevelInfoResponse>();
 		
 		// get all the Parking Blocks with fill status within the given gps bounding box
-		GridManagementService gridService = GridManagementService.getInstance();
 		Set<ParkingLocationWithFillRate> parkingLocationsWithFillRate = new HashSet<ParkingLocationWithFillRate>(
-				gridService.findStreetByGPSCoor(topLeftCorner.getLatitude(), topLeftCorner.getLongitude(), 
-				bottomRightCorner.getLatitude(), bottomRightCorner.getLongitude()));
+				getParkingLocaitonWithFillRate(searchArea));
 		
 		// for each of the parking block, get all the parking space information inside the block
 		for (ParkingLocationWithFillRate pl : parkingLocationsWithFillRate) {
@@ -579,7 +592,6 @@ public class ParkResource {
 			for (ParkingSpace ps :  pl.getSpaces()) {
 				SimpleParkingSpaceWithStatus spaceWithStatus = new SimpleParkingSpaceWithStatus();
 				spaceWithStatus.setSpaceId(ps.getSpaceId());
-				spaceWithStatus.setSpaceName(ps.getSpaceIdentifier());
 				// set the parking space status
 				if (pl.isSpaceAvaliable(ps.getSpaceId())) {
 					spaceWithStatus.setStatus("available");

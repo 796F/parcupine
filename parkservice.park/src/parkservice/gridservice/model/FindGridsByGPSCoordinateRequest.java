@@ -1,5 +1,7 @@
 package parkservice.gridservice.model;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -8,37 +10,22 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class FindGridsByGPSCoordinateRequest {
 	private long lastUpdateTime;
-	private GpsCoordinate topLeftCorner;
-	private GpsCoordinate bottomRightCorner;
+	private List<SearchArea> searchArea;
 
 	/**
-	 * @return the topLeftCorner
+	 * Get the search area
+	 * @return
 	 */
-	public GpsCoordinate getTopLeftCorner() {
-		return topLeftCorner;
+	public List<SearchArea> getSearchArea() {
+		return searchArea;
 	}
 
 	/**
-	 * @param topLeftCorner
-	 *            the topLeftCorner to set
+	 * set the search area list
+	 * @param searchArea
 	 */
-	public void setTopLeftCorner(GpsCoordinate topLeftCorner) {
-		this.topLeftCorner = topLeftCorner;
-	}
-
-	/**
-	 * @return the bottomRightCorner
-	 */
-	public GpsCoordinate getBottomRightCorner() {
-		return bottomRightCorner;
-	}
-
-	/**
-	 * @param bottomRightCorner
-	 *            the bottomRightCorner to set
-	 */
-	public void setBottomRightCorner(GpsCoordinate bottomRightCorner) {
-		this.bottomRightCorner = bottomRightCorner;
+	public void setSearchArea(List<SearchArea> searchArea) {
+		this.searchArea = searchArea;
 	}
 
 	/**
