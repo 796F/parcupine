@@ -29,8 +29,7 @@ CLLocationManagerDelegate,
 UISearchBarDelegate,
 UIGestureRecognizerDelegate, 
 UITableViewDelegate, 
-UIActionSheetDelegate,
-RKRequestDelegate> {
+UIActionSheetDelegate> {
     DataLayer * dataLayer;
     NetworkLayer* networkLayer;
     NSManagedObjectContext* managedObjectContext;
@@ -57,19 +56,22 @@ RKRequestDelegate> {
 @property (weak, nonatomic) MKCircle* gCircle;
 @property (nonatomic, retain) NSMutableArray* callouts;
 @property (nonatomic, retain) NSMutableArray* calloutLines;
-@property (nonatomic, retain) NSMutableArray* grids;
-@property (nonatomic, retain) NSMutableArray* streets;
-@property (nonatomic, retain) NSMutableArray* spots;
+
+//@property (nonatomic, retain) NSMutableArray* grids;
+//@property (nonatomic, retain) NSMutableArray* streets;
+//@property (nonatomic, retain) NSMutableArray* spots;
 
 @property (nonatomic, retain) CLGeocoder* geocoder;
 @property (nonatomic) CLLocationCoordinate2D user_loc;
 @property (nonatomic) bool user_loc_isGood;
+
 @property (nonatomic, retain) MKCircle* desired_spot;
+
 @property (nonatomic) MKCoordinateRegion oldStreetLevelRegion;
 @property (atomic) bool shouldNotClearOverlays;
 
 //microblock organization
-@property (strong, nonatomic) NSMutableArray* oldMicroBlockIds; //list of current blocks
+@property (strong, nonatomic) NSMutableArray* currentMicroBlockIds; //list of current blocks
  /*         _         
           /   GID - *      
     MID  ---- GID - * 
@@ -83,6 +85,10 @@ RKRequestDelegate> {
 @property (strong, nonatomic) NSMutableDictionary* gridMicroBlockMap;
 @property (strong, nonatomic) NSMutableDictionary* streetMicroBlockMap;
 @property (strong, nonatomic) NSMutableDictionary* spotMicroBlockMap;
+
+//callback methods for updating map
+-(void) addNewOverlays:(NSDictionary*) overlayMap;
+-(void) updateOverlays:(NSDictionary*) updateMap;
 
 -(CLLocationCoordinate2D)topRightOfMap;
 -(CLLocationCoordinate2D)botLeftOfMap;

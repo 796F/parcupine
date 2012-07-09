@@ -21,10 +21,10 @@
 #import "AbstractRequestObject.h"
 
 //microblock constants
-#define GRID_MICROBLOCK_REF_LAT 42.283405
-#define GRID_MICROBLOCK_REF_LON -71.274834 
-#define GRID_MICROBLOCK_COLUMNS 35
-#define GRID_MICROBLOCK_ROWS 20
+#define GRID_MICROBLOCK_REF_LAT 42.245802 //42.245802
+#define GRID_MICROBLOCK_REF_LON -71.321869 
+#define GRID_MICROBLOCK_COLUMNS 40
+#define GRID_MICROBLOCK_ROWS 40
 #define GRID_MICROBLOCK_LENGTH_DEGREES 0.01
 #define STREET_MICROBLOCK_LENGTH_DEGREES 0.0025
 #define SPOT_MICROBLOCK_LENGTH_DEGREES 0.000625
@@ -33,7 +33,70 @@
 @implementation NetworkLayer
 
 @synthesize dataLayer;
-@synthesize parent;
+@synthesize mapController;
+
+
+-(void) insertTestData{
+    NSArray* grids = [[NSArray alloc] initWithObjects:  
+                      //insert stuff here.  
+                      
+                      nil];
+    for(id dic in grids){
+        //create the grid object
+        Grid* grid = (Grid*)[NSEntityDescription insertNewObjectForEntityForName:@"Grid" inManagedObjectContext:dataLayer.managedObjectContext];
+        NSNumberFormatter * f = [[NSNumberFormatter alloc] init];
+        [f setNumberStyle:NSNumberFormatterNoStyle];
+        [grid setGridId:[f numberFromString:[dic objectForKey:@"gridId"]]];
+        NSNumber* lon = [f numberFromString:[dic objectForKey:@"lon"]];
+        [grid setLon:lon];
+        NSNumber* lat = [f numberFromString:[dic objectForKey:@"lat"]];
+        [grid setLat:lat];
+        [grid setStatus:[f numberFromString:[dic objectForKey:@"fillRate"]]];
+        NSNumber* mbid = [f numberFromString:[dic objectForKey:@"mbid"]];
+        [grid setMicroblock:mbid];
+        
+        //store the grid objects into core data if it doesn't exist yet.  
+        if (![dataLayer objExistsInCoreData:grid entityType:kGridEntity]){
+            //if grid isn't yet inside core data, leave it there.  
+            //create the mk polygon and return it.  
+        }else{
+            //since grid already exists, delete reference in MOC
+            [dataLayer.managedObjectContext deleteObject:grid];
+            NSLog(@"exists@");
+        }
+    }
+    //return the entire list regardless.  
+    NSError* error= nil;
+    if(![dataLayer.managedObjectContext save:&error]){
+        //oh noes, cant' store this grid.  wtf to do.
+        NSLog(@"error saving!!!\n");
+    }
+
+}
+
+#pragma mark - RESTKIT callbacks
+//ALL SERVER REQUESTS WILL GET HANDLED BY THIS METHOD ASYNCHRONOUSLY.  
+-(void) request:(RKRequest *)request didLoadResponse:(RKResponse *)response{    
+    //handle background data download to improve the user experience.  
+    NSLog(@"\nRESULT >>> %@", [response bodyAsString]);
+    
+    //add overlays returned using
+    [mapController addNewOverlays:nil];
+    //update overlays returned using this.  
+    [mapController updateOverlays:nil];
+    
+    //this method will be saving the server responses
+    [dataLayer storeGridData:nil];
+}
+
+-(void) request:(RKRequest *)request didFailLoadWithError:(NSError *)error{
+    
+}
+
+-(void) requestDidTimeout:(RKRequest *)request{
+    
+}
+
 -(void) testAsync{
     NSArray* keys = [NSArray arrayWithObjects:@"email", @"password", nil];
     NSArray* value = [NSArray arrayWithObjects:@"miguel@parqme.com", @"a", nil];
@@ -43,66 +106,65 @@
     AbstractRequestObject* abs = [[AbstractRequestObject alloc] init];
     [abs setBody:jsonData];
     [abs setContentType:@"application/json"];
-    [[RKClient sharedClient] post:@"/parkservice.auth" params:abs delegate:parent];
+    [[RKClient sharedClient] post:@"/parkservice.auth" params:abs delegate:self];
     NSLog(@"\nREQUEST >>> %@", [info description]);
     
 }
 
--(NSDictionary*) requestGridsWithIDs:(NSArray*) newIDs{
+-(void) requestGridsWithIDs:(NSArray*) newIDs{
     //request from the server overlay information like lat/long etc.  
     NSArray* boundingBoxes = [self convertGridLevelIDs:newIDs];
-    NSNumber* lastUpdateTimeLong = [NSNumber numberWithLong:[[NSDate date] longValue]];
+    NSNumber* lastUpdateTimeLong = [NSNumber numberWithLong:[[NSDate date] timeIntervalSince1970]];
     NSDictionary* requestDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:boundingBoxes, @"boxes",lastUpdateTimeLong, @"lastUpdateTime", nil];
+
     NSError *error;
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:requestDictionary options:0 error:&error];
-    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.maps"];
-    //send boundingBoxes to server 
-    [request setMethod:RKRequestMethodGET];
-    [request setHTTPBody:jsonData];
-    [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];    
-    RKResponse* result = [request sendSynchronously];
-    //create MKPolygons with the results, and then repackage and return.  
-    return [Parser parseGridResponse:[result bodyAsString]];
+    AbstractRequestObject* abs = [[AbstractRequestObject alloc] init];
+    [abs setBody:jsonData];
+    [abs setContentType:@"application/json"];
+    [[RKClient sharedClient] post:@"/parkservice.auth" params:abs delegate:self];
 }
 
--(NSDictionary*) addGridsToMapForIDs:(NSArray*) newIDs UpdateForIDs:(NSArray*) updateIDs{
+-(void) addGridsToMapForIDs:(NSArray*) newIDs UpdateForIDs:(NSArray*) updateIDs{
     NSMutableArray* IDsToRequest = [[NSMutableArray alloc] init];
-    NSMutableArray* temp = [[NSMutableArray alloc] initWithArray:newIDs];
+    NSMutableArray* tempNewIDs = [[NSMutableArray alloc] initWithArray:newIDs];
     //go through the newIDs and check if any aren't in Core Data.  
-    for(NSNumber* gridId in newIDs){
-        if (![dataLayer existsInCoreData:gridId entityType:kGridEntity]){
-            //move to requests array
-            [IDsToRequest addObject:gridId];
-            [temp removeObject:gridId];
+    for(NSNumber* mbid in newIDs){
+        if (![dataLayer mbIdExistsInCoreData:mbid entityType:kGridEntity]){
+
+            //if doesn't exist in core data, make a note to request from server
+            [IDsToRequest addObject:mbid];
+            [tempNewIDs removeObject:mbid];
         }
     }
-    NSMutableDictionary* overlaysToAdd = [[NSMutableDictionary alloc] initWithDictionary:[dataLayer fetchGridsForIDs:temp]];
+    //tell the data layer to provide map with overlays it has.  
+    [dataLayer fetchGridsForIDs:tempNewIDs];
+
     //request for those that aren't to fill in the holes.  
-    [overlaysToAdd addEntriesFromDictionary:[self requestGridsWithIDs:IDsToRequest]];
+    [self requestGridsWithIDs:IDsToRequest];
+
     //call update on whole map
-    CLLocationCoordinate2D NE = [parent topRightOfMap];
-    CLLocationCoordinate2D SW = [parent botLeftOfMap];
-    NSDictionary* updatedAvailability = [self updateGridsWithNE:&NE SW:&SW];
-    //nest and return both dictionaries.  
-    NSMutableDictionary* results = [[NSMutableDictionary alloc] initWithObjectsAndKeys:overlaysToAdd , @"new", updatedAvailability, @"update", nil];
-    return results;
+    CLLocationCoordinate2D NE = [mapController topRightOfMap];
+    CLLocationCoordinate2D SW = [mapController botLeftOfMap];
+    
+    [self updateGridsWithNE:&NE SW:&SW];
 }
--(NSDictionary*) addStreetsToMapForIDs:(NSArray*) newIDs UpdateForIDs:(NSArray*) updateIDs{
-    return nil;
+-(void) addStreetsToMapForIDs:(NSArray*) newIDs UpdateForIDs:(NSArray*) updateIDs{
+ 
 }
--(NSDictionary*) addSpotsToMapForIDs:(NSArray*) newIDs UpdateForIDs:(NSArray*) updateIDs{
-    return nil;
+-(void) addSpotsToMapForIDs:(NSArray*) newIDs UpdateForIDs:(NSArray*) updateIDs{
+ 
 }
 
+-(void) updateGridsWithNE:(CLLocationCoordinate2D*) topRight SW:(CLLocationCoordinate2D*) botLeft{
+    //send request to server to get updated colors
+    [mapController updateOverlays:nil];
+}
+-(void) updateStreetsWithNE:(CLLocationCoordinate2D*) topRight SW:(CLLocationCoordinate2D*) botLeft{
 
--(NSDictionary*) updateGridsWithNE:(CLLocationCoordinate2D*) topRight SW:(CLLocationCoordinate2D*) botLeft{
-    return nil;
 }
--(NSDictionary*) updateStreetsWithNE:(CLLocationCoordinate2D*) topRight SW:(CLLocationCoordinate2D*) botLeft{
-    return nil;    
-}
--(NSDictionary*) updateSpotsWithNE:(CLLocationCoordinate2D*) topRight SW:(CLLocationCoordinate2D*) botLeft{
-    return nil;
+-(void) updateSpotsWithNE:(CLLocationCoordinate2D*) topRight SW:(CLLocationCoordinate2D*) botLeft{
+
 }
 
 
@@ -110,151 +172,7 @@
 -(NSArray*) callGridWithNE:(CLLocationCoordinate2D*) topRight SW:(CLLocationCoordinate2D*) botLeft{    
     //if were missing some, get grids json from server
     NSArray* grids = [NSArray arrayWithObjects:                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"12", @"gridId", @"42.387981", @"lat", @"-71.132965", @"lon", @"4", @"fillRate" , nil],
                       
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"13", @"gridId", @"42.387981", @"lat", @"-71.127965", @"lon", @"0", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"14", @"gridId", @"42.387981", @"lat", @"-71.122965", @"lon", @"0", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"15", @"gridId", @"42.387981", @"lat", @"-71.117965", @"lon", @"3", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"16", @"gridId", @"42.387981", @"lat", @"-71.112965", @"lon", @"1", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"17", @"gridId", @"42.387981", @"lat", @"-71.107965", @"lon", @"0", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"18", @"gridId", @"42.387981", @"lat", @"-71.102965", @"lon", @"4", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"19", @"gridId", @"42.387981", @"lat", @"-71.097965", @"lon", @"1", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"20", @"gridId", @"42.387981", @"lat", @"-71.092965", @"lon", @"0", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"21", @"gridId", @"42.387981", @"lat", @"-71.087965", @"lon", @"1", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"22", @"gridId", @"42.387981", @"lat", @"-71.082965", @"lon", @"1", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"23", @"gridId", @"42.382981", @"lat", @"-71.132965", @"lon", @"1", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"24", @"gridId", @"42.382981", @"lat", @"-71.127965", @"lon", @"4", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"25", @"gridId", @"42.382981", @"lat", @"-71.122965", @"lon", @"2", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"26", @"gridId", @"42.382981", @"lat", @"-71.117965", @"lon", @"4", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"27", @"gridId", @"42.382981", @"lat", @"-71.112965", @"lon", @"1", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"28", @"gridId", @"42.382981", @"lat", @"-71.107965", @"lon", @"2", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"29", @"gridId", @"42.382981", @"lat", @"-71.102965", @"lon", @"3", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"30", @"gridId", @"42.382981", @"lat", @"-71.097965", @"lon", @"4", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"31", @"gridId", @"42.382981", @"lat", @"-71.092965", @"lon", @"1", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"32", @"gridId", @"42.382981", @"lat", @"-71.087965", @"lon", @"3", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"33", @"gridId", @"42.382981", @"lat", @"-71.082965", @"lon", @"0", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"34", @"gridId", @"42.377981", @"lat", @"-71.132965", @"lon", @"4", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"35", @"gridId", @"42.377981", @"lat", @"-71.127965", @"lon", @"0", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"36", @"gridId", @"42.377981", @"lat", @"-71.122965", @"lon", @"4", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"37", @"gridId", @"42.377981", @"lat", @"-71.117965", @"lon", @"2", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"38", @"gridId", @"42.377981", @"lat", @"-71.112965", @"lon", @"2", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"39", @"gridId", @"42.377981", @"lat", @"-71.107965", @"lon", @"2", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"40", @"gridId", @"42.377981", @"lat", @"-71.102965", @"lon", @"3", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"41", @"gridId", @"42.377981", @"lat", @"-71.097965", @"lon", @"3", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"42", @"gridId", @"42.377981", @"lat", @"-71.092965", @"lon", @"3", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"43", @"gridId", @"42.377981", @"lat", @"-71.087965", @"lon", @"2", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"44", @"gridId", @"42.377981", @"lat", @"-71.082965", @"lon", @"3", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"45", @"gridId", @"42.372981", @"lat", @"-71.132965", @"lon", @"2", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"46", @"gridId", @"42.372981", @"lat", @"-71.127965", @"lon", @"0", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"47", @"gridId", @"42.372981", @"lat", @"-71.122965", @"lon", @"1", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"48", @"gridId", @"42.372981", @"lat", @"-71.117965", @"lon", @"0", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"49", @"gridId", @"42.372981", @"lat", @"-71.112965", @"lon", @"1", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"50", @"gridId", @"42.372981", @"lat", @"-71.107965", @"lon", @"4", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"51", @"gridId", @"42.372981", @"lat", @"-71.102965", @"lon", @"0", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"52", @"gridId", @"42.372981", @"lat", @"-71.097965", @"lon", @"0", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"53", @"gridId", @"42.372981", @"lat", @"-71.092965", @"lon", @"4", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"54", @"gridId", @"42.372981", @"lat", @"-71.087965", @"lon", @"1", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"55", @"gridId", @"42.372981", @"lat", @"-71.082965", @"lon", @"1", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"56", @"gridId", @"42.367981", @"lat", @"-71.132965", @"lon", @"1", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"57", @"gridId", @"42.367981", @"lat", @"-71.127965", @"lon", @"1", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"58", @"gridId", @"42.367981", @"lat", @"-71.122965", @"lon", @"1", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"59", @"gridId", @"42.367981", @"lat", @"-71.117965", @"lon", @"1", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"60", @"gridId", @"42.367981", @"lat", @"-71.112965", @"lon", @"4", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"61", @"gridId", @"42.367981", @"lat", @"-71.107965", @"lon", @"1", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"62", @"gridId", @"42.367981", @"lat", @"-71.102965", @"lon", @"4", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"63", @"gridId", @"42.367981", @"lat", @"-71.097965", @"lon", @"0", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"64", @"gridId", @"42.367981", @"lat", @"-71.092965", @"lon", @"1", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"65", @"gridId", @"42.367981", @"lat", @"-71.087965", @"lon", @"3", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"66", @"gridId", @"42.367981", @"lat", @"-71.082965", @"lon", @"2", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"67", @"gridId", @"42.362981", @"lat", @"-71.132965", @"lon", @"1", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"68", @"gridId", @"42.362981", @"lat", @"-71.127965", @"lon", @"0", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"69", @"gridId", @"42.362981", @"lat", @"-71.122965", @"lon", @"2", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"70", @"gridId", @"42.362981", @"lat", @"-71.117965", @"lon", @"1", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"71", @"gridId", @"42.362981", @"lat", @"-71.112965", @"lon", @"1", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"72", @"gridId", @"42.362981", @"lat", @"-71.107965", @"lon", @"0", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"73", @"gridId", @"42.362981", @"lat", @"-71.102965", @"lon", @"3", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"74", @"gridId", @"42.362981", @"lat", @"-71.097965", @"lon", @"1", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"75", @"gridId", @"42.362981", @"lat", @"-71.092965", @"lon", @"3", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"76", @"gridId", @"42.362981", @"lat", @"-71.087965", @"lon", @"1", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"77", @"gridId", @"42.362981", @"lat", @"-71.082965", @"lon", @"1", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"78", @"gridId", @"42.357981", @"lat", @"-71.132965", @"lon", @"1", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"79", @"gridId", @"42.357981", @"lat", @"-71.127965", @"lon", @"0", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"80", @"gridId", @"42.357981", @"lat", @"-71.122965", @"lon", @"4", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"81", @"gridId", @"42.357981", @"lat", @"-71.117965", @"lon", @"3", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"82", @"gridId", @"42.357981", @"lat", @"-71.112965", @"lon", @"2", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"83", @"gridId", @"42.357981", @"lat", @"-71.107965", @"lon", @"3", @"fillRate" , nil],
-                      
-                      [[NSDictionary alloc] initWithObjectsAndKeys:@"84", @"gridId", @"42.357981", @"lat", @"-71.102965", @"lon", @"2", @"fillRate" , nil],
                       nil];
     NSMutableArray* gridArr = [[NSMutableArray alloc] initWithCapacity:grids.count];
     for(id dic in grids){
@@ -267,7 +185,7 @@
         [grid setLat:[f numberFromString:[dic objectForKey:@"lat"]]];
         [grid setStatus:[f numberFromString:[dic objectForKey:@"fillRate"]]];
         //store the grid objects into core data if it doesn't exist yet.  
-        if (![dataLayer existsInCoreData:grid entityType:kGridEntity]){
+        if (![dataLayer objExistsInCoreData:grid entityType:kGridEntity]){
             //if grid isn't yet inside core data, leave it there.  
             //create the mk polygon and return it.  
         }else{

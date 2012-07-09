@@ -15,22 +15,22 @@
 
 //using @class to avoid cycle, which breaks the compiler.  sigh
 @class PQMapViewController;
-@interface NetworkLayer : NSObject{
+@interface NetworkLayer : NSObject <RKRequestDelegate>{
     DataLayer* dataLayer;
 }
 
 @property (nonatomic,retain) DataLayer* dataLayer;
-@property (nonatomic,retain) PQMapViewController* parent;
+@property (nonatomic,retain) PQMapViewController* mapController;
 
 //returns two dictionaries nested, one for updates the other for adding.  
--(NSDictionary*) addGridsToMapForIDs:(NSArray*) newIDs UpdateForIDs:(NSArray*) updateIDs;
--(NSDictionary*) addStreetsToMapForIDs:(NSArray*) newIDs UpdateForIDs:(NSArray*) updateIDs;
--(NSDictionary*) addSpotsToMapForIDs:(NSArray*) newIDs UpdateForIDs:(NSArray*) updateIDs;
+-(void) addGridsToMapForIDs:(NSArray*) newIDs UpdateForIDs:(NSArray*) updateIDs;
+-(void) addStreetsToMapForIDs:(NSArray*) newIDs UpdateForIDs:(NSArray*) updateIDs;
+-(void) addSpotsToMapForIDs:(NSArray*) newIDs UpdateForIDs:(NSArray*) updateIDs;
 
 //gets updates for overlays already on map
--(NSDictionary*) updateGridsWithNE:(CLLocationCoordinate2D*) topRight SW:(CLLocationCoordinate2D*) botLeft;
--(NSDictionary*) updateStreetsWithNE:(CLLocationCoordinate2D*) topRight SW:(CLLocationCoordinate2D*) botLeft;
--(NSDictionary*) updateSpotsWithNE:(CLLocationCoordinate2D*) topRight SW:(CLLocationCoordinate2D*) botLeft;
+-(void) updateGridsWithNE:(CLLocationCoordinate2D*) topRight SW:(CLLocationCoordinate2D*) botLeft;
+-(void) updateStreetsWithNE:(CLLocationCoordinate2D*) topRight SW:(CLLocationCoordinate2D*) botLeft;
+-(void) updateSpotsWithNE:(CLLocationCoordinate2D*) topRight SW:(CLLocationCoordinate2D*) botLeft;
 
 //calculates MID's based on lat/long. 
 -(NSMutableArray*) getGridLevelMicroBlockIDListWithNE:(CLLocationCoordinate2D*) topRight SW:(CLLocationCoordinate2D*) botLeft;
@@ -39,4 +39,5 @@
 
 //DEBUG
 -(void) testAsync;
+-(void) insertTestData;
 @end

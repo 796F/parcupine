@@ -9,7 +9,8 @@
 #import <Foundation/Foundation.h>
 #import <MapKit/MapKit.h>
 #import "Segment.h"
-
+#define GRID_LENGTH 0.005
+@class PQMapViewController;
 @interface DataLayer : NSObject {
         NSManagedObjectContext *managedObjectContext;
 }
@@ -20,9 +21,11 @@ typedef enum {
     kStreetEntity
 } EntityType;
 
+@property (nonatomic,retain) PQMapViewController* mapController;
 @property (nonatomic, retain) NSManagedObjectContext *managedObjectContext;
 
--(BOOL) existsInCoreData:(NSObject*)object entityType:(EntityType) entityType;
+-(BOOL) objExistsInCoreData:(NSObject*)object entityType:(EntityType) entityType;
+-(BOOL) mbIdExistsInCoreData:(NSObject*)object entityType:(EntityType) entityType;
 - (NSSet *)fetchObjectsForEntityName:(NSString *)newEntityName
                        withPredicate:(id)stringOrPredicate;
 
@@ -31,8 +34,10 @@ typedef enum {
 -(void) storeStreetData:(NSArray*)streetList;
 -(void) storeGridData:(NSArray*)gridList;
 
--(NSDictionary*) fetchGridsForIDs:(NSArray*) microBlockIDs;
--(NSDictionary*) fetchStreetsForIDs:(NSArray*) microBlockIDs;
--(NSDictionary*) fetchSpotsForIDs:(NSArray*) microBlockIDs;
+-(void) fetchGridsForIDs:(NSArray*) microBlockIDs;
+-(void) fetchStreetsForIDs:(NSArray*) microBlockIDs;
+-(void) fetchSpotsForIDs:(NSArray*) microBlockIDs;
+
+-(void) testFetch:(EntityType)entityType Microblocks:(NSArray*) mbids;
 
 @end

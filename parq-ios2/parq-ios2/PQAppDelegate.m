@@ -29,6 +29,11 @@
     return nl;
 }
 
+-(NetworkLayer*) getNetworkLayer{
+    NetworkLayer* nl = [[NetworkLayer alloc] init];
+    return nl;
+}
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
 

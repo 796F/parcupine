@@ -34,7 +34,6 @@
 
 #define ACCURACY_LIMIT 100
 #define USER_DISTANCE_FROM_SPOT_THRESHOLD 0.0001
-#define GRID_LENGTH 0.005
 #define GRID_LEVEL_REGION_METERS 1150
 #define STREET_LEVEL_REGION_METERS 500
 #define SPOT_LEVEL_REGION_METERS 100
@@ -84,9 +83,9 @@ typedef struct{
 @synthesize leftBarButton;
 @synthesize zoomState;
 @synthesize displayedData;
-@synthesize grids;
-@synthesize streets;
-@synthesize spots;
+//@synthesize grids;
+//@synthesize streets;
+//@synthesize spots;
 @synthesize managedObjectContext;
 @synthesize user_loc;
 @synthesize user_loc_isGood;
@@ -97,7 +96,7 @@ typedef struct{
 @synthesize gridMicroBlockMap;
 @synthesize streetMicroBlockMap;
 @synthesize spotMicroBlockMap;
-@synthesize oldMicroBlockIds;
+@synthesize currentMicroBlockIds;
 
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     NSLog(@"hello\n");
@@ -436,11 +435,57 @@ typedef struct{
             nil];
     
 }
-#pragma mark - RestKit callback
+#pragma mark - Network and Data Layer callbacks
 
-- (void)request:(RKRequest *)request didLoadResponse:(RKResponse *)response{
+//this is used by the network and data layers to add overlay objects to the map
+-(void) addNewOverlays:(NSDictionary*) overlayMap{
+    //add the new ones to map and add them to the mb map
+    //NSLog(@"desc1:%s\n", overlayMap.allValues.description.UTF8String);
+    for(NSDictionary* gridsDictionary in overlayMap.allValues){
+        [self.map addOverlays:gridsDictionary.allValues];
+        //NSLog(@"desc:%s\n", gridsDictionary.allValues.description.UTF8String);
+    }
+    [gridMicroBlockMap addEntriesFromDictionary:overlayMap];
+}
+
+//this is used by the network layer to update the overlays on the map once server responds.  
+-(void) updateOverlays:(NSDictionary*) updateMap{
+    if(updateMap==nil){
+        return;
+    }
+    for(NSDictionary* gridsDictionary in gridMicroBlockMap.allValues){
+        for(MKPolygon* overlay in gridsDictionary.allValues){
+            NSNumber* newAvailability = [updateMap objectForKey:[NSNumber numberWithLong: overlay.objId]];
+            if(newAvailability==nil){
+                NSLog(@"updated color data not found\n");
+                continue;
+            }
+            MKPolygonView* view = (MKPolygonView*) [map viewForOverlay:overlay];
+            switch (newAvailability.intValue) {
+                case 0:
+                    view.fillColor = [[UIColor veryLowAvailabilityColor] colorWithAlphaComponent:0.2];
+                    break;
+                case 1:
+                    view.fillColor = [[UIColor lowAvailabilityColor] colorWithAlphaComponent:0.2];
+                    break;
+                case 2:
+                    view.fillColor = [[UIColor mediumAvailabilityColor] colorWithAlphaComponent:0.2];
+                    break;
+                case 3:
+                    view.fillColor = [[UIColor highAvailabilityColor] colorWithAlphaComponent:0.2];
+                    break;
+                case 4:
+                    view.fillColor = [[UIColor veryHighAvailabilityColor] colorWithAlphaComponent:0.2];
+                    break;
+                default:
+                    //error??
+                    break;
+            }
+            
+        }
+    }
+
     
-    NSLog(@"\nRESULT >>> %@", [response bodyAsString]);
 }
 
 #pragma mark - ACTION SHEET AND ALERTS
@@ -553,17 +598,32 @@ typedef struct{
     //keep track of some stuff
     NSMutableArray* insideCircle = [[NSMutableArray alloc] init];
     float avgLat=0, avgLon=0, count=0;
-    for(PQSpotAnnotation* spot in spots){
-        CLLocation* spot_loc = [[CLLocation alloc] initWithLatitude:        spot.coordinate.latitude longitude: spot.coordinate.longitude];
-        CLLocationDistance dist = [spot_loc distanceFromLocation:center];
-        if(dist<radius-2 && spot.available == YES){
-            //inside the circle
-            [insideCircle addObject:spot];
-            avgLat += spot_loc.coordinate.latitude;
-            avgLon += spot_loc.coordinate.longitude;   
-            count++;
+    for(NSDictionary* spotMap in spotMicroBlockMap.allValues){
+        for(PQSpotAnnotation* spot in spotMap){
+            CLLocation* spot_loc = [[CLLocation alloc] initWithLatitude:        spot.coordinate.latitude longitude: spot.coordinate.longitude];
+            CLLocationDistance dist = [spot_loc distanceFromLocation:center];
+            if(dist<radius-2 && spot.available == YES){
+                //inside the circle
+                [insideCircle addObject:spot];
+                avgLat += spot_loc.coordinate.latitude;
+                avgLon += spot_loc.coordinate.longitude;   
+                count++;
+            }
+
         }
     }
+    
+//    for(PQSpotAnnotation* spot in spots){
+//        CLLocation* spot_loc = [[CLLocation alloc] initWithLatitude:        spot.coordinate.latitude longitude: spot.coordinate.longitude];
+//        CLLocationDistance dist = [spot_loc distanceFromLocation:center];
+//        if(dist<radius-2 && spot.available == YES){
+//            //inside the circle
+//            [insideCircle addObject:spot];
+//            avgLat += spot_loc.coordinate.latitude;
+//            avgLon += spot_loc.coordinate.longitude;   
+//            count++;
+//        }
+//    }
     /* CALCULATE AVERAGES FOR BOTH SIDES */
     NSArray* segData = [self loadBlockData];
     return [self newCalloutPlacementWithSegment:[segData objectAtIndex:1] andSpots:insideCircle];
@@ -571,8 +631,12 @@ typedef struct{
 }
 
 -(NSArray*) oneSidedCallout:(NSArray*)spotList aLat:(double)avgLat aLon:(double)avgLon{
-    NSMutableArray* results = [[NSMutableArray alloc] initWithCapacity:spots.count];
-    
+    int totalSpotsOnMap = 0;
+    for(NSDictionary* spotMap in spotMicroBlockMap.allValues){
+        totalSpotsOnMap += spotMap.count;
+    }
+    NSMutableArray* results = [[NSMutableArray alloc] initWithCapacity:totalSpotsOnMap];
+//    NSMutableArray* results = [[NSMutableArray alloc] initWithCapacity:spots.count];    
     //project bubbles using this average and the spot's coordinates.  
     for(MKCircle* spot in spotList){
         CLLocation* spot_loc = [[CLLocation alloc] initWithLatitude:spot.coordinate.latitude longitude:spot.coordinate.longitude];
@@ -684,12 +748,15 @@ typedef struct{
     [map removeOverlays:map.overlays];
     [map removeAnnotations:callouts];
     [map removeOverlays:calloutLines];
-    [map removeAnnotations:spots];
-    [grids removeAllObjects];
+    for(NSDictionary* spotsMap in spotMicroBlockMap){
+        [map removeAnnotations:spotsMap.allValues];
+    }
+    
     [callouts removeAllObjects];
     [calloutLines removeAllObjects];
-    [streets removeAllObjects];
-    [spots removeAllObjects];
+    [gridMicroBlockMap removeAllObjects];
+    [streetMicroBlockMap removeAllObjects];
+    [spotMicroBlockMap removeAllObjects];
 }
 
 - (void)clearGrids {
@@ -697,23 +764,38 @@ typedef struct{
     // is leaving residual stuff behind on the map.
     // A hack to get around this is to clear all
     // overlays and then add back the ones we want.
+    for(NSNumber* MBID in gridMicroBlockMap){
+        NSDictionary* gridMap = [gridMicroBlockMap objectForKey:MBID];
+        [self.map removeOverlays:gridMap.allValues];
+        [gridMicroBlockMap removeObjectForKey:MBID];
+    }
 //    [self.map removeOverlays:self.grids];
 //    [grids removeAllObjects];
-    [self.map removeOverlays:self.map.overlays];
-    [grids removeAllObjects];
-    [self.map addOverlays:calloutLines];
-    if (gCircle != nil) {
-        [self.map addOverlay:gCircle];
-    }
+//    [self.map removeOverlays:self.map.overlays];
+//    [grids removeAllObjects];
+//    [self.map addOverlays:calloutLines];
+//    if (gCircle != nil) {
+//        [self.map addOverlay:gCircle];
+//    }
 }
 
 -(void) clearStreets{
-    [self.map removeOverlays:self.streets];
-    [streets removeAllObjects];
+    for(NSNumber* MBID in streetMicroBlockMap){
+        NSDictionary* streetMap = [streetMicroBlockMap objectForKey:MBID];
+        [self.map removeOverlays:streetMap.allValues];
+        [streetMicroBlockMap removeObjectForKey:MBID];
+    }
+//    [self.map removeOverlays:self.streets];
+//    [streets removeAllObjects];
 }
 -(void) clearSpots{
-    [self.map removeAnnotations:self.spots];
-    [spots removeAllObjects];
+    for(NSNumber* MBID in spotMicroBlockMap){
+        NSDictionary* spotMap = [spotMicroBlockMap objectForKey:MBID];
+        [self.map removeOverlays:spotMap.allValues];
+        [spotMicroBlockMap removeObjectForKey:MBID];
+    }
+//    [self.map removeAnnotations:self.spots];
+//    [spots removeAllObjects];
 }
 
 - (void)showSelectionCircle:(CLLocationCoordinate2D *)coord {
@@ -766,117 +848,65 @@ typedef struct{
 }
 
 - (void)showGridLevelWithCoordinates:(CLLocationCoordinate2D *)coord {
-    [self clearMap];
     CLLocationCoordinate2D NE = [self topRightOfMap];
     CLLocationCoordinate2D SW = [self botLeftOfMap];
     NSMutableArray* newMicroBlockIds = [networkLayer getGridLevelMicroBlockIDListWithNE:&NE SW:&SW];
     NSMutableArray* updateMicroBlockIds = [[NSMutableArray alloc] init];
-    
     //see header file for structure of maps.  
-    if (oldMicroBlockIds==nil){
-        //everything needs to be loaded again.  
+    if (currentMicroBlockIds==nil){
+        //everything needs to be loaded again.
     }else{
         //go through both arrays, from left to right.  
         int i=0, j=0;
-        while(i<oldMicroBlockIds.count || j< newMicroBlockIds.count){
-            long oldId = [[oldMicroBlockIds objectAtIndex:i] longValue];
+        while(i<currentMicroBlockIds.count && j< newMicroBlockIds.count){
+            //NSLog(@"currCount: %d, newCount: %d\n", currentMicroBlockIds.count, newMicroBlockIds.count);
+            long oldId = [[currentMicroBlockIds objectAtIndex:i] longValue];
             long newId = [[newMicroBlockIds objectAtIndex:j] longValue];
             if(oldId < newId){
                 i++;
             }else if(newId < oldId){
                 j++;
             }else{
+                
                 //remove both.  
-                [oldMicroBlockIds removeObjectAtIndex:i];
+                [currentMicroBlockIds removeObjectAtIndex:i];
                 [newMicroBlockIds removeObjectAtIndex:j];
                 //add to update list.  
                 [updateMicroBlockIds addObject:[NSNumber numberWithLong:oldId]];
             }
-        }
-        //remove overlays no longer on map.  
-        for(NSNumber* old in oldMicroBlockIds){
-            //get the dictionary for the microblock id
-            NSDictionary* gridsForMicroBlock = [gridMicroBlockMap objectForKey:old];
-            //remove all objects associated with that micro block
-            [map removeOverlays:[gridsForMicroBlock allValues]];
-            //remove the microblock from the dictionary
-            [gridMicroBlockMap removeObjectForKey:old];
-        }
-        
-        //get results from network layer
-        NSDictionary* results = [networkLayer addGridsToMapForIDs:newMicroBlockIds UpdateForIDs:updateMicroBlockIds];
-        
-        //add the new ones to map and add them to the mb map
-        NSDictionary* newOverlays = [results objectForKey:@"new"];
-        [map addOverlays:[newOverlays allValues]];
-        [gridMicroBlockMap addEntriesFromDictionary:newOverlays];
-        
-        //update everything on map.  
-        NSDictionary* updates = [results objectForKey:@"update"];
-        for(NSNumber* mbId in gridMicroBlockMap){
-            NSDictionary* gridToPointer = [gridMicroBlockMap objectForKey:mbId];
-            for(NSNumber* gridId in gridToPointer){
-                NSNumber* newCapacity = [updates objectForKey:gridId];
-                if(newCapacity!=nil){
-                    MKPolygonView* gridView = (MKPolygonView*)[map viewForOverlay:[gridToPointer objectForKey:gridId]];
-                    switch ([newCapacity intValue]) {
-                        case 0:
-                            gridView.fillColor = [UIColor veryLowAvailabilityColor];                            
-                            break;
-                        case 1:
-                            gridView.fillColor = [UIColor lowAvailabilityColor];
-                            break;
-                        case 2:
-                            gridView.fillColor = [UIColor mediumAvailabilityColor];
-                            break;
-                        case 3:
-                            gridView.fillColor = [UIColor highAvailabilityColor];
-                            break;
-                        case 4:
-                            gridView.fillColor = [UIColor veryHighAvailabilityColor];                            
-                            break;
-                        default:
-                            //error
-                            break;
-                    }
-                }else{
-                    //ERROR, update should have been there.  
-                }
-            }
-        }
-        
-        //assign old to be a combination of new and update.  
-        [newMicroBlockIds addObjectsFromArray:updateMicroBlockIds];
-        oldMicroBlockIds = newMicroBlockIds;
+        }        
     }
+    NSLog(@"current:%s\n", currentMicroBlockIds.description.UTF8String);
+    NSLog(@"new:%s\n", newMicroBlockIds.description.UTF8String);
+    NSLog(@"update %s\n", updateMicroBlockIds.description.UTF8String);
     
-    
-        
-    
-    NSArray* gridList = nil;//[networkLayer callGridWithNE:&NE SW:&SW];
-    for (Grid* grid in gridList) {
-        //calculate actual se_point using haversine.  
-        int color = [[grid status] intValue];
-
-        CLLocationCoordinate2D nw_point = CLLocationCoordinate2DMake(grid.lat.doubleValue, grid.lon.doubleValue);
-        CLLocationCoordinate2D se_point = CLLocationCoordinate2DMake(nw_point.latitude - GRID_LENGTH, nw_point.longitude + GRID_LENGTH);
-        CLLocationCoordinate2D ne_point = CLLocationCoordinate2DMake(nw_point.latitude ,se_point.longitude);
-        CLLocationCoordinate2D sw_point = CLLocationCoordinate2DMake(se_point.latitude ,nw_point.longitude);
-        CLLocationCoordinate2D testLotCoords[5]={nw_point, ne_point, se_point, sw_point, nw_point};
-
-        MKPolygon *commuterPoly1 = [MKPolygon polygonWithCoordinates:testLotCoords count:5];
-        [commuterPoly1 setColor:color];
-        [grids addObject:commuterPoly1];
+    //remove overlays no longer on map.  
+    for(NSNumber* old in currentMicroBlockIds){
+        //get the dictionary for the microblock id
+        NSDictionary* gridsForMicroBlock = [gridMicroBlockMap objectForKey:old];
+        //remove all objects associated with that micro block
+        [map removeOverlays:[gridsForMicroBlock allValues]];
+        //remove the microblock from the dictionary
+        [gridMicroBlockMap removeObjectForKey:old];
     }
-    [self.map addOverlays:grids];
+    //add the grids that are missing, and update the rest.  
+    [networkLayer addGridsToMapForIDs:newMicroBlockIds UpdateForIDs:updateMicroBlockIds];
+    
+    //assign old to be a combination of new and update.  
+    [newMicroBlockIds addObjectsFromArray:updateMicroBlockIds];
+    currentMicroBlockIds = newMicroBlockIds;
 }
 
 - (void)showStreetLevelWithCoordinates:(CLLocationCoordinate2D *)coord {
     [self clearMap];
-    
+    /* 
+     
+     ALERT THIS FUNCTION DOESN'T USE MICROBLOCKS YET.  NEED TO IMPLEMENT.  
+     
+     */
     NSArray* data = [self loadCambridgeBlockData];
-    if(streets==NULL){
-        streets = [[NSMutableArray alloc] init];
+    if(streetMicroBlockMap==NULL){
+        streetMicroBlockMap = [[NSMutableDictionary alloc] init];
     }
     
     for (id line in data) {
@@ -894,10 +924,9 @@ typedef struct{
         
         int color = [((Segment*)line) color];
         [routeLine setColor:color];
-        [streets addObject:routeLine];
-        
+        [self.map addOverlay:routeLine];        
     }
-    [self.map addOverlays:streets];
+
 }
 
 
@@ -907,16 +936,16 @@ typedef struct{
     [self clearSpots];
     
     NSArray* data = [self loadSpotData];
-    if(spots==NULL){
-        spots = [[NSMutableArray alloc] init];
+    if(spotMicroBlockMap==NULL){
+        spotMicroBlockMap = [[NSMutableDictionary alloc] init];
     }
     for(id spot in data){
         NSArray* point = [spot componentsSeparatedByString:@","];
         CLLocationCoordinate2D coord = CLLocationCoordinate2DMake([[point objectAtIndex:0] floatValue], [[point objectAtIndex:1] floatValue]);
         PQSpotAnnotation *annotation = [[PQSpotAnnotation alloc] initWithCoordinate:coord available:[[point objectAtIndex:2] intValue] name:[[point objectAtIndex:3] intValue]];
-        [spots addObject:annotation];
+        [self.map addAnnotation:annotation];
     }
-    [self.map addAnnotations:spots];
+    
 }
 
 - (void)showAvailabilitySelectionView {
@@ -1426,8 +1455,11 @@ typedef struct{
 
 
 - (IBAction)noneButtonPressed:(id)sender {
-    NSLog(@"im the none button\n");
-    [networkLayer testAsync];
+//    [networkLayer testAsync];
+//   [networkLayer insertTestData];
+    NSArray* MBIDS = [[NSArray alloc] initWithObjects:[NSNumber numberWithLong:1], nil];
+    [dataLayer fetchGridsForIDs:MBIDS];
+    
 }
 
 - (void)keyboardWillShow:(NSNotification *)note { 
@@ -1488,14 +1520,17 @@ typedef struct{
     if(!dataLayer){
         //prepare the data layer for fetching from core data
         dataLayer = [((PQAppDelegate*)[[UIApplication sharedApplication] delegate]) getDataLayer];
+        [dataLayer setMapController:self];
     }
     if(!networkLayer){
-        networkLayer = [((PQAppDelegate*)[[UIApplication sharedApplication] delegate])  getNetworkLayerWithDataLayer:dataLayer];
-        [networkLayer setParent:self];
+        networkLayer = [((PQAppDelegate*)[[UIApplication sharedApplication] delegate]) getNetworkLayer];
+//        networkLayer = [((PQAppDelegate*)[[UIApplication sharedApplication] delegate])  getNetworkLayerWithDataLayer:dataLayer];
+        [networkLayer setDataLayer:dataLayer];
+        [networkLayer setMapController:self];
     }
-    if(grids==nil) grids = [[NSMutableArray alloc] init];
-    if(spots==nil) spots = [[NSMutableArray alloc] init];
-    if(streets==nil) streets = [[NSMutableArray alloc] init];
+    if(gridMicroBlockMap==nil) gridMicroBlockMap = [[NSMutableDictionary alloc] init];
+    if(spotMicroBlockMap==nil) spotMicroBlockMap = [[NSMutableDictionary alloc] init];
+    if(streetMicroBlockMap==nil) streetMicroBlockMap = [[NSMutableDictionary alloc] init];
     
     //check the current zoom level to set the ZOOM_STATE integer.  
     if (self.map.bounds.size.width >= GRID_TO_STREET_SPAN_LAT) {
@@ -1611,11 +1646,3 @@ typedef struct{
 @end
 
 #pragma mark - IDEA DUMP
-////this overwrites the current grid colors, doesn't 
-//for( MKPolygon* overlay in grids){
-//    MKPolygonView* view = (MKPolygonView*) [map viewForOverlay:overlay];
-//    view.fillColor = [[UIColor veryLowAvailabilityColor] colorWithAlphaComponent:0.2];
-//    //we can edit already existing overlays, so NO need to remove them.  
-//    
-//    //maintain a hash map of ID to OVERLAY object, server responds with ID's, find and modify the color.  EZ.
-//}

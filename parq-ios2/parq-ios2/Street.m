@@ -2,7 +2,7 @@
 //  Street.m
 //  Parq
 //
-//  Created by Michael Xia on 6/5/12.
+//  Created by Michael Xia on 6/28/12.
 //  Copyright (c) 2012 Massachusetts Institute of Technology. All rights reserved.
 //
 
@@ -15,6 +15,7 @@
 
 @dynamic streetId;
 @dynamic streetName;
+@dynamic microblock;
 @dynamic childrenSpots;
 @dynamic childrenWaypoints;
 

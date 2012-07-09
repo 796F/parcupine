@@ -16,19 +16,79 @@
 #import "Grid.h"
 #import "Street.h"
 #import "Spot.h"
+#import "PQMapViewController.h"
+#import "MKShape+Color.h"
+#import "UIColor+Parq.h"
+
+
 
 @implementation DataLayer
 @synthesize managedObjectContext;
+@synthesize mapController;
+
+-(void) testFetch:(EntityType)entityType Microblocks:(NSArray*) mbids{
+    for(NSNumber* mbid in mbids){
+        NSFetchRequest *request = [[NSFetchRequest alloc] init];
+       
+        NSString* entityName;
+        if(entityType==kGridEntity){
+            entityName = @"Grid";
+        }else if(entityType == kStreetEntity){
+            entityName = @"Street";
+        }else{
+            entityName = @"Spot";
+        }
+        
+        NSString* sortKey = [NSString stringWithFormat:@"%ld",mbid.longValue];
+        
+        //set which entity type you want to search
+        NSEntityDescription* entity = [NSEntityDescription entityForName:entityName inManagedObjectContext:managedObjectContext];
+        [request setEntity:entity];
+        //set the sorting params
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K == %@", @"microblock", sortKey];
+        [request setPredicate:predicate];
+        
+        NSError *error = nil;
+        NSArray* returnedObjects = [managedObjectContext executeFetchRequest:request error:&error];
+//        NSUInteger count = [managedObjectContext countForFetchRequest:request error:&error];
+        for(Grid* grid in returnedObjects){
+            //for each returned grid
+            NSLog(@"%f %f\n", grid.lat.doubleValue, grid.lon.doubleValue);
+        }
+    }
+}
 
 
--(NSDictionary*) fetchGridsForIDs:(NSArray*) microBlockIDs{
-    return nil;
+-(void) fetchGridsForIDs:(NSArray*) microBlockIDs{
+    //go through list of microblock ids.  
+    for(NSNumber* mbid in microBlockIDs){
+        //extract them from core data
+        NSFetchRequest *request = [[NSFetchRequest alloc] init];
+        NSEntityDescription *entity = [NSEntityDescription entityForName:@"Grid" inManagedObjectContext:managedObjectContext];
+        [request setEntity:entity];
+        NSString* sortKey = [NSString stringWithFormat:@"%ld",mbid.longValue];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K == %@", @"microblock", sortKey];
+        [request setPredicate:predicate];
+        NSError *error = nil;
+        NSArray* returnedObjects = [managedObjectContext executeFetchRequest:request error:&error];
+        NSMutableDictionary* gridMap = [[NSMutableDictionary alloc] initWithCapacity:returnedObjects.count];
+        for(Grid* grid in returnedObjects){
+            //these all belong to one microblock id.  
+            //NSLog(@"%lu = %f %f\n", grid.gridId.longValue, grid.lat.doubleValue, grid.lon.doubleValue);
+            [gridMap addEntriesFromDictionary:[[NSDictionary alloc] initWithObjectsAndKeys:[grid generateOverlay], grid.gridId, nil]];
+        }    
+        NSDictionary* mbidToGridMap = [[NSDictionary alloc] initWithObjectsAndKeys:gridMap,mbid, nil];
+        [mapController addNewOverlays:mbidToGridMap];
+    }
 }
--(NSDictionary*) fetchStreetsForIDs:(NSArray*) microBlockIDs{
-    return nil;    
+
+
+
+-(void) fetchStreetsForIDs:(NSArray*) microBlockIDs{
+   
 }
--(NSDictionary*) fetchSpotsForIDs:(NSArray*) microBlockIDs{
-    return nil;
+-(void) fetchSpotsForIDs:(NSArray*) microBlockIDs{
+    
 }
 - (NSSet *)fetchObjectsForEntityName:(NSString *)newEntityName
                        withPredicate:(id)stringOrPredicate {
@@ -50,8 +110,39 @@
     }    
     return [NSSet setWithArray:results];
 }
+-(BOOL) mbIdExistsInCoreData:(NSNumber*)objectId entityType:(EntityType) entityType{
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    NSString* entityName;
+    if(entityType==kGridEntity){
+        entityName = @"Grid";
+    }else if(entityType == kStreetEntity){
+        entityName = @"Street";
+    }else{
+        entityName = @"Spot";
+    }
+    NSString* sortKey = [NSString stringWithFormat:@"%ld",objectId.longValue];
+    
+    
+    
+    //set which entity type you want to search
+    NSEntityDescription* entity = [NSEntityDescription entityForName:entityName inManagedObjectContext:managedObjectContext];
+    [request setEntity:entity];
+    //set the sorting params
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K == %@", @"microblock", sortKey];
+    [request setPredicate:predicate];
+    
+    NSError *error = nil;
+    NSUInteger count = [managedObjectContext countForFetchRequest:request error:&error];
+    if (count==0) {
+        //NSLog(@"%s == %s did not occur\n", sortField.UTF8String, sortKey.UTF8String);
+        return false;
+    }else{
+        //NSLog(@"%s == %s exists!!\n", sortField.UTF8String, sortKey.UTF8String);
+        return true;        
+    }
+}
 
--(BOOL) existsInCoreData:(NSObject*)object entityType:(EntityType) entityType{
+-(BOOL) objExistsInCoreData:(NSObject*)object entityType:(EntityType) entityType{
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
     NSString* entityName;
     NSString* sortField;
@@ -93,7 +184,7 @@
 -(void) storeSpotData:(NSArray*)spotList{
     //for each spot returned by server
     for(id spot in spotList){
-        if([self existsInCoreData:spot entityType:kSpotEntity]){
+        if([self objExistsInCoreData:spot entityType:kSpotEntity]){
             continue;
         }else{
             [managedObjectContext insertObject:spot];
@@ -108,7 +199,7 @@
 
 -(void) storeStreetData:(NSArray*)streetList{
     for(id street in streetList){
-        if([self existsInCoreData:street entityType:kStreetEntity]){
+        if([self objExistsInCoreData:street entityType:kStreetEntity]){
             continue;
         }else{
             [managedObjectContext insertObject:street];
@@ -122,7 +213,7 @@
 }
 -(void) storeGridData:(NSArray*)gridList{
     for(id grid in gridList){
-        if([self existsInCoreData:grid entityType:kGridEntity]){
+        if([self objExistsInCoreData:grid entityType:kGridEntity]){
             continue;
         }else{
             [managedObjectContext insertObject:grid];
@@ -135,19 +226,5 @@
     }
 }
 
--(NSArray*) retrieveGridsForCoordinate:(CLLocationCoordinate2D*)coord{
-    //extract them from core data
-    NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Grid" inManagedObjectContext:managedObjectContext];
-    [request setEntity:entity];
-    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"gridId" ascending:NO];
-    
-    //ADD search parameters for coordinate.  
-    
-    NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor, nil];
-    [request setSortDescriptors:sortDescriptors];
-    NSError* error  = nil;
-    return [[managedObjectContext executeFetchRequest:request error:&error] mutableCopy];
-}
 
 @end
