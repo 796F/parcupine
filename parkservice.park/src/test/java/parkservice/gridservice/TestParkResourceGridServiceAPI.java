@@ -1,5 +1,6 @@
 package parkservice.gridservice;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -21,6 +22,7 @@ import parkservice.gridservice.model.GetUpdatedSpotLevelInfoResponse;
 import parkservice.gridservice.model.GetUpdatedStreetInfoRequest;
 import parkservice.gridservice.model.GetUpdatedStreetInfoResponse;
 import parkservice.gridservice.model.GpsCoordinate;
+import parkservice.gridservice.model.SearchArea;
 import parkservice.gridservice.model.SearchForStreetsRequest;
 import parkservice.gridservice.model.SearchForStreetsResponse;
 import parkservice.resources.ParkResource;
@@ -37,16 +39,19 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		
 		FindGridsByGPSCoordinateRequest findGridByGPSCoordinateRequest = new FindGridsByGPSCoordinateRequest();
 		
-		GpsCoordinate topLeft = new GpsCoordinate();
-		topLeft.setLatitude(-180);
-		topLeft.setLongitude(-180);
-		GpsCoordinate bottomRight = new GpsCoordinate();
-		bottomRight.setLatitude(180);
-		bottomRight.setLongitude(180);
+		GpsCoordinate northEast = new GpsCoordinate();
+		northEast.setLatitude(180);
+		northEast.setLongitude(180);
+		GpsCoordinate southWest = new GpsCoordinate();
+		southWest.setLatitude(-180);
+		southWest.setLongitude(-180);
 		
 		findGridByGPSCoordinateRequest.setLastUpdateTime(0);
-		findGridByGPSCoordinateRequest.setTopLeftCorner(topLeft);
-		findGridByGPSCoordinateRequest.setBottomRightCorner(bottomRight);
+		List<SearchArea> testSearchArea = new ArrayList<SearchArea>();
+		testSearchArea.add(new SearchArea());
+		testSearchArea.get(0).setNorthEastCorner(northEast);
+		testSearchArea.get(0).setSouthWestCorner(southWest);
+		findGridByGPSCoordinateRequest.setSearchArea(testSearchArea);
 		
 		JAXBElement<FindGridsByGPSCoordinateRequest> testRequest = new JAXBElement<FindGridsByGPSCoordinateRequest>(
 				new QName("Test"), FindGridsByGPSCoordinateRequest.class, findGridByGPSCoordinateRequest);
@@ -63,10 +68,10 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		assertEquals(response1.length, 0);
 		
 		// test for search with no result from small search area
-		topLeft.setLatitude(0.0);
-		topLeft.setLongitude(0.0);
-		bottomRight.setLatitude(0.001);
-		bottomRight.setLongitude(0.001);
+		northEast.setLatitude(0.0);
+		northEast.setLongitude(0.0);
+		southWest.setLatitude(0.001);
+		southWest.setLongitude(0.001);
 		findGridByGPSCoordinateRequest.setLastUpdateTime(0);
 		FindGridsByGPSCoordinateResponse[] response2 = parkResource.findGridByGPSCoor(testRequest);
 		assertNotNull(response2);
@@ -78,15 +83,19 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		ParkResource parkResource = new ParkResource();
 		
 		SearchForStreetsRequest searchForStreetsRequest = new SearchForStreetsRequest();
-		GpsCoordinate topLeft = new GpsCoordinate();
-		topLeft.setLatitude(-180);
-		topLeft.setLongitude(-180);
-		GpsCoordinate bottomRight = new GpsCoordinate();
-		bottomRight.setLatitude(180);
-		bottomRight.setLongitude(180);
+		GpsCoordinate northEast = new GpsCoordinate();
+		northEast.setLatitude(180);
+		northEast.setLongitude(180);
+		GpsCoordinate southWest = new GpsCoordinate();
+		southWest.setLatitude(-180);
+		southWest.setLongitude(-180);
 		
-		searchForStreetsRequest.setTopLeftCorner(topLeft);
-		searchForStreetsRequest.setBottomRightCorner(bottomRight);
+		List<SearchArea> testSearchArea = new ArrayList<SearchArea>();
+		testSearchArea.add(new SearchArea());
+		testSearchArea.get(0).setNorthEastCorner(northEast);
+		testSearchArea.get(0).setSouthWestCorner(southWest);
+		searchForStreetsRequest.setSearchArea(testSearchArea);
+		
 		JAXBElement<SearchForStreetsRequest> jaxbTestRequest = new JAXBElement<SearchForStreetsRequest>(
 				new QName("Test"), SearchForStreetsRequest.class, searchForStreetsRequest);
 		
@@ -95,10 +104,10 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		assertTrue(response.length > 0);
 		
 		// test for search with no result
-		topLeft.setLatitude(0.0);
-		topLeft.setLongitude(0.0);
-		bottomRight.setLatitude(0.001);
-		bottomRight.setLongitude(0.001);
+		southWest.setLatitude(0.0);
+		southWest.setLongitude(0.0);
+		northEast.setLatitude(0.001);
+		northEast.setLongitude(0.001);
 		SearchForStreetsResponse[] response1 = parkResource.searchForStreets(jaxbTestRequest);
 		assertNotNull(response1);
 		assertEquals(response1.length, 0);
@@ -108,15 +117,18 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		ParkResource parkResource = new ParkResource();
 		
 		GetUpdatedStreetInfoRequest getUpdatedStreetInfoRequest = new GetUpdatedStreetInfoRequest();
-		GpsCoordinate topLeft = new GpsCoordinate();
-		topLeft.setLatitude(-180);
-		topLeft.setLongitude(-180);
-		GpsCoordinate bottomRight = new GpsCoordinate();
-		bottomRight.setLatitude(180);
-		bottomRight.setLongitude(180);
+		GpsCoordinate northEast = new GpsCoordinate();
+		northEast.setLatitude(180);
+		northEast.setLongitude(180);
+		GpsCoordinate southWest = new GpsCoordinate();
+		southWest.setLatitude(-180);
+		southWest.setLongitude(-180);
 		
-		getUpdatedStreetInfoRequest.setTopLeftCorner(topLeft);
-		getUpdatedStreetInfoRequest.setBottomRightCorner(bottomRight);
+		List<SearchArea> testSearchArea = new ArrayList<SearchArea>();
+		testSearchArea.add(new SearchArea());
+		testSearchArea.get(0).setNorthEastCorner(northEast);
+		testSearchArea.get(0).setSouthWestCorner(southWest);
+		getUpdatedStreetInfoRequest.setSearchArea(testSearchArea);
 		getUpdatedStreetInfoRequest.setLastUpdateTime(0);
 		JAXBElement<GetUpdatedStreetInfoRequest> jaxbTestRequest = new JAXBElement<GetUpdatedStreetInfoRequest>(
 				new QName("Test"), GetUpdatedStreetInfoRequest.class, getUpdatedStreetInfoRequest);
@@ -132,10 +144,10 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		assertEquals(response1.length, 0);
 		
 		// test for search with no result from small search area
-		topLeft.setLatitude(0.0);
-		topLeft.setLongitude(0.0);
-		bottomRight.setLatitude(0.001);
-		bottomRight.setLongitude(0.001);
+		southWest.setLatitude(0.0);
+		southWest.setLongitude(0.0);
+		northEast.setLatitude(0.001);
+		northEast.setLongitude(0.001);
 		getUpdatedStreetInfoRequest.setLastUpdateTime(0);
 		GetUpdatedStreetInfoResponse[] response2 = parkResource.getUpdatedStreetInfo(jaxbTestRequest);
 		assertNotNull(response2);
@@ -146,16 +158,18 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		ParkResource parkResource = new ParkResource();
 		
 		GetSpotLevelInfoRequest getStreetInfoRequest = new GetSpotLevelInfoRequest();
-		GpsCoordinate topLeft = new GpsCoordinate();
-		topLeft.setLatitude(-180);
-		topLeft.setLongitude(-180);
-		GpsCoordinate bottomRight = new GpsCoordinate();
-		bottomRight.setLatitude(180);
-		bottomRight.setLongitude(180);
+		GpsCoordinate northEast = new GpsCoordinate();
+		northEast.setLatitude(180);
+		northEast.setLongitude(180);
+		GpsCoordinate southWest = new GpsCoordinate();
+		southWest.setLatitude(-180);
+		southWest.setLongitude(-180);
 		
-		getStreetInfoRequest.setNumberOfSearchBox(1);
-		getStreetInfoRequest.setTopLeftCorner1(topLeft);
-		getStreetInfoRequest.setBottomRightCorner1(bottomRight);
+		List<SearchArea> testSearchArea = new ArrayList<SearchArea>();
+		testSearchArea.add(new SearchArea());
+		testSearchArea.get(0).setNorthEastCorner(northEast);
+		testSearchArea.get(0).setSouthWestCorner(southWest);
+		getStreetInfoRequest.setSearchArea(testSearchArea);
 		JAXBElement<GetSpotLevelInfoRequest> jaxbTestRequest = new JAXBElement<GetSpotLevelInfoRequest>(
 				new QName("Test"), GetSpotLevelInfoRequest.class, getStreetInfoRequest);
 		
@@ -168,10 +182,10 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		assertNotNull(response[0].getParkingSpace().get(0).getSpaceName().length() > 0);
 		
 		// test for search with no result
-		topLeft.setLatitude(0.0);
-		topLeft.setLongitude(0.0);
-		bottomRight.setLatitude(0.001);
-		bottomRight.setLongitude(0.001);
+		southWest.setLatitude(0.0);
+		southWest.setLongitude(0.0);
+		northEast.setLatitude(0.001);
+		northEast.setLongitude(0.001);
 		GetSpotLevelInfoResponse[] response1 = parkResource.getStreetInfo(jaxbTestRequest);
 		assertNotNull(response1);
 		assertEquals(response1.length, 0);
@@ -181,15 +195,19 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		// get the test grid
 		ParkResource parkResource = new ParkResource();
 		FindGridsByGPSCoordinateRequest findGridByGPSCoordinateRequest = new FindGridsByGPSCoordinateRequest();
-		GpsCoordinate topLeft = new GpsCoordinate();
-		topLeft.setLatitude(-180);
-		topLeft.setLongitude(-180);
-		GpsCoordinate bottomRight = new GpsCoordinate();
-		bottomRight.setLatitude(180);
-		bottomRight.setLongitude(180);
+		GpsCoordinate northEast = new GpsCoordinate();
+		northEast.setLatitude(180);
+		northEast.setLongitude(180);
+		GpsCoordinate southWest = new GpsCoordinate();
+		southWest.setLatitude(-180);
+		southWest.setLongitude(-180);
+		
+		List<SearchArea> testSearchArea = new ArrayList<SearchArea>();
+		testSearchArea.add(new SearchArea());
+		testSearchArea.get(0).setNorthEastCorner(northEast);
+		testSearchArea.get(0).setSouthWestCorner(southWest);
+		findGridByGPSCoordinateRequest.setSearchArea(testSearchArea);
 		findGridByGPSCoordinateRequest.setLastUpdateTime(0);
-		findGridByGPSCoordinateRequest.setTopLeftCorner(topLeft);
-		findGridByGPSCoordinateRequest.setBottomRightCorner(bottomRight);
 		JAXBElement<FindGridsByGPSCoordinateRequest> testRequest = new JAXBElement<FindGridsByGPSCoordinateRequest>(
 				new QName("Test"), FindGridsByGPSCoordinateRequest.class, findGridByGPSCoordinateRequest);
 		
@@ -205,23 +223,22 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		assertEquals(0.0, curFillRate);
 		
 		// do a confined grid search
-		topLeft.setLatitude(gridLat - 0.001);
-		topLeft.setLongitude(gridLong - 0.001);
-		bottomRight.setLatitude(gridLat + 0.001);
-		bottomRight.setLongitude(gridLong + 0.001);
+		southWest.setLatitude(gridLat - 0.001);
+		southWest.setLongitude(gridLong - 0.001);
+		northEast.setLatitude(gridLat + 0.001);
+		northEast.setLongitude(gridLong + 0.001);
 		
 		responseGrid = parkResource.findGridByGPSCoor(testRequest);
 		assertNotNull(responseGrid);
 		assertEquals(testGridId, responseGrid[0].getGridId());
 		
 		// search for streets in gps coor
-		topLeft.setLatitude(-180);
-		topLeft.setLongitude(-180);
-		bottomRight.setLatitude(180);
-		bottomRight.setLongitude(180);
+		southWest.setLatitude(-180);
+		southWest.setLongitude(-180);
+		northEast.setLatitude(180);
+		northEast.setLongitude(180);
 		SearchForStreetsRequest searchForStreetsRequest = new SearchForStreetsRequest();
-		searchForStreetsRequest.setTopLeftCorner(topLeft);
-		searchForStreetsRequest.setBottomRightCorner(bottomRight);
+		searchForStreetsRequest.setSearchArea(testSearchArea);
 	
 		JAXBElement<SearchForStreetsRequest> jaxbTestRequest = new JAXBElement<SearchForStreetsRequest>(
 				new QName("Test"), SearchForStreetsRequest.class, searchForStreetsRequest);
@@ -230,18 +247,18 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		assertTrue(responseStreet.length > 0);
 		
 		long testStreetId = responseStreet[0].getStreetId();
-		double streetLat = responseStreet[0].getGpsCoor().get(0).getLatitude();
-		double streetLong = responseStreet[0].getGpsCoor().get(0).getLongitude();
+		//double streetLat = responseStreet[0].getGpsCoor().get(0).getLatitude();
+		// double streetLong = responseStreet[0].getGpsCoor().get(0).getLongitude();
 		double streetFillRate = responseStreet[0].getFillRate();
 		
 		// test that the initial value is correct
 		assertEquals(0.0, streetFillRate);
 		
 		// do a confined street search
-		topLeft.setLatitude(streetLat - 0.0001);
-		topLeft.setLongitude(streetLong - 0.0001);
-		bottomRight.setLatitude(6);
-		bottomRight.setLongitude(6);
+		southWest.setLatitude(0);
+		southWest.setLongitude(0);
+		northEast.setLatitude(6);
+		northEast.setLongitude(6);
 		responseStreet = parkResource.searchForStreets(jaxbTestRequest);
 		assertNotNull(responseStreet);
 		assertTrue(responseStreet.length >= 1);
@@ -251,16 +268,21 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 	public void testGetUpdatedSpotLevelInfoResponse() {
 		// search for streets in gps coor
 		ParkResource parkResource = new ParkResource();
-		GpsCoordinate topLeft = new GpsCoordinate();
-		topLeft.setLatitude(-180);
-		topLeft.setLongitude(-180);
-		GpsCoordinate bottomRight = new GpsCoordinate();
-		bottomRight.setLatitude(180);
-		bottomRight.setLongitude(180);
+		GpsCoordinate northEast = new GpsCoordinate();
+		northEast.setLatitude(180);
+		northEast.setLongitude(180);
+		GpsCoordinate southWest = new GpsCoordinate();
+		southWest.setLatitude(-180);
+		southWest.setLongitude(-180);
+		
+		List<SearchArea> testSearchArea = new ArrayList<SearchArea>();
+		testSearchArea.add(new SearchArea());
+		testSearchArea.get(0).setNorthEastCorner(northEast);
+		testSearchArea.get(0).setSouthWestCorner(southWest);
 		
 		GetUpdatedSpotLevelInfoRequest getStreetInfoRequest = new GetUpdatedSpotLevelInfoRequest();
-		getStreetInfoRequest.setTopLeftCorner(topLeft);
-		getStreetInfoRequest.setBottomRightCorner(bottomRight);
+		getStreetInfoRequest.setSearchArea(testSearchArea);
+		
 		JAXBElement<GetUpdatedSpotLevelInfoRequest> jaxbTestStreetRequest = new JAXBElement<GetUpdatedSpotLevelInfoRequest>(
 				new QName("Test"), GetUpdatedSpotLevelInfoRequest.class, getStreetInfoRequest);
 		
@@ -274,17 +296,20 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 	public void testFillRateUpdate() {
 		// search for streets in gps coor
 		ParkResource parkResource = new ParkResource();
-		GpsCoordinate topLeft = new GpsCoordinate();
-		topLeft.setLatitude(-180);
-		topLeft.setLongitude(-180);
-		GpsCoordinate bottomRight = new GpsCoordinate();
-		bottomRight.setLatitude(180);
-		bottomRight.setLongitude(180);
 		
 		GetSpotLevelInfoRequest getStreetInfoRequest = new GetSpotLevelInfoRequest();
-		getStreetInfoRequest.setNumberOfSearchBox(1);
-		getStreetInfoRequest.setTopLeftCorner1(topLeft);
-		getStreetInfoRequest.setBottomRightCorner1(bottomRight);
+		GpsCoordinate northEast = new GpsCoordinate();
+		northEast.setLatitude(180);
+		northEast.setLongitude(180);
+		GpsCoordinate southWest = new GpsCoordinate();
+		southWest.setLatitude(-180);
+		southWest.setLongitude(-180);
+		
+		List<SearchArea> testSearchArea = new ArrayList<SearchArea>();
+		testSearchArea.add(new SearchArea());
+		testSearchArea.get(0).setNorthEastCorner(northEast);
+		testSearchArea.get(0).setSouthWestCorner(southWest);
+		getStreetInfoRequest.setSearchArea(testSearchArea);
 	
 		JAXBElement<GetSpotLevelInfoRequest> jaxbTestRequest = new JAXBElement<GetSpotLevelInfoRequest>(
 				new QName("Test"), GetSpotLevelInfoRequest.class, getStreetInfoRequest);
@@ -304,8 +329,7 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		// make sure the grid data also is updated
 		FindGridsByGPSCoordinateRequest findGridByGPSCoordinateRequest = new FindGridsByGPSCoordinateRequest();
 		findGridByGPSCoordinateRequest.setLastUpdateTime(0);
-		findGridByGPSCoordinateRequest.setTopLeftCorner(topLeft);
-		findGridByGPSCoordinateRequest.setBottomRightCorner(bottomRight);
+		findGridByGPSCoordinateRequest.setSearchArea(testSearchArea);
 		JAXBElement<FindGridsByGPSCoordinateRequest> testRequest = new JAXBElement<FindGridsByGPSCoordinateRequest>(
 				new QName("Test"), FindGridsByGPSCoordinateRequest.class, findGridByGPSCoordinateRequest);
 		
@@ -327,24 +351,27 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 	public void testFullParkingScenrio() {
 		// search for streets in gps coor
 		ParkResource parkResource = new ParkResource();
-		GpsCoordinate topLeft = new GpsCoordinate();
-		topLeft.setLatitude(-180);
-		topLeft.setLongitude(-180);
-		GpsCoordinate bottomRight = new GpsCoordinate();
-		bottomRight.setLatitude(180);
-		bottomRight.setLongitude(180);
 		
 		GetSpotLevelInfoRequest getStreetInfoRequest = new GetSpotLevelInfoRequest();
-		getStreetInfoRequest.setNumberOfSearchBox(1);
-		getStreetInfoRequest.setTopLeftCorner1(topLeft);
-		getStreetInfoRequest.setBottomRightCorner1(bottomRight);
+		GpsCoordinate northEast = new GpsCoordinate();
+		northEast.setLatitude(180);
+		northEast.setLongitude(180);
+		GpsCoordinate southWest = new GpsCoordinate();
+		southWest.setLatitude(-180);
+		southWest.setLongitude(-180);
+		
+		List<SearchArea> testSearchArea = new ArrayList<SearchArea>();
+		testSearchArea.add(new SearchArea());
+		testSearchArea.get(0).setNorthEastCorner(northEast);
+		testSearchArea.get(0).setSouthWestCorner(southWest);
+		getStreetInfoRequest.setSearchArea(testSearchArea);
+		
 		JAXBElement<GetSpotLevelInfoRequest> jaxbTestStreetRequest = new JAXBElement<GetSpotLevelInfoRequest>(
 				new QName("Test"), GetSpotLevelInfoRequest.class, getStreetInfoRequest);
 		
 		FindGridsByGPSCoordinateRequest findGridByGPSCoordinateRequest = new FindGridsByGPSCoordinateRequest();
 		findGridByGPSCoordinateRequest.setLastUpdateTime(0);
-		findGridByGPSCoordinateRequest.setTopLeftCorner(topLeft);
-		findGridByGPSCoordinateRequest.setBottomRightCorner(bottomRight);
+		findGridByGPSCoordinateRequest.setSearchArea(testSearchArea);
 		JAXBElement<FindGridsByGPSCoordinateRequest> jaxbTestGridRequest = new JAXBElement<FindGridsByGPSCoordinateRequest>(
 				new QName("Test"), FindGridsByGPSCoordinateRequest.class, findGridByGPSCoordinateRequest);
 		
