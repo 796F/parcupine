@@ -20,7 +20,7 @@
 #import "MKShape+Color.h"
 #import "UIColor+Parq.h"
 
-
+//
 
 @implementation DataLayer
 @synthesize managedObjectContext;
@@ -43,9 +43,8 @@
     
     
     //store data into core data.  
-    
-    for(NSString* key in data.allKeys){
-        NSString* innerString = [data objectForKey:key];
+    int gridid = 0;
+    for(NSString* innerString in data.allValues){
         NSArray* innerArray = [innerString componentsSeparatedByString:@","];
         //create the grid object
         Grid* grid = (Grid*)[NSEntityDescription insertNewObjectForEntityForName:@"Grid" inManagedObjectContext:managedObjectContext];
@@ -53,7 +52,8 @@
         [f setNumberStyle:NSNumberFormatterNoStyle];
         
         
-        [grid setGridId:[f numberFromString:key]];
+        [grid setGridId:[NSNumber numberWithInt:gridid]];
+        gridid++;
         NSNumber* lon = [f numberFromString:[innerArray objectAtIndex:1]];
         [grid setLon:lon];
         NSNumber* lat = [f numberFromString:[innerArray objectAtIndex:0]];
@@ -61,18 +61,8 @@
         [grid setStatus:[f numberFromString:[innerArray objectAtIndex:2]]];
         NSNumber* mbid = [f numberFromString:[innerArray objectAtIndex:3]];
         [grid setMicroblock:mbid];
-        
-        //store the grid objects into core data if it doesn't exist yet.  
-        if (![self objExistsInCoreData:grid EntityType:kGridEntity]){
-            //if grid isn't yet inside core data, leave it there.  
-            //create the mk polygon and return it.  
-        }else{
-            //since grid already exists, delete reference in MOC
-            [managedObjectContext deleteObject:grid];
-            NSLog(@"exists@");
-        }
+        NSLog(@"remaining...%d\n", 6400 - gridid);
     }
-        //return the entire list regardless.  
     
     if(![managedObjectContext save:&error]){
         //oh noes, cant' store this grid.  wtf to do.
