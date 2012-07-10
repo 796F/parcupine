@@ -337,4 +337,13 @@
     return CLLocationCoordinate2DMake(lat, lon);
 }
 
+#pragma mark - network status methods
+
+-(BOOL) isRecheableViaWifi{
+    return [[[RKClient sharedClient] reachabilityObserver] isReachableViaWiFi];
+}
+-(BOOL) isRecheableVia3G{
+    return [[[RKClient sharedClient] reachabilityObserver] isReachableViaWWAN];
+}
+
 @end

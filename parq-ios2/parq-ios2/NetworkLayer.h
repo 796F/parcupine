@@ -37,6 +37,10 @@
 -(NSMutableArray*) getStreetLevelMicroBlockIDListWithNE:(CLLocationCoordinate2D*) topRight SW:(CLLocationCoordinate2D*) botLeft;
 -(NSMutableArray*) getSpotLevelMicroBlockIDListWithNE:(CLLocationCoordinate2D*) topRight SW:(CLLocationCoordinate2D*) botLeft;
 
+//network status
+-(BOOL) isRecheableViaWifi;
+-(BOOL) isRecheableVia3G;
+
 //DEBUG
 -(void) testAsync;
 -(void) insertTestData;
