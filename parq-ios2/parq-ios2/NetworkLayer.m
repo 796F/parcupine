@@ -237,6 +237,12 @@
     
     unsigned long topRightRowCol[2]; //ind 0 is row and 1 is col
     long topRightId = [self gridLevelMicroBlockIDForPoint:topRight AndArray:topRightRowCol];
+
+    //DEBUG - top row is not loading sometimes, due to how mapping function worked.  testing manual adjustment  
+    topRightId += GRID_MICROBLOCK_COLUMNS;  //up the id by one row.  
+    topRightRowCol[0]++;                    //up the row by one.  
+    //end DEBUG
+
     unsigned long botLeftRowCol[2];
     long botLeftId = [self gridLevelMicroBlockIDForPoint:botLeft AndArray:botLeftRowCol];
 
@@ -345,5 +351,10 @@
 -(BOOL) isRecheableVia3G{
     return [[[RKClient sharedClient] reachabilityObserver] isReachableViaWWAN];
 }
+
+//subscribe to status change, maybe use?
+//[[NSNotificationCenter defaultCenter] addObserver:self 
+//                                         selector:@selector(reachabilityStatusChanged:) 
+//                                             name:RKReachabilityDidChangeNotification object:nil];
 
 @end
