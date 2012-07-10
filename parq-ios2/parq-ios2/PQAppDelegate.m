@@ -45,6 +45,7 @@
     if([dataLayer isFirstLaunch]){
         //first launch!  do something special.  
         NSLog(@"HELLO THIS IS YOUR FIRST LAUNCH YAAAAY\n");
+        [dataLayer loadMockData];
     }
     
     return YES;

@@ -24,23 +24,21 @@ typedef enum {
 @property (nonatomic,retain) PQMapViewController* mapController;
 @property (nonatomic, retain) NSManagedObjectContext *managedObjectContext;
 
--(BOOL) objExistsInCoreData:(NSObject*)object entityType:(EntityType) entityType;
--(BOOL) mbIdExistsInCoreData:(NSObject*)object entityType:(EntityType) entityType;
 - (NSSet *)fetchObjectsForEntityName:(NSString *)newEntityName
                        withPredicate:(id)stringOrPredicate;
 
+//checks if an object, or if an mbid, is already stored in core data.  
+-(BOOL) objExistsInCoreData:(NSObject*)object EntityType:(EntityType) entityType;
+-(BOOL) mbIdExistsInCoreData:(NSObject*)object EntityType:(EntityType) entityType;
+
 //call after server responds.  
--(void) storeSpotData:(NSArray*)spotList;
--(void) storeStreetData:(NSArray*)streetList;
--(void) storeGridData:(NSArray*)gridList;
-
--(void) fetchGridsForIDs:(NSArray*) microBlockIDs;
--(void) fetchStreetsForIDs:(NSArray*) microBlockIDs;
--(void) fetchSpotsForIDs:(NSArray*) microBlockIDs;
-
--(void) testFetch:(EntityType)entityType Microblocks:(NSArray*) mbids;
+-(void) store:(EntityType)entityType WithData:(NSArray*)overlayList;
+-(void) fetch:(EntityType) entityType ForIDs:(NSArray*) microBlockIDs;
 
 //settings stuff using plist
 -(BOOL) isFirstLaunch;
 
+//debug
+-(void) testFetch:(EntityType)entityType Microblocks:(NSArray*) microBlockIDs;
+-(void) loadMockData;
 @end

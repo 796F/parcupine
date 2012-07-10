@@ -57,10 +57,6 @@ UIActionSheetDelegate> {
 @property (nonatomic, retain) NSMutableArray* callouts;
 @property (nonatomic, retain) NSMutableArray* calloutLines;
 
-//@property (nonatomic, retain) NSMutableArray* grids;
-//@property (nonatomic, retain) NSMutableArray* streets;
-//@property (nonatomic, retain) NSMutableArray* spots;
-
 @property (nonatomic, retain) CLGeocoder* geocoder;
 @property (nonatomic) CLLocationCoordinate2D user_loc;
 @property (nonatomic) bool user_loc_isGood;
@@ -70,8 +66,9 @@ UIActionSheetDelegate> {
 @property (nonatomic) MKCoordinateRegion oldStreetLevelRegion;
 @property (atomic) bool shouldNotClearOverlays;
 
-//microblock organization
-@property (strong, nonatomic) NSMutableArray* currentMicroBlockIds; //list of current blocks
+//list of current blocks
+@property (strong, nonatomic) NSMutableArray* currentMicroBlockIds;
+
  /*         _         
           /   GID - *      
     MID  ---- GID - * 
@@ -87,9 +84,10 @@ UIActionSheetDelegate> {
 @property (strong, nonatomic) NSMutableDictionary* spotMicroBlockMap;
 
 //callback methods for updating map
--(void) addNewOverlays:(NSDictionary*) overlayMap;
--(void) updateOverlays:(NSDictionary*) updateMap;
+-(void) addNewOverlays:(NSDictionary*) overlayMap OfType:(EntityType) entityType;
+-(void) updateOverlays:(NSDictionary*) updateMap OfType:(EntityType) entityType;
 
 -(CLLocationCoordinate2D)topRightOfMap;
 -(CLLocationCoordinate2D)botLeftOfMap;
+
 @end

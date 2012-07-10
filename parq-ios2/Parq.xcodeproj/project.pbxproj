@@ -75,6 +75,7 @@
 		FCDFE25615913BE900FF6053 /* UserObject.m in Sources */ = {isa = PBXBuildFile; fileRef = FCDFE25515913BE900FF6053 /* UserObject.m */; };
 		FCDFE25A159140BE00FF6053 /* PQEditBookmarkViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FCDFE259159140BE00FF6053 /* PQEditBookmarkViewController.m */; };
 		FCE5A01F15AC81000069A03E /* parq.plist in Resources */ = {isa = PBXBuildFile; fileRef = FCE5A01E15AC81000069A03E /* parq.plist */; };
+		FCE5A02115ACD8AD0069A03E /* mockdata.plist in Resources */ = {isa = PBXBuildFile; fileRef = FCE5A02015ACD8AD0069A03E /* mockdata.plist */; };
 		FCF937C4157D497F0062A5A1 /* parq.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = FCF937BE157D49190062A5A1 /* parq.xcdatamodeld */; };
 		FCF937C5157D4A780062A5A1 /* DataLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = FC48562F1577FD37002C4479 /* DataLayer.m */; };
 		FCF937C6157D4A780062A5A1 /* NetworkLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = FC7CE864157943630059EE43 /* NetworkLayer.m */; };
@@ -232,6 +233,7 @@
 		FCDFE258159140BE00FF6053 /* PQEditBookmarkViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PQEditBookmarkViewController.h; sourceTree = "<group>"; };
 		FCDFE259159140BE00FF6053 /* PQEditBookmarkViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PQEditBookmarkViewController.m; sourceTree = "<group>"; };
 		FCE5A01E15AC81000069A03E /* parq.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = parq.plist; path = "parq-ios2/parq.plist"; sourceTree = "<group>"; };
+		FCE5A02015ACD8AD0069A03E /* mockdata.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = mockdata.plist; path = "parq-ios2/mockdata.plist"; sourceTree = "<group>"; };
 		FCF937BF157D49190062A5A1 /* parq.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = parq.xcdatamodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -263,6 +265,7 @@
 		8703AC9B1513F841002FE357 = {
 			isa = PBXGroup;
 			children = (
+				FCE5A02015ACD8AD0069A03E /* mockdata.plist */,
 				FCE5A01E15AC81000069A03E /* parq.plist */,
 				8703ACDF1513FC84002FE357 /* Resources */,
 				8703ACB01513F841002FE357 /* parq-ios2 */,
@@ -596,6 +599,7 @@
 				FC7214951592522100D228C6 /* doneup.png in Resources */,
 				FC6C9F6015925D02002C5418 /* donedown.png in Resources */,
 				FCE5A01F15AC81000069A03E /* parq.plist in Resources */,
+				FCE5A02115ACD8AD0069A03E /* mockdata.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

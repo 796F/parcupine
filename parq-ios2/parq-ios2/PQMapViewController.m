@@ -104,8 +104,6 @@ typedef struct{
 
 -(NSArray*)loadCambridgeBlockData{
         NSArray* data = [NSArray arrayWithObjects:
-                         
-                         
                          [[NSDictionary alloc] initWithObjectsAndKeys:@"42.377235,-71.11056;42.37505,-71.11112", @"line", [NSNumber numberWithInt:3], @"color", nil],
                          
                          [[NSDictionary alloc] initWithObjectsAndKeys:@"42.374928,-71.11007;42.377625,-71.109436", @"line", [NSNumber numberWithInt:5], @"color", nil],
@@ -119,7 +117,6 @@ typedef struct{
                          [[NSDictionary alloc] initWithObjectsAndKeys:@"42.37439,-71.105896;42.374706,-71.10835", @"line", [NSNumber numberWithInt:3], @"color", nil],
                          
                          [[NSDictionary alloc] initWithObjectsAndKeys:@"42.37738,-71.11063;42.3779,-71.10813;42.377975,-71.10781", @"line", [NSNumber numberWithInt:5], @"color", nil],
-                         
                          
                          [[NSDictionary alloc] initWithObjectsAndKeys:@"42.376755,-71.10657;42.377975,-71.10781", @"line", [NSNumber numberWithInt:3], @"color", nil],
                          
@@ -150,8 +147,6 @@ typedef struct{
                          [[NSDictionary alloc] initWithObjectsAndKeys:@"42.3779,-71.10813;42.37738,-71.11063", @"line", [NSNumber numberWithInt:5], @"color", nil],
                          
                          [[NSDictionary alloc] initWithObjectsAndKeys:@"42.37738,-71.11063;42.37695,-71.112656", @"line", [NSNumber numberWithInt:4], @"color", nil],
-                         
-                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.37695,-71.112656", @"line", [NSNumber numberWithInt:4], @"color", nil],
                          
                          [[NSDictionary alloc] initWithObjectsAndKeys:@"42.37695,-71.112656;42.376312,-71.11561", @"line", [NSNumber numberWithInt:2], @"color", nil],
                          
@@ -395,64 +390,37 @@ typedef struct{
             @"42.364894,-71.110846,1,1429,0,22",
             @"42.364846,-71.110835,0,1431,0,23",
             @"42.364799,-71.110830,1,1433,0,24",
-            //
-            @"42.365311,-71.110994,0,1431,0,24",
-            @"42.365291,-71.111118,0,1433,0,24",
-            @"42.365279,-71.111253,0,1434,0,24",
-            @"42.365267,-71.111388,0,1435,0,24",
-            @"42.365255,-71.111523,0,1436,0,24",
-            @"42.365243,-71.111658,0,1437,0,24",
-            @"42.365231,-71.111793,0,1438,0,24",
-            @"42.365219,-71.111928,0,1439,0,24",
             
-            @"42.364769,-71.11101,0,1433,0,24",
-            @"42.364759,-71.111133,0,1434,0,24",
-            @"42.364749,-71.111256,0,1435,0,24",
-            @"42.364739,-71.111379,0,1436,0,24",
-            @"42.364729,-71.111502,0,1437,0,24",
-            @"42.364719,-71.111625,0,1438,0,24",
-            @"42.364709,-71.111748,0,1439,0,24",
-            @"42.364699,-71.111871,0,1440,0,24",
-            @"42.364795,-71.11093,0,1444,024",
-
-            @"42.364689,-71.11101,0,1433,0,24",
-            @"42.364679,-71.111133,0,1434,0,24",
-            @"42.364669,-71.111256,0,1435,0,24",
-            @"42.364659,-71.111379,0,1436,0,24",
-            @"42.364649,-71.111502,0,1437,0,24",
-            @"42.364639,-71.111625,0,1438,0,24",
-            @"42.364629,-71.111748,0,1439,0,24",
-            @"42.364619,-71.111871,0,1440,0,24",
-            @"42.364684,-71.110887,0,1449,0,24",
-            
-            @"42.365555,-71.110825,1,1436,0,24",
-            @"42.365733,-71.110851,1,1437,0,24",
-            @"42.365911,-71.110877,1,1438,0,24",
-            @"42.366089,-71.110903,1,1439,0,24",
-            @"42.366267,-71.110929,1,1440,0,24",
-
-
             nil];
     
 }
 #pragma mark - Network and Data Layer callbacks
 
 //this is used by the network and data layers to add overlay objects to the map
--(void) addNewOverlays:(NSDictionary*) overlayMap{
+-(void) addNewOverlays:(NSDictionary*) overlayMap OfType:(EntityType) entityType{
     //add the new ones to map and add them to the mb map
     //NSLog(@"desc1:%s\n", overlayMap.allValues.description.UTF8String);
-    for(NSDictionary* gridsDictionary in overlayMap.allValues){
-        [self.map addOverlays:gridsDictionary.allValues];
+    for(NSDictionary* overlayDictionary in overlayMap.allValues){
+        [self.map addOverlays:overlayDictionary.allValues];
         //NSLog(@"desc:%s\n", gridsDictionary.allValues.description.UTF8String);
     }
-    [gridMicroBlockMap addEntriesFromDictionary:overlayMap];
+    
+    if(entityType == kGridEntity){
+        [gridMicroBlockMap addEntriesFromDictionary:overlayMap];
+    }else if (entityType == kStreetEntity){
+        [streetMicroBlockMap addEntriesFromDictionary:overlayMap];
+    }else{
+        [spotMicroBlockMap addEntriesFromDictionary:overlayMap];
+    }
+    
 }
 
 //this is used by the network layer to update the overlays on the map once server responds.  
--(void) updateOverlays:(NSDictionary*) updateMap{
+-(void) updateOverlays:(NSDictionary*) updateMap OfType:(EntityType) entityType{
     if(updateMap==nil){
         return;
     }
+    
     for(NSDictionary* gridsDictionary in gridMicroBlockMap.allValues){
         for(MKPolygon* overlay in gridsDictionary.allValues){
             NSNumber* newAvailability = [updateMap objectForKey:[NSNumber numberWithLong: overlay.objId]];
@@ -850,7 +818,7 @@ typedef struct{
 - (void)showGridLevelWithCoordinates:(CLLocationCoordinate2D *)coord {
     CLLocationCoordinate2D NE = [self topRightOfMap];
     CLLocationCoordinate2D SW = [self botLeftOfMap];
-    NSMutableArray* newMicroBlockIds = [networkLayer getGridLevelMicroBlockIDListWithNE:&NE SW:&SW];
+    NSMutableArray* newMicroBlockIds = [networkLayer getMBIDsWithType:kGridEntity NE:&NE SW:&SW];
     NSMutableArray* updateMicroBlockIds = [[NSMutableArray alloc] init];
     //see header file for structure of maps.  
     if (currentMicroBlockIds==nil){
@@ -876,10 +844,10 @@ typedef struct{
             }
         }        
     }
-    NSLog(@"current:%s\n", currentMicroBlockIds.description.UTF8String);
-    NSLog(@"new:%s\n", newMicroBlockIds.description.UTF8String);
-    NSLog(@"update %s\n", updateMicroBlockIds.description.UTF8String);
-    
+//    NSLog(@"current:%s\n", currentMicroBlockIds.description.UTF8String);
+//    NSLog(@"new:%s\n", newMicroBlockIds.description.UTF8String);
+//    NSLog(@"update %s\n", updateMicroBlockIds.description.UTF8String);
+
     //remove overlays no longer on map.  
     for(NSNumber* old in currentMicroBlockIds){
         //get the dictionary for the microblock id
@@ -890,7 +858,7 @@ typedef struct{
         [gridMicroBlockMap removeObjectForKey:old];
     }
     //add the grids that are missing, and update the rest.  
-    [networkLayer addGridsToMapForIDs:newMicroBlockIds UpdateForIDs:updateMicroBlockIds];
+    [networkLayer addOverlayOfType:kGridEntity ToMapForIDs:newMicroBlockIds AndUpdateForIDs:updateMicroBlockIds];
     
     //assign old to be a combination of new and update.  
     [newMicroBlockIds addObjectsFromArray:updateMicroBlockIds];
@@ -1319,7 +1287,8 @@ typedef struct{
 
 - (void)handleSingleTap:(UIGestureRecognizer *)sender {
     //close search bar on tap anywhere.
-    [self setSearchBar:(UISearchBar *)self.topSearchBar active:NO];
+    [self setSearchBar:topSearchBar active:NO];
+    [topSearchBar setText:@""];
 }
 
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
@@ -1456,10 +1425,15 @@ typedef struct{
 
 - (IBAction)noneButtonPressed:(id)sender {
 //    [networkLayer testAsync];
-//   [networkLayer insertTestData];
-    NSArray* MBIDS = [[NSArray alloc] initWithObjects:[NSNumber numberWithLong:1], nil];
-    [dataLayer fetchGridsForIDs:MBIDS];
-    
+
+//    int loop = 0;
+//    NSLog(@"map annotation count%d\n", map.annotations.count);
+//    for(PQSpotAnnotation* anno in map.annotations){
+//        loop++;
+//        NSLog(@"looped %d\n", loop);
+//        MKAnnotationView* view = [map viewForAnnotation:anno];
+//        view.image = [UIImage imageNamed:@"spot_occupied.png"];
+//    }
 }
 
 - (void)keyboardWillShow:(NSNotification *)note { 
@@ -1488,7 +1462,13 @@ typedef struct{
 }
 
 - (IBAction)numPadSubmit:(id)sender {
-    [self setSearchBar:topSearchBar active:NO];
+    if(topSearchBar.text.length==4){
+        [self setSearchBar:topSearchBar active:NO];
+        //set it as "SpotNumber:1234" so the user knows?  
+        //[topSearchBar setText:[NSString stringWithFormat:@"Spot: %s", topSearchBar.text.UTF8String]];
+    }else{
+        NSLog(@"check your number, len not 4\n");
+    }
 }
 #pragma mark - LOCATION
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation{

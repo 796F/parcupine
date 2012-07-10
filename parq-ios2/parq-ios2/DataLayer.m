@@ -28,6 +28,59 @@
 
 #pragma mark - plist calls
 
+-(void) loadMockData{
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSError *error;
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *path = [documentsDirectory stringByAppendingPathComponent:@"mockdata.plist"];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    if (![fileManager fileExistsAtPath: path]){
+        //if the file doesn't exist yet, create it and do write.  
+        NSString *bundle = [[NSBundle mainBundle] pathForResource:@"mockdata" ofType:@"plist"];
+        [fileManager copyItemAtPath:bundle toPath: path error:&error]; 
+    }
+    NSDictionary *data = [[NSDictionary alloc] initWithContentsOfFile:path];
+    
+    
+    //store data into core data.  
+    
+    for(NSString* key in data.allKeys){
+        NSString* innerString = [data objectForKey:key];
+        NSArray* innerArray = [innerString componentsSeparatedByString:@","];
+        //create the grid object
+        Grid* grid = (Grid*)[NSEntityDescription insertNewObjectForEntityForName:@"Grid" inManagedObjectContext:managedObjectContext];
+        NSNumberFormatter * f = [[NSNumberFormatter alloc] init];
+        [f setNumberStyle:NSNumberFormatterNoStyle];
+        
+        
+        [grid setGridId:[f numberFromString:key]];
+        NSNumber* lon = [f numberFromString:[innerArray objectAtIndex:1]];
+        [grid setLon:lon];
+        NSNumber* lat = [f numberFromString:[innerArray objectAtIndex:0]];
+        [grid setLat:lat];
+        [grid setStatus:[f numberFromString:[innerArray objectAtIndex:2]]];
+        NSNumber* mbid = [f numberFromString:[innerArray objectAtIndex:3]];
+        [grid setMicroblock:mbid];
+        
+        //store the grid objects into core data if it doesn't exist yet.  
+        if (![self objExistsInCoreData:grid EntityType:kGridEntity]){
+            //if grid isn't yet inside core data, leave it there.  
+            //create the mk polygon and return it.  
+        }else{
+            //since grid already exists, delete reference in MOC
+            [managedObjectContext deleteObject:grid];
+            NSLog(@"exists@");
+        }
+    }
+        //return the entire list regardless.  
+    
+    if(![managedObjectContext save:&error]){
+        //oh noes, cant' store this grid.  wtf to do.
+        NSLog(@"error saving!!!\n");
+    }
+}
+
+
 -(NSString*) getPlistPath{
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSError *error;
@@ -91,7 +144,7 @@
 }
 
 
--(void) fetchGridsForIDs:(NSArray*) microBlockIDs{
+-(void) fetch:(EntityType) entityType ForIDs:(NSArray*) microBlockIDs{
     //go through list of microblock ids.  
     for(NSNumber* mbid in microBlockIDs){
         //extract them from core data
@@ -110,7 +163,7 @@
             [gridMap addEntriesFromDictionary:[[NSDictionary alloc] initWithObjectsAndKeys:[grid generateOverlay], grid.gridId, nil]];
         }    
         NSDictionary* mbidToGridMap = [[NSDictionary alloc] initWithObjectsAndKeys:gridMap,mbid, nil];
-        [mapController addNewOverlays:mbidToGridMap];
+        [mapController addNewOverlays:mbidToGridMap OfType:kGridEntity];
     }
 }
 
@@ -142,7 +195,9 @@
     }    
     return [NSSet setWithArray:results];
 }
--(BOOL) mbIdExistsInCoreData:(NSNumber*)objectId entityType:(EntityType) entityType{
+
+
+-(BOOL) mbIdExistsInCoreData:(NSNumber*)objectId EntityType:(EntityType) entityType{
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
     NSString* entityName;
     if(entityType==kGridEntity){
@@ -174,7 +229,7 @@
     }
 }
 
--(BOOL) objExistsInCoreData:(NSObject*)object entityType:(EntityType) entityType{
+-(BOOL) objExistsInCoreData:(NSObject*)object EntityType:(EntityType) entityType{
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
     NSString* entityName;
     NSString* sortField;
@@ -212,14 +267,12 @@
         return true;        
     }
 }
-
--(void) storeSpotData:(NSArray*)spotList{
-    //for each spot returned by server
-    for(id spot in spotList){
-        if([self objExistsInCoreData:spot entityType:kSpotEntity]){
+-(void) store:(EntityType)entityType WithData:(NSArray*)overlayList{
+    for(id overlay in overlayList){
+        if([self objExistsInCoreData:overlay EntityType:entityType]){
             continue;
         }else{
-            [managedObjectContext insertObject:spot];
+            [managedObjectContext insertObject:overlay];
         }
     }
     NSError *error = nil;
@@ -227,35 +280,7 @@
     if (error!=nil) {
         NSLog(@"error saving to core data: %s\n", error.description.UTF8String);
     }    
-}
 
--(void) storeStreetData:(NSArray*)streetList{
-    for(id street in streetList){
-        if([self objExistsInCoreData:street entityType:kStreetEntity]){
-            continue;
-        }else{
-            [managedObjectContext insertObject:street];
-        }
-    }
-    NSError *error = nil;
-    [managedObjectContext save:&error];
-    if (error!=nil) {
-        NSLog(@"error saving to core data: %s\n", error.description.UTF8String);
-    }
-}
--(void) storeGridData:(NSArray*)gridList{
-    for(id grid in gridList){
-        if([self objExistsInCoreData:grid entityType:kGridEntity]){
-            continue;
-        }else{
-            [managedObjectContext insertObject:grid];
-        }
-    }
-    NSError *error = nil;
-    [managedObjectContext save:&error];
-    if (error!=nil) {
-        NSLog(@"error saving to core data: %s\n", error.description.UTF8String);
-    }
 }
 
 
