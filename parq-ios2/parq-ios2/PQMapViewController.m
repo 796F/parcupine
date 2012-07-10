@@ -1518,16 +1518,15 @@ typedef struct{
     
     [super viewDidLoad];
     if(!dataLayer){
-        //prepare the data layer for fetching from core data
-        dataLayer = [((PQAppDelegate*)[[UIApplication sharedApplication] delegate]) getDataLayer];
+        //set pointer to data layer.
+        dataLayer = ((PQAppDelegate*)[[UIApplication sharedApplication] delegate]).dataLayer;
         [dataLayer setMapController:self];
     }
     if(!networkLayer){
-        networkLayer = [((PQAppDelegate*)[[UIApplication sharedApplication] delegate]) getNetworkLayer];
-//        networkLayer = [((PQAppDelegate*)[[UIApplication sharedApplication] delegate])  getNetworkLayerWithDataLayer:dataLayer];
-        [networkLayer setDataLayer:dataLayer];
+        networkLayer = ((PQAppDelegate*)[[UIApplication sharedApplication] delegate]).networkLayer;
         [networkLayer setMapController:self];
     }
+    
     if(gridMicroBlockMap==nil) gridMicroBlockMap = [[NSMutableDictionary alloc] init];
     if(spotMicroBlockMap==nil) spotMicroBlockMap = [[NSMutableDictionary alloc] init];
     if(streetMicroBlockMap==nil) streetMicroBlockMap = [[NSMutableDictionary alloc] init];

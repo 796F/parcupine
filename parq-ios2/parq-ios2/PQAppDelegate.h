@@ -15,17 +15,17 @@
     NSManagedObjectModel *managedObjectModel;
     NSManagedObjectContext *managedObjectContext;
     NSPersistentStoreCoordinator *persistentStoreCoordinator;
+    DataLayer * dataLayer;
+    NetworkLayer* networkLayer;
 }
 
 @property (strong, nonatomic) UIWindow *window;
 @property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
 @property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
+@property (strong, nonatomic) DataLayer* dataLayer;
+@property (strong, nonatomic) NetworkLayer* networkLayer;
 
-
-- (DataLayer*) getDataLayer;
-- (NetworkLayer*) getNetworkLayer;
-- (NetworkLayer*) getNetworkLayerWithDataLayer:(DataLayer*) dl;
 - (void)saveContext;
 - (NSURL *)applicationDocumentsDirectory;
 @end

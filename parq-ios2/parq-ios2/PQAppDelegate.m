@@ -17,25 +17,13 @@
 @synthesize managedObjectModel = __managedObjectModel;
 @synthesize persistentStoreCoordinator = __persistentStoreCoordinator;
 @synthesize undoManager;
-    
--(DataLayer*) getDataLayer{
-    DataLayer* dl = [[DataLayer alloc] init];
-    dl.managedObjectContext = __managedObjectContext;
-    return dl;
-}
--(NetworkLayer*) getNetworkLayerWithDataLayer:(DataLayer*) dl{
-    NetworkLayer* nl = [[NetworkLayer alloc] init];
-    nl.dataLayer = dl;
-    return nl;
-}
+@synthesize dataLayer;    
+@synthesize networkLayer;
 
--(NetworkLayer*) getNetworkLayer{
-    NetworkLayer* nl = [[NetworkLayer alloc] init];
-    return nl;
-}
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    
 
     NSManagedObjectContext* context  = [self managedObjectContext];
     if(!context){
@@ -47,7 +35,18 @@
     NSURL* url = [NSURL URLWithString:@"http://75.101.132.219:80/"];
     [RKClient clientWithBaseURL:url];
 
-    // Override point for customization after application launch.
+    //set up data layer
+    dataLayer = [[DataLayer alloc] init];
+    dataLayer.managedObjectContext = __managedObjectContext;
+
+    networkLayer = [[NetworkLayer alloc] init];
+    networkLayer.dataLayer = dataLayer;
+
+    if([dataLayer isFirstLaunch]){
+        //first launch!  do something special.  
+        NSLog(@"HELLO THIS IS YOUR FIRST LAUNCH YAAAAY\n");
+    }
+    
     return YES;
 }
 							

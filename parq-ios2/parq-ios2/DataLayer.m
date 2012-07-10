@@ -26,6 +26,38 @@
 @synthesize managedObjectContext;
 @synthesize mapController;
 
+#pragma mark - plist calls
+
+-(NSString*) getPlistPath{
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSError *error;
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *path = [documentsDirectory stringByAppendingPathComponent:@"parq.plist"];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    if (![fileManager fileExistsAtPath: path]){
+        //if the file doesn't exist yet, create it and do write.  
+        NSString *bundle = [[NSBundle mainBundle] pathForResource:@"parq" ofType:@"plist"];
+        [fileManager copyItemAtPath:bundle toPath: path error:&error]; 
+    }
+    return path;
+}
+-(BOOL) isFirstLaunch{
+    NSString* path = [self getPlistPath];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
+    
+    if(![data objectForKey:@"previouslyLaunched"]){
+        //now mark the app as launched.  
+        [data setObject:[NSNumber numberWithBool:YES] forKey:@"previouslyLaunched"];        
+        [data writeToFile: path atomically:YES];
+        return YES;        
+    }else{
+        //flag was raised, this isn't first launch.  
+        return NO;
+    }
+}
+
+#pragma mark - CORE DATA CALLS
+
 -(void) testFetch:(EntityType)entityType Microblocks:(NSArray*) mbids{
     for(NSNumber* mbid in mbids){
         NSFetchRequest *request = [[NSFetchRequest alloc] init];

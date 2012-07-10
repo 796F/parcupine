@@ -40,4 +40,7 @@ typedef enum {
 
 -(void) testFetch:(EntityType)entityType Microblocks:(NSArray*) mbids;
 
+//settings stuff using plist
+-(BOOL) isFirstLaunch;
+
 @end
