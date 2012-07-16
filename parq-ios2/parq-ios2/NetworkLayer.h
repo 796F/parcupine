@@ -37,5 +37,5 @@
 
 //DEBUG
 -(void) testAsync;
-
+-(void) loadSpotData;
 @end

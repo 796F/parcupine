@@ -12,12 +12,10 @@
  All pushes to, and fetches from, will go thorugh this layer.  There is a single instance.  
  */
 
-
-
-#import "NetworkLayer.h"
 #import "Grid.h"
-#import "PQMapViewController.h"
 #import "Parser.h"
+#import "NetworkLayer.h"
+#import "PQMapViewController.h"
 #import "AbstractRequestObject.h"
 
 //microblock constants
@@ -26,11 +24,11 @@
 #define GRID_MICROBLOCK_COLUMNS 40
 #define GRID_MICROBLOCK_ROWS 40
 
-#define STREET_MICROBLOCK_COLUMNS 40
-#define STREET_MICROBLOCK_ROWS 40
+#define STREET_MICROBLOCK_COLUMNS 160
+#define STREET_MICROBLOCK_ROWS 160      //25,600 total for street level.  
 
-#define SPOT_MICROBLOCK_COLUMNS 40
-#define SPOT_MICROBLOCK_ROWS 40
+#define SPOT_MICROBLOCK_COLUMNS 640
+#define SPOT_MICROBLOCK_ROWS 640    //409600 total mbids per city for spot level.  
 
 #define GRID_MICROBLOCK_LENGTH_DEGREES 0.01
 #define STREET_MICROBLOCK_LENGTH_DEGREES 0.0025
@@ -44,6 +42,7 @@
 @synthesize mapController;
 
 -(void) testAsync{
+
     NSArray* keys = [NSArray arrayWithObjects:@"email", @"password", nil];
     NSArray* value = [NSArray arrayWithObjects:@"miguel@parqme.com", @"a", nil];
     NSDictionary* info = [NSDictionary dictionaryWithObjects:value forKeys:keys];
@@ -84,9 +83,13 @@
     NSLog(@"timed out\n");    
 }
 
-
 -(void) request:(EntityType) entityType WithIDs:(NSArray*)IDsToRequest{
     if(IDsToRequest.count>0){
+        
+        //*debug DO NOTHING
+        return;
+        //end debug
+        
         //request from the server overlay information like lat/long etc.  
         NSArray* boundingBoxes = [self convertGridLevelIDs:IDsToRequest];
         NSNumber* lastUpdateTimeLong = [NSNumber numberWithLong:[[NSDate date] timeIntervalSince1970]];
@@ -100,9 +103,6 @@
         [abs setContentType:@"application/json"];
         [[RKClient sharedClient] post:@"/parkservice.auth" params:abs delegate:self];
     }
-}
--(void) requestGridsWithIDs:(NSArray*) newIDs{
-    
 }
 
 -(void) addOverlayOfType:(EntityType) entityType ToMapForIDs:(NSArray*) newIDs AndUpdateForIDs:(NSArray*) updateIDs{
@@ -126,7 +126,7 @@
     CLLocationCoordinate2D NE = [mapController topRightOfMap];
     CLLocationCoordinate2D SW = [mapController botLeftOfMap];
     
-    [self updateOverlayOfType:(EntityType) entityType WithNE:&NE SW:&SW];
+    [self updateOverlayOfType:entityType WithNE:&NE SW:&SW];
 }
 
 
@@ -136,50 +136,6 @@
     //package them properly for the map controller's function.  
     [mapController updateOverlays:nil OfType:kGridEntity];
 }
-
-
--(NSArray*) callGridWithNE:(CLLocationCoordinate2D*) topRight SW:(CLLocationCoordinate2D*) botLeft{    
-    //if were missing some, get grids json from server
-    NSArray* grids = [NSArray arrayWithObjects:                      
-                      
-                      nil];
-    NSMutableArray* gridArr = [[NSMutableArray alloc] initWithCapacity:grids.count];
-    for(id dic in grids){
-        //create the grid object
-        Grid* grid = (Grid*)[NSEntityDescription insertNewObjectForEntityForName:@"Grid" inManagedObjectContext:dataLayer.managedObjectContext];
-        NSNumberFormatter * f = [[NSNumberFormatter alloc] init];
-        [f setNumberStyle:NSNumberFormatterNoStyle];
-        [grid setGridId:[f numberFromString:[dic objectForKey:@"gridId"]]];
-        [grid setLon:[f numberFromString:[dic objectForKey:@"lon"]]];
-        [grid setLat:[f numberFromString:[dic objectForKey:@"lat"]]];
-        [grid setStatus:[f numberFromString:[dic objectForKey:@"fillRate"]]];
-        //store the grid objects into core data if it doesn't exist yet.  
-        if (![dataLayer objExistsInCoreData:grid EntityType:kGridEntity]){
-            //if grid isn't yet inside core data, leave it there.  
-            //create the mk polygon and return it.  
-        }else{
-            //since grid already exists, delete reference in MOC
-            //how can we keep the grid, but dont' save it.  
-            //different object here?  perhaps using the same fields.  
-        }
-        [gridArr addObject:grid];
-    }
-    //return the entire list regardless.  
-    NSError* error= nil;
-    if(![dataLayer.managedObjectContext save:&error]){
-        //oh noes, cant' store this grid.  wtf to do.
-    }
-    return gridArr; 
-}
-
--(NSArray*) callSpotWithNE:(CLLocationCoordinate2D*) topRight SW:(CLLocationCoordinate2D *) botLeft{
-    return nil;
-}
-
--(NSArray*) callStreetWithNE:(CLLocationCoordinate2D *)topRight SW:(CLLocationCoordinate2D *)botLeft{
-    return nil;
-}
-
 
 #pragma mark - MICROBLOCK FUNCTIONS
 
@@ -196,12 +152,16 @@
     //depending on the entity type, call a different function.      
     if(entityType == kGridEntity){
         colLength = GRID_MICROBLOCK_COLUMNS;
-        topRightId = [self gridLevelMicroBlockIDForPoint:topRight AndArray:topRightRowCol];
-        botLeftId = [self gridLevelMicroBlockIDForPoint:botLeft AndArray:botLeftRowCol];    
+        topRightId = [self get:kGridEntity MBIDForPoint:topRight AndArray:topRightRowCol];
+        botLeftId = [self get:kGridEntity MBIDForPoint:botLeft AndArray:botLeftRowCol];
     }else if(entityType == kStreetEntity){
-        
+        colLength = STREET_MICROBLOCK_COLUMNS;
+        topRightId = [self get:kStreetEntity MBIDForPoint:topRight AndArray:topRightRowCol];
+        botLeftId = [self get:kStreetEntity MBIDForPoint:botLeft AndArray:botLeftRowCol];
     }else{
-        
+        colLength = SPOT_MICROBLOCK_COLUMNS;
+        topRightId = [self get:kSpotEntity MBIDForPoint:topRight AndArray:topRightRowCol];
+        botLeftId = [self get:kSpotEntity MBIDForPoint:botLeft AndArray:botLeftRowCol];
     }
     
     //TESTING - top row is not loading sometimes, due to how mapping function worked.  testing manual adjustment, pre-loading surrounding area for ui flow.    
@@ -229,26 +189,7 @@
     return microBlockIds;
 }
 
--(long) gridLevelMicroBlockIDForPoint:(CLLocationCoordinate2D*) coord AndArray:(unsigned long*) RowCol{
-    double dy = coord->latitude - MICROBLOCK_REF_LAT;
-    double dx = coord->longitude - MICROBLOCK_REF_LON;
-    if(dx < 0 || dy < 0 ){
-        return MID_BOUNDING_ERROR;
-    }
-    long row = dy/GRID_MICROBLOCK_LENGTH_DEGREES;
-    long col = dx/GRID_MICROBLOCK_LENGTH_DEGREES;
-    RowCol[0] = row;
-    RowCol[1] = col;
-    if(row> GRID_MICROBLOCK_ROWS || col > GRID_MICROBLOCK_COLUMNS){
-        return MID_BOUNDING_ERROR;
-    }    
-    long microblock_id = row * GRID_MICROBLOCK_COLUMNS + col;
-    //NSLog(@"row: %lu col %lu gives id: %lu\n", row, col, microblock_id);
-    [self botLeftOfGridID:[NSNumber numberWithLong:microblock_id]];
-    return microblock_id;
-}
-
--(long) get:(EntityType) entityType MBIDsForPoint:(CLLocationCoordinate2D*) coord AndArray:(unsigned long*) RowCol{
+-(long) get:(EntityType) entityType MBIDForPoint:(CLLocationCoordinate2D*) coord AndArray:(unsigned long*) RowCol{
     double dy;
     double dx;
     long row;
@@ -278,26 +219,14 @@
             return MID_BOUNDING_ERROR;
         }
     }
-
     RowCol[0] = row;
     RowCol[1] = col;
     long microblock_id = row * colLength + col;
     return microblock_id;
     
 }
--(NSArray*) getStreetLevelMicroBlockIDListWithNE:(CLLocationCoordinate2D*) topRight SW:(CLLocationCoordinate2D*) botLeft{    
-    
-    return nil;
-}
 
--(long) spotLevelMicroBlockIDForPoint:(CLLocationCoordinate2D*) coord AndArray:(unsigned long*) RowCol{
-    return 0;
-}
--(NSArray*) getSpotLevelMicroBlockIDListWithNE:(CLLocationCoordinate2D*) topRight SW:(CLLocationCoordinate2D*) botLeft{    
-    
-    return nil;
-}
-
+#pragma mark - MBID TO BOUNDING BOX
 //return minimal number of bounding boxes to represent the given microblocks.  
 -(NSArray*) convertGridLevelIDs:(NSArray*) microBlockIds{
     //this list is pre-sorted, smallest to largest.  
@@ -323,10 +252,10 @@
             nextID = [NSNumber numberWithLong:nextID.longValue+GRID_MICROBLOCK_COLUMNS];
         }
         BoundingBox* bb = [[BoundingBox alloc] init];
-        bb.botLeft = [self botLeftOfGridID:startId];
+        bb.botLeft = [self botLeftOf:kGridEntity WithID:startId];
         if(rightCount > upCount){
             //create bonding box going right
-            bb.topRight = [self topRightOfGridId:[NSNumber numberWithLong:startId.longValue+rightCount]];
+            bb.topRight = [self topRightOf:kGridEntity WithId:[NSNumber numberWithLong:startId.longValue+rightCount]];
             //add th bounding box to output
             [results addObject:bb];
             //remove indexes 0, 1, 2, ...
@@ -334,7 +263,7 @@
             [temp removeObjectsAtIndexes:toRemoveList];
         }else{
             //create bounding box going up
-            bb.topRight = [self topRightOfGridId:[NSNumber numberWithLong:startId.longValue+upCount*GRID_MICROBLOCK_COLUMNS]];
+            bb.topRight = [self topRightOf:kGridEntity WithId:[NSNumber numberWithLong:startId.longValue+upCount*GRID_MICROBLOCK_COLUMNS]];
             [results addObject:bb];
             for(int i=0; i<upCount; i++){
                 //removes objects 0, 35, 70, ...
@@ -349,7 +278,7 @@
     return results;
 }
 //given a microblock ID for grid, return the bottom left lat/lon
--(CLLocationCoordinate2D) botLeftOfGridID:(NSNumber*) gridId{
+-(CLLocationCoordinate2D) botLeftOf:(EntityType)entityType WithID:(NSNumber*) gridId{
     int column = gridId.longValue % GRID_MICROBLOCK_COLUMNS;
     int row = gridId.longValue / GRID_MICROBLOCK_COLUMNS;
     double lat = MICROBLOCK_REF_LAT + row * GRID_MICROBLOCK_LENGTH_DEGREES;
@@ -357,7 +286,7 @@
     return CLLocationCoordinate2DMake(lat, lon);
 }
 //given a microblock ID for grid, return the top right lat/lon
--(CLLocationCoordinate2D) topRightOfGridId:(NSNumber*) gridId{
+-(CLLocationCoordinate2D) topRightOf:(EntityType)entityType  WithId:(NSNumber*) gridId{
     int column = gridId.longValue % GRID_MICROBLOCK_COLUMNS;
     int row = gridId.longValue / GRID_MICROBLOCK_COLUMNS;
     double lat = MICROBLOCK_REF_LAT + (row+1) * GRID_MICROBLOCK_LENGTH_DEGREES;
@@ -378,5 +307,62 @@
 //[[NSNotificationCenter defaultCenter] addObserver:self 
 //                                         selector:@selector(reachabilityStatusChanged:) 
 //                                             name:RKReachabilityDidChangeNotification object:nil];
-
+-(void) loadSpotData{
+    
+    
+    NSArray* spotData = [NSArray arrayWithObjects:
+                         @"42.365354,-71.110843,1,1410,0,1",
+                         @"42.365292,-71.110835,1,1412,0,2",
+                         @"42.365239,-71.110825,1,1414,0,3",
+                         @"42.365187,-71.110811,0,1416,0,4",
+                         @"42.365140,-71.110806,1,1418,0,5",
+                         @"42.365092,-71.110798,0,1420,0,6",
+                         @"42.365045,-71.110790,1,1422,0,7",
+                         @"42.364995,-71.110782,0,1424,0,8",
+                         @"42.364947,-71.110768,0,1426,0,9",
+                         @"42.364896,-71.110766,0,1428,0,10",
+                         @"42.364846,-71.110752,0,1430,0,11",
+                         @"42.364797,-71.110739,0,1432,0,12",
+                         
+                         @"42.365348,-71.110924,1,1411,0,13",
+                         @"42.365300,-71.110916,0,1413,0,14",
+                         @"42.365251,-71.110905,0,1415,0,15",
+                         @"42.365203,-71.110900,0,1417,0,16",
+                         @"42.365154,-71.110892,1,1419,0,17",
+                         @"42.365104,-71.110876,0,1421,0,18",
+                         @"42.365049,-71.110868,1,1423,0,19",
+                         @"42.364993,-71.110860,1,1425,0,20",
+                         @"42.364943,-71.110849,1,1427,0,21",
+                         @"42.364894,-71.110846,1,1429,0,22",
+                         @"42.364846,-71.110835,0,1431,0,23",
+                         @"42.364799,-71.110830,1,1433,0,24",
+                         nil];
+    int spotId = 0;
+    for(NSString* spotString in spotData){
+        NSArray* innerArray = [spotString componentsSeparatedByString:@","];
+        //create the grid object
+        Spot* spot = (Spot*)[NSEntityDescription insertNewObjectForEntityForName:@"Spot" inManagedObjectContext:dataLayer.managedObjectContext];
+        NSNumberFormatter * f = [[NSNumberFormatter alloc] init];
+        [f setNumberStyle:NSNumberFormatterNoStyle];
+        [spot setSpotId:[NSNumber numberWithInt:spotId]];
+        spotId++;
+        NSNumber* lon = [f numberFromString:[innerArray objectAtIndex:1]];
+        [spot setLon:lon];
+        NSNumber* lat = [f numberFromString:[innerArray objectAtIndex:0]];
+        [spot setLat:lat];
+        [spot setStatus:[f numberFromString:[innerArray objectAtIndex:2]]];
+        [spot setSpotNumber:[f numberFromString:[innerArray objectAtIndex:3]]];
+        CLLocationCoordinate2D coord = CLLocationCoordinate2DMake(lat.floatValue, lon.floatValue);
+        unsigned long arr[2];
+        NSNumber* mbid = [NSNumber numberWithLong:[self get:kSpotEntity MBIDForPoint:&coord AndArray:arr]];
+        [spot setMicroblock:mbid];
+        NSLog(@"%d remaining..\n", 24 - spotId);
+    }
+    
+    NSError* error;
+    if(![dataLayer.managedObjectContext save:&error]){
+        //oh noes, cant' store this grid.  wtf to do.
+        NSLog(@"error saving!!!\n");
+    }
+}
 @end

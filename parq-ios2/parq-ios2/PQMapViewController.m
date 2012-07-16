@@ -99,7 +99,7 @@ typedef struct{
 @synthesize currentMicroBlockIds;
 
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    NSLog(@"hello\n");
+    NSLog(@"\n <<<<PQMapViewController:tableView did select row index path says hiiii>>>>\n\n");
 }
 
 -(NSArray*)loadCambridgeBlockData{
@@ -309,8 +309,6 @@ typedef struct{
                          [[NSDictionary alloc] initWithObjectsAndKeys:@"42.366805,-71.110383;42.368375,-71.108806", @"line", [NSNumber numberWithInt:1], @"color", nil]
                          ,nil];
 
-     
-
     NSMutableArray* segList = [[NSMutableArray alloc] initWithCapacity:data.count];
     for(id line in data){
         NSArray *raw_waypoints = [[line objectForKey:@"line"] componentsSeparatedByString:@";"];
@@ -362,55 +360,25 @@ typedef struct{
     }
     return segList;
 }
-
--(NSArray*) loadSpotData {
-    return [NSArray arrayWithObjects:
-            @"42.365354,-71.110843,1,1410,0,1",
-            @"42.365292,-71.110835,1,1412,0,2",
-            @"42.365239,-71.110825,1,1414,0,3",
-            @"42.365187,-71.110811,0,1416,0,4",
-            @"42.365140,-71.110806,1,1418,0,5",
-            @"42.365092,-71.110798,0,1420,0,6",
-            @"42.365045,-71.110790,1,1422,0,7",
-            @"42.364995,-71.110782,0,1424,0,8",
-            @"42.364947,-71.110768,0,1426,0,9",
-            @"42.364896,-71.110766,0,1428,0,10",
-            @"42.364846,-71.110752,0,1430,0,11",
-            @"42.364797,-71.110739,0,1432,0,12",
-            
-            @"42.365348,-71.110924,1,1411,0,13",
-            @"42.365300,-71.110916,0,1413,0,14",
-            @"42.365251,-71.110905,0,1415,0,15",
-            @"42.365203,-71.110900,0,1417,0,16",
-            @"42.365154,-71.110892,1,1419,0,17",
-            @"42.365104,-71.110876,0,1421,0,18",
-            @"42.365049,-71.110868,1,1423,0,19",
-            @"42.364993,-71.110860,1,1425,0,20",
-            @"42.364943,-71.110849,1,1427,0,21",
-            @"42.364894,-71.110846,1,1429,0,22",
-            @"42.364846,-71.110835,0,1431,0,23",
-            @"42.364799,-71.110830,1,1433,0,24",
-            
-            nil];
-    
-}
 #pragma mark - Network and Data Layer callbacks
 
 //this is used by the network and data layers to add overlay objects to the map
 -(void) addNewOverlays:(NSDictionary*) overlayMap OfType:(EntityType) entityType{
-    //add the new ones to map and add them to the mb map
-    //NSLog(@"desc1:%s\n", overlayMap.allValues.description.UTF8String);
-    for(NSDictionary* overlayDictionary in overlayMap.allValues){
-        [self.map addOverlays:overlayDictionary.allValues];
-        //NSLog(@"desc:%s\n", gridsDictionary.allValues.description.UTF8String);
-    }
-    
     if(entityType == kGridEntity){
         [gridMicroBlockMap addEntriesFromDictionary:overlayMap];
+        for(NSDictionary* overlayDictionary in overlayMap.allValues){
+            [self.map addOverlays:overlayDictionary.allValues];
+        }
     }else if (entityType == kStreetEntity){
         [streetMicroBlockMap addEntriesFromDictionary:overlayMap];
+        for(NSDictionary* overlayDictionary in overlayMap.allValues){
+            [self.map addOverlays:overlayDictionary.allValues];
+        }
     }else{
         [spotMicroBlockMap addEntriesFromDictionary:overlayMap];
+        for(NSDictionary* overlayDictionary in overlayMap.allValues){
+            [self.map addAnnotations:overlayDictionary.allValues];
+        }
     }
     
 }
@@ -566,9 +534,10 @@ typedef struct{
     //keep track of some stuff
     NSMutableArray* insideCircle = [[NSMutableArray alloc] init];
     float avgLat=0, avgLon=0, count=0;
-    for(NSDictionary* spotMap in spotMicroBlockMap.allValues){
-        for(PQSpotAnnotation* spot in spotMap){
-            CLLocation* spot_loc = [[CLLocation alloc] initWithLatitude:        spot.coordinate.latitude longitude: spot.coordinate.longitude];
+    for(NSNumber* MBID in spotMicroBlockMap){
+        NSDictionary* spotMap = [spotMicroBlockMap objectForKey:MBID];
+        for(PQSpotAnnotation* spot in spotMap.allValues){
+            CLLocation* spot_loc = [[CLLocation alloc] initWithLatitude:spot.coordinate.latitude longitude: spot.coordinate.longitude];
             CLLocationDistance dist = [spot_loc distanceFromLocation:center];
             if(dist<radius-2 && spot.available == YES){
                 //inside the circle
@@ -580,7 +549,7 @@ typedef struct{
 
         }
     }
-    
+
 //    for(PQSpotAnnotation* spot in spots){
 //        CLLocation* spot_loc = [[CLLocation alloc] initWithLatitude:        spot.coordinate.latitude longitude: spot.coordinate.longitude];
 //        CLLocationDistance dist = [spot_loc distanceFromLocation:center];
@@ -716,8 +685,9 @@ typedef struct{
     [map removeOverlays:map.overlays];
     [map removeAnnotations:callouts];
     [map removeOverlays:calloutLines];
-    for(NSDictionary* spotsMap in spotMicroBlockMap){
-        [map removeAnnotations:spotsMap.allValues];
+    for(NSNumber* MBID in spotMicroBlockMap){
+        NSDictionary* spots = [spotMicroBlockMap objectForKey:MBID];
+        [map removeAnnotations:spots.allValues];
     }
     
     [callouts removeAllObjects];
@@ -725,6 +695,7 @@ typedef struct{
     [gridMicroBlockMap removeAllObjects];
     [streetMicroBlockMap removeAllObjects];
     [spotMicroBlockMap removeAllObjects];
+    [currentMicroBlockIds removeAllObjects];
 }
 
 - (void)clearGrids {
@@ -748,22 +719,19 @@ typedef struct{
 }
 
 -(void) clearStreets{
-    for(NSNumber* MBID in streetMicroBlockMap){
-        NSDictionary* streetMap = [streetMicroBlockMap objectForKey:MBID];
-        [self.map removeOverlays:streetMap.allValues];
-        [streetMicroBlockMap removeObjectForKey:MBID];
-    }
-//    [self.map removeOverlays:self.streets];
-//    [streets removeAllObjects];
+    [self.map removeOverlays:streetMicroBlockMap.allValues];
+//    for(NSNumber* MBID in streetMicroBlockMap){
+//        NSDictionary* streetMap = [streetMicroBlockMap objectForKey:MBID];
+//        [self.map removeOverlays:streetMap.allValues];
+//        [streetMicroBlockMap removeObjectForKey:MBID];
+//    }
 }
 -(void) clearSpots{
     for(NSNumber* MBID in spotMicroBlockMap){
         NSDictionary* spotMap = [spotMicroBlockMap objectForKey:MBID];
-        [self.map removeOverlays:spotMap.allValues];
+        [self.map removeAnnotations:spotMap.allValues];
         [spotMicroBlockMap removeObjectForKey:MBID];
     }
-//    [self.map removeAnnotations:self.spots];
-//    [spots removeAllObjects];
 }
 
 - (void)showSelectionCircle:(CLLocationCoordinate2D *)coord {
@@ -816,12 +784,16 @@ typedef struct{
 }
 
 - (void)showGridLevelWithCoordinates:(CLLocationCoordinate2D *)coord {
+    [self clearSpots];
+    [self clearStreets];
+    
     CLLocationCoordinate2D NE = [self topRightOfMap];
     CLLocationCoordinate2D SW = [self botLeftOfMap];
     NSMutableArray* newMicroBlockIds = [networkLayer getMBIDsWithType:kGridEntity NE:&NE SW:&SW];
     NSMutableArray* updateMicroBlockIds = [[NSMutableArray alloc] init];
     //see header file for structure of maps.  
-    if (currentMicroBlockIds==nil){
+    
+    if (currentMicroBlockIds==nil || currentMicroBlockIds.count==0){
         //everything needs to be loaded again.
     }else{
         //go through both arrays, from left to right.  
@@ -850,6 +822,7 @@ typedef struct{
 
     //remove overlays no longer on map.  
     for(NSNumber* old in currentMicroBlockIds){
+//    NSLog(@"removing...%lu\n", old.longValue);
         //get the dictionary for the microblock id
         NSDictionary* gridsForMicroBlock = [gridMicroBlockMap objectForKey:old];
         //remove all objects associated with that micro block
@@ -876,7 +849,7 @@ typedef struct{
     if(streetMicroBlockMap==NULL){
         streetMicroBlockMap = [[NSMutableDictionary alloc] init];
     }
-    
+    int streetid = 0;
     for (id line in data) {
         //        NSArray *raw_waypoints = [[line objectForKey:@"line"] componentsSeparatedByString:@";"];
         CLLocationCoordinate2D waypoints[2] = {[line A], [line B]};
@@ -893,27 +866,60 @@ typedef struct{
         int color = [((Segment*)line) color];
         [routeLine setColor:color];
         [self.map addOverlay:routeLine];        
+        NSDictionary* streetMap = [[NSDictionary alloc] initWithObjectsAndKeys:routeLine,[NSNumber numberWithInt:streetid], nil];
+        [streetMicroBlockMap addEntriesFromDictionary:streetMap];
+        streetid++;
     }
+
 
 }
 
 
-- (void)showSpotLevelWithCoordinates:(CLLocationCoordinate2D *)coord {
+- (void)showSpotLevelWithCoordinates:(CLLocationCoordinate2D *)coord {    
     [self clearStreets];
     [self clearGrids];
-    [self clearSpots];
     
-    NSArray* data = [self loadSpotData];
-    if(spotMicroBlockMap==NULL){
-        spotMicroBlockMap = [[NSMutableDictionary alloc] init];
-    }
-    for(id spot in data){
-        NSArray* point = [spot componentsSeparatedByString:@","];
-        CLLocationCoordinate2D coord = CLLocationCoordinate2DMake([[point objectAtIndex:0] floatValue], [[point objectAtIndex:1] floatValue]);
-        PQSpotAnnotation *annotation = [[PQSpotAnnotation alloc] initWithCoordinate:coord available:[[point objectAtIndex:2] intValue] name:[[point objectAtIndex:3] intValue]];
-        [self.map addAnnotation:annotation];
+    CLLocationCoordinate2D NE = [self topRightOfMap];
+    CLLocationCoordinate2D SW = [self botLeftOfMap];
+    NSMutableArray* newMicroBlockIds = [networkLayer getMBIDsWithType:kSpotEntity NE:&NE SW:&SW];
+    NSMutableArray* updateMicroBlockIds = [[NSMutableArray alloc] init];
+    //see header file for structure of maps.  
+    
+    if (currentMicroBlockIds==nil || currentMicroBlockIds.count==0){
+        //everything needs to be loaded again.
+    }else{
+        //go through both arrays, from left to right.  
+        int i=0, j=0;
+        while(i<currentMicroBlockIds.count && j< newMicroBlockIds.count){
+            //NSLog(@"currCount: %d, newCount: %d\n", currentMicroBlockIds.count, newMicroBlockIds.count);
+            long oldId = [[currentMicroBlockIds objectAtIndex:i] longValue];
+            long newId = [[newMicroBlockIds objectAtIndex:j] longValue];
+            if(oldId < newId){
+                i++;
+            }else if(newId < oldId){
+                j++;
+            }else{
+                
+                //remove both.  
+                [currentMicroBlockIds removeObjectAtIndex:i];
+                [newMicroBlockIds removeObjectAtIndex:j];
+                //add to update list.  
+                [updateMicroBlockIds addObject:[NSNumber numberWithLong:oldId]];
+            }
+        }        
     }
     
+    for(NSNumber* old in currentMicroBlockIds){
+        NSDictionary* spotForMicroBlock = [spotMicroBlockMap objectForKey:old];
+        [map removeAnnotations:[spotForMicroBlock allValues]];
+        [spotMicroBlockMap removeObjectForKey:old];
+    }
+    //add the grids that are missing, and update the rest.  
+    [networkLayer addOverlayOfType:kSpotEntity ToMapForIDs:newMicroBlockIds AndUpdateForIDs:updateMicroBlockIds];
+    
+    //assign old to be a combination of new and update.  
+    [newMicroBlockIds addObjectsFromArray:updateMicroBlockIds];
+    currentMicroBlockIds = newMicroBlockIds;    
 }
 
 - (void)showAvailabilitySelectionView {
@@ -929,6 +935,8 @@ typedef struct{
 }
 
 - (void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated {
+    //stops getting called sometimes if you zoom down and make callouts appear, then pinch out.  
+    //very inconsistent though, unsure what the issue is.  
     oldStreetLevelRegion.center = map.centerCoordinate;    
     if (displayedData != kNoneData) {
         double currentSpan = mapView.region.span.latitudeDelta;
@@ -939,10 +947,18 @@ typedef struct{
             [self clearMap];
         }else if (currentSpan >= GRID_TO_STREET_SPAN_LAT) {
             //within grid level, show grids.  
+            if(zoomState!=kGridZoomLevel){
+                //changed INTO grid level.  current ids useless.  
+                [currentMicroBlockIds removeAllObjects];
+            }
             zoomState = kGridZoomLevel;
             [self showGridLevelWithCoordinates:&center];
             [self showAvailabilitySelectionView];
         }else if(currentSpan >= STREET_TO_SPOT_SPAN_LAT){
+            if(zoomState!=kStreetZoomLevel){
+                //changed INTO street level.  current ids useless.  
+                [currentMicroBlockIds removeAllObjects];
+            }
             //within street level, show streets.  
             zoomState = kStreetZoomLevel;
             [self showStreetLevelWithCoordinates:&center];
@@ -957,7 +973,10 @@ typedef struct{
                 [self.map removeOverlay:gCircle];
             }
             shouldNotClearOverlays = false;
-            
+            if(zoomState!=kStreetZoomLevel){
+                //changed INTO spot level.  current ids useless.  
+                [currentMicroBlockIds removeAllObjects];
+            }
             //below the street canyon, fall down into spot level.  
             zoomState = kSpotZoomLevel;
             [mapView setRegion:MKCoordinateRegionMake(center, MKCoordinateSpanMake(SPOT_LEVEL_SPAN, SPOT_LEVEL_SPAN)) animated:YES];
@@ -1424,6 +1443,7 @@ typedef struct{
 
 
 - (IBAction)noneButtonPressed:(id)sender {
+    [self clearMap];
 //    [networkLayer testAsync];
 
 //    int loop = 0;
@@ -1478,7 +1498,6 @@ typedef struct{
             manager.distanceFilter = 30.0;
             MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(newLocation.coordinate, SPOT_LEVEL_REGION_METERS, SPOT_LEVEL_REGION_METERS);
             [self.map setRegion:[map regionThatFits:viewRegion] animated:YES];
-
             user_loc_isGood = true;
         }
     }
@@ -1561,6 +1580,7 @@ typedef struct{
                                              selector:@selector(keyboardWillShow:) 
                                                  name:UIKeyboardDidShowNotification 
                                                object:nil];
+    user_loc_isGood = false;
 }
 
 
@@ -1589,7 +1609,7 @@ typedef struct{
     locationManager.desiredAccuracy=kCLLocationAccuracyNearestTenMeters;
 
     [locationManager startUpdatingLocation];
-    user_loc_isGood = false;
+
 }
 
 - (void)viewDidAppear:(BOOL)animated

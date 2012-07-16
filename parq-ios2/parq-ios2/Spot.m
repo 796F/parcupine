@@ -2,23 +2,30 @@
 //  Spot.m
 //  Parq
 //
-//  Created by Michael Xia on 6/28/12.
-//  Copyright (c) 2012 Massachusetts Institute of Technology. All rights reserved.
+//  Created by Michael Xia on 7/11/12.
+//  Copyright (c) 2012 PARQ LLC. All rights reserved.
 //
 
 #import "Spot.h"
-#import "Street.h"
+#import "Waypoint.h"
 
 
 @implementation Spot
 
 @dynamic lat;
 @dynamic lon;
+@dynamic microblock;
 @dynamic segNumber;
 @dynamic spotId;
 @dynamic spotNumber;
 @dynamic status;
-@dynamic microblock;
-@dynamic parentStreet;
+@dynamic parentWaypoint;
+
+-(PQSpotAnnotation*) generateOverlay{
+    //allocate an annotation, fill it with the info provided
+    CLLocationCoordinate2D coord = CLLocationCoordinate2DMake([self.lat doubleValue], [self.lon doubleValue]);
+    PQSpotAnnotation *annotation = [[PQSpotAnnotation alloc] initWithCoordinate:coord available:[self.status intValue] name:[self.spotNumber intValue]];
+    return annotation;
+}
 
 @end

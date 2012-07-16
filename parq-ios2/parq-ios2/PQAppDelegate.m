@@ -46,6 +46,7 @@
         //first launch!  do something special.  
         NSLog(@"HELLO THIS IS YOUR FIRST LAUNCH YAAAAY\n");
         [dataLayer loadMockData];
+        [networkLayer loadSpotData];
     }
     
     return YES;

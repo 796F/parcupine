@@ -2,11 +2,12 @@
 //  Waypoint.m
 //  Parq
 //
-//  Created by Michael Xia on 6/28/12.
-//  Copyright (c) 2012 Massachusetts Institute of Technology. All rights reserved.
+//  Created by Michael Xia on 7/11/12.
+//  Copyright (c) 2012 PARQ LLC. All rights reserved.
 //
 
 #import "Waypoint.h"
+#import "Spot.h"
 #import "Street.h"
 
 
@@ -14,8 +15,9 @@
 
 @dynamic lat;
 @dynamic lon;
-@dynamic status;
 @dynamic microblock;
+@dynamic status;
 @dynamic parentStreet;
+@dynamic childrenSpots;
 
 @end

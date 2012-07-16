@@ -87,7 +87,6 @@
 -(BOOL) isFirstLaunch{
     NSString* path = [self getPlistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
-    
     if(![data objectForKey:@"previouslyLaunched"]){
         //now mark the app as launched.  
         [data setObject:[NSNumber numberWithBool:YES] forKey:@"previouslyLaunched"];        
@@ -135,25 +134,39 @@
 
 
 -(void) fetch:(EntityType) entityType ForIDs:(NSArray*) microBlockIDs{
+    NSString* entityName;
+    if(entityType==kGridEntity){
+        entityName = @"Grid";
+    }else if(entityType == kStreetEntity){
+        entityName = @"Street";
+    }else{
+        entityName = @"Spot";
+    }
     //go through list of microblock ids.  
     for(NSNumber* mbid in microBlockIDs){
         //extract them from core data
         NSFetchRequest *request = [[NSFetchRequest alloc] init];
-        NSEntityDescription *entity = [NSEntityDescription entityForName:@"Grid" inManagedObjectContext:managedObjectContext];
+        
+        NSEntityDescription *entity = [NSEntityDescription entityForName:entityName inManagedObjectContext:managedObjectContext];
         [request setEntity:entity];
         NSString* sortKey = [NSString stringWithFormat:@"%ld",mbid.longValue];
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K == %@", @"microblock", sortKey];
         [request setPredicate:predicate];
         NSError *error = nil;
         NSArray* returnedObjects = [managedObjectContext executeFetchRequest:request error:&error];
-        NSMutableDictionary* gridMap = [[NSMutableDictionary alloc] initWithCapacity:returnedObjects.count];
-        for(Grid* grid in returnedObjects){
+        NSMutableDictionary* overlayMap = [[NSMutableDictionary alloc] initWithCapacity:returnedObjects.count];
+        for(id object in returnedObjects){
             //these all belong to one microblock id.  
-            //NSLog(@"%lu = %f %f\n", grid.gridId.longValue, grid.lat.doubleValue, grid.lon.doubleValue);
-            [gridMap addEntriesFromDictionary:[[NSDictionary alloc] initWithObjectsAndKeys:[grid generateOverlay], grid.gridId, nil]];
+            if(entityType == kGridEntity){
+                [overlayMap addEntriesFromDictionary:[[NSDictionary alloc] initWithObjectsAndKeys:[object generateOverlay], [(Grid*)object gridId], nil]];
+            }else if (entityType == kStreetEntity){
+                [overlayMap addEntriesFromDictionary:[[NSDictionary alloc] initWithObjectsAndKeys:[object generateOverlay], [(Street*)object streetId], nil]];
+            }else{
+                [overlayMap addEntriesFromDictionary:[[NSDictionary alloc] initWithObjectsAndKeys:[object generateOverlay], [(Spot*)object spotId], nil]];
+            }
         }    
-        NSDictionary* mbidToGridMap = [[NSDictionary alloc] initWithObjectsAndKeys:gridMap,mbid, nil];
-        [mapController addNewOverlays:mbidToGridMap OfType:kGridEntity];
+        NSDictionary* mbidToGridMap = [[NSDictionary alloc] initWithObjectsAndKeys:overlayMap,mbid, nil];
+        [mapController addNewOverlays:mbidToGridMap OfType:entityType];
     }
 }
 

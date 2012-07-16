@@ -2,30 +2,26 @@
 //  Street.h
 //  Parq
 //
-//  Created by Michael Xia on 6/28/12.
-//  Copyright (c) 2012 Massachusetts Institute of Technology. All rights reserved.
+//  Created by Michael Xia on 7/11/12.
+//  Copyright (c) 2012 PARQ LLC. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
+#import <MapKit/MapKit.h>
+#import "MKShape+Color.h"
 
-@class Spot, Waypoint;
+@class Waypoint;
 
 @interface Street : NSManagedObject
 
+@property (nonatomic, retain) NSNumber * microblock;
 @property (nonatomic, retain) NSNumber * streetId;
 @property (nonatomic, retain) NSString * streetName;
-@property (nonatomic, retain) NSNumber * microblock;
-@property (nonatomic, retain) NSSet *childrenSpots;
 @property (nonatomic, retain) NSOrderedSet *childrenWaypoints;
 @end
 
 @interface Street (CoreDataGeneratedAccessors)
-
-- (void)addChildrenSpotsObject:(Spot *)value;
-- (void)removeChildrenSpotsObject:(Spot *)value;
-- (void)addChildrenSpots:(NSSet *)values;
-- (void)removeChildrenSpots:(NSSet *)values;
 
 - (void)insertObject:(Waypoint *)value inChildrenWaypointsAtIndex:(NSUInteger)idx;
 - (void)removeObjectFromChildrenWaypointsAtIndex:(NSUInteger)idx;
@@ -37,4 +33,5 @@
 - (void)removeChildrenWaypointsObject:(Waypoint *)value;
 - (void)addChildrenWaypoints:(NSOrderedSet *)values;
 - (void)removeChildrenWaypoints:(NSOrderedSet *)values;
+-(MKPolyline*) generateOverlay;
 @end

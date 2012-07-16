@@ -21,13 +21,12 @@
         <attribute name="spotId" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
         <attribute name="spotNumber" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="status" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
-        <relationship name="parentStreet" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Street" inverseName="childrenSpots" inverseEntity="Street" syncable="YES"/>
+        <relationship name="parentWaypoint" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Waypoint" inverseName="childrenSpots" inverseEntity="Waypoint" syncable="YES"/>
     </entity>
     <entity name="Street" representedClassName="Street" syncable="YES">
         <attribute name="microblock" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
         <attribute name="streetId" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
         <attribute name="streetName" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="childrenSpots" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Spot" inverseName="parentStreet" inverseEntity="Spot" syncable="YES"/>
         <relationship name="childrenWaypoints" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Waypoint" inverseName="parentStreet" inverseEntity="Waypoint" syncable="YES"/>
     </entity>
     <entity name="Waypoint" representedClassName="Waypoint" syncable="YES">
@@ -35,13 +34,14 @@
         <attribute name="lon" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
         <attribute name="microblock" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
         <attribute name="status" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <relationship name="childrenSpots" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Spot" inverseName="parentWaypoint" inverseEntity="Spot" syncable="YES"/>
         <relationship name="parentStreet" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Street" inverseName="childrenWaypoints" inverseEntity="Street" syncable="YES"/>
     </entity>
     <elements>
         <element name="Bookmark" positionX="160" positionY="192" width="128" height="105"/>
         <element name="Grid" positionX="72" positionY="-270" width="128" height="120"/>
-        <element name="Spot" positionX="-162" positionY="9" width="128" height="150"/>
-        <element name="Street" positionX="54" positionY="-135" width="144" height="90"/>
-        <element name="Waypoint" positionX="54" positionY="45" width="128" height="105"/>
+        <element name="Spot" positionX="-162" positionY="9" width="128" height="165"/>
+        <element name="Street" positionX="54" positionY="-135" width="144" height="105"/>
+        <element name="Waypoint" positionX="54" positionY="45" width="128" height="135"/>
     </elements>
 </model>
