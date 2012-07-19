@@ -12,6 +12,7 @@
 #import <RestKit/RestKit.h>
 #import "JSONKit.h"
 #import "BoundingBox.h"
+#import "SpotInfo.h"
 
 //using @class to avoid cycle, which breaks the compiler.  sigh
 @class PQMapViewController;
@@ -30,6 +31,7 @@
 
 //calculates MID's based on lat/long. 
 -(NSMutableArray*) getMBIDsWithType:(EntityType) entityType NE:(CLLocationCoordinate2D*) topRight SW:(CLLocationCoordinate2D*) botLeft;
+-(SpotInfo*) getSpotInfoForId:(NSNumber*)spotId SpotNumber:(NSNumber*)spotNum GPS:(CLLocationCoordinate2D*)coord; 
 
 //network status
 -(BOOL) isRecheableViaWifi;

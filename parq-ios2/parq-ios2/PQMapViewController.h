@@ -11,11 +11,13 @@
 #import <CoreLocation/CoreLocation.h>
 #import "DataLayer.h"
 #import "PQAppDelegate.h"
-
+#import "SpotInfo.h"
 #import "MKShape+Color.h"
 #import "UIColor+Parq.h"
 #import "CalloutMapAnnotation.h"
 #import "CalloutMapAnnotationView.h"
+#import "PQPinAnnotation.h"
+#import "PQBookmarksViewController.h"
 
 #import "Segment.h"
 #import "Spot.h"
@@ -61,7 +63,8 @@ UIActionSheetDelegate> {
 @property (nonatomic) CLLocationCoordinate2D user_loc;
 @property (nonatomic) bool user_loc_isGood;
 
-@property (nonatomic, retain) MKCircle* desired_spot;
+@property (nonatomic, retain) PQSpotAnnotation* desired_spot;
+@property (nonatomic, retain) SpotInfo* spotInfo;
 
 @property (nonatomic) MKCoordinateRegion oldStreetLevelRegion;
 @property (atomic) bool shouldNotClearOverlays;
@@ -89,5 +92,7 @@ UIActionSheetDelegate> {
 
 -(CLLocationCoordinate2D)topRightOfMap;
 -(CLLocationCoordinate2D)botLeftOfMap;
+
+-(void) showBookmarkWithLocation:(CLLocationCoordinate2D*) coord AndAnnotation:(id <MKAnnotation>)annotation;
 
 @end

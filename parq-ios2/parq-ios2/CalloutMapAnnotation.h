@@ -1,6 +1,7 @@
 #import <Foundation/Foundation.h>
 #import <MapKit/MapKit.h>
 #import "Spot.h"
+#import "PQSpotAnnotation.h"
 
 @interface CalloutMapAnnotation : NSObject <MKAnnotation> {
 	CLLocationDegrees _latitude;
@@ -18,12 +19,14 @@ typedef enum {
 @property (nonatomic) CLLocationDegrees longitude;
 @property (nonatomic, copy) NSString *title;
 @property (nonatomic) CalloutCorner corner;
-@property (nonatomic) MKCircle* circle;
+@property (nonatomic) PQSpotAnnotation* circle;
+//@property (nonatomic, retain) Spot* spot;
 
 - (id)initWithLatitude:(CLLocationDegrees)latitude
 		  andLongitude:(CLLocationDegrees)longitude
               andTitle:(NSString *)title
              andCorner:(CalloutCorner) corner
-               andCircle:(MKCircle*) circle;
+             andCircle:(PQSpotAnnotation*) circle;
+//               andSpot:(Spot*) spot;
 
 @end

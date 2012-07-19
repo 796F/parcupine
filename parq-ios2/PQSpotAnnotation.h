@@ -12,7 +12,10 @@
 @interface PQSpotAnnotation : NSObject <MKAnnotation>
 @property (nonatomic) BOOL available;
 @property (nonatomic) int name;
+@property (nonatomic) long objId;
 
 - (id)initWithCoordinate:(CLLocationCoordinate2D)coordinate
-               available:(BOOL)available name:(int)name;
+               available:(BOOL)available 
+                    name:(int)name
+                   objId:(long)objId;
 @end

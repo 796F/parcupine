@@ -24,6 +24,9 @@
 @synthesize midButton;
 @synthesize userIsEditing;
 @synthesize rightButton;
+
+@synthesize parent;
+
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if(buttonIndex==0){
@@ -94,6 +97,7 @@
                 self.bookmarks = [self loadBookmarks];
             }
             cell.bookmarkName.text = [self.bookmarks objectAtIndex:[indexPath row]-1];
+
             return cell;
         }
     }else if(displayType == 1){
@@ -126,8 +130,15 @@
 }
 
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    NSLog(@"index tapped %d\n", indexPath.row);
+    NSLog(@"BOOKMARK index tapped %d\n", indexPath.row);
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    //find which bookmark that index corresponds to.  
+//    BookmarkCell* cell = (BookmarkCell*) [table cellForRowAtIndexPath:indexPath];
+    
+    CLLocationCoordinate2D coord = CLLocationCoordinate2DMake(42.365102, -71.110841);
+    //get rid of this view, and then zoom the map.  
+    [self dismissModalViewControllerAnimated:YES];
+    [self.parent showBookmarkWithLocation:&coord AndAnnotation:nil];    
 }
 
 - (IBAction)bottomBarTapped {

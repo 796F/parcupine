@@ -12,13 +12,15 @@
 @synthesize coordinate = _coordinate;
 @synthesize available = _available;
 @synthesize name = _name;
+@synthesize objId = _objId;
 
 - (id)initWithCoordinate:(CLLocationCoordinate2D)coordinate
-               available:(BOOL)available name:(int)name {
+               available:(BOOL)available name:(int)name objId:(long)objId{
 	if (self = [super init]) {
 		_coordinate = coordinate;
         _available = available;
         _name = name;
+        _objId = objId;
 	}
     return self;
 }

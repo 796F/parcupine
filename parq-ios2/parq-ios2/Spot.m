@@ -24,7 +24,7 @@
 -(PQSpotAnnotation*) generateOverlay{
     //allocate an annotation, fill it with the info provided
     CLLocationCoordinate2D coord = CLLocationCoordinate2DMake([self.lat doubleValue], [self.lon doubleValue]);
-    PQSpotAnnotation *annotation = [[PQSpotAnnotation alloc] initWithCoordinate:coord available:[self.status intValue] name:[self.spotNumber intValue]];
+    PQSpotAnnotation *annotation = [[PQSpotAnnotation alloc] initWithCoordinate:coord available:[self.status intValue] name:[self.spotNumber intValue] objId:[self.spotId longValue]];
     return annotation;
 }
 

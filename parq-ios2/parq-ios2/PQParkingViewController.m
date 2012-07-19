@@ -71,6 +71,7 @@ typedef enum {
 @synthesize paygStartTime;
 @synthesize dateFormatter;
 @synthesize parent;
+@synthesize spotInfo;
 
 #pragma mark - Park state transitions
 - (void)parkedAfterParking {
@@ -237,6 +238,7 @@ typedef enum {
         self.tableView.frame = CGRectMake(0, -131, 320, 611);
         datePicker.frame = CGRectMake(0, 2, 320, 216);
     }];
+    datePicker.minuteInterval = 15;
     self.navigationItem.title = @"Enter Amount";
     self.navigationItem.leftBarButtonItem = cancelButton;
     self.navigationItem.rightBarButtonItem = doneButton;
@@ -248,7 +250,9 @@ typedef enum {
         self.tableView.frame = CGRectMake(0, 0, 320, 416);
         datePicker.frame = CGRectMake(0, 89, 320, 216);
     }];
-    self.navigationItem.title = @"1106, Cambridge, MA";
+    NSString* title = [NSString stringWithFormat:@"%d, %s.\n", spotInfo.spotNumber.intValue, spotInfo.streetName.UTF8String];
+    
+    self.navigationItem.title = title;
     if (parkState == kParkedParkState) {
         self.navigationItem.leftBarButtonItem = nil;
     }
@@ -436,9 +440,10 @@ typedef enum {
     [super viewDidLoad];
 
     // Hardcoding the rate and limit for now
-    rateNumeratorCents = 50;
-    rateDenominatorMinutes = 30;
-    limit = 600; // 10 hours * 60 min/hr
+    self.navigationItem.title =[NSString stringWithFormat:@"%d, %s.\n", spotInfo.spotNumber.intValue, spotInfo.streetName.UTF8String];
+    rateNumeratorCents = [spotInfo.rateCents intValue];
+    rateDenominatorMinutes = [spotInfo.minuteInterval intValue];
+    limit = [spotInfo.maxTime intValue];
 
     // Initialize variables
     parkState = kParkingParkState;

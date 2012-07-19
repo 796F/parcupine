@@ -59,12 +59,14 @@
 		FC121A15159B7D910072DA85 /* libRestKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FC121A0A159B6FF00072DA85 /* libRestKit.a */; };
 		FC121A53159B9C880072DA85 /* Parser.m in Sources */ = {isa = PBXBuildFile; fileRef = FC121A52159B9C880072DA85 /* Parser.m */; };
 		FC121A59159BAD8E0072DA85 /* AbstractRequestObject.m in Sources */ = {isa = PBXBuildFile; fileRef = FC121A58159BAD8E0072DA85 /* AbstractRequestObject.m */; };
+		FC18601615B8503600AFFF8E /* SpotInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = FC18601515B8503600AFFF8E /* SpotInfo.m */; };
 		FC18F4141595893C00C18286 /* PQPaymentMethodsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC18F4131595893C00C18286 /* PQPaymentMethodsViewController.m */; };
 		FC6C9F6015925D02002C5418 /* donedown.png in Resources */ = {isa = PBXBuildFile; fileRef = FC6C9F5F15925D02002C5418 /* donedown.png */; };
 		FC7214831592144F00D228C6 /* BookmarkCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FC7214821592144F00D228C6 /* BookmarkCell.m */; };
 		FC7214871592179C00D228C6 /* RecentCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FC7214861592179C00D228C6 /* RecentCell.m */; };
 		FC72148A1592267A00D228C6 /* ContactCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FC7214891592267A00D228C6 /* ContactCell.m */; };
 		FC7214951592522100D228C6 /* doneup.png in Resources */ = {isa = PBXBuildFile; fileRef = FC7214941592522100D228C6 /* doneup.png */; };
+		FC768F8615B718B0004F6696 /* PQPinAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = FC768F8515B718B0004F6696 /* PQPinAnnotation.m */; };
 		FCD0F07D159120800063D6FA /* PQBookmarksViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FCD0F07C159120800063D6FA /* PQBookmarksViewController.m */; };
 		FCD8FE071598BD57004E38C4 /* BoundingBox.m in Sources */ = {isa = PBXBuildFile; fileRef = FCD8FE061598BD57004E38C4 /* BoundingBox.m */; };
 		FCDBD4B815ADF28100E81B7E /* Waypoint.m in Sources */ = {isa = PBXBuildFile; fileRef = FCDBD4B715ADF28100E81B7E /* Waypoint.m */; };
@@ -198,6 +200,8 @@
 		FC121A52159B9C880072DA85 /* Parser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Parser.m; path = "parq-ios2/Parser.m"; sourceTree = "<group>"; };
 		FC121A57159BAD8E0072DA85 /* AbstractRequestObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AbstractRequestObject.h; path = "parq-ios2/AbstractRequestObject.h"; sourceTree = "<group>"; };
 		FC121A58159BAD8E0072DA85 /* AbstractRequestObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AbstractRequestObject.m; path = "parq-ios2/AbstractRequestObject.m"; sourceTree = "<group>"; };
+		FC18601415B8503600AFFF8E /* SpotInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpotInfo.h; path = "parq-ios2/SpotInfo.h"; sourceTree = "<group>"; };
+		FC18601515B8503600AFFF8E /* SpotInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpotInfo.m; path = "parq-ios2/SpotInfo.m"; sourceTree = "<group>"; };
 		FC18F4121595893C00C18286 /* PQPaymentMethodsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PQPaymentMethodsViewController.h; sourceTree = "<group>"; };
 		FC18F4131595893C00C18286 /* PQPaymentMethodsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PQPaymentMethodsViewController.m; sourceTree = "<group>"; };
 		FC48562E1577FD37002C4479 /* DataLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DataLayer.h; path = "parq-ios2/DataLayer.h"; sourceTree = "<group>"; };
@@ -210,6 +214,8 @@
 		FC7214881592267A00D228C6 /* ContactCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContactCell.h; path = "parq-ios2/ContactCell.h"; sourceTree = "<group>"; };
 		FC7214891592267A00D228C6 /* ContactCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ContactCell.m; path = "parq-ios2/ContactCell.m"; sourceTree = "<group>"; };
 		FC7214941592522100D228C6 /* doneup.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = doneup.png; sourceTree = "<group>"; };
+		FC768F8415B718B0004F6696 /* PQPinAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PQPinAnnotation.h; sourceTree = "<group>"; };
+		FC768F8515B718B0004F6696 /* PQPinAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PQPinAnnotation.m; sourceTree = "<group>"; };
 		FC772758157C2C8C005DEBEA /* Segment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Segment.h; path = "parq-ios2/Segment.h"; sourceTree = "<group>"; };
 		FC772759157C2C8C005DEBEA /* Segment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Segment.m; path = "parq-ios2/Segment.m"; sourceTree = "<group>"; };
 		FC7CE863157943620059EE43 /* NetworkLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkLayer.h; path = "parq-ios2/NetworkLayer.h"; sourceTree = "<group>"; };
@@ -413,6 +419,8 @@
 				8791F9CD153383E500525267 /* CalloutMapAnnotationView.m */,
 				87ABC3A91582BC4400030005 /* PQSpotAnnotation.h */,
 				87ABC3AA1582BC4400030005 /* PQSpotAnnotation.m */,
+				FC768F8415B718B0004F6696 /* PQPinAnnotation.h */,
+				FC768F8515B718B0004F6696 /* PQPinAnnotation.m */,
 			);
 			name = Annotations;
 			path = "parq-ios2";
@@ -457,6 +465,8 @@
 				FCD8FE061598BD57004E38C4 /* BoundingBox.m */,
 				FC121A57159BAD8E0072DA85 /* AbstractRequestObject.h */,
 				FC121A58159BAD8E0072DA85 /* AbstractRequestObject.m */,
+				FC18601415B8503600AFFF8E /* SpotInfo.h */,
+				FC18601515B8503600AFFF8E /* SpotInfo.m */,
 			);
 			name = Objects;
 			sourceTree = "<group>";
@@ -642,6 +652,8 @@
 				FCDBD4B815ADF28100E81B7E /* Waypoint.m in Sources */,
 				FCDBD4BB15ADF28100E81B7E /* Spot.m in Sources */,
 				FCDBD4BE15ADF28100E81B7E /* Street.m in Sources */,
+				FC768F8615B718B0004F6696 /* PQPinAnnotation.m in Sources */,
+				FC18601615B8503600AFFF8E /* SpotInfo.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

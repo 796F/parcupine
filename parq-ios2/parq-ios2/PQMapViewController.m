@@ -97,6 +97,7 @@ typedef struct{
 @synthesize streetMicroBlockMap;
 @synthesize spotMicroBlockMap;
 @synthesize currentMicroBlockIds;
+@synthesize spotInfo;
 
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     NSLog(@"\n <<<<PQMapViewController:tableView did select row index path says hiiii>>>>\n\n");
@@ -360,7 +361,20 @@ typedef struct{
     }
     return segList;
 }
-#pragma mark - Network and Data Layer callbacks
+#pragma mark - callbacks
+
+-(void) showBookmarkWithLocation:(CLLocationCoordinate2D*) coord AndAnnotation:(id <MKAnnotation>)annotation{
+        NSLog(@"showing coords %f %f\n", (*coord).latitude, (*coord).longitude);
+    if(annotation==nil){
+
+        //just zoom to spot, there's no annotation to add.  
+        MKCoordinateRegion viewRegion = [self.map regionThatFits:MKCoordinateRegionMakeWithDistance(*coord,SPOT_LEVEL_REGION_METERS, SPOT_LEVEL_REGION_METERS)];
+        [self.map setRegion:viewRegion animated:YES];
+    }else{
+        PQPinAnnotation* pin = [[PQPinAnnotation alloc] initWithCoordinate:map.centerCoordinate title:@"title" subTitle:@"subtitle"];
+        [self.map addAnnotation:pin];
+    }
+}
 
 //this is used by the network and data layers to add overlay objects to the map
 -(void) addNewOverlays:(NSDictionary*) overlayMap OfType:(EntityType) entityType{
@@ -381,6 +395,10 @@ typedef struct{
         }
     }
     
+}
+
+-(void) mapView:(MKMapView *)mapView didSelectAnnotationView:(MKAnnotationView *)view{
+    NSLog(@"HELLO\n");
 }
 
 //this is used by the network layer to update the overlays on the map once server responds.  
@@ -533,34 +551,45 @@ typedef struct{
     //look through list of points, check spot distanceFromLocation (coord) vs radius.  
     //keep track of some stuff
     NSMutableArray* insideCircle = [[NSMutableArray alloc] init];
+    NSMutableArray* allInsideCircle = [[NSMutableArray alloc] init];
     float avgLat=0, avgLon=0, count=0;
     for(NSNumber* MBID in spotMicroBlockMap){
         NSDictionary* spotMap = [spotMicroBlockMap objectForKey:MBID];
         for(PQSpotAnnotation* spot in spotMap.allValues){
             CLLocation* spot_loc = [[CLLocation alloc] initWithLatitude:spot.coordinate.latitude longitude: spot.coordinate.longitude];
             CLLocationDistance dist = [spot_loc distanceFromLocation:center];
-            if(dist<radius-2 && spot.available == YES){
+            if(dist<radius-2){
                 //inside the circle
-                [insideCircle addObject:spot];
-                avgLat += spot_loc.coordinate.latitude;
-                avgLon += spot_loc.coordinate.longitude;   
-                count++;
+                if(spot.available == YES){
+                    [insideCircle addObject:spot];
+                    avgLat += spot_loc.coordinate.latitude;
+                    avgLon += spot_loc.coordinate.longitude;   
+                    count++;
+                }
+                 
+                [allInsideCircle addObject:spot];
+                
+                
             }
 
         }
     }
-
-//    for(PQSpotAnnotation* spot in spots){
-//        CLLocation* spot_loc = [[CLLocation alloc] initWithLatitude:        spot.coordinate.latitude longitude: spot.coordinate.longitude];
-//        CLLocationDistance dist = [spot_loc distanceFromLocation:center];
-//        if(dist<radius-2 && spot.available == YES){
-//            //inside the circle
-//            [insideCircle addObject:spot];
-//            avgLat += spot_loc.coordinate.latitude;
-//            avgLon += spot_loc.coordinate.longitude;   
-//            count++;
-//        }
-//    }
+    
+    //update the segment view with numbers from list.  
+    int selBarInd=0;
+    while(selBarInd<allInsideCircle.count){
+        if(selBarInd<4){
+            //top bar
+            PQSpotAnnotation* spot = [allInsideCircle objectAtIndex:selBarInd];
+            [topSpotSelectionBar setTitle:[NSString stringWithFormat:@"%d", spot.name] forSegmentAtIndex:selBarInd+1];   
+        }else{
+            PQSpotAnnotation* spot = [allInsideCircle objectAtIndex:selBarInd];
+            [bottomSpotSelectionBar setTitle:[NSString stringWithFormat:@"%d", spot.name] forSegmentAtIndex:selBarInd-3];
+            
+        }
+        selBarInd++;
+    }
+    
     /* CALCULATE AVERAGES FOR BOTH SIDES */
     NSArray* segData = [self loadBlockData];
     return [self newCalloutPlacementWithSegment:[segData objectAtIndex:1] andSpots:insideCircle];
@@ -575,13 +604,13 @@ typedef struct{
     NSMutableArray* results = [[NSMutableArray alloc] initWithCapacity:totalSpotsOnMap];
 //    NSMutableArray* results = [[NSMutableArray alloc] initWithCapacity:spots.count];    
     //project bubbles using this average and the spot's coordinates.  
-    for(MKCircle* spot in spotList){
+    for(PQSpotAnnotation* spot in spotList){
         CLLocation* spot_loc = [[CLLocation alloc] initWithLatitude:spot.coordinate.latitude longitude:spot.coordinate.longitude];
         //controls how far the callouts go.  
         double rsq = CALLOUT_LINE_LENGTH;
         
         //only make callout for those clearly in circle
-        
+
         
         double mdx = avgLat - spot_loc.coordinate.latitude;
         double mdy = avgLon - spot_loc.coordinate.longitude;
@@ -617,7 +646,8 @@ typedef struct{
             }
         }
         NSString* title = [NSString stringWithFormat:@"%d", spot.name];
-        NSDictionary* add = [[NSDictionary alloc] initWithObjectsAndKeys:[[CalloutMapAnnotation alloc] initWithLatitude:callout_lat                                         andLongitude:callout_lon
+        NSDictionary* add = [[NSDictionary alloc] initWithObjectsAndKeys:
+                             [[CalloutMapAnnotation alloc] initWithLatitude:callout_lat                                         andLongitude:callout_lon
                                                                                                                andTitle:title
                                                                                                               andCorner:corner
                                                                                                               andCircle:spot], @"callout",spot_loc, @"spot", nil];
@@ -647,8 +677,15 @@ typedef struct{
             //check where user's location is.  
             CLLocationCoordinate2D spot_loc = c.circle.coordinate;
             desired_spot = c.circle;
-            //user distance from spot.  
-            //user's gps reported accuracy. 
+            
+            /*request from the server the rate object based on the spotID and gps?  
+             gps is just used to make sure ur not too far fromt he spot, but what about 
+             urban canyons?  
+            
+            user distance from spot.  
+            user's gps reported accuracy. */
+            
+            spotInfo = [networkLayer getSpotInfoForId:[NSNumber numberWithLong:c.circle.objId] SpotNumber:[NSNumber numberWithInt:[c.title intValue]] GPS:&user_loc];
             
             if(user_loc_isGood && ![self pointA:&spot_loc isCloseToB:&user_loc]){
                 UIActionSheet *directionsActionSheet = [[UIActionSheet alloc] initWithTitle:[NSString stringWithFormat:@"Spot %@", c.title] delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles: @"Get Directions", @"Park Now", nil];
@@ -669,7 +706,7 @@ typedef struct{
     UINavigationController *vc = [storyboard instantiateViewControllerWithIdentifier:@"ParkingController"];
     [vc setModalPresentationStyle:UIModalPresentationFullScreen];
     PQParkingViewController *vcTop = [[vc viewControllers] objectAtIndex:0];
-    //also pass rate information for the selected spot here.  
+    vcTop.spotInfo = spotInfo;
     vcTop.parent = (PQMapViewController*)self;
     [self presentModalViewController:vc animated:YES];
 }
@@ -973,10 +1010,11 @@ typedef struct{
                 [self.map removeOverlay:gCircle];
             }
             shouldNotClearOverlays = false;
-            if(zoomState!=kStreetZoomLevel){
-                //changed INTO spot level.  current ids useless.  
-                [currentMicroBlockIds removeAllObjects];
-            }
+//            if(zoomState!=kSpotZoomLevel){
+//                //changed INTO spot level.  current ids useless.  
+//                NSLog(@"changed INTO street view\n");
+//                [currentMicroBlockIds removeAllObjects];
+//            }
             //below the street canyon, fall down into spot level.  
             zoomState = kSpotZoomLevel;
             [mapView setRegion:MKCoordinateRegionMake(center, MKCoordinateSpanMake(SPOT_LEVEL_SPAN, SPOT_LEVEL_SPAN)) animated:YES];
@@ -1136,6 +1174,26 @@ typedef struct{
             }
         }
         return annotationView;
+    }else if ([annotation isKindOfClass:[PQPinAnnotation class]]){
+        //drop a pin with some info.  
+        MKPinAnnotationView* customPinView = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"test"];
+        
+        customPinView.pinColor = MKPinAnnotationColorPurple;
+        customPinView.animatesDrop = YES;
+        customPinView.canShowCallout = YES;
+        
+        // add a detail disclosure button to the callout which will open a new view controller page
+        //
+        // note: you can assign a specific call out accessory view, or as MKMapViewDelegate you can implement:
+        //  - (void)mapView:(MKMapView *)mapView annotationView:(MKAnnotationView *)view calloutAccessoryControlTapped:(UIControl *)control;
+        //
+        
+        UIButton* rightButton = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
+        [rightButton addTarget:self
+                        action:@selector(showDetails:)
+              forControlEvents:UIControlEventTouchUpInside];
+        customPinView.rightCalloutAccessoryView = rightButton;
+        return customPinView;
     }
     
 	return nil;
@@ -1315,9 +1373,10 @@ typedef struct{
     
     [geocoder geocodeAddressString:searchBar.text inRegion:nil completionHandler:^(NSArray *placemarks, NSError * error){
         CLLocation* locationObject = [[placemarks objectAtIndex:0] location];
-        [self.map setCenterCoordinate:locationObject.coordinate animated:YES];
-        //        MKCoordinateRegion viewRegion = [self.map regionThatFits:MKCoordinateRegionMakeWithDistance(locationObject.coordinate, 0.5*METERS_PER_MILE, 0.5*METERS_PER_MILE)];
-        //        [self.map setRegion:viewRegion animated:YES];
+        MKCoordinateRegion viewRegion = [self.map regionThatFits:MKCoordinateRegionMakeWithDistance(locationObject.coordinate,SPOT_LEVEL_REGION_METERS, SPOT_LEVEL_REGION_METERS)];
+        
+        [self.map setRegion:viewRegion animated:YES];
+        //[self.map setCenterCoordinate:locationObject.coordinate animated:YES];
     }];
     
     [self setSearchBar:searchBar active:NO];
@@ -1335,7 +1394,8 @@ typedef struct{
 
 - (void)searchBarBookmarkButtonClicked:(UISearchBar *)searchBar {
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
-    UIViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"BookmarksController"];
+    PQBookmarksViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"BookmarksController"];
+    [vc setParent:self]; //assignt he parent to be self.  
     [vc setModalPresentationStyle:UIModalPresentationFullScreen];
     [self presentModalViewController:vc animated:YES];
 }
@@ -1443,7 +1503,7 @@ typedef struct{
 
 
 - (IBAction)noneButtonPressed:(id)sender {
-    [self clearMap];
+//    [self clearMap];
 //    [networkLayer testAsync];
 
 //    int loop = 0;

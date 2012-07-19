@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "PQMapViewController.h"
 
 @interface PQBookmarksViewController : UIViewController <UITableViewDelegate, UITableViewDataSource,UIActionSheetDelegate>{
 
@@ -25,5 +26,6 @@
 @property (strong, nonatomic) NSArray* contacts;
 //@property (atomic) int tableDisplayType;
 @property (atomic) bool userIsEditing;
+@property (nonatomic) PQMapViewController* parent;
 
 @end
