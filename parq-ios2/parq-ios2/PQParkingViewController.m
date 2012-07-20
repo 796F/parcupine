@@ -278,7 +278,7 @@ typedef enum {
     int totalMinutes = datePicker.countDownDuration/60;
     if (totalMinutes > limit || totalMinutes + totalParkedSeconds/60 > limit) {
         datePicker.countDownDuration = limit*60 - totalParkedSeconds;
-        totalMinutes = limit;
+        totalMinutes = limit - totalParkedSeconds/60;
     }
     int hoursPart = totalMinutes/60;
     int minutesPart = totalMinutes%60;
