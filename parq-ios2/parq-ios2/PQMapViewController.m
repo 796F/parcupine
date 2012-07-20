@@ -40,6 +40,7 @@
 
 //alert view tags
 #define GPS_LAUNCH_ALERT 0
+#define SPOT_LOOKS_TAKEN_ALERT 1
 
 typedef enum {
     kGridZoomLevel,
@@ -477,6 +478,16 @@ typedef struct{
             case 1:
                 [self parkNow];
                 break;
+        }
+    }
+}
+
+-(void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+    if(alertView.tag == SPOT_LOOKS_TAKEN_ALERT){
+        //spot appears taken.  
+        if(buttonIndex == 1){
+            //yes im sure i wan tto park.  
+            [self parkNow];
         }
     }
 }
@@ -1497,7 +1508,13 @@ typedef struct{
             //found our target.  
             spotInfo = [networkLayer getSpotInfoForId:[NSNumber numberWithLong:spot.objId] SpotNumber:[NSNumber numberWithInt:spot.name] GPS:&user_loc];
             CLLocationCoordinate2D spot_loc = spot.coordinate;
-            if(user_loc_isGood && ![self pointA:&spot_loc isCloseToB:&user_loc]){
+            if(!spot.available){
+                //not available.  ask are you sure?
+                NSString* title = [NSString stringWithFormat:@"Spot %d appears taken", name];
+                UIAlertView* spotTakenAlert = [[UIAlertView alloc] initWithTitle:title message:@"Are you sure you want to park?" delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Park", nil];
+                spotTakenAlert.tag = SPOT_LOOKS_TAKEN_ALERT;
+                [spotTakenAlert show];
+            }else if(user_loc_isGood && ![self pointA:&spot_loc isCloseToB:&user_loc]){
                 UIActionSheet *directionsActionSheet = [[UIActionSheet alloc] initWithTitle:[NSString stringWithFormat:@"Spot %d", name] delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles: @"Get Directions", @"Park Now", nil];
                 directionsActionSheet.tag = GPS_LAUNCH_ALERT;
                 [directionsActionSheet showInView:bottomSpotSelectionView];
@@ -1520,7 +1537,13 @@ typedef struct{
             //found our target.  
             spotInfo = [networkLayer getSpotInfoForId:[NSNumber numberWithLong:spot.objId] SpotNumber:[NSNumber numberWithInt:spot.name] GPS:&user_loc];
             CLLocationCoordinate2D spot_loc = spot.coordinate;
-            if(user_loc_isGood && ![self pointA:&spot_loc isCloseToB:&user_loc]){
+            if(!spot.available){
+                //not available.
+                NSString* title = [NSString stringWithFormat:@"Spot %d appears taken", name];
+                UIAlertView* spotTakenAlert = [[UIAlertView alloc] initWithTitle:title message:@"Are you sure you want to park?" delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Park", nil];
+                spotTakenAlert.tag = SPOT_LOOKS_TAKEN_ALERT;
+                [spotTakenAlert show];
+            }else if(user_loc_isGood && ![self pointA:&spot_loc isCloseToB:&user_loc]){
                 UIActionSheet *directionsActionSheet = [[UIActionSheet alloc] initWithTitle:[NSString stringWithFormat:@"Spot %d", name] delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles: @"Get Directions", @"Park Now", nil];
                 directionsActionSheet.tag = GPS_LAUNCH_ALERT;
                 [directionsActionSheet showInView:bottomSpotSelectionView];

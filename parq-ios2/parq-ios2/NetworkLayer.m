@@ -380,4 +380,8 @@
         NSLog(@"error saving!!!\n");
     }
 }
+
+-(void) loadStreetData{
+ // STORE THE street's information into core data.     
+}
 @end

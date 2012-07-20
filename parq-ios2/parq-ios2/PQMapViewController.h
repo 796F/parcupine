@@ -31,7 +31,8 @@ CLLocationManagerDelegate,
 UISearchBarDelegate,
 UIGestureRecognizerDelegate, 
 UITableViewDelegate, 
-UIActionSheetDelegate> {
+UIActionSheetDelegate,
+UIAlertViewDelegate> {
     DataLayer * dataLayer;
     NetworkLayer* networkLayer;
     NSManagedObjectContext* managedObjectContext;

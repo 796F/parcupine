@@ -13,6 +13,7 @@
 @property (nonatomic) int rateNumeratorCents;
 @property (nonatomic) int rateDenominatorMinutes;
 @property (nonatomic) int limit;
+@property (atomic) int totalParkedSeconds;
 @property (atomic) int notificationTag;
 @property (nonatomic, copy) NSString *address;
 @property (weak, nonatomic) IBOutlet UIButton *startButton;

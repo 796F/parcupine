@@ -78,7 +78,7 @@ typedef enum {
 @synthesize parent;
 @synthesize spotInfo;
 @synthesize notificationTag;
-
+@synthesize totalParkedSeconds;
 #pragma mark - Park state transitions
 - (void)parkedAfterParking {
     parkState = kParkedParkState;
@@ -136,10 +136,17 @@ typedef enum {
         [expiresAtTimer invalidate];
         prepaidEndTime = [NSDate dateWithTimeIntervalSinceNow:datePicker.countDownDuration];
         [self scheduleLocalNotification:prepaidEndTime];
+        totalParkedSeconds = datePicker.countDownDuration;
         timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updatePrepaidTimer) userInfo:nil repeats:YES];
+
+        if(totalParkedSeconds >= limit*60){
+            //you have extended to or beyond the limit.  hide extend button or somthing.  
+            extendButton.enabled = NO;
+        }
     } else { // Pay as you go
         paygStartTime = [NSDate date];
         timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updatePaygTimer) userInfo:nil repeats:YES];
+        totalParkedSeconds = 0;
     }
     [self parkedAfterParking];
 }
@@ -149,6 +156,7 @@ typedef enum {
     unparkActionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
     unparkActionSheet.tag = ACTIONSHEET_UNPARK;
     [self scheduleLocalNotification:nil];   //remove all notifications
+    totalParkedSeconds = 0;
     [unparkActionSheet showInView:self.tableView];
 }
 
@@ -166,15 +174,22 @@ typedef enum {
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (actionSheet.tag == ACTIONSHEET_UNPARK && buttonIndex == actionSheet.destructiveButtonIndex) {
         [timer invalidate];
+        totalParkedSeconds = 0;
         [self dismissModalViewControllerAnimated:YES];
     } else if (actionSheet.tag == ACTIONSHEET_EXTEND && buttonIndex == actionSheet.firstOtherButtonIndex) {
         prepaidEndTime = [NSDate dateWithTimeInterval:datePicker.countDownDuration sinceDate:prepaidEndTime];
+        totalParkedSeconds += datePicker.countDownDuration;
+        
         int totalMinutes = ([prepaidEndTime timeIntervalSinceNow]+59)/60;
         hours.text = [NSString stringWithFormat:@"%02d", totalMinutes/60];
         minutes.text = [NSString stringWithFormat:@"%02d", totalMinutes%60];
         expiresAtTime.text = [dateFormatter stringFromDate:prepaidEndTime];
         [self scheduleLocalNotification:prepaidEndTime]; //reset the notifications.  
         [self parkedAfterExtending];
+        if(totalParkedSeconds >= limit*60){
+            //you have extended to or beyond the limit.  hide extend button or somthing.  
+            extendButton.enabled = NO;
+        }
     }
 }
 
@@ -226,6 +241,7 @@ typedef enum {
         [timer invalidate];
         [self dismissModalViewControllerAnimated:YES];
     }
+    
     if (parkState == kParkedParkState) {
         // Adding 59 seconds rounds 00:04:59 to 00:05 but keeps 00:05:00 as 00:05
         int totalMinutes = ([prepaidEndTime timeIntervalSinceNow]+59)/60;
@@ -260,8 +276,8 @@ typedef enum {
 - (IBAction)durationChanged:(id)sender {
     
     int totalMinutes = datePicker.countDownDuration/60;
-    if (totalMinutes > limit) {
-        datePicker.countDownDuration = limit*60;
+    if (totalMinutes > limit || totalMinutes + totalParkedSeconds/60 > limit) {
+        datePicker.countDownDuration = limit*60 - totalParkedSeconds;
         totalMinutes = limit;
     }
     int hoursPart = totalMinutes/60;
@@ -297,8 +313,7 @@ typedef enum {
 
     datePicker.minuteInterval = spotInfo.minuteInterval.intValue;
     datePicker.countDownDuration = spotInfo.minuteInterval.intValue;
-    //this is ignored because of the countdowntimermode.
-    //datePicker.maximumDate = [NSDate dateWithTimeIntervalSinceNow:spotInfo.maxTime.intValue*60];
+
     self.navigationItem.title = @"Enter Amount";
     self.navigationItem.leftBarButtonItem = cancelButton;
     self.navigationItem.rightBarButtonItem = doneButton;
@@ -397,6 +412,7 @@ typedef enum {
         extendActionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
         extendActionSheet.tag = ACTIONSHEET_EXTEND;
         [extendActionSheet showInView:self.tableView];
+
     }
 }
 
