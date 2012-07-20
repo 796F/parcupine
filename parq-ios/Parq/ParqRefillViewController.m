@@ -47,7 +47,8 @@
         scheduledAlert.soundName = UILocalNotificationDefaultSoundName;
         endingAlert.soundName = UILocalNotificationDefaultSoundName;
     }
-    [myApp scheduleLocalNotification:endingAlert];[myApp scheduleLocalNotification:scheduledAlert];
+    [myApp scheduleLocalNotification:endingAlert];
+    [myApp scheduleLocalNotification:scheduledAlert];
     
 }
 

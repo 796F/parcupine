@@ -112,10 +112,11 @@
     SpotInfo* spot = [[SpotInfo alloc] init];
     [spot setMaxTime:[NSNumber numberWithFloat:120]];
     [spot setMinTime:[NSNumber numberWithFloat:15]];
-    [spot setMinuteInterval:[NSNumber numberWithFloat:15]];
+    [spot setMinuteInterval:[NSNumber numberWithFloat:1]];
     [spot setRateCents:[NSNumber numberWithFloat:25]];
     [spot setStreetName:@"Howard St, MA"];
-    [spot setSpotNumber:[NSNumber numberWithFloat:1412]];
+
+    [spot setSpotNumber:spotNum]; //this should come from server, act as a check.  
     
     return spot;
 }

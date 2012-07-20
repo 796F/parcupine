@@ -50,10 +50,13 @@ UIActionSheetDelegate> {
 @property (weak, nonatomic) IBOutlet UISegmentedControl *topSpotSelectionBar;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *availabilitySelectionBar;
 @property (weak, nonatomic) IBOutlet UIView *availabilitySelectionView;
+@property (weak, nonatomic) IBOutlet UIView *justParkSelectionView;
 @property (weak, nonatomic) IBOutlet UIView *bottomSpotSelectionView;
 @property (weak, nonatomic) IBOutlet UIView *topSpotSelectionView;
 @property (weak, nonatomic) IBOutlet UIImageView *gradientIcon;
-
+@property (weak, nonatomic) IBOutlet UIButton *findMeButton;
+@property (weak, nonatomic) IBOutlet UIButton *parkMeButton;
+@property (weak, nonatomic) IBOutlet UIButton *dropPinButton;
 //internal management stuff
 @property (weak, nonatomic) MKCircle* gCircle;
 @property (nonatomic, retain) NSMutableArray* callouts;
@@ -68,9 +71,11 @@ UIActionSheetDelegate> {
 
 @property (nonatomic) MKCoordinateRegion oldStreetLevelRegion;
 @property (atomic) bool shouldNotClearOverlays;
+@property (atomic) bool doubleTapAlreadyCalled;
 
 //list of current blocks
 @property (strong, nonatomic) NSMutableArray* currentMicroBlockIds;
+@property (strong, nonatomic) NSMutableArray* allInsideCircle;
 
  /*         _         
           /   GID - *      
@@ -94,5 +99,6 @@ UIActionSheetDelegate> {
 -(CLLocationCoordinate2D)botLeftOfMap;
 
 -(void) showBookmarkWithLocation:(CLLocationCoordinate2D*) coord AndAnnotation:(id <MKAnnotation>)annotation;
+
 
 @end

@@ -72,20 +72,23 @@ typedef struct{
 @synthesize map;
 @synthesize topSearchBar;
 @synthesize availabilitySelectionView;
+@synthesize justParkSelectionView;
 @synthesize bottomSpotSelectionView;
 @synthesize topSpotSelectionView;
 @synthesize gradientIcon;
 @synthesize navigationBar;
 @synthesize bottomSpotSelectionBar;
+
 @synthesize topSpotSelectionBar;
 @synthesize geocoder;
 @synthesize disableViewOverlay;
 @synthesize leftBarButton;
+@synthesize parkMeButton;
+@synthesize dropPinButton;
+@synthesize findMeButton;
 @synthesize zoomState;
 @synthesize displayedData;
-//@synthesize grids;
-//@synthesize streets;
-//@synthesize spots;
+
 @synthesize managedObjectContext;
 @synthesize user_loc;
 @synthesize user_loc_isGood;
@@ -98,6 +101,8 @@ typedef struct{
 @synthesize spotMicroBlockMap;
 @synthesize currentMicroBlockIds;
 @synthesize spotInfo;
+@synthesize allInsideCircle;
+@synthesize doubleTapAlreadyCalled;
 
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     NSLog(@"\n <<<<PQMapViewController:tableView did select row index path says hiiii>>>>\n\n");
@@ -364,9 +369,8 @@ typedef struct{
 #pragma mark - callbacks
 
 -(void) showBookmarkWithLocation:(CLLocationCoordinate2D*) coord AndAnnotation:(id <MKAnnotation>)annotation{
-        NSLog(@"showing coords %f %f\n", (*coord).latitude, (*coord).longitude);
+    [self showSpotSelectionViews];
     if(annotation==nil){
-
         //just zoom to spot, there's no annotation to add.  
         MKCoordinateRegion viewRegion = [self.map regionThatFits:MKCoordinateRegionMakeWithDistance(*coord,SPOT_LEVEL_REGION_METERS, SPOT_LEVEL_REGION_METERS)];
         [self.map setRegion:viewRegion animated:YES];
@@ -395,6 +399,21 @@ typedef struct{
         }
     }
     
+}
+
+-(IBAction)justParkMeButtonPressed:(id)sender{
+    //show loading screen
+    
+    //request server for nearest open spot
+    
+    //zoom user's map to that area
+    
+}
+-(IBAction)dropPinButtonPressed:(id)sender{
+    NSLog(@"drop a pin yo\n");
+}
+-(IBAction)findMeButtonPressed:(id)sender{
+    NSLog(@"zoom to my location!!\n");
 }
 
 -(void) mapView:(MKMapView *)mapView didSelectAnnotationView:(MKAnnotationView *)view{
@@ -551,7 +570,12 @@ typedef struct{
     //look through list of points, check spot distanceFromLocation (coord) vs radius.  
     //keep track of some stuff
     NSMutableArray* insideCircle = [[NSMutableArray alloc] init];
-    NSMutableArray* allInsideCircle = [[NSMutableArray alloc] init];
+    if (allInsideCircle==nil){
+        allInsideCircle = [[NSMutableArray alloc] init];
+    }else{
+        [allInsideCircle removeAllObjects];
+    }
+    
     float avgLat=0, avgLon=0, count=0;
     for(NSNumber* MBID in spotMicroBlockMap){
         NSDictionary* spotMap = [spotMicroBlockMap objectForKey:MBID];
@@ -566,29 +590,23 @@ typedef struct{
                     avgLon += spot_loc.coordinate.longitude;   
                     count++;
                 }
-                 
                 [allInsideCircle addObject:spot];
-                
                 
             }
 
         }
     }
     
-    //update the segment view with numbers from list.  
-    int selBarInd=0;
-    while(selBarInd<allInsideCircle.count){
-        if(selBarInd<4){
-            //top bar
-            PQSpotAnnotation* spot = [allInsideCircle objectAtIndex:selBarInd];
-            [topSpotSelectionBar setTitle:[NSString stringWithFormat:@"%d", spot.name] forSegmentAtIndex:selBarInd+1];   
+    //before updating, we should sort our circles by number.  
+    [allInsideCircle sortUsingComparator:^NSComparisonResult(PQSpotAnnotation* obj1, PQSpotAnnotation* obj2) {
+        if(obj1.name < obj2.name){
+            return -1;
         }else{
-            PQSpotAnnotation* spot = [allInsideCircle objectAtIndex:selBarInd];
-            [bottomSpotSelectionBar setTitle:[NSString stringWithFormat:@"%d", spot.name] forSegmentAtIndex:selBarInd-3];
-            
+            return 1;
         }
-        selBarInd++;
-    }
+    }];
+
+    [self updateSpotSegmentBar];
     
     /* CALCULATE AVERAGES FOR BOTH SIDES */
     NSArray* segData = [self loadBlockData];
@@ -876,6 +894,8 @@ typedef struct{
 }
 
 - (void)showStreetLevelWithCoordinates:(CLLocationCoordinate2D *)coord {
+    //THIS METHOD CAUSES A ZOOMING HICCUP WHEN THE USER ZOOMS OUT OF SPOT TO STREET LEVEL.  
+    //MOST NOTICEABLE WHEN YOU DOUBLE TAP AT SPOT LEVEL TO ZOOM OUT TO STREET LEVEL.  
     [self clearMap];
     /* 
      
@@ -960,20 +980,42 @@ typedef struct{
 }
 
 - (void)showAvailabilitySelectionView {
-    self.availabilitySelectionView.hidden = NO;
-    self.topSpotSelectionView.hidden = YES;
-    self.bottomSpotSelectionView.hidden = YES;
+
+    if(doubleTapAlreadyCalled){
+        doubleTapAlreadyCalled = NO;
+    }else{
+        
+        [UIView animateWithDuration:.7 animations:^{
+            //x y width height
+            self.topSpotSelectionView.frame = CGRectMake(320, 44, 320, 44);
+            self.bottomSpotSelectionView.frame = CGRectMake(-320, 416, 320, 44);
+            self.availabilitySelectionView.frame = CGRectMake(0, 44, 320, 44);
+            self.justParkSelectionView.frame = CGRectMake(0, 416, 320, 44);
+        }];
+        
+        self.availabilitySelectionView.hidden = NO;
+        //self.topSpotSelectionView.hidden = YES;
+        //self.bottomSpotSelectionView.hidden = YES;
+    }
 }
 
 - (void)showSpotSelectionViews {
+    [UIView animateWithDuration:.7 animations:^{
+                                                    //x y width height
+        self.topSpotSelectionView.frame = CGRectMake(0, 44, 320, 44);
+        self.bottomSpotSelectionView.frame = CGRectMake(0, 416, 320, 44);
+        self.availabilitySelectionView.frame = CGRectMake(-320, 44, 320, 44);
+        self.justParkSelectionView.frame = CGRectMake(320, 416, 320, 44);
+    }];
     self.topSpotSelectionView.hidden = NO;
     self.bottomSpotSelectionView.hidden = NO;
-    self.availabilitySelectionView.hidden = YES;
+    //self.availabilitySelectionView.hidden = YES;
 }
 
 - (void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated {
     //stops getting called sometimes if you zoom down and make callouts appear, then pinch out.  
     //very inconsistent though, unsure what the issue is.  
+    //NSLog(@"REGION DID CHANGe shouldNotClear = %d\n", shouldNotClearOverlays);
     oldStreetLevelRegion.center = map.centerCoordinate;    
     if (displayedData != kNoneData) {
         double currentSpan = mapView.region.span.latitudeDelta;
@@ -995,14 +1037,19 @@ typedef struct{
             if(zoomState!=kStreetZoomLevel){
                 //changed INTO street level.  current ids useless.  
                 [currentMicroBlockIds removeAllObjects];
+                [self showAvailabilitySelectionView];
+            }else{
+                
             }
             //within street level, show streets.  
             zoomState = kStreetZoomLevel;
             [self showStreetLevelWithCoordinates:&center];
-            [self showAvailabilitySelectionView];
+
         }else if(currentSpan < STREET_TO_SPOT_SPAN_LAT){
             if(!shouldNotClearOverlays){
                 //if we're allowed to clear the overlays, remove them.  
+                [allInsideCircle removeAllObjects]; //update what's inside the circle.  
+                [self updateSpotSegmentBar];
                 if(callouts.count >0){
                     //remove overlays on pan
                     [self clearCallouts]; 
@@ -1283,6 +1330,7 @@ typedef struct{
         MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(coord,SPOT_LEVEL_REGION_METERS ,SPOT_LEVEL_REGION_METERS);
         [self.map setRegion:[self.map regionThatFits:viewRegion] animated:YES];
         [self showSpotLevelWithCoordinates:&coord];
+        [self showSpotSelectionViews];
     } else if (zoomState==kSpotZoomLevel) {
         if(oldStreetLevelRegion.center.longitude==0){
             oldStreetLevelRegion.center = map.centerCoordinate;
@@ -1292,7 +1340,10 @@ typedef struct{
             oldStreetLevelRegion.span.longitudeDelta =  0.005000;
         }
         [self.map setRegion:[self.map regionThatFits:oldStreetLevelRegion] animated:YES];            
+        //this below method causes animation hiccup.  see method for more info.
         [self showStreetLevelWithCoordinates:&(oldStreetLevelRegion.center)];
+        [self showAvailabilitySelectionView];
+        doubleTapAlreadyCalled = YES;
     }
 
 }
@@ -1416,7 +1467,7 @@ typedef struct{
     [self setSearchBar:searchBar active:NO];
 }
 
-#pragma mark - TOOLBAR BUTTON ACTIONS
+#pragma mark - MAP TOOLBARS
 - (IBAction)availabilityBarTapped {
     switch (self.availabilitySelectionBar.selectedSegmentIndex) {
         case 0:
@@ -1439,15 +1490,88 @@ typedef struct{
 
 -(IBAction)topSpotSegControlIndexChanged:(id)sender{
     int index = self.topSpotSelectionBar.selectedSegmentIndex;
-    NSString* test = [sender titleForSegmentAtIndex:index];
-    NSLog(@"%s\n", test.UTF8String );
+    int name = [[topSpotSelectionBar titleForSegmentAtIndex:index] intValue];
+    for(PQSpotAnnotation* spot in allInsideCircle){
+        //for each spot inside the circle, check match spot number.  
+        if(spot.name == name){
+            //found our target.  
+            spotInfo = [networkLayer getSpotInfoForId:[NSNumber numberWithLong:spot.objId] SpotNumber:[NSNumber numberWithInt:spot.name] GPS:&user_loc];
+            CLLocationCoordinate2D spot_loc = spot.coordinate;
+            if(user_loc_isGood && ![self pointA:&spot_loc isCloseToB:&user_loc]){
+                UIActionSheet *directionsActionSheet = [[UIActionSheet alloc] initWithTitle:[NSString stringWithFormat:@"Spot %d", name] delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles: @"Get Directions", @"Park Now", nil];
+                directionsActionSheet.tag = GPS_LAUNCH_ALERT;
+                [directionsActionSheet showInView:bottomSpotSelectionView];
+                
+            }else{
+                [self parkNow];
+                
+            }
+        
+        }
+    }
 }
 
 -(IBAction)botSpotSegControlIndexChanged:(id)sender{
     int index = self.bottomSpotSelectionBar.selectedSegmentIndex;
-    NSString* test = [sender titleForSegmentAtIndex:index];
-    NSLog(@"%s\n", test.UTF8String );
+    int name = [[bottomSpotSelectionBar titleForSegmentAtIndex:index] intValue];
+    for(PQSpotAnnotation* spot in allInsideCircle){
+        //for each spot inside the circle, check match spot number.  
+        if(spot.name == name){
+            //found our target.  
+            spotInfo = [networkLayer getSpotInfoForId:[NSNumber numberWithLong:spot.objId] SpotNumber:[NSNumber numberWithInt:spot.name] GPS:&user_loc];
+            CLLocationCoordinate2D spot_loc = spot.coordinate;
+            if(user_loc_isGood && ![self pointA:&spot_loc isCloseToB:&user_loc]){
+                UIActionSheet *directionsActionSheet = [[UIActionSheet alloc] initWithTitle:[NSString stringWithFormat:@"Spot %d", name] delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles: @"Get Directions", @"Park Now", nil];
+                directionsActionSheet.tag = GPS_LAUNCH_ALERT;
+                [directionsActionSheet showInView:bottomSpotSelectionView];
+                
+            }else{
+                [self parkNow];
+                
+            }
+            
+        }
+    }
 }
+
+//IF NOT AVAILABLE, DARKEN THE BUTTON???? text red?
+-(void) updateSpotSegmentBar{
+    int segIndex = 0; //0 and 5 are arrows.  
+    while(segIndex < 7){
+        NSString* title;
+        if(segIndex < allInsideCircle.count){
+            //we have a number to show
+            PQSpotAnnotation* spot = [allInsideCircle objectAtIndex:segIndex];
+            title = [NSString stringWithFormat:@"%d", spot.name];
+            if(segIndex < 4){
+                int trueIndex = segIndex+1;
+                [topSpotSelectionBar setTitle:title forSegmentAtIndex:trueIndex];
+                [topSpotSelectionBar setEnabled:YES forSegmentAtIndex:trueIndex];
+            }else{
+                int trueIndex = segIndex - 3;  
+                [bottomSpotSelectionBar setTitle:title forSegmentAtIndex:trueIndex];
+                [bottomSpotSelectionBar setEnabled:YES forSegmentAtIndex:trueIndex];
+            }
+            
+        }else{
+           //we don't have a number to show
+            
+            if(segIndex < 4){
+                //top bar
+                int trueIndex = segIndex+1;
+                [topSpotSelectionBar setTitle:@"-----" forSegmentAtIndex:trueIndex];
+                [topSpotSelectionBar setEnabled:NO forSegmentAtIndex:trueIndex];
+            }else{
+                int trueIndex = segIndex - 3;  
+                [bottomSpotSelectionBar setTitle:@"-----" forSegmentAtIndex:trueIndex];
+                [bottomSpotSelectionBar setEnabled:NO forSegmentAtIndex:trueIndex];
+            }
+        }
+        segIndex++;
+    }
+    
+}
+
 
 -(IBAction)settingsButtonPressed :(id)sender{
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
@@ -1557,6 +1681,7 @@ typedef struct{
         if (!user_loc_isGood) {
             manager.distanceFilter = 30.0;
             MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(newLocation.coordinate, SPOT_LEVEL_REGION_METERS, SPOT_LEVEL_REGION_METERS);
+            [self showSpotSelectionViews];
             [self.map setRegion:[map regionThatFits:viewRegion] animated:YES];
             user_loc_isGood = true;
         }
@@ -1574,7 +1699,7 @@ typedef struct{
 #pragma mark - View lifecycle
 
 - (void)viewDidLoad{
-    
+
     [super viewDidLoad];
     if(!dataLayer){
         //set pointer to data layer.
@@ -1589,6 +1714,9 @@ typedef struct{
     if(gridMicroBlockMap==nil) gridMicroBlockMap = [[NSMutableDictionary alloc] init];
     if(spotMicroBlockMap==nil) spotMicroBlockMap = [[NSMutableDictionary alloc] init];
     if(streetMicroBlockMap==nil) streetMicroBlockMap = [[NSMutableDictionary alloc] init];
+    if(allInsideCircle==nil) allInsideCircle = [[NSMutableArray alloc] init];
+    
+    [self updateSpotSegmentBar];
     
     //check the current zoom level to set the ZOOM_STATE integer.  
     if (self.map.bounds.size.width >= GRID_TO_STREET_SPAN_LAT) {
@@ -1618,7 +1746,14 @@ typedef struct{
     [self.topSpotSelectionBar setWidth:36 forSegmentAtIndex:5];
     [self.bottomSpotSelectionBar setWidth:36 forSegmentAtIndex:0];
     [self.bottomSpotSelectionBar setWidth:36 forSegmentAtIndex:5];
-    
+    [self.bottomSpotSelectionBar setTitle:@"More" forSegmentAtIndex:4];
+    [self.bottomSpotSelectionBar setEnabled:NO forSegmentAtIndex:4];
+    //disable arrows
+    [self.bottomSpotSelectionBar setEnabled:NO forSegmentAtIndex:0];
+    [self.bottomSpotSelectionBar setEnabled:NO forSegmentAtIndex:5];    
+    [self.topSpotSelectionBar setEnabled:NO forSegmentAtIndex:0];
+    [self.topSpotSelectionBar setEnabled:NO forSegmentAtIndex:5];
+
     // Do any additional setup after loading the view, typically from a nib.
     self.map.delegate=self;
     self.map.showsUserLocation = YES;
@@ -1694,6 +1829,7 @@ typedef struct{
 {
 
 	[super viewDidDisappear:animated];
+    
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation

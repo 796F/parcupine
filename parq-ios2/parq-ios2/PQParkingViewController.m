@@ -14,10 +14,15 @@
 #define ACTIONSHEET_EXTEND 1
 #define ACTIONSHEET_UNPARK 2
 #define ALERTVIEW_INFO 1
+#define COUNT_DOWN 4
+#define COUNT_UP 5
+#define REFILL 6
+
 typedef enum {
     kParkingParkState=0,
     kParkedParkState,
-    kExtendingParkState
+    kExtendingParkState,
+    kReturningToAppState,
 } ParkState;
 
 @interface PQParkingViewController ()
@@ -72,6 +77,7 @@ typedef enum {
 @synthesize dateFormatter;
 @synthesize parent;
 @synthesize spotInfo;
+@synthesize notificationTag;
 
 #pragma mark - Park state transitions
 - (void)parkedAfterParking {
@@ -91,6 +97,10 @@ typedef enum {
 }
 
 - (void)extendingAfterParked {
+    //check limit before allowing extend.  
+    
+    //or just hide the button if limit is hit.  
+    
     parkState = kExtendingParkState;
     timeRemainingCellView.hidden = NO;
     timeToAddCellView.hidden = NO;
@@ -121,8 +131,11 @@ typedef enum {
 #pragma mark - Main button actions
 - (IBAction)startTimer:(id)sender {
     if (!prepaidFlag.hidden) { // Prepaid
+        //set up notifications.  
+        notificationTag = COUNT_DOWN;
         [expiresAtTimer invalidate];
         prepaidEndTime = [NSDate dateWithTimeIntervalSinceNow:datePicker.countDownDuration];
+        [self scheduleLocalNotification:prepaidEndTime];
         timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updatePrepaidTimer) userInfo:nil repeats:YES];
     } else { // Pay as you go
         paygStartTime = [NSDate date];
@@ -135,6 +148,7 @@ typedef enum {
     UIActionSheet *unparkActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Unpark" otherButtonTitles:nil];
     unparkActionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
     unparkActionSheet.tag = ACTIONSHEET_UNPARK;
+    [self scheduleLocalNotification:nil];   //remove all notifications
     [unparkActionSheet showInView:self.tableView];
 }
 
@@ -159,6 +173,7 @@ typedef enum {
         hours.text = [NSString stringWithFormat:@"%02d", totalMinutes/60];
         minutes.text = [NSString stringWithFormat:@"%02d", totalMinutes%60];
         expiresAtTime.text = [dateFormatter stringFromDate:prepaidEndTime];
+        [self scheduleLocalNotification:prepaidEndTime]; //reset the notifications.  
         [self parkedAfterExtending];
     }
 }
@@ -171,7 +186,46 @@ typedef enum {
 }
 
 #pragma mark - Timer update methods
+//prepare a 5 minute warning and a out of time warning.  
+- (void) scheduleLocalNotification:(NSDate*) endDate{
+    //clears old notifications
+    UIApplication* myApp = [UIApplication sharedApplication];
+    if(endDate == nil){ //counting up
+        [myApp cancelAllLocalNotifications];
+    }else{ //counting down
+        //set a 5 minute time from endDate, regardless of refill/parking
+        [myApp cancelAllLocalNotifications];
+        UILocalNotification* lowTimeAlert = [[UILocalNotification alloc] init];
+        
+        lowTimeAlert.applicationIconBadgeNumber=1; //mark the app with red 1
+        //this method uses seconds.
+        NSTimeInterval fiveMinutes = -300;
+        lowTimeAlert.fireDate = [NSDate dateWithTimeInterval:fiveMinutes sinceDate:endDate];
+        lowTimeAlert.timeZone = [NSTimeZone defaultTimeZone];
+        lowTimeAlert.alertBody = @"You have 5 minutes remaining!";
+        
+        UILocalNotification* endingAlert = [[UILocalNotification alloc] init];        
+        endingAlert.applicationIconBadgeNumber=1; //mark the app with red 1
+        endingAlert.fireDate = endDate;
+        endingAlert.timeZone = [NSTimeZone defaultTimeZone];
+        endingAlert.alertBody = @"You have run out of time!";
+        
+        lowTimeAlert.soundName = UILocalNotificationDefaultSoundName;
+        endingAlert.soundName = UILocalNotificationDefaultSoundName;
+        
+        [myApp scheduleLocalNotification:endingAlert];
+        [myApp scheduleLocalNotification:lowTimeAlert];
+    }
+}
 - (void)updatePrepaidTimer {
+    int remainingSeconds = round([prepaidEndTime timeIntervalSinceNow]);
+    
+    
+    if (remainingSeconds < 1) {
+        //out of time.  
+        [timer invalidate];
+        [self dismissModalViewControllerAnimated:YES];
+    }
     if (parkState == kParkedParkState) {
         // Adding 59 seconds rounds 00:04:59 to 00:05 but keeps 00:05:00 as 00:05
         int totalMinutes = ([prepaidEndTime timeIntervalSinceNow]+59)/60;
@@ -181,6 +235,7 @@ typedef enum {
     } else { // parkState == kExtendingParkState
         int totalSeconds = round([prepaidEndTime timeIntervalSinceNow]);
         int totalMinutes = (totalSeconds+59)/60;
+        //even odd thing makes it tick.  
         if (totalSeconds%2 == 0) {
             remainingAmount.text = [NSString stringWithFormat:@"%02d:%02d", totalMinutes/60, totalMinutes%60];
         } else {
@@ -203,6 +258,7 @@ typedef enum {
 
 #pragma mark - Date Picker control
 - (IBAction)durationChanged:(id)sender {
+    
     int totalMinutes = datePicker.countDownDuration/60;
     if (totalMinutes > limit) {
         datePicker.countDownDuration = limit*60;
@@ -238,7 +294,11 @@ typedef enum {
         self.tableView.frame = CGRectMake(0, -131, 320, 611);
         datePicker.frame = CGRectMake(0, 2, 320, 216);
     }];
-    datePicker.minuteInterval = 15;
+
+    datePicker.minuteInterval = spotInfo.minuteInterval.intValue;
+    datePicker.countDownDuration = spotInfo.minuteInterval.intValue;
+    //this is ignored because of the countdowntimermode.
+    //datePicker.maximumDate = [NSDate dateWithTimeIntervalSinceNow:spotInfo.maxTime.intValue*60];
     self.navigationItem.title = @"Enter Amount";
     self.navigationItem.leftBarButtonItem = cancelButton;
     self.navigationItem.rightBarButtonItem = doneButton;
@@ -280,6 +340,7 @@ typedef enum {
 }
 
 - (void)prepaidSelected {
+    
     meter.image = [UIImage imageNamed:@"meter_prepaid.png"];
     expiresAtTime.hidden = NO;
     paygCheck.image = [UIImage imageNamed:@"check_empty.png"];
@@ -288,6 +349,7 @@ typedef enum {
         [self animateFlagOut:paygFlag];
         [self animateFlagIn:prepaidFlag];
     }
+
     prepaidAmount.textColor = [UIColor whiteColor];
     unparkButton.frame = CGRectMake(165, 10, 145, 52);
     unparkButton.titleLabel.font = [UIFont boldSystemFontOfSize:19];
@@ -576,4 +638,5 @@ typedef enum {
     // Return YES for supported orientations
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
+
 @end
