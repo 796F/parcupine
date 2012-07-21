@@ -28,7 +28,7 @@
 @property (weak, nonatomic) IBOutlet UILabel* plateLabel;
 @property (weak, nonatomic) IBOutlet UILabel* ssnLabel;
 @property (weak, nonatomic) IBOutlet UILabel* balanceLabel;
-
+@property (weak, nonatomic) UIViewController* parent;
 @property (weak, nonatomic) UserObject* user;
 
 @end

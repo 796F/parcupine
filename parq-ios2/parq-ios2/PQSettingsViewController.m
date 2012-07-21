@@ -27,6 +27,7 @@
 @synthesize balanceLabel;
 @synthesize balanceCellView;
 @synthesize user;
+@synthesize parent;
 
 #pragma mark - BUTTONS
 
@@ -36,10 +37,9 @@
 }
 -(IBAction)signOutButtonPressed:(id)sender{
     [dataLayer setLoggedIn:NO];
-    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
-    UIViewController* vc = [storyboard instantiateViewControllerWithIdentifier:@"LoginController"];
-    [vc setModalPresentationStyle:UIModalPresentationFullScreen];
-    [self presentModalViewController:vc animated:YES];    
+    self.parent.view.hidden = YES;
+    [self dismissModalViewControllerAnimated:YES];
+      
 }
 
 #pragma mark - VIEW LIFECYCLE

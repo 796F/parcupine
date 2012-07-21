@@ -1599,8 +1599,11 @@ typedef struct{
 -(IBAction)settingsButtonPressed :(id)sender{
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
     UINavigationController *vc = [storyboard instantiateViewControllerWithIdentifier:@"SettingsController"];
+
     [vc setModalPresentationStyle:UIModalPresentationFullScreen];
     PQSettingsViewController *vcTop = [[vc viewControllers] objectAtIndex:0];
+    [vcTop setParent:self];
+    
     UserObject* ourUser = [[UserObject alloc] initWithUid:nil City:nil SSN:nil Balance:nil Sound:nil Vibrate:nil Name:nil Address:nil Plate:nil];
 
     //THIS IS A PLACE HOLDER.  USER object is not initialized here, but rather on login.  
