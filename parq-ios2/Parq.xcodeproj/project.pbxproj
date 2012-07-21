@@ -67,6 +67,8 @@
 		FC72148A1592267A00D228C6 /* ContactCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FC7214891592267A00D228C6 /* ContactCell.m */; };
 		FC7214951592522100D228C6 /* doneup.png in Resources */ = {isa = PBXBuildFile; fileRef = FC7214941592522100D228C6 /* doneup.png */; };
 		FC768F8615B718B0004F6696 /* PQPinAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = FC768F8515B718B0004F6696 /* PQPinAnnotation.m */; };
+		FC97EE7315BB379600186182 /* login.png in Resources */ = {isa = PBXBuildFile; fileRef = FC97EE7215BB379500186182 /* login.png */; };
+		FC97EE7915BB3FB300186182 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC97EE7815BB3FB200186182 /* LoginViewController.m */; };
 		FCD0F07D159120800063D6FA /* PQBookmarksViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FCD0F07C159120800063D6FA /* PQBookmarksViewController.m */; };
 		FCD8FE071598BD57004E38C4 /* BoundingBox.m in Sources */ = {isa = PBXBuildFile; fileRef = FCD8FE061598BD57004E38C4 /* BoundingBox.m */; };
 		FCDBD4B815ADF28100E81B7E /* Waypoint.m in Sources */ = {isa = PBXBuildFile; fileRef = FCDBD4B715ADF28100E81B7E /* Waypoint.m */; };
@@ -220,6 +222,9 @@
 		FC772759157C2C8C005DEBEA /* Segment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Segment.m; path = "parq-ios2/Segment.m"; sourceTree = "<group>"; };
 		FC7CE863157943620059EE43 /* NetworkLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkLayer.h; path = "parq-ios2/NetworkLayer.h"; sourceTree = "<group>"; };
 		FC7CE864157943630059EE43 /* NetworkLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NetworkLayer.m; path = "parq-ios2/NetworkLayer.m"; sourceTree = "<group>"; };
+		FC97EE7215BB379500186182 /* login.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = login.png; sourceTree = "<group>"; };
+		FC97EE7715BB3FB200186182 /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
+		FC97EE7815BB3FB200186182 /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
 		FCD0F07B159120800063D6FA /* PQBookmarksViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PQBookmarksViewController.h; sourceTree = "<group>"; };
 		FCD0F07C159120800063D6FA /* PQBookmarksViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PQBookmarksViewController.m; sourceTree = "<group>"; };
 		FCD8FE051598BD57004E38C4 /* BoundingBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoundingBox.h; path = "parq-ios2/BoundingBox.h"; sourceTree = "<group>"; };
@@ -329,6 +334,8 @@
 				87E1BE66154A08D80095E92D /* PQParkingViewController.m */,
 				8703ACBF1513F841002FE357 /* PQMapViewController.h */,
 				8703ACC01513F841002FE357 /* PQMapViewController.m */,
+				FC97EE7715BB3FB200186182 /* LoginViewController.h */,
+				FC97EE7815BB3FB200186182 /* LoginViewController.m */,
 				8703ACB11513F841002FE357 /* Supporting Files */,
 			);
 			path = "parq-ios2";
@@ -389,6 +396,7 @@
 				87E1BE59154741190095E92D /* right_arrow.png */,
 				871E2103152CE02100D9452A /* settings.png */,
 				87ABC3B71582DBF900030005 /* spot_free.png */,
+				FC97EE7215BB379500186182 /* login.png */,
 				87ABC3B81582DBF900030005 /* spot_occupied.png */,
 			);
 			name = Images;
@@ -610,6 +618,7 @@
 				FC6C9F6015925D02002C5418 /* donedown.png in Resources */,
 				FCE5A01F15AC81000069A03E /* parq.plist in Resources */,
 				FCE5A02115ACD8AD0069A03E /* mockdata.plist in Resources */,
+				FC97EE7315BB379600186182 /* login.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -654,6 +663,7 @@
 				FCDBD4BE15ADF28100E81B7E /* Street.m in Sources */,
 				FC768F8615B718B0004F6696 /* PQPinAnnotation.m in Sources */,
 				FC18601615B8503600AFFF8E /* SpotInfo.m in Sources */,
+				FC97EE7915BB3FB300186182 /* LoginViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -749,6 +759,7 @@
 				GCC_PREFIX_HEADER = "parq-ios2/Parq-Prefix.pch";
 				HEADER_SEARCH_PATHS = "\"$(BUILT_PRODUCTS_DIR)/../../Headers\"";
 				INFOPLIST_FILE = "parq-ios2/Parq-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-all_load",
@@ -765,6 +776,7 @@
 				GCC_PREFIX_HEADER = "parq-ios2/Parq-Prefix.pch";
 				HEADER_SEARCH_PATHS = "\"$(BUILT_PRODUCTS_DIR)/../../Headers\"";
 				INFOPLIST_FILE = "parq-ios2/Parq-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-all_load",

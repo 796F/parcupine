@@ -8,9 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import "UserObject.h"
-
+#import "NetworkLayer.h"
+#import "DataLayer.h"
 @interface PQSettingsViewController : UITableViewController < UITableViewDataSource, UITableViewDelegate>{
-    
+    NetworkLayer* networkLayer;
+    DataLayer* dataLayer;
 }
 @property (weak, nonatomic) IBOutlet UIView* nameCellView;
 @property (weak, nonatomic) IBOutlet UIView* addrCellView;

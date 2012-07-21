@@ -98,6 +98,25 @@
     }
 }
 
+-(BOOL) isLoggedIn{
+    NSString* path = [self getPlistPath];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
+    if([[data objectForKey:@"isLoggedIn"] boolValue]){
+        //isLoggedIn 
+        return YES;        
+    }else{
+        //flag was raised, this isn't first launch.  
+        return NO;
+    }
+}
+-(void) setLoggedIn:(BOOL) yesORno{
+    NSLog(@"setting loggedIn = %d\n", yesORno);
+    NSString* path = [self getPlistPath];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
+    [data setObject:[NSNumber numberWithBool:yesORno] forKey:@"isLoggedIn"];        
+    [data writeToFile: path atomically:YES];
+}
+
 #pragma mark - CORE DATA CALLS
 
 -(void) testFetch:(EntityType)entityType Microblocks:(NSArray*) mbids{

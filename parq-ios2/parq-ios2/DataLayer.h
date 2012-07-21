@@ -37,6 +37,8 @@ typedef enum {
 
 //settings stuff using plist
 -(BOOL) isFirstLaunch;
+-(BOOL) isLoggedIn;
+-(void) setLoggedIn:(BOOL) yesORno;
 
 //debug
 -(void) testFetch:(EntityType)entityType Microblocks:(NSArray*) microBlockIDs;

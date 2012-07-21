@@ -7,7 +7,7 @@
 //
 
 #import "PQSettingsViewController.h"
-
+#import "PQAppDelegate.h"
 @interface PQSettingsViewController ()
 
 @end
@@ -34,6 +34,13 @@
     //save information, then dismiss.  
     [self dismissModalViewControllerAnimated:YES];
 }
+-(IBAction)signOutButtonPressed:(id)sender{
+    [dataLayer setLoggedIn:NO];
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
+    UIViewController* vc = [storyboard instantiateViewControllerWithIdentifier:@"LoginController"];
+    [vc setModalPresentationStyle:UIModalPresentationFullScreen];
+    [self presentModalViewController:vc animated:YES];    
+}
 
 #pragma mark - VIEW LIFECYCLE
 
@@ -51,7 +58,12 @@
 -(void) viewDidLoad{
 
     [super viewDidLoad];
-
+    if(!networkLayer){
+        networkLayer = ((PQAppDelegate*)[[UIApplication sharedApplication] delegate]).networkLayer;
+    }
+    if(!dataLayer){
+        dataLayer = ((PQAppDelegate*)[[UIApplication sharedApplication] delegate]).dataLayer;
+    }
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
  
@@ -123,5 +135,4 @@
 
     //if section isn't 0, dont' do anything.  
 }
-
 @end

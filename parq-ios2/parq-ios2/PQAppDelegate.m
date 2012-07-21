@@ -23,8 +23,9 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    
+
     NSLog(@"app did finish launching\n");
+    
     NSManagedObjectContext* context  = [self managedObjectContext];
     if(!context){
         //this is coming out as nil.
@@ -44,7 +45,6 @@
 
     if([dataLayer isFirstLaunch]){
         //first launch!  do something special.  
-        NSLog(@"HELLO THIS IS YOUR FIRST LAUNCH YAAAAY\n");
         [dataLayer loadMockData];
         [networkLayer loadSpotData];
     }

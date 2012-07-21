@@ -1650,6 +1650,8 @@ typedef struct{
 
 
 - (IBAction)noneButtonPressed:(id)sender {
+
+    
 //    [self clearMap];
 //    [networkLayer testAsync];
 
@@ -1697,6 +1699,23 @@ typedef struct{
         NSLog(@"check your number, len not 4\n");
     }
 }
+
+-(void) checkLoggedIn{
+    if([dataLayer isLoggedIn]){
+        //already logged in.  dont' hsow login screen.  
+        self.view.hidden = NO;
+        NSLog(@"reveal the map\n");
+    }else{
+        self.view.hidden = YES;
+        NSLog(@"hide the map\n");
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
+        LoginViewController* vc = [storyboard instantiateViewControllerWithIdentifier:@"LoginController"];
+        [vc setParent:self];
+        [vc setModalPresentationStyle:UIModalPresentationFullScreen];
+        [self presentModalViewController:vc animated:YES];    
+    }
+}
+
 #pragma mark - LOCATION
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation{
     user_loc = newLocation.coordinate;
@@ -1724,6 +1743,7 @@ typedef struct{
 - (void)viewDidLoad{
 
     [super viewDidLoad];
+    
     if(!dataLayer){
         //set pointer to data layer.
         dataLayer = ((PQAppDelegate*)[[UIApplication sharedApplication] delegate]).dataLayer;
@@ -1821,23 +1841,21 @@ typedef struct{
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-
-    locationManager=[[CLLocationManager alloc] init];
-    locationManager.delegate=self;
-    locationManager.desiredAccuracy=kCLLocationAccuracyNearestTenMeters;
-
-    [locationManager startUpdatingLocation];
-
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
-    
+    [self checkLoggedIn];
     [super viewDidAppear:animated];
     //prepare geocoder upon view load.  
     if(geocoder ==nil){
         geocoder = [[CLGeocoder alloc] init];
     }
+    locationManager=[[CLLocationManager alloc] init];
+    locationManager.delegate=self;
+    locationManager.desiredAccuracy=kCLLocationAccuracyNearestTenMeters;
+    
+    [locationManager startUpdatingLocation];
     
 }
 
