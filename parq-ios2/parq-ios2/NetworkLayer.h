@@ -13,6 +13,7 @@
 #import "JSONKit.h"
 #import "BoundingBox.h"
 #import "SpotInfo.h"
+#import "User.h"
 
 //using @class to avoid cycle, which breaks the compiler.  sigh
 @class PQMapViewController;
@@ -33,6 +34,7 @@
 -(NSMutableArray*) getMBIDsWithType:(EntityType) entityType NE:(CLLocationCoordinate2D*) topRight SW:(CLLocationCoordinate2D*) botLeft;
 -(SpotInfo*) getSpotInfoForId:(NSNumber*)spotId SpotNumber:(NSNumber*)spotNum GPS:(CLLocationCoordinate2D*)coord; 
 
+-(User*) loginEmail:(NSString*) email AndPassword:(NSString*) pass;
 //network status
 -(BOOL) isRecheableViaWifi;
 -(BOOL) isRecheableVia3G;

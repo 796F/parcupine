@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "UserObject.h"
+#import "loginResponseObject.h"
 #import "NetworkLayer.h"
 #import "DataLayer.h"
 @interface PQSettingsViewController : UITableViewController < UITableViewDataSource, UITableViewDelegate>{
@@ -16,6 +16,7 @@
 }
 @property (weak, nonatomic) IBOutlet UIView* nameCellView;
 @property (weak, nonatomic) IBOutlet UIView* addrCellView;
+@property (weak, nonatomic) IBOutlet UIView* emailCellView;
 @property (weak, nonatomic) IBOutlet UIView* plateCellView;
 @property (weak, nonatomic) IBOutlet UIView* ssnCellView;
 @property (weak, nonatomic) IBOutlet UIView* balanceCellView;
@@ -25,10 +26,11 @@
 
 @property (weak, nonatomic) IBOutlet UILabel* nameLabel;
 @property (weak, nonatomic) IBOutlet UILabel* addrLabel;
+@property (weak, nonatomic) IBOutlet UILabel* emailLabel;
 @property (weak, nonatomic) IBOutlet UILabel* plateLabel;
 @property (weak, nonatomic) IBOutlet UILabel* ssnLabel;
 @property (weak, nonatomic) IBOutlet UILabel* balanceLabel;
 @property (weak, nonatomic) UIViewController* parent;
-@property (weak, nonatomic) UserObject* user;
+@property (weak, nonatomic) User* user;
 
 @end

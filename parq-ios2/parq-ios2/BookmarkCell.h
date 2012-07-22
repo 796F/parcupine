@@ -14,6 +14,7 @@
 }
 
 @property (nonatomic, strong) IBOutlet UILabel* bookmarkName;
-@property (nonatomic) MKCoordinateRegion region;
+@property (nonatomic) CLLocationCoordinate2D region;
+@property (nonatomic) IBOutlet UIImageView* minus;
 
 @end

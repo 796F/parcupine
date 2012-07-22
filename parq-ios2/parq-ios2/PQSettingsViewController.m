@@ -26,61 +26,10 @@
 @synthesize plateCellView;
 @synthesize balanceLabel;
 @synthesize balanceCellView;
+@synthesize emailLabel;
+@synthesize emailCellView;
 @synthesize user;
 @synthesize parent;
-
-#pragma mark - BUTTONS
-
--(IBAction)doneButtonPressed:(id)sender{
-    //save information, then dismiss.  
-    [self dismissModalViewControllerAnimated:YES];
-}
--(IBAction)signOutButtonPressed:(id)sender{
-    [dataLayer setLoggedIn:NO];
-    self.parent.view.hidden = YES;
-    [self dismissModalViewControllerAnimated:YES];
-      
-}
-
-#pragma mark - VIEW LIFECYCLE
-
-- (id)initWithStyle:(UITableViewStyle)style
-{
-    self = [super initWithStyle:style];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
-
-
-
--(void) viewDidLoad{
-
-    [super viewDidLoad];
-    if(!networkLayer){
-        networkLayer = ((PQAppDelegate*)[[UIApplication sharedApplication] delegate]).networkLayer;
-    }
-    if(!dataLayer){
-        dataLayer = ((PQAppDelegate*)[[UIApplication sharedApplication] delegate]).dataLayer;
-    }
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
- 
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
-}
-
-- (void)viewDidUnload{
-    [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
-}
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
-}
 
 #pragma mark - Table view data source
 
@@ -132,7 +81,67 @@
             //account balance
         }
     }
-
+    
     //if section isn't 0, dont' do anything.  
 }
+#pragma mark - BUTTONS
+
+-(IBAction)doneButtonPressed:(id)sender{
+    //save information, then dismiss.  
+    [self dismissModalViewControllerAnimated:YES];
+}
+-(IBAction)signOutButtonPressed:(id)sender{
+    [dataLayer setLoggedIn:NO];
+    self.parent.view.hidden = YES;
+    [self dismissModalViewControllerAnimated:YES];
+      
+}
+
+#pragma mark - VIEW LIFECYCLE
+
+- (id)initWithStyle:(UITableViewStyle)style
+{
+    self = [super initWithStyle:style];
+    if (self) {
+        // Custom initialization
+    }
+    return self;
+}
+
+
+
+-(void) viewDidLoad{
+
+    [super viewDidLoad];
+    if(!networkLayer){
+        networkLayer = ((PQAppDelegate*)[[UIApplication sharedApplication] delegate]).networkLayer;
+    }
+    if(!dataLayer){
+        dataLayer = ((PQAppDelegate*)[[UIApplication sharedApplication] delegate]).dataLayer;
+    }
+    user = [dataLayer getUser];
+    nameLabel.text = user.name;
+    addrLabel.text = user.address;
+    emailLabel.text = user.email;
+    plateLabel.text = user.license;
+    balanceLabel.text = [user.balance stringValue];
+    
+    // Uncomment the following line to preserve selection between presentations.
+    // self.clearsSelectionOnViewWillAppear = NO;
+ 
+    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
+    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+}
+
+- (void)viewDidUnload{
+    [super viewDidUnload];
+    // Release any retained subviews of the main view.
+    // e.g. self.myOutlet = nil;
+}
+
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
+    return (interfaceOrientation == UIInterfaceOrientationPortrait);
+}
+
 @end

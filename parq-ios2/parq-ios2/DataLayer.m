@@ -305,5 +305,14 @@
 
 }
 
+-(User*) getUser{
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"User" inManagedObjectContext:managedObjectContext];
+    [request setEntity:entity];
+    NSError *error = nil;
+    NSArray* returnedObjects = [managedObjectContext executeFetchRequest:request error:&error];
+    return (User*) [returnedObjects lastObject];
+}
+
 
 @end

@@ -519,6 +519,8 @@ typedef enum {
 
     // Hardcoding the rate and limit for now
     self.navigationItem.title =[NSString stringWithFormat:@"%d, %s.\n", spotInfo.spotNumber.intValue, spotInfo.streetName.UTF8String];
+    addressLabel.text = spotInfo.streetName;
+    
     rateNumeratorCents = [spotInfo.rateCents intValue];
     rateDenominatorMinutes = [spotInfo.minuteInterval intValue];
     limit = [spotInfo.maxTime intValue];

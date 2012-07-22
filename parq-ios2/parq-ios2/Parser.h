@@ -7,9 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
-
+#import "User.h"
 @interface Parser : NSObject
 
 +(NSDictionary*) parseGridResponse:(NSString*) jsonResponse;
++(NSDictionary*) parseUserObjectString:(NSString*) jsonResponse;
 
 @end

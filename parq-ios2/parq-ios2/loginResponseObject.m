@@ -6,9 +6,9 @@
 //  Copyright (c) 2012 Massachusetts Institute of Technology. All rights reserved.
 //
 
-#import "UserObject.h"
+#import "loginResponseObject.h"
 
-@implementation UserObject
+@implementation loginResponseObject
 
 @synthesize city;
 @synthesize uid;
@@ -16,15 +16,13 @@
 @synthesize name;
 @synthesize address;
 @synthesize plate;
-@synthesize ssn;
 @synthesize balance;
 
 @synthesize soundEnabled;
 @synthesize vibrateEnabled;
 
--(UserObject*) initWithUid:(NSNumber*) uidIn 
+-(loginResponseObject*) initWithUid:(NSNumber*) uidIn 
                       City:(NSNumber*) cityIn 
-                       SSN:(NSNumber*) ssnIn 
                    Balance:(NSNumber*)balanceIn 
                      Sound:(NSNumber*) soundIn 
                    Vibrate:(NSNumber*)vibIn 
@@ -36,7 +34,6 @@
     self.name = nameIn;
     self.address = addr;
     self.plate = plateIn;
-    self.ssn = ssnIn;
     self.balance = balanceIn;
     self.soundEnabled = soundIn;
     self.vibrateEnabled = vibIn;

@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <MapKit/MapKit.h>
 #import "Segment.h"
+#import "User.h"
 #define GRID_LENGTH 0.005
 @class PQMapViewController;
 @interface DataLayer : NSObject {
@@ -26,6 +27,8 @@ typedef enum {
 
 - (NSSet *)fetchObjectsForEntityName:(NSString *)newEntityName
                        withPredicate:(id)stringOrPredicate;
+
+-(User*) getUser;
 
 //checks if an object, or if an mbid, is already stored in core data.  
 -(BOOL) objExistsInCoreData:(NSObject*)object EntityType:(EntityType) entityType;

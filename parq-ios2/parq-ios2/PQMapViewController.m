@@ -991,7 +991,10 @@ typedef struct{
 }
 
 - (void)showAvailabilitySelectionView {
-
+    //Debug when we switch to number pad, then zoom out, and select search bar again.
+    topSearchBar.keyboardType = UIKeyboardTypeDefault;
+    topSearchBar.selectedScopeButtonIndex=0;
+    //debug
     if(doubleTapAlreadyCalled){
         doubleTapAlreadyCalled = NO;
     }else{
@@ -1052,6 +1055,7 @@ typedef struct{
             }else{
                 
             }
+            
             //within street level, show streets.  
             zoomState = kStreetZoomLevel;
             [self showStreetLevelWithCoordinates:&center];
@@ -1603,11 +1607,6 @@ typedef struct{
     [vc setModalPresentationStyle:UIModalPresentationFullScreen];
     PQSettingsViewController *vcTop = [[vc viewControllers] objectAtIndex:0];
     [vcTop setParent:self];
-    
-    UserObject* ourUser = [[UserObject alloc] initWithUid:nil City:nil SSN:nil Balance:nil Sound:nil Vibrate:nil Name:nil Address:nil Plate:nil];
-
-    //THIS IS A PLACE HOLDER.  USER object is not initialized here, but rather on login.  
-    vcTop.user = ourUser;
     //also pass rate information for the selected spot here.  
     [self presentModalViewController:vc animated:YES];
 
@@ -1653,7 +1652,9 @@ typedef struct{
 
 
 - (IBAction)noneButtonPressed:(id)sender {
-
+        
+    
+    //self.map = [[MKMapView alloc] initWithFrame:CGRectMake(0, 44, 320, 416)];
     
 //    [self clearMap];
 //    [networkLayer testAsync];
@@ -1711,11 +1712,12 @@ typedef struct{
     }else{
         self.view.hidden = YES;
         NSLog(@"hide the map\n");
+        
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
-        LoginViewController* vc = [storyboard instantiateViewControllerWithIdentifier:@"LoginController"];
-        [vc setParent:self];
+        LoginNavigationController *vc = [storyboard instantiateViewControllerWithIdentifier:@"LoginController"];
+        vc.parent = self;
         [vc setModalPresentationStyle:UIModalPresentationFullScreen];
-        [self presentModalViewController:vc animated:YES];    
+        [self presentModalViewController:vc animated:YES];
     }
 }
 
@@ -1844,6 +1846,9 @@ typedef struct{
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    if(![dataLayer isLoggedIn]){
+        self.view.hidden = YES; //not logged in?  hide map.
+    }
 }
 
 - (void)viewDidAppear:(BOOL)animated

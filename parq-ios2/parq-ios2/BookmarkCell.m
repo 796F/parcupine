@@ -11,6 +11,7 @@
 @implementation BookmarkCell
 @synthesize bookmarkName;
 @synthesize region;
+@synthesize minus;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {

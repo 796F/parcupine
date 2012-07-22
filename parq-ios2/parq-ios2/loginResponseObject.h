@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface UserObject : NSObject{
+@interface loginResponseObject : NSObject{
     
 }
 @property (weak, nonatomic) NSNumber* uid; //used to identify a user
@@ -17,15 +17,14 @@
 @property (weak, nonatomic) NSString* name;
 @property (weak, nonatomic) NSString* address;
 @property (weak, nonatomic) NSString* plate;
-@property (weak, nonatomic) NSNumber* ssn;
+//@property (weak, nonatomic) NSNumber* ssn;
 @property (weak, nonatomic) NSNumber* balance;
 
 @property (weak, nonatomic) NSNumber* soundEnabled;
 @property (weak, nonatomic) NSNumber* vibrateEnabled;
 
--(UserObject*) initWithUid:(NSNumber*) uidIn 
+-(loginResponseObject*) initWithUid:(NSNumber*) uidIn 
                       City:(NSNumber*) cityIn 
-                       SSN:(NSNumber*) ssnIn 
                    Balance:(NSNumber*)balanceIn 
                      Sound:(NSNumber*) soundIn 
                    Vibrate:(NSNumber*)vibIn 

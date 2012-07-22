@@ -8,8 +8,7 @@
 
 #import "PQBookmarksViewController.h"
 #import "BookmarkCell.h"
-#import "RecentCell.h"
-#import "ContactCell.h"
+
 @interface PQBookmarksViewController ()
 
 @end
@@ -48,6 +47,20 @@
     }
 }
 
+-(void) tableView:(UITableView *)tableView willBeginEditingRowAtIndexPath:(NSIndexPath *)indexPath{
+    
+}
+-(void) tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath{
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        //NSInteger row = [indexPath row];
+        [UIView animateWithDuration:.7 animations:^{
+            //x y width height
+            tableView.frame = CGRectMake(320, 44, 320, 44);
+        }];
+
+    }
+}
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     // Return the number of rows in the section.
     int displayType = bookmarkSelectionBar.selectedSegmentIndex;
@@ -75,57 +88,40 @@
     static NSString *CellIdentifier;
     int displayType = bookmarkSelectionBar.selectedSegmentIndex;
 
-    if(displayType == 0){
-        if(indexPath.row==0){
-            UITableViewCell *cell = [tableView
-                                     dequeueReusableCellWithIdentifier:@"currLocCell"];
-            if (cell == nil) {
-                cell = [[UITableViewCell alloc]
-                        initWithStyle:UITableViewCellStyleDefault 
-                        reuseIdentifier:CellIdentifier];
-            }
-            return cell;
-        }else{
-            BookmarkCell *cell = [tableView
-                                     dequeueReusableCellWithIdentifier:@"bookmarkCell"];
-            if (cell == nil) {
-                cell = [[BookmarkCell alloc]
-                        initWithStyle:UITableViewCellStyleDefault 
-                        reuseIdentifier:CellIdentifier];
-            }
-            if (self.bookmarks==nil){
-                self.bookmarks = [self loadBookmarks];
-            }
-            cell.bookmarkName.text = [self.bookmarks objectAtIndex:[indexPath row]-1];
-
-            return cell;
-        }
-    }else if(displayType == 1){
-        RecentCell *cell = [tableView dequeueReusableCellWithIdentifier:@"recentCell"];
+    if(indexPath.row==0 && displayType == 0){
+        UITableViewCell *cell = [tableView
+                                 dequeueReusableCellWithIdentifier:@"currLocCell"];
         if (cell == nil) {
-            cell = [[RecentCell alloc]
+            cell = [[UITableViewCell alloc]
                     initWithStyle:UITableViewCellStyleDefault 
                     reuseIdentifier:CellIdentifier];
         }
-        if(self.recentSearches==nil){
-            self.recentSearches = [self loadRecent];   
-        }
-        cell.recentSearchName.text = [self.recentSearches objectAtIndex:[indexPath row]];
-        cell.recentSearchDescription.text = @"IM A MISSING DESC LAWL";
         return cell;
     }else{
-        ContactCell* cell = [tableView dequeueReusableCellWithIdentifier:@"contactCell"];
+        BookmarkCell *cell = [tableView
+                                 dequeueReusableCellWithIdentifier:@"bookmarkCell"];
         if (cell == nil) {
-            cell = [[ContactCell alloc]
+            cell = [[BookmarkCell alloc]
                     initWithStyle:UITableViewCellStyleDefault 
                     reuseIdentifier:CellIdentifier];
         }
-        if(self.contacts==nil){
-            self.contacts = [self loadContacts];
+        if (self.bookmarks==nil){
+            self.bookmarks = [self loadBookmarks];
         }
-        cell.contactName.text = [self.contacts objectAtIndex:[indexPath row]];
+        if(displayType==0){
+            //current location offsets the index.  
+            cell.bookmarkName.text = [self.bookmarks objectAtIndex:[indexPath row]-1];
+        }else if(displayType==1){
+            //recents
+            cell.bookmarkName.text = [self.recentSearches objectAtIndex:[indexPath row]];
+        }else{
+            //contacts
+            cell.bookmarkName.text = [self.contacts objectAtIndex:[indexPath row]];
+        }
+        
         return cell;
     }
+    
     
 }
 
@@ -161,24 +157,42 @@
     }
 }
 
+-(void) toggleShowRedMinus:(NSArray*) cellList Row:(int) row Section:(int) section{
+    int i=0;
+    if(userIsEditing){
+        userIsEditing = NO;
+        //hide, currently editing.  
+        for(i=0; i<cellList.count; i++){
+            BookmarkCell* cell = (BookmarkCell*)[table cellForRowAtIndexPath:[NSIndexPath indexPathForRow:row+i inSection:section]];
+            cell.selectionStyle = UITableViewCellSelectionStyleBlue;
+            [UIView animateWithDuration:0.5 animations:^{
+                cell.bookmarkName.center = CGPointMake(cell.bookmarkName.center.x-30, cell.bookmarkName.center.y);
+                cell.minus.center = CGPointMake(-15, cell.minus.center.y);
+            }];
+        }
+
+    }else{
+        //show, not yet editing.  
+        userIsEditing = YES;        
+        for(i=0; i<cellList.count; i++){
+            BookmarkCell* cell = (BookmarkCell*)[table cellForRowAtIndexPath:[NSIndexPath indexPathForRow:row+i inSection:section]];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            [UIView animateWithDuration:0.5 animations:^{
+                cell.bookmarkName.center = CGPointMake(cell.bookmarkName.center.x+30, cell.bookmarkName.center.y);
+                cell.minus.center = CGPointMake(30, cell.minus.center.y);
+            }];
+        }
+
+    }
+    
+}
 
 -(IBAction)editButtonPressed:(id)sender{
+    
     switch(self.bookmarkSelectionBar.selectedSegmentIndex){
         case 0:
             //this is all a place holder really, best case is to immitate ios bookmarks.
-            if(userIsEditing){
-                leftButton.title = @"Edit";
-                leftButton.tintColor = [UIColor grayColor];
-                rightButton.title = @"Done";
-                rightButton.tintColor = [UIColor grayColor];
-                userIsEditing = NO;
-            }else{
-                leftButton.title = @"Done";
-                leftButton.tintColor = [UIColor blueColor];
-                rightButton.title = @"Delete";
-                rightButton.tintColor = [UIColor redColor];
-                userIsEditing = YES;
-            }
+            [self toggleShowRedMinus:self.bookmarks Row:1 Section:0];
             break;
         case 1:{
             
@@ -186,16 +200,22 @@
             clearRecentActionSheet.tag = 1;
             [clearRecentActionSheet showInView:self.view];
             //clear the recent searches
-            break;
+            
             
             }
+            break;
         case 2:
             //edit contacts
-            
+            [self toggleShowRedMinus:self.contacts Row:0 Section:2];
             break;
     }
     
     //shift all labels to the right a small bit.
+    
+
+    
+
+    
     
     //show red minus signs in the shited space
     
@@ -207,6 +227,7 @@
     [self dismissModalViewControllerAnimated:YES];
 }
 
+#pragma mark - view lifecycle
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];

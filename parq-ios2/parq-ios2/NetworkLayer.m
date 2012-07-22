@@ -14,6 +14,7 @@
 
 #import "Grid.h"
 #import "Parser.h"
+#import "User.h"
 #import "NetworkLayer.h"
 #import "PQMapViewController.h"
 #import "AbstractRequestObject.h"
@@ -55,6 +56,8 @@
     NSLog(@"\nREQUEST >>> %@", [info description]);
     
 }
+
+
 
 
 #pragma mark - RESTKIT callbacks
@@ -383,5 +386,56 @@
 
 -(void) loadStreetData{
  // STORE THE street's information into core data.     
+}
+-(User*) loginEmail:(NSString*) email AndPassword:(NSString*) pass{
+    //send info to server.  
+    NSArray* keys = [NSArray arrayWithObjects:@"email", @"password", nil];
+    NSArray* value = [NSArray arrayWithObjects:email, pass, nil];
+    NSDictionary* info = [NSDictionary dictionaryWithObjects:value forKeys:keys];
+    NSError *error;
+    NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
+    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.auth"];
+    [request setMethod:RKRequestMethodPOST];
+    [request setHTTPBody:jsonData];
+    [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
+    RKResponse* response = [request sendSynchronously];
+    NSLog(@"\nREQUEST >>> %@", [info description]);
+    NSDictionary* results = [Parser parseUserObjectString:[response bodyAsString]];  
+    NSNumber* uid = [results objectForKey:@"uid"];
+    if(uid.longValue > 0){
+//        //UNUSED 
+//        NSString* ccStub = [results objectForKey:@"creditCardStub"];
+//        NSNumber* parkState = [results objectForKey:@"parkState"];
+//        NSString* city = [results objectForKey:@"city"];
+//        NSString* addr = [results objectForKey:@"addr"];
+//        NSString* license = [results objectForKey:@"license"];
+//        NSString* name = [results objectForKey:@"name"];
+//        NSString* email = [results objectForKey:@"email"];
+//        NSNumber* balance = [results objectForKey:@"balance"];
+//        NSNumber* payment = [results objectForKey:@"payment"];
+//        //unused 
+//        
+        User* user = (User*)[NSEntityDescription insertNewObjectForEntityForName:@"User" inManagedObjectContext:dataLayer.managedObjectContext];
+        
+        [user setAddress:@"77 Massachusetts Avenue"];
+        [user setName:@"Eric Baczuk"];
+        [user setEmail:@"eric.baczuk@gmail.com"];
+        [user setLicense:@"EBY776J"];
+        [user setCity:@"Cambridge"];
+        [user setPayment:[NSNumber numberWithInt:0]];
+        [user setUid:[NSNumber numberWithLong:0]];
+        [user setBalance:[NSNumber numberWithInt:100]];
+        NSError* error;
+        if(![dataLayer.managedObjectContext save:&error]){
+            //logged in, but something wrong wtih core data. cannot store user.  
+            [dataLayer.managedObjectContext deleteObject:user];
+            return nil;
+        }else{
+            return user;
+        }
+    }else{
+        //bad login
+        return nil;
+    }
 }
 @end

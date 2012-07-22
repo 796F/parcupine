@@ -16,4 +16,11 @@
     return nil;
 }
 
++(NSDictionary*) parseUserObjectString:(NSString *)jsonResponse{
+    NSLog(@"RESPONSE >>> %@", jsonResponse);
+    NSDictionary* results = [jsonResponse objectFromJSONString];
+    return results;
+
+}
+
 @end
