@@ -21,9 +21,9 @@
 @property (weak, nonatomic) IBOutlet UIBarButtonItem* midButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem* rightButton;
 
-@property (strong, nonatomic) NSArray* bookmarks;
-@property (strong, nonatomic) NSArray* recentSearches;
-@property (strong, nonatomic) NSArray* contacts;
+@property (strong, nonatomic) NSMutableArray* bookmarks;
+@property (strong, nonatomic) NSMutableArray* recentSearches;
+@property (strong, nonatomic) NSMutableArray* contacts;
 //@property (atomic) int tableDisplayType;
 @property (atomic) bool userIsEditing;
 @property (nonatomic) PQMapViewController* parent;

@@ -51,6 +51,10 @@
 		87E1BE67154A08D80095E92D /* PQParkingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 87E1BE66154A08D80095E92D /* PQParkingViewController.m */; };
 		87E1BE69154B35270095E92D /* payg.png in Resources */ = {isa = PBXBuildFile; fileRef = 87E1BE68154B35270095E92D /* payg.png */; };
 		FC08BB7B1590D1F40077659C /* PQSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC08BB7A1590D1F40077659C /* PQSettingsViewController.m */; };
+		FC11B28A15BDC7D7001AB653 /* goMap.png in Resources */ = {isa = PBXBuildFile; fileRef = FC11B28915BDC7D7001AB653 /* goMap.png */; };
+		FC11B28D15BDD1E2001AB653 /* SelfReportingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC11B28C15BDD1E2001AB653 /* SelfReportingViewController.m */; };
+		FC11B29515BDE6CD001AB653 /* crosshair.png in Resources */ = {isa = PBXBuildFile; fileRef = FC11B29415BDE6CD001AB653 /* crosshair.png */; };
+		FC11B29B15BDE8D5001AB653 /* pin.png in Resources */ = {isa = PBXBuildFile; fileRef = FC11B29A15BDE8D5001AB653 /* pin.png */; };
 		FC1219E0159B6CAD0072DA85 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC1219DF159B6CAD0072DA85 /* CFNetwork.framework */; };
 		FC1219E2159B6CBE0072DA85 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC1219E1159B6CBE0072DA85 /* MobileCoreServices.framework */; };
 		FC1219E4159B6CC90072DA85 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC1219E3159B6CC90072DA85 /* Security.framework */; };
@@ -196,6 +200,11 @@
 		87E1BE68154B35270095E92D /* payg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = payg.png; sourceTree = "<group>"; };
 		FC08BB791590D1F40077659C /* PQSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PQSettingsViewController.h; sourceTree = "<group>"; };
 		FC08BB7A1590D1F40077659C /* PQSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PQSettingsViewController.m; sourceTree = "<group>"; };
+		FC11B28915BDC7D7001AB653 /* goMap.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = goMap.png; sourceTree = "<group>"; };
+		FC11B28B15BDD1E2001AB653 /* SelfReportingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelfReportingViewController.h; sourceTree = "<group>"; };
+		FC11B28C15BDD1E2001AB653 /* SelfReportingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SelfReportingViewController.m; sourceTree = "<group>"; };
+		FC11B29415BDE6CD001AB653 /* crosshair.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = crosshair.png; sourceTree = "<group>"; };
+		FC11B29A15BDE8D5001AB653 /* pin.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pin.png; sourceTree = "<group>"; };
 		FC1219DF159B6CAD0072DA85 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		FC1219E1159B6CBE0072DA85 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		FC1219E3159B6CC90072DA85 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
@@ -329,6 +338,8 @@
 			isa = PBXGroup;
 			children = (
 				8703ACBC1513F841002FE357 /* MainStoryboard.storyboard */,
+				FC11B28B15BDD1E2001AB653 /* SelfReportingViewController.h */,
+				FC11B28C15BDD1E2001AB653 /* SelfReportingViewController.m */,
 				8703ACB91513F841002FE357 /* PQAppDelegate.h */,
 				8703ACBA1513F841002FE357 /* PQAppDelegate.m */,
 				FCB2B08915BCA17900272DCD /* RegisterViewController.h */,
@@ -390,7 +401,10 @@
 		8703ACE01513FC8E002FE357 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				FC11B29415BDE6CD001AB653 /* crosshair.png */,
+				FC11B29A15BDE8D5001AB653 /* pin.png */,
 				FCB2B08115BC8D8400272DCD /* register2.png */,
+				FC11B28915BDC7D7001AB653 /* goMap.png */,
 				FCB2B09315BCC1EC00272DCD /* bottombar.png */,
 				FC7214941592522100D228C6 /* doneup.png */,
 				FC6C9F5F15925D02002C5418 /* donedown.png */,
@@ -414,8 +428,8 @@
 				871E2103152CE02100D9452A /* settings.png */,
 				87ABC3B71582DBF900030005 /* spot_free.png */,
 				FC97EE7215BB379500186182 /* login.png */,
-				87ABC3B81582DBF900030005 /* spot_occupied.png */,
 				FCB2B06E15BC700200272DCD /* blueplus.png */,
+				87ABC3B81582DBF900030005 /* spot_occupied.png */,
 				FCB2B07015BC70B500272DCD /* redminus.png */,
 			);
 			name = Images;
@@ -640,6 +654,9 @@
 				FCB2B07115BC70B500272DCD /* redminus.png in Resources */,
 				FCB2B08215BC8D8400272DCD /* register2.png in Resources */,
 				FCB2B09415BCC1F000272DCD /* bottombar.png in Resources */,
+				FC11B28A15BDC7D7001AB653 /* goMap.png in Resources */,
+				FC11B29515BDE6CD001AB653 /* crosshair.png in Resources */,
+				FC11B29B15BDE8D5001AB653 /* pin.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -686,6 +703,7 @@
 				FCB2B08815BC941300272DCD /* PQLoginViewController.m in Sources */,
 				FCB2B08B15BCA17A00272DCD /* RegisterViewController.m in Sources */,
 				FCB2B08E15BCAA4000272DCD /* LoginNavigationController.m in Sources */,
+				FC11B28D15BDD1E2001AB653 /* SelfReportingViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

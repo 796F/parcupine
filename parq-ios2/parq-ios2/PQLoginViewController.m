@@ -28,12 +28,22 @@
 
 -(IBAction)submitButtonPressed:(id)sender{
     NSLog(@"submitting...\n");
-    
+    BOOL loginResp = [self tryLoggingIn];
+    if(loginResp){
+        [dataLayer setLoggedIn:YES];
+        parent.view.hidden = NO;
+        [self dismissModalViewControllerAnimated:YES];
+    }else{
+        //unhide email/password box.  
+        passwordField.hidden = NO;
+        emailField.hidden = NO;
+        [dataLayer setLoggedIn:NO];
+    }
 }
 
 -(IBAction)registerButtonPressed:(id)sender{
     //allow user to register and show waiver for study.  
-    NSString* terms = @"Users must agree to not sue the shit out of us when they find out were tracking their movements, looking through their cameras, and conducting human experiments ahaahahahah.  how do you think clair works?  pixie dust and unicorn horns?  we need to predict your movements purely through your cell phone data, so give us a break and hand over the data.";
+    NSString* terms = @"Users must agree to not sue the shit out of us when they find out were tracking their movements, looking through their cameras, and conducting human experiments ahaahahahah.  how do you think clair works?  pixie dust and unicorn horns?  we need to predict your movements purely through your cell phone data, so give us a break and hand over the data.Users must agree to not sue the shit out of us when they find out were tracking their movements, looking through their cameras, and conducting human experiments ahaahahahah.  how do you think clair works?  pixie dust and unicorn horns?  we need to predict your movements purely through your cell phone data, so give us a break and hand over the dataUsers must agree to not sue the shit out of us when they find out were tracking their movements, looking through their cameras, and conducting human experiments ahaahahahah.  how do you think clair works?  pixie dust and unicorn horns?  we need to predict your movements purely through your cell phone data, so give us a break and hand over the dataUsers must agree to not sue the shit out of us when they find out were tracking their movements, looking through their cameras, and conducting human experiments ahaahahahah.  how do you think clair works?  pixie dust and unicorn horns?  we need to predict your movements purely through your cell phone data, so give us a break and hand over the dataUsers must agree to not sue the shit out of us when they find out were tracking their movements, looking through their cameras, and conducting human experiments ahaahahahah.  how do you think clair works?  pixie dust and unicorn horns?  we need to predict your movements purely through your cell phone data, so give us a break and hand over the dataUsers must agree to not sue the shit out of us when they find out were tracking their movements, looking through their cameras, and conducting human experiments ahaahahahah.  how do you think clair works?  pixie dust and unicorn horns?  we need to predict your movements purely through your cell phone data, so give us a break and hand over the dataUsers must agree to not sue the shit out of us when they find out were tracking their movements, looking through their cameras, and conducting human experiments ahaahahahah.  how do you think clair works?  pixie dust and unicorn horns?  we need to predict your movements purely through your cell phone data, so give us a break and hand over the dataUsers must agree to not sue the shit out of us when they find out were tracking their movements, looking through their cameras, and conducting human experiments ahaahahahah.  how do you think clair works?  pixie dust and unicorn horns?  we need to predict your movements purely through your cell phone data, so give us a break and hand over the dataUsers must agree to not sue the shit out of us when they find out were tracking their movements, looking through their cameras, and conducting human experiments ahaahahahah.  how do you think clair works?  pixie dust and unicorn horns?  we need to predict your movements purely through your cell phone data, so give us a break and hand over the data";
     UIAlertView* tosAlert = [[UIAlertView alloc] initWithTitle:@"Terms of Service" message:terms delegate:self cancelButtonTitle:@"Quit" otherButtonTitles:@"I Agree", nil];
     tosAlert.tag = TOS_ALERT_VIEW;
     [tosAlert show];
@@ -92,6 +102,7 @@
 //        NSString* license = licensePlateField.text;
         [self removeKeyboard:nil];
         [licensePlateField resignFirstResponder];
+        [self submitButtonPressed:self];
     }
     return YES;
 }
@@ -111,7 +122,6 @@
             //x y width height
             double originy = textField.frame.origin.y;
             //255, 283, 313, 344  make these -95
-            NSLog(@"%f\n", originy);
             self.entireScreen.frame = CGRectMake(0, 178 - originy , 320, 460);
             
         }];
@@ -119,7 +129,6 @@
 }
 
 -(void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
-    NSLog(@"buttonIndex %d\n", buttonIndex);
     if(alertView.tag == TOS_ALERT_VIEW && buttonIndex == 1){
         //agree to tos.  allow them to register.  
         

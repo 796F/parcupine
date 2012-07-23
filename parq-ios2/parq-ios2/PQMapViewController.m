@@ -395,6 +395,7 @@ typedef struct{
         }
     }else{
         [spotMicroBlockMap addEntriesFromDictionary:overlayMap];
+        NSLog(@"%d\n", spotMicroBlockMap.count);
         for(NSDictionary* overlayDictionary in overlayMap.allValues){
             [self.map addAnnotations:overlayDictionary.allValues];
         }
@@ -901,6 +902,13 @@ typedef struct{
     
     //assign old to be a combination of new and update.  
     [newMicroBlockIds addObjectsFromArray:updateMicroBlockIds];
+    [newMicroBlockIds sortUsingComparator:^NSComparisonResult(NSNumber* obj1, NSNumber* obj2) {
+        if(obj1.longValue < obj2.longValue){
+            return -1;
+        }else{
+            return 1;
+        }
+    }];
     currentMicroBlockIds = newMicroBlockIds;
 }
 
@@ -950,6 +958,7 @@ typedef struct{
     CLLocationCoordinate2D NE = [self topRightOfMap];
     CLLocationCoordinate2D SW = [self botLeftOfMap];
     NSMutableArray* newMicroBlockIds = [networkLayer getMBIDsWithType:kSpotEntity NE:&NE SW:&SW];
+
     NSMutableArray* updateMicroBlockIds = [[NSMutableArray alloc] init];
     //see header file for structure of maps.  
     
@@ -976,9 +985,18 @@ typedef struct{
             }
         }        
     }
+        //NSLog(@"current:%s\n", currentMicroBlockIds.description.UTF8String);
+        //NSLog(@"new:%s\n", newMicroBlockIds.description.UTF8String);
+        //NSLog(@"update %s\n", updateMicroBlockIds.description.UTF8String);
+
+    
     
     for(NSNumber* old in currentMicroBlockIds){
         NSDictionary* spotForMicroBlock = [spotMicroBlockMap objectForKey:old];
+        if(spotForMicroBlock!=nil){
+            //removed something??
+            NSLog(@"%lu %s\n >>>>", old.longValue, spotForMicroBlock.description.UTF8String);
+        }
         [map removeAnnotations:[spotForMicroBlock allValues]];
         [spotMicroBlockMap removeObjectForKey:old];
     }
@@ -987,7 +1005,14 @@ typedef struct{
     
     //assign old to be a combination of new and update.  
     [newMicroBlockIds addObjectsFromArray:updateMicroBlockIds];
-    currentMicroBlockIds = newMicroBlockIds;    
+    [newMicroBlockIds sortUsingComparator:^NSComparisonResult(NSNumber* obj1, NSNumber* obj2) {
+        if(obj1.longValue < obj2.longValue){
+            return -1;
+        }else{
+            return 1;
+        }
+    }];
+    currentMicroBlockIds = [NSMutableArray arrayWithArray:newMicroBlockIds];
 }
 
 - (void)showAvailabilitySelectionView {
@@ -1653,7 +1678,11 @@ typedef struct{
 
 - (IBAction)noneButtonPressed:(id)sender {
         
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
+    UINavigationController *vc = [storyboard instantiateViewControllerWithIdentifier:@"selfReporting"];
     
+    [vc setModalPresentationStyle:UIModalPresentationFullScreen];
+    [self presentModalViewController:vc animated:YES];
     //self.map = [[MKMapView alloc] initWithFrame:CGRectMake(0, 44, 320, 416)];
     
 //    [self clearMap];

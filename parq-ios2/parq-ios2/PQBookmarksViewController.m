@@ -9,6 +9,8 @@
 #import "PQBookmarksViewController.h"
 #import "BookmarkCell.h"
 
+
+
 @interface PQBookmarksViewController ()
 
 @end
@@ -26,13 +28,18 @@
 
 @synthesize parent;
 
+
+#pragma mark - ACTION SHEET
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if(buttonIndex==0){
         //clear the recents
+        [self.recentSearches removeAllObjects];
+        [table reloadData];
     }
     //else cancel.  
 }
+#pragma mark - TABLE VIEW FUNCTIONS
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     int displayType = bookmarkSelectionBar.selectedSegmentIndex;
@@ -40,22 +47,34 @@
         return 1;
     }else if (displayType == 1){
         return 1;
-        //split recent by area? time of search?
+        //split time of search?
     }else{
         //split contacts up into alphabetical sections ???
         return 1;
     }
 }
+-(UITableViewCellEditingStyle) tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath{
+    if(indexPath.row == 0 && bookmarkSelectionBar.selectedSegmentIndex == 0){
+        return UITableViewCellEditingStyleNone;
+    }else{
+        return UITableViewCellEditingStyleDelete;
+    }
+}
 
 -(void) tableView:(UITableView *)tableView willBeginEditingRowAtIndexPath:(NSIndexPath *)indexPath{
     
+    
 }
+
 -(void) tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath{
+    NSInteger row = [indexPath row];    
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        //NSInteger row = [indexPath row];
+        if(bookmarkSelectionBar.selectedSegmentIndex ==0){
+            row-=1;
+        }
+        [self.bookmarks removeObjectAtIndex:row];
         [UIView animateWithDuration:.7 animations:^{
-            //x y width height
-            tableView.frame = CGRectMake(320, 44, 320, 44);
+            [table deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationTop];
         }];
 
     }
@@ -118,7 +137,9 @@
             //contacts
             cell.bookmarkName.text = [self.contacts objectAtIndex:[indexPath row]];
         }
-        
+        //initialize the cell.  
+        [cell setRegion:CLLocationCoordinate2DMake(0, 0)];
+        [cell setParent:self];
         return cell;
     }
     
@@ -137,19 +158,23 @@
     [self.parent showBookmarkWithLocation:&coord AndAnnotation:nil];    
 }
 
+#pragma mark - segment bar function
 - (IBAction)bottomBarTapped {
     switch (self.bookmarkSelectionBar.selectedSegmentIndex) {
         case 0:
+            [self hideRedMinus:self.contacts];
             leftButton.title = @"Edit";
             midButton.title = @"Bookmarks";
             [table reloadData];
             break;
         case 1:
+            
             leftButton.title = @"Clear";
             midButton.title = @"All Recent";
             [table reloadData];
             break;
         case 2:
+            [self hideRedMinus:self.bookmarks];
             leftButton.title = @"Edit";
             midButton.title = @"Contacts";
             [table reloadData];
@@ -157,46 +182,61 @@
     }
 }
 
--(void) toggleShowRedMinus:(NSArray*) cellList Row:(int) row Section:(int) section{
-    int i=0;
-    if(userIsEditing){
-        userIsEditing = NO;
-        //hide, currently editing.  
-        for(i=0; i<cellList.count; i++){
-            BookmarkCell* cell = (BookmarkCell*)[table cellForRowAtIndexPath:[NSIndexPath indexPathForRow:row+i inSection:section]];
-            cell.selectionStyle = UITableViewCellSelectionStyleBlue;
-            [UIView animateWithDuration:0.5 animations:^{
-                cell.bookmarkName.center = CGPointMake(cell.bookmarkName.center.x-30, cell.bookmarkName.center.y);
-                cell.minus.center = CGPointMake(-15, cell.minus.center.y);
-            }];
-        }
-
+#pragma mark - red minus animations
+-(void) hideRedMinus:(NSArray*) cellList{
+    if(userIsEditing==NO){
+        //wasn't editing .  do nothing.  
     }else{
-        //show, not yet editing.  
-        userIsEditing = YES;        
+        userIsEditing = NO;
+        int i, row=0;
+        if(bookmarkSelectionBar.selectedSegmentIndex==0){
+            row = 1;
+        }
         for(i=0; i<cellList.count; i++){
-            BookmarkCell* cell = (BookmarkCell*)[table cellForRowAtIndexPath:[NSIndexPath indexPathForRow:row+i inSection:section]];
-            cell.selectionStyle = UITableViewCellSelectionStyleNone;
-            [UIView animateWithDuration:0.5 animations:^{
-                cell.bookmarkName.center = CGPointMake(cell.bookmarkName.center.x+30, cell.bookmarkName.center.y);
-                cell.minus.center = CGPointMake(30, cell.minus.center.y);
-            }];
+            BookmarkCell* cell = (BookmarkCell*)[table cellForRowAtIndexPath:[NSIndexPath indexPathForRow:row+i inSection:0]];
+            cell.selectionStyle = UITableViewCellSelectionStyleBlue;
+            [cell endEditing];
         }
 
+    }
+}
+-(void) showRedMinus:(NSArray*) cellList{
+    if(userIsEditing){
+        //already shown, do nothing.  
+    }else{
+        userIsEditing = YES;        
+        int i, row=0;
+        if(bookmarkSelectionBar.selectedSegmentIndex==0){
+            row = 1;
+        }
+        for(i=0; i<cellList.count; i++){
+            BookmarkCell* cell = (BookmarkCell*)[table cellForRowAtIndexPath:[NSIndexPath indexPathForRow:row+i inSection:0]];
+            [cell beginEditing];
+        }
     }
     
 }
 
+-(void) toggleShowRedMinus:(NSArray*) cellList {
+    if(userIsEditing){
+        //hide, currently editing.  
+        [self hideRedMinus:cellList];
+    }else{
+        //show, not yet editing.  
+        [self showRedMinus:cellList];
+    }
+}
+#pragma mark - toolbar buttons
 -(IBAction)editButtonPressed:(id)sender{
     
     switch(self.bookmarkSelectionBar.selectedSegmentIndex){
         case 0:
             //this is all a place holder really, best case is to immitate ios bookmarks.
-            [self toggleShowRedMinus:self.bookmarks Row:1 Section:0];
+            [self toggleShowRedMinus:self.bookmarks];
             break;
         case 1:{
             
-            UIActionSheet *clearRecentActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Clear All Recents", nil];
+            UIActionSheet *clearRecentActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Clear All Recents" otherButtonTitles: nil];
             clearRecentActionSheet.tag = 1;
             [clearRecentActionSheet showInView:self.view];
             //clear the recent searches
@@ -206,16 +246,11 @@
             break;
         case 2:
             //edit contacts
-            [self toggleShowRedMinus:self.contacts Row:0 Section:2];
+            [self toggleShowRedMinus:self.contacts];
             break;
     }
     
-    //shift all labels to the right a small bit.
-    
-
-    
-
-    
+    //shift all labels to the right a small bit.    
     
     //show red minus signs in the shited space
     
@@ -237,15 +272,26 @@
     return self;
 }
 
--(NSArray*) loadBookmarks{
-    return [[NSArray alloc] initWithObjects:@"Work",@"Gym",@"Lab",@"School", @"Girl",@"Bars", nil];
+-(NSMutableArray*) loadBookmarks{
+    return [[NSMutableArray alloc] initWithObjects:@"Work",@"Gym",@"Lab",@"School", @"Girl",@"Bars", nil];
 }
 
--(NSArray*) loadRecent{
-    return [[NSArray alloc] initWithObjects:@"House of Blues", @"SENSEable Labs", @"Baltimore Aquarium", nil];
+-(NSMutableArray*) loadRecent{
+    return [[NSMutableArray alloc] initWithObjects:@"House of Blues", @"SENSEable Labs", @"Baltimore Aquarium", nil];
 }
--(NSArray*) loadContacts{
-    return [[NSArray alloc] initWithObjects:@"Baczuk, Eric", @"Biderman, Assaf", @"Bukauskus, Aurimas", @"Long, Sunny", @"Ratti, Carlo", @"Xia, Michael", @"Yen, Mark", @"Zheng, Gordon", nil];
+-(NSMutableArray*) loadContacts{
+//    ABAddressBookRef addressBook = ABAddressBookCreate( );
+//    CFArrayRef allPeople = ABAddressBookCopyArrayOfAllPeople( addressBook );
+//    CFIndex nPeople = ABAddressBookGetPersonCount( addressBook );
+//    
+//    for ( int i = 0; i < nPeople; i++ )
+//    {
+//        ABRecordRef ref = CFArrayGetValueAtIndex( allPeople, i );
+//        CFStringRef name = ABRecordCopyCompositeName(ref);
+//        NSLog(@"%@\n", name);
+//    }
+    return [[NSMutableArray alloc] initWithObjects:@"Baczuk, Eric", @"Biderman, Assaf", @"Bukauskus, Aurimas", @"Long, Sunny", @"Ratti, Carlo", @"Xia, Michael", @"Yen, Mark", @"Zheng, Gordon", nil];
+
 }
 - (void)viewDidLoad
 {
