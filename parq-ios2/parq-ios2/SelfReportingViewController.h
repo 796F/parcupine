@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <MapKit/MapKit.h>
 #import "NetworkLayer.h"
-@interface SelfReportingViewController : UIViewController <MKMapViewDelegate>{
+@interface SelfReportingViewController : UIViewController <MKMapViewDelegate, UIGestureRecognizerDelegate>{
     
 }
 
@@ -17,5 +17,6 @@
 @property (weak, nonatomic) IBOutlet UIBarButtonItem* leftButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem* rightButton;
 @property (weak, nonatomic) NetworkLayer* networkLayer;
-
+@property BOOL showTapMe;
+@property int UIType;
 @end

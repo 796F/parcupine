@@ -19,10 +19,11 @@
 #import "PQPinAnnotation.h"
 #import "PQBookmarksViewController.h"
 #import "LoginNavigationController.h"
-
+#import "PQParkedCarAnnotation.h"
 #import "Segment.h"
 #import "Spot.h"
 #import "Grid.h"
+#import "PopOutView.h"
 
 //user @class to avoid cycles, which breaks the compiler
 @class NetworkLayer;
@@ -51,14 +52,18 @@ UIAlertViewDelegate> {
 @property (weak, nonatomic) IBOutlet UISegmentedControl *bottomSpotSelectionBar;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *topSpotSelectionBar;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *availabilitySelectionBar;
+
+@property (weak, nonatomic) IBOutlet UIView *dropPinSelectionView;
 @property (weak, nonatomic) IBOutlet UIView *availabilitySelectionView;
 @property (weak, nonatomic) IBOutlet UIView *justParkSelectionView;
 @property (weak, nonatomic) IBOutlet UIView *bottomSpotSelectionView;
 @property (weak, nonatomic) IBOutlet UIView *topSpotSelectionView;
+
 @property (weak, nonatomic) IBOutlet UIImageView *gradientIcon;
 @property (weak, nonatomic) IBOutlet UIButton *findMeButton;
 @property (weak, nonatomic) IBOutlet UIButton *parkMeButton;
 @property (weak, nonatomic) IBOutlet UIButton *dropPinButton;
+@property (weak, nonatomic) IBOutlet UIButton *cancelDropPinButton;
 //internal management stuff
 @property (weak, nonatomic) MKCircle* gCircle;
 @property (nonatomic, retain) NSMutableArray* callouts;
@@ -67,9 +72,11 @@ UIAlertViewDelegate> {
 @property (nonatomic, retain) CLGeocoder* geocoder;
 @property (nonatomic) CLLocationCoordinate2D user_loc;
 @property (nonatomic) bool user_loc_isGood;
+@property (atomic) bool isDroppingPin;
 
 @property (nonatomic, retain) PQSpotAnnotation* desired_spot;
 @property (nonatomic, retain) SpotInfo* spotInfo;
+@property (atomic, retain) PQParkedCarAnnotation* bookmarkPin;
 
 @property (nonatomic) MKCoordinateRegion oldStreetLevelRegion;
 @property (atomic) bool shouldNotClearOverlays;
@@ -77,6 +84,8 @@ UIAlertViewDelegate> {
 
 //list of current blocks
 @property (strong, nonatomic) NSMutableArray* currentMicroBlockIds;
+//@property (strong, nonatomic) NSMutableArray* currentGridMBIDs;
+//@property (strong, nonatomic) NSMutableArray* currentSpotMBIDs;
 @property (strong, nonatomic) NSMutableArray* allInsideCircle;
 
  /*         _         
@@ -92,6 +101,9 @@ UIAlertViewDelegate> {
 @property (strong, nonatomic) NSMutableDictionary* gridMicroBlockMap;
 @property (strong, nonatomic) NSMutableDictionary* streetMicroBlockMap;
 @property (strong, nonatomic) NSMutableDictionary* spotMicroBlockMap;
+
+@property (weak, nonatomic) IBOutlet UIView* popOutSpotNumberView;
+@property (weak, nonatomic) IBOutlet    UITextField* popOutSpotNumberField;
 
 //callback methods for updating map
 -(void) addNewOverlays:(NSDictionary*) overlayMap OfType:(EntityType) entityType;

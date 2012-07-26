@@ -10,6 +10,9 @@
 #import "loginResponseObject.h"
 #import "NetworkLayer.h"
 #import "DataLayer.h"
+#import "UserInfo.h"
+#import "EditSettingsViewController.h"
+
 @interface PQSettingsViewController : UITableViewController < UITableViewDataSource, UITableViewDelegate>{
     NetworkLayer* networkLayer;
     DataLayer* dataLayer;
@@ -31,6 +34,10 @@
 @property (weak, nonatomic) IBOutlet UILabel* ssnLabel;
 @property (weak, nonatomic) IBOutlet UILabel* balanceLabel;
 @property (weak, nonatomic) UIViewController* parent;
+@property (weak, nonatomic) IBOutlet UITableView* table;
 @property (weak, nonatomic) User* user;
+@property (retain, nonatomic) UserInfo* userInfo;
+
+-(void) updateField:(UserInfo*) userInfo;
 
 @end

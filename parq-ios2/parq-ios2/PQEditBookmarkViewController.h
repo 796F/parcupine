@@ -15,5 +15,9 @@
 
 @property (weak, nonatomic) IBOutlet MKMapView *map;
 @property (nonatomic) CLLocationCoordinate2D bookmarkCoordinate;
+@property (weak, nonatomic) UIViewController* parent;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem* saveButton;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem* cancelButton;
+
 
 @end

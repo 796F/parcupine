@@ -14,8 +14,20 @@
 
 @implementation PQEditBookmarkViewController
 
+@synthesize parent;
 @synthesize map;
 @synthesize bookmarkCoordinate;
+@synthesize saveButton;
+@synthesize cancelButton;
+
+
+-(IBAction)saveButtonPressed:(id)sender{
+    [self dismissModalViewControllerAnimated:YES];
+}
+
+-(IBAction)cancelButtonPressed:(id)sender{
+    [self dismissModalViewControllerAnimated:YES];
+}
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {

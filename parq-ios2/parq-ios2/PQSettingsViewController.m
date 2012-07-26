@@ -30,7 +30,8 @@
 @synthesize emailCellView;
 @synthesize user;
 @synthesize parent;
-
+@synthesize table;
+@synthesize userInfo;
 #pragma mark - Table view data source
 
 
@@ -45,6 +46,31 @@
 //}
 #pragma mark - Table view delegate
 
+-(void) updateField:(UserInfo*) updateInfo{
+
+    //call back by edit controller.  
+    NSString* name = updateInfo.fieldName;
+    if([name hasPrefix:@"Name:"]){
+        nameLabel.text = updateInfo.confirmNewValue;
+    }else if([name hasPrefix:@"Address:"]){
+        addrLabel.text = updateInfo.confirmNewValue;
+    }else if([name hasPrefix:@"Email:"]){
+        emailLabel.text = updateInfo.confirmNewValue;
+    }else if([name hasPrefix:@"License:"]){
+        plateLabel.text = updateInfo.confirmNewValue;
+    }else{
+        return;
+    }
+    
+}
+
+-(void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
+    EditSettingsViewController *vc = (EditSettingsViewController*) segue.destinationViewController;
+    [vc setVehicle:userInfo];
+    [vc setParent:self];
+}
+
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     int section = indexPath.section;
@@ -53,17 +79,30 @@
     if(section == 0){
         //selected one of the account settings.  
         switch (row) {
-            case 0:
+            case 0:{
                 //name
+                [userInfo setFieldName:@"Name:"];
+                [userInfo setOldValue:nameLabel.text];
+                [self performSegueWithIdentifier:@"editUser" sender:self];
+                }
                 break;
             case 1:
                 //addr
+                [userInfo setFieldName:@"Address:"];
+                [userInfo setOldValue:addrLabel.text];
+                [self performSegueWithIdentifier:@"editUser" sender:self];
                 break;
             case 2:
-                //license
+                //email
+                [userInfo setFieldName:@"Email:"];
+                [userInfo setOldValue:emailLabel.text];
+                [self performSegueWithIdentifier:@"editUser" sender:self];
                 break;
             case 3:
-                //ssn
+                //license
+                [userInfo setFieldName:@"License:"];
+                [userInfo setOldValue:plateLabel.text];
+                [self performSegueWithIdentifier:@"editUser" sender:self];
                 break;
             default:
                 //error
@@ -125,7 +164,7 @@
     emailLabel.text = user.email;
     plateLabel.text = user.license;
     balanceLabel.text = [user.balance stringValue];
-    
+    userInfo = [[UserInfo alloc] init];
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
  

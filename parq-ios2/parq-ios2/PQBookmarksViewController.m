@@ -25,6 +25,7 @@
 @synthesize midButton;
 @synthesize userIsEditing;
 @synthesize rightButton;
+@synthesize  currentSelection;
 
 @synthesize parent;
 
@@ -105,9 +106,8 @@
 {
 
     static NSString *CellIdentifier;
-    int displayType = bookmarkSelectionBar.selectedSegmentIndex;
 
-    if(indexPath.row==0 && displayType == 0){
+    if(indexPath.row==0 && currentSelection == kBookmarks){
         UITableViewCell *cell = [tableView
                                  dequeueReusableCellWithIdentifier:@"currLocCell"];
         if (cell == nil) {
@@ -127,10 +127,10 @@
         if (self.bookmarks==nil){
             self.bookmarks = [self loadBookmarks];
         }
-        if(displayType==0){
+        if(currentSelection == kBookmarks){
             //current location offsets the index.  
             cell.bookmarkName.text = [self.bookmarks objectAtIndex:[indexPath row]-1];
-        }else if(displayType==1){
+        }else if(currentSelection == kRecent){
             //recents
             cell.bookmarkName.text = [self.recentSearches objectAtIndex:[indexPath row]];
         }else{
@@ -146,11 +146,41 @@
     
 }
 
+-(void) loadEditBookmarkMap:(NSIndexPath*) indexPath OrCell:(BookmarkCell*) cellIn{
+    UIAlertView* comingSoon = [[UIAlertView alloc] initWithTitle:@"Feature Coming Soon" message:nil delegate:self cancelButtonTitle:@"Cool!" otherButtonTitles: nil];
+    [comingSoon show];
+    return;
+    
+    if(cellIn!=nil){
+        //came from a cell, grab info from cellIn
+        
+    }else if(indexPath!=nil){
+        //came from tap
+        BookmarkCell* cell = (BookmarkCell*) [table cellForRowAtIndexPath:indexPath];
+        //grab info from the cell.  
+        NSLog(@"%s\n", cell.bookmarkName.text.UTF8String);
+    }else{
+        //error!!!???
+        return;
+    }
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
+    UINavigationController *vc = [storyboard instantiateViewControllerWithIdentifier:@"editBookmark"];
+    
+    [vc setModalPresentationStyle:UIModalPresentationFullScreen];
+    //[vc setModalTransitionStyle:UIModalTransitionStylePartialCurl];
+    [self presentModalViewController:vc animated:YES];
+}
+
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     NSLog(@"BOOKMARK index tapped %d\n", indexPath.row);
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    if(userIsEditing){
+        //load the bookmark?
+        [self loadEditBookmarkMap:indexPath OrCell:nil];
+        return;
+    }
     //find which bookmark that index corresponds to.  
-//    BookmarkCell* cell = (BookmarkCell*) [table cellForRowAtIndexPath:indexPath];
+    
     
     CLLocationCoordinate2D coord = CLLocationCoordinate2DMake(42.365102, -71.110841);
     //get rid of this view, and then zoom the map.  
@@ -160,36 +190,40 @@
 
 #pragma mark - segment bar function
 - (IBAction)bottomBarTapped {
+    if(userIsEditing){
+        NSLog(@"was editing during switch\n");
+        [self toggleEditMode];   
+    }
     switch (self.bookmarkSelectionBar.selectedSegmentIndex) {
         case 0:
-            [self hideRedMinus:self.contacts];
             leftButton.title = @"Edit";
             midButton.title = @"Bookmarks";
             [table reloadData];
+            currentSelection = kBookmarks;
             break;
         case 1:
-            
             leftButton.title = @"Clear";
             midButton.title = @"All Recent";
             [table reloadData];
+            currentSelection = kRecent;
             break;
         case 2:
-            [self hideRedMinus:self.bookmarks];
             leftButton.title = @"Edit";
             midButton.title = @"Contacts";
             [table reloadData];
+            currentSelection = kContact;
             break;
     }
 }
 
 #pragma mark - red minus animations
--(void) hideRedMinus:(NSArray*) cellList{
+-(void) hideEditMap:(NSArray*) cellList{
     if(userIsEditing==NO){
         //wasn't editing .  do nothing.  
     }else{
         userIsEditing = NO;
         int i, row=0;
-        if(bookmarkSelectionBar.selectedSegmentIndex==0){
+        if(currentSelection ==kBookmarks){
             row = 1;
         }
         for(i=0; i<cellList.count; i++){
@@ -200,13 +234,13 @@
 
     }
 }
--(void) showRedMinus:(NSArray*) cellList{
+-(void) showEditMap:(NSArray*) cellList{
     if(userIsEditing){
         //already shown, do nothing.  
     }else{
         userIsEditing = YES;        
         int i, row=0;
-        if(bookmarkSelectionBar.selectedSegmentIndex==0){
+        if(currentSelection == kBookmarks){
             row = 1;
         }
         for(i=0; i<cellList.count; i++){
@@ -217,22 +251,52 @@
     
 }
 
--(void) toggleShowRedMinus:(NSArray*) cellList {
+-(void) fadeOut:(UIView*)viewToDissolve withDuration:(NSTimeInterval)  duration andWait:(NSTimeInterval) wait{
+    [UIView beginAnimations:@"Fade Out" context:nil];
+    [UIView setAnimationDelay:wait];
+    [UIView setAnimationDuration:duration];
+    viewToDissolve.alpha = 0.0;
+    [UIView commitAnimations];
+}
+-(void) fadeIn:(UIView*)viewToDissolve withDuration:(NSTimeInterval)  duration andWait:(NSTimeInterval) wait{
+    [UIView beginAnimations:@"Fade In" context:nil];
+    [UIView setAnimationDelay:wait];
+    [UIView setAnimationDuration:duration];
+    viewToDissolve.alpha = 1.0;
+    [UIView commitAnimations];
+}
+
+-(void) toggleEditMode{
+    NSArray* cellList;
+    if(currentSelection == kBookmarks){
+        cellList = self.bookmarks;
+    }else if(currentSelection == kRecent){
+        cellList = nil;
+    }else{
+        cellList = self.contacts;
+    }
     if(userIsEditing){
         //hide, currently editing.  
-        [self hideRedMinus:cellList];
+        [self.leftButton setEnabled:YES];
+        self.rightButton.tintColor = [UIColor darkGrayColor];
+        [self hideEditMap:cellList];
     }else{
         //show, not yet editing.  
-        [self showRedMinus:cellList];
+        [self.leftButton setEnabled:NO];
+        self.rightButton.tintColor = [UIColor blueColor];
+        [self showEditMap:cellList];
+        
     }
 }
+
 #pragma mark - toolbar buttons
 -(IBAction)editButtonPressed:(id)sender{
     
     switch(self.bookmarkSelectionBar.selectedSegmentIndex){
         case 0:
             //this is all a place holder really, best case is to immitate ios bookmarks.
-            [self toggleShowRedMinus:self.bookmarks];
+            [self toggleEditMode];
+
             break;
         case 1:{
             
@@ -246,7 +310,8 @@
             break;
         case 2:
             //edit contacts
-            [self toggleShowRedMinus:self.contacts];
+            [self toggleEditMode];
+
             break;
     }
     
@@ -259,7 +324,12 @@
 }
 
 -(IBAction)doneButtonPressed:(id)sender{
-    [self dismissModalViewControllerAnimated:YES];
+    if(userIsEditing){
+        [self toggleEditMode];
+    }else{
+        [self dismissModalViewControllerAnimated:YES];        
+    }
+
 }
 
 #pragma mark - view lifecycle
@@ -307,6 +377,7 @@
         self.contacts = [self loadContacts];
     }
     userIsEditing = NO;
+    currentSelection = kBookmarks;
 	// Do any additional setup after loading the view.
 }
 

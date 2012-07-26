@@ -130,6 +130,12 @@ typedef enum {
 
 #pragma mark - Main button actions
 - (IBAction)startTimer:(id)sender {
+//    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
+//    UINavigationController *vc = [storyboard instantiateViewControllerWithIdentifier:@"selfReporting"];
+//    
+//    [vc setModalPresentationStyle:UIModalPresentationFullScreen];
+//    [self presentModalViewController:vc animated:YES];
+    
     if (!prepaidFlag.hidden) { // Prepaid
         //set up notifications.  
         notificationTag = COUNT_DOWN;
@@ -516,8 +522,14 @@ typedef enum {
 
 - (void)viewDidLoad{
     [super viewDidLoad];
-
-    // Hardcoding the rate and limit for now
+    if(!dataLayer){
+        //set pointer to data layer.
+        dataLayer = ((PQAppDelegate*)[[UIApplication sharedApplication] delegate]).dataLayer;
+    }
+    if(!networkLayer){
+        networkLayer = ((PQAppDelegate*)[[UIApplication sharedApplication] delegate]).networkLayer;
+    }
+    
     self.navigationItem.title =[NSString stringWithFormat:@"%d, %s.\n", spotInfo.spotNumber.intValue, spotInfo.streetName.UTF8String];
     addressLabel.text = spotInfo.streetName;
     

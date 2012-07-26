@@ -8,7 +8,10 @@
 
 #import <UIKit/UIKit.h>
 #import "PQMapViewController.h"
-@interface PQParkingViewController : UITableViewController <UIAlertViewDelegate, UITableViewDelegate, UIActionSheetDelegate>
+@interface PQParkingViewController : UITableViewController <UIAlertViewDelegate, UITableViewDelegate, UIActionSheetDelegate>{
+    DataLayer* dataLayer;
+    NetworkLayer* networkLayer;
+}
 @property (nonatomic, readonly) double rate;
 @property (nonatomic) int rateNumeratorCents;
 @property (nonatomic) int rateDenominatorMinutes;
@@ -47,4 +50,5 @@
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *doneButton;
 @property (weak, nonatomic) PQMapViewController *parent;
 @property (nonatomic, retain) SpotInfo* spotInfo;
+
 @end

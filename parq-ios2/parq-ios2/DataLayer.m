@@ -97,6 +97,11 @@
         return NO;
     }
 }
+-(int) UIType{
+    NSString* path = [self getPlistPath];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
+    return [[data objectForKey:@"uiType"] intValue];
+}
 
 -(BOOL) isLoggedIn{
     NSString* path = [self getPlistPath];
@@ -114,6 +119,12 @@
     NSString* path = [self getPlistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
     [data setObject:[NSNumber numberWithBool:yesORno] forKey:@"isLoggedIn"];        
+    [data writeToFile: path atomically:YES];
+}
+-(void) setUIType:(int) type{
+    NSString* path = [self getPlistPath];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
+    [data setObject:[NSNumber numberWithInt:type] forKey:@"isLoggedIn"];        
     [data writeToFile: path atomically:YES];
 }
 
@@ -169,7 +180,7 @@
         NSEntityDescription *entity = [NSEntityDescription entityForName:entityName inManagedObjectContext:managedObjectContext];
         [request setEntity:entity];
         NSString* sortKey = [NSString stringWithFormat:@"%ld",mbid.longValue];
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K == %@", @"microblock", sortKey];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K == %@",  @"microblock", sortKey];
         [request setPredicate:predicate];
         NSError *error = nil;
         NSArray* returnedObjects = [managedObjectContext executeFetchRequest:request error:&error];

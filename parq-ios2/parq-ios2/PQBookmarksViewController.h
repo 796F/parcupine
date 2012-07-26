@@ -8,11 +8,17 @@
 
 #import <UIKit/UIKit.h>
 #import "PQMapViewController.h"
-
+#import "BookmarkCell.h"
 @interface PQBookmarksViewController : UIViewController <UITableViewDelegate, UITableViewDataSource,UIActionSheetDelegate>{
 
     
 }
+
+typedef enum {
+    kBookmarks,
+    kRecent,
+    kContact
+} bookmarkSelection;
 
 @property (weak, nonatomic) IBOutlet UITableView *table;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *bookmarkSelectionBar;
@@ -26,6 +32,9 @@
 @property (strong, nonatomic) NSMutableArray* contacts;
 //@property (atomic) int tableDisplayType;
 @property (atomic) bool userIsEditing;
+@property (atomic) bookmarkSelection currentSelection;
 @property (nonatomic) PQMapViewController* parent;
+
+-(void) loadEditBookmarkMap:(NSIndexPath*) indexPath OrCell:(BookmarkCell*) cellIn;
 
 @end

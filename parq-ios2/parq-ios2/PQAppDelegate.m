@@ -47,6 +47,7 @@
         //first launch!  do something special.  
         [dataLayer loadMockData];
         [networkLayer loadSpotData];
+        //[networkLayer decideUIType];
     }
     
     return YES;

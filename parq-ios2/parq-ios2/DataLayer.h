@@ -39,6 +39,8 @@ typedef enum {
 -(void) fetch:(EntityType) entityType ForIDs:(NSArray*) microBlockIDs;
 
 //settings stuff using plist
+-(int) UIType;
+-(void) setUIType:(int) type;
 -(BOOL) isFirstLaunch;
 -(BOOL) isLoggedIn;
 -(void) setLoggedIn:(BOOL) yesORno;

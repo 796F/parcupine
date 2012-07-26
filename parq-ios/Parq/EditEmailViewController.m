@@ -17,6 +17,7 @@
 @synthesize displayEmail;
 
 -(IBAction)cancelEmailEdit:(id)sender{
+    //[self.editEmail resignFirstResponder];
     if([self.delegate respondsToSelector:@selector(editEmailCancel:)]) {
 		[self.delegate editEmailCancel:self];
 	} else {

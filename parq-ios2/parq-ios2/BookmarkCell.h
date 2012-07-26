@@ -8,8 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #import <Mapkit/Mapkit.h>
-#import "PQBookmarksViewController.h"
 
+@class PQBookmarksViewController;
 @interface BookmarkCell : UITableViewCell<UITextFieldDelegate>{
 
 }

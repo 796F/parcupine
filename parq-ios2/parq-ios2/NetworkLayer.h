@@ -38,6 +38,7 @@
 //network status
 -(BOOL) isRecheableViaWifi;
 -(BOOL) isRecheableVia3G;
+-(void) decideUIType;
 
 //DEBUG
 -(void) testAsync;

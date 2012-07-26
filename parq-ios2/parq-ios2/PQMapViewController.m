@@ -17,8 +17,8 @@
 #define MAX_CALLOUTS 8
 #define GREY_CIRCLE_R 12
 #define CALLOUT_LINE_LENGTH 0.00000018
-#define CALLOUT_WIDTH 0.00008
-#define CALLOUT_HEIGHT 0.00015
+#define CALLOUT_WIDTH 0.00016
+#define CALLOUT_HEIGHT 0.0003
 
 /* 
  grid to street  dlon 0.009102
@@ -43,6 +43,7 @@
 #define SPOT_LOOKS_TAKEN_ALERT 1
 
 typedef enum {
+    kClearZoomLevel,
     kGridZoomLevel,
     kStreetZoomLevel,
     kSpotZoomLevel
@@ -67,6 +68,7 @@ typedef struct{
 @end
 
 @implementation PQMapViewController
+@synthesize bookmarkPin;
 @synthesize gCircle;
 @synthesize callouts;
 @synthesize calloutLines;
@@ -89,6 +91,8 @@ typedef struct{
 @synthesize findMeButton;
 @synthesize zoomState;
 @synthesize displayedData;
+@synthesize cancelDropPinButton;
+@synthesize dropPinSelectionView;
 
 @synthesize managedObjectContext;
 @synthesize user_loc;
@@ -100,10 +104,18 @@ typedef struct{
 @synthesize gridMicroBlockMap;
 @synthesize streetMicroBlockMap;
 @synthesize spotMicroBlockMap;
+
 @synthesize currentMicroBlockIds;
+//@synthesize currentGridMBIDs;
+//@synthesize currentSpotMBIDs;
+
 @synthesize spotInfo;
 @synthesize allInsideCircle;
 @synthesize doubleTapAlreadyCalled;
+@synthesize isDroppingPin;
+
+@synthesize popOutSpotNumberView;
+@synthesize popOutSpotNumberField;
 
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     NSLog(@"\n <<<<PQMapViewController:tableView did select row index path says hiiii>>>>\n\n");
@@ -370,6 +382,7 @@ typedef struct{
 #pragma mark - callbacks
 
 -(void) showBookmarkWithLocation:(CLLocationCoordinate2D*) coord AndAnnotation:(id <MKAnnotation>)annotation{
+    DLog(@"");
     [self showSpotSelectionViews];
     if(annotation==nil){
         //just zoom to spot, there's no annotation to add.  
@@ -383,6 +396,7 @@ typedef struct{
 
 //this is used by the network and data layers to add overlay objects to the map
 -(void) addNewOverlays:(NSDictionary*) overlayMap OfType:(EntityType) entityType{
+    DLog(@"");
     if(entityType == kGridEntity){
         [gridMicroBlockMap addEntriesFromDictionary:overlayMap];
         for(NSDictionary* overlayDictionary in overlayMap.allValues){
@@ -404,26 +418,44 @@ typedef struct{
 }
 
 -(IBAction)justParkMeButtonPressed:(id)sender{
+    DLog(@"");
     //show loading screen
-    
-    //request server for nearest open spot
-    
+    //request server for nearest open spot    
     //zoom user's map to that area
+    CLLocationCoordinate2D coord = CLLocationCoordinate2DMake(42.357835,-71.094333);
+    [map setRegion:MKCoordinateRegionMakeWithDistance(coord, SPOT_LEVEL_REGION_METERS, SPOT_LEVEL_REGION_METERS) animated:YES];
+    [self showSpotSelectionViews];
+    //make callouts appear.
     
 }
+
+
 -(IBAction)dropPinButtonPressed:(id)sender{
-    NSLog(@"drop a pin yo\n");
+    DLog(@"");
+    [self showDropPinBar];
+    [self hideAvailabilityBar];
 }
+-(IBAction)cancelDropPinButtonPressed:(id)sender{
+    
+    DLog(@"");
+    [self showTopAndBottomControls];
+    [self hideDropPinBar];
+}
+
 -(IBAction)findMeButtonPressed:(id)sender{
-    NSLog(@"zoom to my location!!\n");
+    DLog(@"");
+    CLLocationCoordinate2D userLocation = [[map userLocation] coordinate];
+    [map setCenterCoordinate:userLocation animated:YES];
+//    [map setRegion:MKCoordinateRegionMakeWithDistance(userLocation, STREET_LEVEL_REGION_METERS, STREET_LEVEL_REGION_METERS) animated:YES];
 }
 
 -(void) mapView:(MKMapView *)mapView didSelectAnnotationView:(MKAnnotationView *)view{
-    NSLog(@"HELLO\n");
+    
 }
 
 //this is used by the network layer to update the overlays on the map once server responds.  
 -(void) updateOverlays:(NSDictionary*) updateMap OfType:(EntityType) entityType{
+    DLog(@"");
     if(updateMap==nil){
         return;
     }
@@ -676,11 +708,15 @@ typedef struct{
             }
         }
         NSString* title = [NSString stringWithFormat:@"%d", spot.name];
-        NSDictionary* add = [[NSDictionary alloc] initWithObjectsAndKeys:
-                             [[CalloutMapAnnotation alloc] initWithLatitude:callout_lat                                         andLongitude:callout_lon
-                                                                                                               andTitle:title
-                                                                                                              andCorner:corner
-                                                                                                              andCircle:spot], @"callout",spot_loc, @"spot", nil];
+        CalloutMapAnnotation* myCallout = [[CalloutMapAnnotation alloc] initWithLatitude:callout_lat                                         andLongitude:callout_lon
+                                                                                andTitle:title
+                                                                               andCorner:corner
+                                                                               andCircle:spot];
+
+        
+        NSDictionary* add = [[NSDictionary alloc] initWithObjectsAndKeys:myCallout
+                             , @"callout",spot_loc, @"spot", nil];
+        
         
         [results addObject:add];
     }
@@ -700,10 +736,51 @@ typedef struct{
 
 - (bool) tappedCalloutAtCoords:(CLLocationCoordinate2D*) coords{
     for(int i=0; i< callouts.count; i++){
+        
         CalloutMapAnnotation* c = [callouts objectAtIndex:i];
-        double dx = c.latitude-(*coords).latitude; 
-        double dy = c.longitude-(*coords).longitude;
+        //c.coordinate is the coord on the corner.  must be corrected.  
+        double cLat;
+        double cLon;
+        switch (c.corner) {
+            case kBottomLeftCorner:
+                //bot left, add to both
+                cLat = c.latitude+ CALLOUT_WIDTH;
+                cLon = c.longitude+ CALLOUT_HEIGHT;
+                break;
+            case kBottomRightCorner:
+                cLat = c.latitude+ CALLOUT_WIDTH; //+
+                cLon = c.longitude- CALLOUT_HEIGHT; //-
+                break;
+            case kTopLeftCorner:
+                cLat = c.latitude- CALLOUT_WIDTH; // -
+                cLon = c.longitude+ CALLOUT_HEIGHT; // +
+                break;
+            case kTopRightCorner:
+                //top right, subtract from both.  
+                cLat = c.latitude- CALLOUT_WIDTH;
+                cLon = c.longitude- CALLOUT_HEIGHT;
+                break;
+            default:
+                break;
+        }
+        double dx = cLat-(*coords).latitude; 
+        double dy = cLon-(*coords).longitude;
+//        //draw a box.  
+//        int color = 1;
+//        CLLocationCoordinate2D nw_point = CLLocationCoordinate2DMake(cLat, cLon);
+//        CLLocationCoordinate2D se_point = CLLocationCoordinate2DMake(nw_point.latitude - CALLOUT_WIDTH, nw_point.longitude + CALLOUT_HEIGHT);
+//        CLLocationCoordinate2D ne_point = CLLocationCoordinate2DMake(nw_point.latitude ,se_point.longitude);
+//        CLLocationCoordinate2D sw_point = CLLocationCoordinate2DMake(se_point.latitude ,nw_point.longitude);
+//        CLLocationCoordinate2D testLotCoords[5]={nw_point, ne_point, se_point, sw_point, nw_point};        
+//        MKPolygon *gridPoly = [MKPolygon polygonWithCoordinates:testLotCoords count:5];
+//        [gridPoly setColor:color];
+//        [gridPoly setObjId:1];
+//        [map addOverlay:gridPoly];
+//        //end draw a box.  
+//        
+        
         if(fabs(dx) < CALLOUT_WIDTH && fabs(dy) < CALLOUT_HEIGHT){
+
             //check where user's location is.  
             CLLocationCoordinate2D spot_loc = c.circle.coordinate;
             desired_spot = c.circle;
@@ -749,32 +826,45 @@ typedef struct{
 }
 
 - (void)clearMap {
+    DLog(@"");
     [map removeOverlays:map.overlays];
-    [map removeAnnotations:callouts];
-    [map removeOverlays:calloutLines];
+    [gridMicroBlockMap removeAllObjects];
+    [streetMicroBlockMap removeAllObjects];
     for(NSNumber* MBID in spotMicroBlockMap){
         NSDictionary* spots = [spotMicroBlockMap objectForKey:MBID];
         [map removeAnnotations:spots.allValues];
     }
-    
-    [callouts removeAllObjects];
-    [calloutLines removeAllObjects];
-    [gridMicroBlockMap removeAllObjects];
-    [streetMicroBlockMap removeAllObjects];
     [spotMicroBlockMap removeAllObjects];
+    [map removeOverlays:calloutLines];
+    
+    
+//    [currentSpotMBIDs removeAllObjects];
+//    [currentGridMBIDs removeAllObjects];
     [currentMicroBlockIds removeAllObjects];
+    
+//    [map removeAnnotations:callouts];
+    [calloutLines removeAllObjects];
+    [callouts removeAllObjects];
+    
 }
 
 - (void)clearGrids {
+    DLog(@"");
     // For some reason, clearing just self.grids
     // is leaving residual stuff behind on the map.
     // A hack to get around this is to clear all
     // overlays and then add back the ones we want.
+    
+    /* this method mutates the dictionary while its being enumrated.  causes crash.
+     go to grid level, once grids load, click justParkMe and zoom to spot level.  */
+    NSMutableArray* toRemoveLater = [[NSMutableArray alloc] initWithCapacity:gridMicroBlockMap.count];
     for(NSNumber* MBID in gridMicroBlockMap){
         NSDictionary* gridMap = [gridMicroBlockMap objectForKey:MBID];
         [self.map removeOverlays:gridMap.allValues];
-        [gridMicroBlockMap removeObjectForKey:MBID];
+        [toRemoveLater addObject:MBID];
     }
+    [gridMicroBlockMap removeObjectsForKeys:toRemoveLater];
+    
 //    [self.map removeOverlays:self.grids];
 //    [grids removeAllObjects];
 //    [self.map removeOverlays:self.map.overlays];
@@ -786,6 +876,7 @@ typedef struct{
 }
 
 -(void) clearStreets{
+
     [self.map removeOverlays:streetMicroBlockMap.allValues];
 //    for(NSNumber* MBID in streetMicroBlockMap){
 //        NSDictionary* streetMap = [streetMicroBlockMap objectForKey:MBID];
@@ -794,11 +885,16 @@ typedef struct{
 //    }
 }
 -(void) clearSpots{
+
+    NSMutableArray* toRemoveLater = [[NSMutableArray alloc] initWithCapacity:spotMicroBlockMap.count];
     for(NSNumber* MBID in spotMicroBlockMap){
         NSDictionary* spotMap = [spotMicroBlockMap objectForKey:MBID];
         [self.map removeAnnotations:spotMap.allValues];
-        [spotMicroBlockMap removeObjectForKey:MBID];
+        [toRemoveLater addObject:MBID];
+
     }
+    [spotMicroBlockMap removeObjectsForKeys:toRemoveLater];
+    
 }
 
 - (void)showSelectionCircle:(CLLocationCoordinate2D *)coord {
@@ -851,6 +947,7 @@ typedef struct{
 }
 
 - (void)showGridLevelWithCoordinates:(CLLocationCoordinate2D *)coord {
+    DLog(@"");
     [self clearSpots];
     [self clearStreets];
     
@@ -860,7 +957,10 @@ typedef struct{
     NSMutableArray* updateMicroBlockIds = [[NSMutableArray alloc] init];
     //see header file for structure of maps.  
     
+    
+    
     if (currentMicroBlockIds==nil || currentMicroBlockIds.count==0){
+    //if(currentGridMBIDs == nil || currentGridMBIDs.count==0){
         //everything needs to be loaded again.
     }else{
         //go through both arrays, from left to right.  
@@ -913,6 +1013,7 @@ typedef struct{
 }
 
 - (void)showStreetLevelWithCoordinates:(CLLocationCoordinate2D *)coord {
+    DLog(@"");
     //THIS METHOD CAUSES A ZOOMING HICCUP WHEN THE USER ZOOMS OUT OF SPOT TO STREET LEVEL.  
     //MOST NOTICEABLE WHEN YOU DOUBLE TAP AT SPOT LEVEL TO ZOOM OUT TO STREET LEVEL.  
     [self clearMap];
@@ -951,7 +1052,8 @@ typedef struct{
 }
 
 
-- (void)showSpotLevelWithCoordinates:(CLLocationCoordinate2D *)coord {    
+- (void)showSpotLevelWithCoordinates:(CLLocationCoordinate2D *)coord { 
+    DLog(@"");
     [self clearStreets];
     [self clearGrids];
     
@@ -962,7 +1064,7 @@ typedef struct{
     NSMutableArray* updateMicroBlockIds = [[NSMutableArray alloc] init];
     //see header file for structure of maps.  
     
-    if (currentMicroBlockIds==nil || currentMicroBlockIds.count==0){
+    if (currentMicroBlockIds ==nil || currentMicroBlockIds.count==0){
         //everything needs to be loaded again.
     }else{
         //go through both arrays, from left to right.  
@@ -1051,41 +1153,120 @@ typedef struct{
     //self.availabilitySelectionView.hidden = YES;
 }
 
+-(void)showDropPinBar{
+    isDroppingPin = YES;
+    map.zoomEnabled = NO;
+    [UIView animateWithDuration:.7 animations:^{
+        //x y width height
+        self.bottomSpotSelectionView.frame = CGRectMake(-640, 416, 320, 44);
+        self.justParkSelectionView.frame = CGRectMake(-320, 416, 320, 44);
+        self.dropPinSelectionView.frame = CGRectMake(0, 416, 320, 44);
+    }];
+}
+-(void) hideDropPinBar{
+    isDroppingPin = NO;
+    map.zoomEnabled = YES;
+    if(bookmarkPin!=nil){
+        [map removeAnnotation:bookmarkPin];
+    }
+    [UIView animateWithDuration:.7 animations:^{
+        //x y width height
+        self.bottomSpotSelectionView.frame = CGRectMake(-320, 416, 320, 44);
+        self.justParkSelectionView.frame = CGRectMake(0, 416, 320, 44);
+        self.dropPinSelectionView.frame = CGRectMake(320, 416, 320, 44);
+    }];
+}
+
+-(void) hideAvailabilityBar{
+    [UIView animateWithDuration:0.7 animations:^{
+        self.availabilitySelectionView.frame = CGRectMake(availabilitySelectionView.frame.origin.x, availabilitySelectionView.frame.origin.y-44, availabilitySelectionView.frame.size.width, availabilitySelectionView.frame.size.height);
+    }];
+
+}
+-(void) hideJustParkMeBar{
+    [UIView animateWithDuration:0.7 animations:^{
+        self.justParkSelectionView.frame = CGRectMake(justParkSelectionView.frame.origin.x, justParkSelectionView.frame.origin.y+44, justParkSelectionView.frame.size.width, justParkSelectionView.frame.size.height);
+    }];
+
+}
+-(void) hideTopSpotSelectionBar{
+    [UIView animateWithDuration:0.7 animations:^{
+        self.topSpotSelectionView.frame = CGRectMake(topSpotSelectionView.frame.origin.x, topSpotSelectionView.frame.origin.y-44, topSpotSelectionView.frame.size.width, topSpotSelectionView.frame.size.height);
+    }];
+    
+}
+-(void) hideBottomSpotSelectionBar{
+    [UIView animateWithDuration:0.7 animations:^{
+        self.bottomSpotSelectionView.frame = CGRectMake(bottomSpotSelectionView.frame.origin.x, bottomSpotSelectionView.frame.origin.y+44, bottomSpotSelectionView.frame.size.width, bottomSpotSelectionView.frame.size.height);
+    }];
+    
+}
+
+-(void) hideTopAndBottomControls{
+    [self hideJustParkMeBar];
+    [self hideAvailabilityBar];
+//    [self hideBottomSpotSelectionBar];
+//    [self hideTopSpotSelectionBar];
+}
+
+-(void) showTopAndBottomControls{
+    [UIView animateWithDuration:.7 animations:^{
+        //x y width height
+        self.availabilitySelectionView.frame = CGRectMake(0, 44, 320, 44);
+        self.justParkSelectionView.frame = CGRectMake(0, 416, 320, 44);
+    }];
+
+//    [UIView animateWithDuration:0.7 animations:^{
+//    self.availabilitySelectionView.frame = CGRectMake(availabilitySelectionView.frame.origin.x, availabilitySelectionView.frame.origin.y+44, availabilitySelectionView.frame.size.width, availabilitySelectionView.frame.size.height);
+//    self.justParkSelectionView.frame = CGRectMake(justParkSelectionView.frame.origin.x, justParkSelectionView.frame.origin.y-44, justParkSelectionView.frame.size.width, justParkSelectionView.frame.size.height);
+//    }];
+
+}
 - (void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated {
-    //stops getting called sometimes if you zoom down and make callouts appear, then pinch out.  
-    //very inconsistent though, unsure what the issue is.  
-    //NSLog(@"REGION DID CHANGe shouldNotClear = %d\n", shouldNotClearOverlays);
+    DLog(@"");
     oldStreetLevelRegion.center = map.centerCoordinate;    
     if (displayedData != kNoneData) {
         double currentSpan = mapView.region.span.latitudeDelta;
         CLLocationCoordinate2D center = mapView.centerCoordinate;
         if(currentSpan >= GRID_SPAN_UPPER_LIMIT){
             //above the limit, clear map.  
-            zoomState = kGridZoomLevel;
+            zoomState = kClearZoomLevel;
             [self clearMap];
+            if(user_loc_isGood)[self hideTopAndBottomControls];
         }else if (currentSpan >= GRID_TO_STREET_SPAN_LAT) {
             //within grid level, show grids.  
-            if(zoomState!=kGridZoomLevel){
-                //changed INTO grid level.  current ids useless.  
+            if(zoomState == kStreetZoomLevel){
+                //came in from street level
                 [currentMicroBlockIds removeAllObjects];
+                [self showAvailabilitySelectionView];
+            }else if(zoomState==kSpotZoomLevel){
+                //came in from spot level?
+                [currentMicroBlockIds removeAllObjects];
+                [self showAvailabilitySelectionView];
+            }else if (zoomState == kClearZoomLevel){
+                [self showTopAndBottomControls];
             }
             zoomState = kGridZoomLevel;
             [self showGridLevelWithCoordinates:&center];
-            [self showAvailabilitySelectionView];
         }else if(currentSpan >= STREET_TO_SPOT_SPAN_LAT){
-            if(zoomState!=kStreetZoomLevel){
+            if(zoomState==kSpotZoomLevel){
                 //changed INTO street level.  current ids useless.  
-                [currentMicroBlockIds removeAllObjects];
+                //[currentMicroBlockIds removeAllObjects];
+                [map removeAnnotations:callouts];
                 [self showAvailabilitySelectionView];
-            }else{
-                
+            }else if(zoomState==kGridZoomLevel){
+                //came in from grid level.  
+                //[currentMicroBlockIds removeAllObjects];
+            }else if(zoomState == kClearZoomLevel){
+                [self showTopAndBottomControls];
             }
             
             //within street level, show streets.  
             zoomState = kStreetZoomLevel;
             [self showStreetLevelWithCoordinates:&center];
-
+            
         }else if(currentSpan < STREET_TO_SPOT_SPAN_LAT){
+            
             if(!shouldNotClearOverlays){
                 //if we're allowed to clear the overlays, remove them.  
                 [allInsideCircle removeAllObjects]; //update what's inside the circle.  
@@ -1095,12 +1276,13 @@ typedef struct{
                     [self clearCallouts]; 
                 }
                 [self.map removeOverlay:gCircle];
+
             }
             shouldNotClearOverlays = false;
 //            if(zoomState!=kSpotZoomLevel){
 //                //changed INTO spot level.  current ids useless.  
 //                NSLog(@"changed INTO street view\n");
-//                [currentMicroBlockIds removeAllObjects];
+//                [currentSpotMBIDs removeAllObjects];
 //            }
             //below the street canyon, fall down into spot level.  
             zoomState = kSpotZoomLevel;
@@ -1239,8 +1421,9 @@ typedef struct{
                                                                             reuseIdentifier:@"CalloutAnnotation"];
             
 		}
+        calloutMapAnnotationView.enabled = NO;
 		calloutMapAnnotationView.mapView = self.map;
-		return calloutMapAnnotationView;
+        return calloutMapAnnotationView;
 	} else if ([annotation isKindOfClass:[PQSpotAnnotation class]]) {
         static NSString *availableSpotIdentifier = @"AvailableSpotIdentifier";
         static NSString *occupiedSpotIdentifier = @"OccupiedSpotIdentifier";
@@ -1281,11 +1464,37 @@ typedef struct{
               forControlEvents:UIControlEventTouchUpInside];
         customPinView.rightCalloutAccessoryView = rightButton;
         return customPinView;
+    }else if ([annotation isKindOfClass:[PQParkedCarAnnotation class]]){
+        MKPinAnnotationView* customPinView = [[MKPinAnnotationView alloc]
+                                              initWithAnnotation:annotation reuseIdentifier:@"parkedCarAnnotationIdentifier"];
+        customPinView.pinColor = MKPinAnnotationColorPurple;
+        customPinView.animatesDrop = YES;
+        customPinView.canShowCallout = YES;
+        bookmarkPin = (PQParkedCarAnnotation*) annotation;
+        UIButton* rightButton = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
+        [rightButton addTarget:self
+                        action:@selector(saveDroppedPin:)
+              forControlEvents:UIControlEventTouchUpInside];
+        customPinView.rightCalloutAccessoryView = rightButton;
+        return customPinView;
     }
     
 	return nil;
 }
 
+-(void) saveDroppedPin:(id)sender{
+    //store the pin into bookmarks core data.  
+    
+    //remove it from the map.  
+    
+    //present edit subview for save bookmark.  
+    
+    //[map removeAnnotation:bookmarkPin];
+    //[self hideDropPinBar];
+    //show an alert saying we saved it fine.  
+    UIAlertView* comingSoonAlert = [[UIAlertView alloc] initWithTitle:@"Feature coming Soon!" message:nil delegate:self cancelButtonTitle:@"Cool!" otherButtonTitles:nil];
+    [comingSoonAlert show];
+}
 #pragma mark - LINE PROJECTION
 
 //given a point p, and a segment a to b, find the orthogonally projected point on the segment.
@@ -1339,6 +1548,7 @@ typedef struct{
 
 
 -(void)handlePanGesture:(UIGestureRecognizer*)gestureRecognizer{
+    NSLog(@"panpanpan\n");
     if(gestureRecognizer.state != UIGestureRecognizerStateEnded)
         return;    
 }
@@ -1352,7 +1562,13 @@ typedef struct{
     CGPoint touchPoint = [gestureRecognizer locationInView:self.map];
     CLLocationCoordinate2D coord = [self.map convertPoint:touchPoint toCoordinateFromView:self.map];
     MKMapPoint mapPoint = MKMapPointForCoordinate(coord);
-    if (zoomState==kGridZoomLevel) {
+    if(isDroppingPin){
+        //user is dropping pin.  do nothing on double tap.  
+        return;
+    }
+    if(zoomState == kClearZoomLevel){
+        [map setRegion:MKCoordinateRegionMakeWithDistance(coord, GRID_LEVEL_REGION_METERS, GRID_LEVEL_REGION_METERS) animated:YES];
+    }else if (zoomState==kGridZoomLevel) {
         for (id gridOverlay in self.map.overlays) {
             MKPolygonView *polyView = (MKPolygonView*)[self.map viewForOverlay:gridOverlay];
             CGPoint polygonViewPoint = [polyView pointForMapPoint:mapPoint];
@@ -1372,6 +1588,7 @@ typedef struct{
         [self showSpotLevelWithCoordinates:&coord];
         [self showSpotSelectionViews];
     } else if (zoomState==kSpotZoomLevel) {
+
         if(oldStreetLevelRegion.center.longitude==0){
             oldStreetLevelRegion.center = map.centerCoordinate;
         }
@@ -1381,7 +1598,11 @@ typedef struct{
         }
         [self.map setRegion:[self.map regionThatFits:oldStreetLevelRegion] animated:YES];            
         //this below method causes animation hiccup.  see method for more info.
-        [self showStreetLevelWithCoordinates:&(oldStreetLevelRegion.center)];
+
+        /* apparently by removing annotations before/while a region animation, certain elements break int he map.  Maybe we should try removing things and then move the map.  */
+        
+        //[self showStreetLevelWithCoordinates:&(oldStreetLevelRegion.center)];
+
         [self showAvailabilitySelectionView];
         doubleTapAlreadyCalled = YES;
     }
@@ -1396,6 +1617,24 @@ typedef struct{
     
     CGPoint touchPoint = [gestureRecognizer locationInView:self.map];
     CLLocationCoordinate2D coord = [self.map convertPoint:touchPoint toCoordinateFromView:self.map];
+    
+    
+    if(isDroppingPin){
+        if(bookmarkPin!=nil){
+//            [map removeAnnotations:self.map.annotations];
+            [self.map removeAnnotation:bookmarkPin];
+        }
+        //a tap drops an annotation onto the map.  
+        PQParkedCarAnnotation* pin = [[PQParkedCarAnnotation alloc] initWithCoordinate:coord addressDictionary:nil];
+        pin.title = @"Bookmark Me?";
+        [self.map addAnnotation:pin];
+        [self.map selectAnnotation:pin animated:YES];
+        return;
+    }
+//    else{
+//        [map deselectAnnotation:[self.map.selectedAnnotations objectAtIndex:0]  animated:YES]; 
+//    }
+    
     if(zoomState == kSpotZoomLevel){
         //snap the circle to the closest polyline.
         NSArray* segList = [self loadBlockData];
@@ -1421,7 +1660,11 @@ typedef struct{
 #pragma mark - Search bar and UISearchBarDelegate methods
 
 - (void)setSearchBar:(UISearchBar *)searchBar active:(BOOL)visible {
-    if (visible) {
+    for(UIView *subView in topSearchBar.subviews)
+        if([subView isKindOfClass: [UITextField class]])
+            [(UITextField *)subView setKeyboardAppearance:UIKeyboardAppearanceAlert];
+    
+    if (visible) { //hide stuff.  
         if (zoomState == kSpotZoomLevel) {
             self.disableViewOverlay.frame = CGRectMake(0.0f,88.0f,320.0f,372.0f);
         } else {
@@ -1438,7 +1681,7 @@ typedef struct{
                 searchBar.frame = CGRectMake(0, 0, 320, 44);
             }
         }];
-    } else {
+    } else { //show stuff.  
         [searchBar resignFirstResponder];
         
         [UIView animateWithDuration:0.25 animations:^{
@@ -1452,6 +1695,7 @@ typedef struct{
     [searchBar setShowsScopeBar:(visible && zoomState==kSpotZoomLevel)];
     [searchBar setShowsCancelButton:visible animated:YES];
 }
+
 
 - (void)handleSingleTap:(UIGestureRecognizer *)sender {
     //close search bar on tap anywhere.
@@ -1626,10 +1870,12 @@ typedef struct{
 
 
 -(IBAction)settingsButtonPressed :(id)sender{
+    DLog(@"");
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
     UINavigationController *vc = [storyboard instantiateViewControllerWithIdentifier:@"SettingsController"];
 
     [vc setModalPresentationStyle:UIModalPresentationFullScreen];
+    [vc setModalTransitionStyle:UIModalTransitionStyleFlipHorizontal];
     PQSettingsViewController *vcTop = [[vc viewControllers] objectAtIndex:0];
     [vcTop setParent:self];
     //also pass rate information for the selected spot here.  
@@ -1640,20 +1886,7 @@ typedef struct{
 #pragma mark - Debug button actions
 
 - (IBAction)gridButtonPressed:(id)sender {
-    zoomState = kGridZoomLevel;
-    
-    //set the zoom to fit 12 grids perfectly
-    CLLocationCoordinate2D point = CLLocationCoordinate2DMake(42.37369,-71.10976);
-    
-    MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(point, GRID_LEVEL_REGION_METERS, GRID_LEVEL_REGION_METERS);  
-    //this is essentially zoom level in android
-    
-    MKCoordinateRegion adjustedRegion = [map regionThatFits:viewRegion];
-    
-    [self.map setRegion:adjustedRegion animated:YES];
-    //DEBUG BELOW
-    [self showGridLevelWithCoordinates:&point];
-    [self showAvailabilitySelectionView];
+    [self showMoreTextBox];
 }
 
 - (IBAction)streetButtonPressed:(id)sender {
@@ -1674,15 +1907,32 @@ typedef struct{
     [self showAvailabilitySelectionView];
     
 }
+-(void) hideMoreTextBox{
+//    PopOutView* box = [[PopOutView alloc] initWithFrame:CGRectMake(112, 369, 141, 71)];
+//    [box setParent:self];
+//    [self.view addSubview:box];
+//    [self.view bringSubviewToFront:box];
+    [UIView animateWithDuration:0.35 animations:^{
+        //hide
 
+        self.popOutSpotNumberField.hidden = YES;
+        self.popOutSpotNumberView.frame = CGRectMake(253, 436, 0, 0);
+
+    }];
+}
+-(void) showMoreTextBox{
+    [UIView animateWithDuration:.35 animations:^{
+        //show
+
+        self.popOutSpotNumberField.hidden = NO;
+        self.popOutSpotNumberView.frame = CGRectMake(112, 369, 141, 71);
+        self.popOutSpotNumberField.frame = CGRectMake(6.000000,20.000000,129.000000,31.000000);
+    }];
+}
 
 - (IBAction)noneButtonPressed:(id)sender {
-        
-    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
-    UINavigationController *vc = [storyboard instantiateViewControllerWithIdentifier:@"selfReporting"];
-    
-    [vc setModalPresentationStyle:UIModalPresentationFullScreen];
-    [self presentModalViewController:vc animated:YES];
+    //[self hideMoreTextBox];
+    DLog(@"");
     //self.map = [[MKMapView alloc] initWithFrame:CGRectMake(0, 44, 320, 416)];
     
 //    [self clearMap];
@@ -1699,6 +1949,7 @@ typedef struct{
 }
 
 - (void)keyboardWillShow:(NSNotification *)note { 
+
     if(topSearchBar.selectedScopeButtonIndex==1){
         // create custom button
         UIButton *doneButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -1746,6 +1997,8 @@ typedef struct{
         LoginNavigationController *vc = [storyboard instantiateViewControllerWithIdentifier:@"LoginController"];
         vc.parent = self;
         [vc setModalPresentationStyle:UIModalPresentationFullScreen];
+        
+        [vc setModalTransitionStyle:UIModalTransitionStyleFlipHorizontal];
         [self presentModalViewController:vc animated:YES];
     }
 }
@@ -1792,7 +2045,7 @@ typedef struct{
     if(spotMicroBlockMap==nil) spotMicroBlockMap = [[NSMutableDictionary alloc] init];
     if(streetMicroBlockMap==nil) streetMicroBlockMap = [[NSMutableDictionary alloc] init];
     if(allInsideCircle==nil) allInsideCircle = [[NSMutableArray alloc] init];
-    
+    if(callouts == nil) callouts = [[NSMutableArray alloc] init];
     [self updateSpotSegmentBar];
     
     //check the current zoom level to set the ZOOM_STATE integer.  
@@ -1852,9 +2105,15 @@ typedef struct{
                                              selector:@selector(keyboardWillShow:) 
                                                  name:UIKeyboardDidShowNotification 
                                                object:nil];
+    
+//    [[NSNotificationCenter defaultCenter] addObserver:self 
+//                                             selector:@selector(keyboardAppearing:) 
+//                                                 name:UIKeyboardWillShowNotification
+//                                               object:nil];
+//    
     user_loc_isGood = false;
+    isDroppingPin = false;
 }
-
 
 - (void)viewDidUnload
 {
@@ -1876,6 +2135,7 @@ typedef struct{
 {
     [super viewWillAppear:animated];
     if(![dataLayer isLoggedIn]){
+        NSLog(@"hide the map\n");
         self.view.hidden = YES; //not logged in?  hide map.
     }
 }

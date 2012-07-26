@@ -7,6 +7,7 @@
 //
 
 #import "BookmarkCell.h"
+#import "PQBookmarksViewController.h"
 
 @implementation BookmarkCell
 @synthesize bookmarkName;
@@ -18,8 +19,7 @@
 @synthesize parent;
 
 -(IBAction)mapPressed:(id)sender{
-    NSLog(@"pressed map button\n");
-    [parent performSegueWithIdentifier:@"showBookmarkMap" sender:parent];
+    [parent loadEditBookmarkMap:nil OrCell:self];
 }
 
 -(IBAction)redMinusPressed:(id)sender{
