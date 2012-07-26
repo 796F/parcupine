@@ -124,7 +124,7 @@
 -(void) setUIType:(int) type{
     NSString* path = [self getPlistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
-    [data setObject:[NSNumber numberWithInt:type] forKey:@"isLoggedIn"];        
+    [data setObject:[NSNumber numberWithInt:type] forKey:@"uiType"];        
     [data writeToFile: path atomically:YES];
 }
 

@@ -771,7 +771,7 @@
                                     <rect key="frame" x="63" y="255" width="198" height="29"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                    <textInputTraits key="textInputTraits" keyboardType="emailAddress" returnKeyType="next"/>
+                                    <textInputTraits key="textInputTraits" keyboardType="emailAddress" keyboardAppearance="alert" returnKeyType="next"/>
                                     <connections>
                                         <outlet property="delegate" destination="V9C-KW-Llm" id="WKy-oR-zGS"/>
                                     </connections>
@@ -780,7 +780,7 @@
                                     <rect key="frame" x="63" y="283" width="198" height="29"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                    <textInputTraits key="textInputTraits" returnKeyType="go" secureTextEntry="YES"/>
+                                    <textInputTraits key="textInputTraits" keyboardAppearance="alert" returnKeyType="go" secureTextEntry="YES"/>
                                     <connections>
                                         <outlet property="delegate" destination="V9C-KW-Llm" id="GMj-FV-Lhf"/>
                                     </connections>
@@ -804,7 +804,7 @@
                                     <rect key="frame" x="63" y="313" width="198" height="31"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                    <textInputTraits key="textInputTraits" returnKeyType="next" secureTextEntry="YES"/>
+                                    <textInputTraits key="textInputTraits" keyboardAppearance="alert" returnKeyType="next" secureTextEntry="YES"/>
                                     <connections>
                                         <outlet property="delegate" destination="V9C-KW-Llm" id="AEm-bO-Akb"/>
                                     </connections>
@@ -813,7 +813,7 @@
                                     <rect key="frame" x="63" y="344" width="198" height="31"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                    <textInputTraits key="textInputTraits" returnKeyType="join"/>
+                                    <textInputTraits key="textInputTraits" keyboardAppearance="alert" returnKeyType="join"/>
                                     <connections>
                                         <outlet property="delegate" destination="V9C-KW-Llm" id="pba-f4-sXC"/>
                                     </connections>
@@ -1027,6 +1027,22 @@
                             <rect key="frame" x="0.0" y="327" width="320" height="218"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
+                                <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="Iac-kZ-gJO">
+                                    <rect key="frame" x="10" y="10" width="145" height="52"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="19"/>
+                                    <size key="titleShadowOffset" width="0.0" height="-1"/>
+                                    <state key="normal" title="Extend">
+                                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <color key="titleShadowColor" white="0.0" alpha="0.40000000000000002" colorSpace="calibratedWhite"/>
+                                    </state>
+                                    <state key="highlighted">
+                                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    </state>
+                                    <connections>
+                                        <action selector="extend:" destination="Hs3-94-mR9" eventType="touchUpInside" id="enl-5h-HvC"/>
+                                    </connections>
+                                </button>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="T3R-6P-VeW">
                                     <rect key="frame" x="10" y="10" width="300" height="52"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -1057,22 +1073,6 @@
                                     </state>
                                     <connections>
                                         <action selector="unparkNow:" destination="Hs3-94-mR9" eventType="touchUpInside" id="1My-KB-kLc"/>
-                                    </connections>
-                                </button>
-                                <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="Iac-kZ-gJO">
-                                    <rect key="frame" x="10" y="10" width="145" height="52"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="19"/>
-                                    <size key="titleShadowOffset" width="0.0" height="-1"/>
-                                    <state key="normal" title="Extend">
-                                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                        <color key="titleShadowColor" white="0.0" alpha="0.40000000000000002" colorSpace="calibratedWhite"/>
-                                    </state>
-                                    <state key="highlighted">
-                                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                    </state>
-                                    <connections>
-                                        <action selector="extend:" destination="Hs3-94-mR9" eventType="touchUpInside" id="enl-5h-HvC"/>
                                     </connections>
                                 </button>
                                 <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="countDownTimer" minuteInterval="5" id="TKm-MG-65C">

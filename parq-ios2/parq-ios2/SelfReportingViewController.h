@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <MapKit/MapKit.h>
 #import "NetworkLayer.h"
+@class PQParkingViewController;
 @interface SelfReportingViewController : UIViewController <MKMapViewDelegate, UIGestureRecognizerDelegate>{
     
 }
@@ -19,4 +20,6 @@
 @property (weak, nonatomic) NetworkLayer* networkLayer;
 @property BOOL showTapMe;
 @property int UIType;
+@property (weak, nonatomic) PQParkingViewController* parent;
+
 @end

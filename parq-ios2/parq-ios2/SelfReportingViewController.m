@@ -7,7 +7,8 @@
 //
 
 #import "SelfReportingViewController.h"
-#import "PQParkedCarAnnotation.h"
+
+#import "PQParkingViewController.h"
 @interface SelfReportingViewController ()
 
 @end
@@ -21,6 +22,7 @@
 @synthesize networkLayer;
 @synthesize showTapMe;
 @synthesize UIType;
+@synthesize parent;
 
 - (MKAnnotationView *)mapView:(MKMapView *)theMapView viewForAnnotation:(id <MKAnnotation>)annotation
 {
@@ -41,7 +43,14 @@
             MKPinAnnotationView* customPinView = [[MKPinAnnotationView alloc]
                                                   initWithAnnotation:annotation reuseIdentifier:parkedCarAnnotationIdentifier];
             //customPinView.pinColor = MKPinAnnotationColorPurple;
-            customPinView.image = [UIImage imageNamed:@"unknown.png"];
+            if(UIType ==1 || UIType == 3){
+                customPinView.image = [UIImage imageNamed:@"unknown.png"];
+                customPinView.tag = 1;
+            }else{
+                customPinView.tag = 2;
+                customPinView.image = [UIImage imageNamed:@"car.png"];
+            }
+            
             customPinView.animatesDrop = YES;
             customPinView.canShowCallout = YES;
             return customPinView;
@@ -56,11 +65,11 @@
     return nil;
 }
 -(void) mapView:(MKMapView *)mapView didDeselectAnnotationView:(MKAnnotationView *)view{
-    if(view.tag ==1){
+    if(view.tag ==1){ // 1 = unknown
         view.image = [UIImage imageNamed:@"unknown.png"];
-    }else if(view.tag == 2){
+    }else if(view.tag == 2){ // 2 = car.  
         view.image = [UIImage imageNamed:@"car.png"];
-    }else{
+    }else{  //0 = open
         view.image = [UIImage imageNamed:@"open.png"];
     }
 
@@ -111,7 +120,7 @@
 -(IBAction)submitButtonPressed:(id)sender{
     //SUBMIT THE INFORMATION TO SERVER. 
     //[networkLayer submitAvailablilityInformation]
-    
+    [parent startTimerButtonAction];
     [self dismissModalViewControllerAnimated:YES];
 }
 
@@ -127,7 +136,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    UITapGestureRecognizer* tgs = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
+    //UITapGestureRecognizer* tgs = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
     showTapMe = YES;
     
     //[self.mapView addGestureRecognizer:tgs];

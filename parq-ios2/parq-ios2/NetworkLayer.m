@@ -59,9 +59,10 @@
 
 -(void) decideUIType{
     //send request to server, store the int value.  
-    RKRequest* req = [[RKRequest alloc] initWithURL:[NSURL URLWithString:@"http://75.101.132.219/ui.php"]];
-    RKResponse* result = [req sendSynchronously];
-    int type = [result.bodyAsString intValue];
+//    RKRequest* req = [[RKRequest alloc] initWithURL:[NSURL URLWithString:@"http://75.101.132.219/ui.php"]];
+//    RKResponse* result = [req sendSynchronously];
+//    int type = [result.bodyAsString intValue];
+    int type = 0;
     [dataLayer setUIType:type];
 }
 
@@ -202,7 +203,7 @@
         for(int i = botLeftRowCol[1]; i<=topRightRowCol[1]; i++){
             if(tempId>topRightId){
                 //error, went beyond our limit.  
-                NSLog(@"MICROBLOCK GEN ERROR\n");
+                return nil;
             }
             [microBlockIds addObject:[NSNumber numberWithLong:tempId]];
             tempId++;

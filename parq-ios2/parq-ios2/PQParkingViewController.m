@@ -14,6 +14,7 @@
 #define ACTIONSHEET_EXTEND 1
 #define ACTIONSHEET_UNPARK 2
 #define ALERTVIEW_INFO 1
+#define PLEASE_HELP_ALERT 3
 #define COUNT_DOWN 4
 #define COUNT_UP 5
 #define REFILL 6
@@ -130,26 +131,42 @@ typedef enum {
 
 #pragma mark - Main button actions
 - (IBAction)startTimer:(id)sender {
-//    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
-//    UINavigationController *vc = [storyboard instantiateViewControllerWithIdentifier:@"selfReporting"];
-//    
-//    [vc setModalPresentationStyle:UIModalPresentationFullScreen];
-//    [self presentModalViewController:vc animated:YES];
     
+    int type = [dataLayer UIType];
+    if(type==0 || type == 1){
+        //force them to help.  
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
+        SelfReportingViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"selfReporting"];
+        [vc setParent:self];
+        [vc setUIType:type];
+        [vc setModalPresentationStyle:UIModalPresentationFullScreen];
+        [self presentModalViewController:vc animated:YES];
+    } else {
+        [self startTimerButtonAction];
+        
+        UIAlertView* askToHelpAlert = [[UIAlertView alloc] initWithTitle:@"Help Us!" message:@"please report open spots" delegate:self cancelButtonTitle:@"No Thanks" otherButtonTitles:@"Sure", nil];
+        askToHelpAlert.tag = PLEASE_HELP_ALERT;
+        [askToHelpAlert show];
+    }
+}
+
+-(void) startTimerButtonAction{
     if (!prepaidFlag.hidden) { // Prepaid
         //set up notifications.  
+        extendButton.hidden = NO;
         notificationTag = COUNT_DOWN;
         [expiresAtTimer invalidate];
         prepaidEndTime = [NSDate dateWithTimeIntervalSinceNow:datePicker.countDownDuration];
         [self scheduleLocalNotification:prepaidEndTime];
         totalParkedSeconds = datePicker.countDownDuration;
         timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updatePrepaidTimer) userInfo:nil repeats:YES];
-
+        
         if(totalParkedSeconds >= limit*60){
             //you have extended to or beyond the limit.  hide extend button or somthing.  
             extendButton.enabled = NO;
         }
     } else { // Pay as you go
+        extendButton.hidden = YES;
         paygStartTime = [NSDate date];
         timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updatePaygTimer) userInfo:nil repeats:YES];
         totalParkedSeconds = 0;
@@ -203,6 +220,14 @@ typedef enum {
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (alertView.tag == ALERTVIEW_INFO) {
         [alertView dismissWithClickedButtonIndex:buttonIndex animated:YES];
+    }else if(alertView.tag == PLEASE_HELP_ALERT && buttonIndex == 1){
+        //agreed to help.  
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
+        SelfReportingViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"selfReporting"];
+        [vc setParent:self];
+        [vc setUIType:[dataLayer UIType]];
+        [vc setModalPresentationStyle:UIModalPresentationFullScreen];
+        [self presentModalViewController:vc animated:YES];
     }
 }
 
@@ -342,42 +367,42 @@ typedef enum {
 
 #pragma mark - Table View actions
 - (void)paygSelected {
+    [self resignPicker];
+    if (paygFlag.hidden) {
+        [self animateFlagIn:paygFlag];
+        [self animateFlagOut:prepaidFlag];
+    }
     meter.image = [UIImage imageNamed:@"meter_payg.png"];
     [expiresAtTimer invalidate];
     expiresAtTime.hidden = YES;
     paygCheck.image = [UIImage imageNamed:@"check.png"];
     prepaidCheck.image = [UIImage imageNamed:@"check_empty.png"];
-    if (paygFlag.hidden) {
-        [self animateFlagIn:paygFlag];
-        [self animateFlagOut:prepaidFlag];
-    }
     prepaidAmount.text = @"Enter Amount";
     prepaidAmount.textColor = [UIColor disabledTextColor];
     unparkButton.frame = CGRectMake(10, 10, 300, 52);
     unparkButton.titleLabel.font = [UIFont boldSystemFontOfSize:21.5];
     hours.text = @"00";
     minutes.text = @"00";
-    [self resignPicker];
+    extendButton.hidden = YES;
 }
 
 - (void)prepaidSelected {
-    
+    NSTimeInterval nextMinute = ceil([[NSDate date] timeIntervalSinceReferenceDate]/60.0)*60.0;
+    expiresAtTimer = [[NSTimer alloc] initWithFireDate:[NSDate dateWithTimeIntervalSinceReferenceDate:nextMinute] interval:60.0 target:self selector:@selector(updateExpiresAtTime) userInfo:nil repeats:YES];
+    [[NSRunLoop currentRunLoop] addTimer:expiresAtTimer forMode:NSDefaultRunLoopMode];
+    [self activatePicker];
     meter.image = [UIImage imageNamed:@"meter_prepaid.png"];
-    expiresAtTime.hidden = NO;
     paygCheck.image = [UIImage imageNamed:@"check_empty.png"];
     prepaidCheck.image = [UIImage imageNamed:@"check.png"];
     if (prepaidFlag.hidden) {
         [self animateFlagOut:paygFlag];
         [self animateFlagIn:prepaidFlag];
     }
-
+    extendButton.hidden = NO;
+    expiresAtTime.hidden = NO;
     prepaidAmount.textColor = [UIColor whiteColor];
     unparkButton.frame = CGRectMake(165, 10, 145, 52);
     unparkButton.titleLabel.font = [UIFont boldSystemFontOfSize:19];
-    NSTimeInterval nextMinute = ceil([[NSDate date] timeIntervalSinceReferenceDate]/60.0)*60.0;
-    expiresAtTimer = [[NSTimer alloc] initWithFireDate:[NSDate dateWithTimeIntervalSinceReferenceDate:nextMinute] interval:60.0 target:self selector:@selector(updateExpiresAtTime) userInfo:nil repeats:YES];
-    [[NSRunLoop currentRunLoop] addTimer:expiresAtTimer forMode:NSDefaultRunLoopMode];
-    [self activatePicker];
 }
 
 - (void)showParkedCar {
@@ -490,10 +515,12 @@ typedef enum {
 }
 
 - (void)animateFlagOut:(UIView *)flag {
+    flag.hidden = YES;
     [UIView animateWithDuration:0.5 delay:0.2 options:UIViewAnimationCurveEaseIn animations:^{
         flag.transform = CGAffineTransformRotate(CGAffineTransformIdentity, M_PI/4);
     } completion:^(BOOL s) {
-        flag.hidden = YES;
+        //the waiting for .5 s to assign hidden=yes created race condition in PQParkingViewContr.m
+//        flag.hidden = YES;
     }];
 }
 

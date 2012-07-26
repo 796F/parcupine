@@ -76,7 +76,6 @@
 		FC768F8615B718B0004F6696 /* PQPinAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = FC768F8515B718B0004F6696 /* PQPinAnnotation.m */; };
 		FC97EE7315BB379600186182 /* login.png in Resources */ = {isa = PBXBuildFile; fileRef = FC97EE7215BB379500186182 /* login.png */; };
 		FCA2ADBC15C0B88E00AB425E /* car.png in Resources */ = {isa = PBXBuildFile; fileRef = FCA2ADBB15C0B88E00AB425E /* car.png */; };
-		FCA2ADC015C0BA5600AB425E /* open.png in Resources */ = {isa = PBXBuildFile; fileRef = FCA2ADBF15C0BA5600AB425E /* open.png */; };
 		FCB2B06F15BC700300272DCD /* blueplus.png in Resources */ = {isa = PBXBuildFile; fileRef = FCB2B06E15BC700200272DCD /* blueplus.png */; };
 		FCB2B07115BC70B500272DCD /* redminus.png in Resources */ = {isa = PBXBuildFile; fileRef = FCB2B07015BC70B500272DCD /* redminus.png */; };
 		FCB2B07415BC7E8200272DCD /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB2B07315BC7E8200272DCD /* User.m */; };
@@ -691,7 +690,6 @@
 				FC11B29F15BDF878001AB653 /* open.png in Resources */,
 				FC410CB215C04F25003C4523 /* greyback.png in Resources */,
 				FCA2ADBC15C0B88E00AB425E /* car.png in Resources */,
-				FCA2ADC015C0BA5600AB425E /* open.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

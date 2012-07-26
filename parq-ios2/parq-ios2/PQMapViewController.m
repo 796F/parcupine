@@ -1674,7 +1674,7 @@ typedef struct{
         
         [UIView animateWithDuration:0.25 animations:^{
             self.navigationBar.leftBarButtonItem = nil;
-            self.disableViewOverlay.alpha = 0.8;
+            self.disableViewOverlay.alpha = 0.6;
             if (zoomState == kSpotZoomLevel) {
                 searchBar.frame = CGRectMake(0, 0, 320, 88);
             } else {
@@ -1933,6 +1933,12 @@ typedef struct{
 - (IBAction)noneButtonPressed:(id)sender {
     //[self hideMoreTextBox];
     DLog(@"");
+    int olduitype = [dataLayer UIType];
+    if(olduitype==3) olduitype = -1;
+    [dataLayer setUIType:olduitype+1];
+    NSString* string = [NSString stringWithFormat:@"uitype = %d", olduitype+1];
+    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:nil message:string delegate:self cancelButtonTitle:@"ok" otherButtonTitles:nil];
+    [alert show];
     //self.map = [[MKMapView alloc] initWithFrame:CGRectMake(0, 44, 320, 416)];
     
 //    [self clearMap];
