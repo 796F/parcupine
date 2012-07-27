@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
@@ -11,6 +13,7 @@ import net.sf.ehcache.Element;
 import com.parq.server.dao.exception.DuplicateEmailException;
 import com.parq.server.dao.model.object.PaymentMethod;
 import com.parq.server.dao.model.object.User;
+import com.parq.server.dao.model.object.UserScore;
 
 /**
  * Dao class responsible for accessing and updating the User Table
@@ -42,6 +45,15 @@ public class UserDao extends AbstractParqDaoParent {
 			+ " VALUES (?, ?, ?, ?)";
 	private static final String sqlCreateUserPrepaidAccount = 
 		"INSERT INTO prepaidaccountbalance (user_id, account_balance) VALUES (?, 0)";
+	
+	private static final String sqlCreateUserScore = "INSERT INTO score (user_id) VALUES (?)";
+	private static final String sqlUpdateUserScore = "INSERT INTO score (user_id, score_1, score_2, score_3) " 
+			+ " VALUES (?, ?, ?, ?)";
+	private static final String sqlGetUserScoreForUser = 
+		"SELECT score_id, user_id, score_1, score_2, score_3 FROM score s WHERE s.user_id = ? ORDER BY score_id DESC LIMIT 1";
+	private static final String sqlGetUserScoreHistoryForUser = 
+		"SELECT score_id, user_id, score_1, score_2, score_3 FROM score s WHERE s.user_id = ? ORDER BY score_id DESC";
+	
 	
 	private static final String emailCache = "getUserByEmail:";
 	private static final String idCache = "getUserById:";
@@ -340,11 +352,11 @@ public class UserDao extends AbstractParqDaoParent {
 		// create the prepaid account for the new user
 		User newlyCreatedUser = getUserByEmail(user.getEmail());
 		newUserCreated &= createPrePaidAccount(newlyCreatedUser.getUserID());
+		newUserCreated &= createUserScore(newlyCreatedUser.getUserID());
 		return newUserCreated;
 	}
 	
 	private boolean createPrePaidAccount(long userId) {
-		
 		PreparedStatement pstmt = null;
 		Connection con = null;
 		boolean userAccountCreated = false;
@@ -360,8 +372,117 @@ public class UserDao extends AbstractParqDaoParent {
 		} finally {
 			closeConnection(con);
 		}
-		
 		return userAccountCreated;
+	}
+	
+	private boolean createUserScore(long userId) {
+		PreparedStatement pstmt = null;
+		Connection con = null;
+		boolean userScoreTableCreated = false;
+		try {
+			con = getConnection();
+			pstmt = con.prepareStatement(sqlCreateUserScore);
+			pstmt.setLong(1, userId);
+			userScoreTableCreated = pstmt.executeUpdate() == 1;
+		} catch (SQLException sqle) {
+			System.out.println("SQL statement is invalid: " + pstmt);
+			sqle.printStackTrace();
+			throw new RuntimeException(sqle);
+		} finally {
+			closeConnection(con);
+		}
+		return userScoreTableCreated;
+	}
+	
+	/**
+	 * Update the user's score
+	 * 
+	 * @param score
+	 * @return
+	 */
+	public boolean updateUserScore(UserScore score) {
+		PreparedStatement pstmt = null;
+		Connection con = null;
+		boolean updateUserScore = false;
+		try {
+			con = getConnection();
+			pstmt = con.prepareStatement(sqlUpdateUserScore);
+			pstmt.setLong(1, score.getUserId());
+			pstmt.setLong(2, score.getScore1());
+			pstmt.setLong(3, score.getScore2());
+			pstmt.setLong(4, score.getScore3());
+			updateUserScore = pstmt.executeUpdate() == 1;
+		} catch (SQLException sqle) {
+			System.out.println("SQL statement is invalid: " + pstmt);
+			sqle.printStackTrace();
+			throw new RuntimeException(sqle);
+		} finally {
+			closeConnection(con);
+		}
+		return updateUserScore;
+	}
+	
+	/**
+	 * @param userId
+	 * @return
+	 */
+	public UserScore getScoreForUser(long userId) {
+		PreparedStatement pstmt = null;
+		Connection con = null;
+		UserScore score = new UserScore();
+		try {
+			con = getConnection();
+			pstmt = con.prepareStatement(sqlGetUserScoreForUser);
+			pstmt.setLong(1, userId);
+			ResultSet rs = pstmt.executeQuery();
+			if (rs.first()) {
+				score.setScoreId(rs.getLong("score_id"));
+				score.setUserId(rs.getLong("user_id"));
+				score.setScore1(rs.getLong("score_1"));
+				score.setScore2(rs.getLong("score_2"));
+				score.setScore3(rs.getLong("score_3"));
+			}
+		} catch (SQLException sqle) {
+			System.out.println("SQL statement is invalid: " + pstmt);
+			sqle.printStackTrace();
+			throw new RuntimeException(sqle);
+		} finally {
+			closeConnection(con);
+		}
+		return score;
+	}
+	
+	/**
+	 * @param userId
+	 * @return
+	 */
+	public List<UserScore> getScoreHistoryForUser(long userId) {
+		PreparedStatement pstmt = null;
+		Connection con = null;
+		List<UserScore> scores = new ArrayList<UserScore>();
+		try {
+			con = getConnection();
+			pstmt = con.prepareStatement(sqlGetUserScoreHistoryForUser);
+			pstmt.setLong(1, userId);
+			ResultSet rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				UserScore userScore = new UserScore();
+				userScore.setScoreId(rs.getLong("score_id"));
+				userScore.setUserId(rs.getLong("user_id"));
+				userScore.setScore1(rs.getLong("score_1"));
+				userScore.setScore2(rs.getLong("score_2"));
+				userScore.setScore3(rs.getLong("score_3"));
+				scores.add(userScore);
+			}
+		} catch (SQLException sqle) {
+			System.out.println("SQL statement is invalid: " + pstmt);
+			sqle.printStackTrace();
+			throw new RuntimeException(sqle);
+		} finally {
+			closeConnection(con);
+		}
+		return scores;
 	}
 	
 	/**

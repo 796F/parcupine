@@ -36,6 +36,7 @@ import com.parq.server.dao.model.object.Payment;
 import com.parq.server.dao.model.object.Payment.PaymentType;
 import com.parq.server.dao.model.object.PaymentAccount;
 import com.parq.server.dao.model.object.User;
+import com.parq.server.dao.model.object.UserScore;
 import com.parq.server.grid.GridManagementService;
 import com.parq.server.grid.model.object.GridWithFillRate;
 import com.parq.server.grid.model.object.ParkingLocationWithFillRate;
@@ -62,6 +63,11 @@ import parkservice.model.RefillRequest;
 import parkservice.model.RefillResponse;
 import parkservice.model.UnparkRequest;
 import parkservice.model.UnparkResponse;
+import parkservice.userscore.model.GetUserScoresRequest;
+import parkservice.userscore.model.GetUserScoreResponse;
+import parkservice.userscore.model.Score;
+import parkservice.userscore.model.UpdateUserScoreRequest;
+import parkservice.userscore.model.UpdateUserScoreResponse;
 
 @Path("/")
 public class ParkResource {
@@ -605,5 +611,55 @@ public class ParkResource {
 		
 		// return the array representation of the GetUpdatedSpotLevelInfoResponse
 		return responseList.toArray(new GetUpdatedSpotLevelInfoResponse[0]);
+	}
+	
+	@POST
+	@Path("/GetUserScoreRequest")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public GetUserScoreResponse
+			getGetUserScore(JAXBElement<GetUserScoresRequest> jaxbRequest) {
+		
+		GetUserScoresRequest request = jaxbRequest.getValue();
+		UserDao userDao = new UserDao();
+		List<UserScore> userScores = userDao.getScoreHistoryForUser(request.getUserId());
+		
+		List<Score> scores = new ArrayList<Score>();
+		for (UserScore uScore : userScores) {
+			Score score = new Score();
+			score.setScoreId(uScore.getScoreId());
+			score.setUserId(uScore.getUserId());
+			score.setScore1(uScore.getScore1());
+			score.setScore2(uScore.getScore2());
+			score.setScore3(uScore.getScore3());
+			scores.add(score);
+		}
+		
+		GetUserScoreResponse response = new GetUserScoreResponse();
+		response.setScores(scores);
+		return response;
+	}
+	
+	@POST
+	@Path("/UpdateUserScoreRequest")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public UpdateUserScoreResponse
+			updateGetUserScore(JAXBElement<UpdateUserScoreRequest> jaxbRequest) {
+	
+		UpdateUserScoreRequest request = jaxbRequest.getValue();
+		UserDao userDao = new UserDao();
+		
+		UserScore uScore = new UserScore();
+		uScore.setScoreId(request.getScore().getScoreId());
+		uScore.setUserId(request.getScore().getUserId());
+		uScore.setScore1(request.getScore().getScore1());
+		uScore.setScore2(request.getScore().getScore2());
+		uScore.setScore3(request.getScore().getScore3());
+		
+		boolean updateSuccessful = userDao.updateUserScore(uScore);
+		UpdateUserScoreResponse response = new UpdateUserScoreResponse();
+		response.setUpdateSuccessful(updateSuccessful);
+		return response;
 	}
 }

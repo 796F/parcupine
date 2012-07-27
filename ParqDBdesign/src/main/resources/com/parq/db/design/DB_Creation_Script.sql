@@ -33,6 +33,17 @@ CREATE TABLE licenseplate
  PRIMARY KEY (plate_id),
  FOREIGN KEY (user_id) references user(user_id));
  
+CREATE TABLE score
+(score_id BIGINT NOT NULL AUTO_INCREMENT,
+ user_id BIGINT NOT NULL,
+ score_1 BIGINT DEFAULT 0,
+ score_2 BIGINT DEFAULT 0,
+ score_3 BIGINT DEFAULT 0,
+ is_deleted BOOLEAN DEFAULT FALSE,
+ lastupdatedatetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+ PRIMARY KEY (score_id),
+ FOREIGN KEY (user_id) references user(user_id));
+
 CREATE TABLE client
 (client_id BIGINT NOT NULL AUTO_INCREMENT,
  name TEXT(64) NOT NULL,

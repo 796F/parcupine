@@ -8,9 +8,12 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 
 import com.parq.server.dao.ParkingStatusDao;
+import com.parq.server.dao.UserDao;
 import com.parq.server.dao.model.object.ParkingInstance;
 import com.parq.server.dao.model.object.Payment;
+import com.parq.server.dao.model.object.User;
 import com.parq.server.dao.model.object.Payment.PaymentType;
+import com.parq.server.dao.support.SupportScriptForDaoTesting;
 import com.parq.server.grid.GridManagementService;
 
 import parkservice.gridservice.model.FindGridsByGPSCoordinateRequest;
@@ -26,13 +29,22 @@ import parkservice.gridservice.model.SearchArea;
 import parkservice.gridservice.model.SearchForStreetsRequest;
 import parkservice.gridservice.model.SearchForStreetsResponse;
 import parkservice.resources.ParkResource;
+import parkservice.userscore.model.GetUserScoresRequest;
+import parkservice.userscore.model.GetUserScoreResponse;
+import parkservice.userscore.model.Score;
+import parkservice.userscore.model.UpdateUserScoreRequest;
+import parkservice.userscore.model.UpdateUserScoreResponse;
 import junit.framework.TestCase;
 
 public class TestParkResourceGridServiceAPI extends TestCase {
 	
-	// TODO this field will likely change a lot
-	private long testUserId = 14;
+	private long testUserId;
 	
+	public TestParkResourceGridServiceAPI() {
+		UserDao userDao = new UserDao();
+		User user = userDao.getUserByEmail(SupportScriptForDaoTesting.userEmail);
+		testUserId = user.getUserID();
+	}
 	
 	public void testBasicFindGridByGPSCoor() {
 		ParkResource parkResource = new ParkResource();
@@ -447,7 +459,6 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		
 	}
 	
-	
 	public void testGridServiceUpdateThreadIsRunning() {
 		try {
 			Thread.sleep(61000);
@@ -455,4 +466,65 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		// expecting to see 2 system.out.println messages
 	}
 	
+	public void testGetUserScore() {
+		ParkResource parkResource = new ParkResource();
+		
+		// create request object
+		GetUserScoresRequest request = new GetUserScoresRequest();
+		request.setUserId(testUserId);
+		
+		// call the ParkResource
+		JAXBElement<GetUserScoresRequest> jaxbRequest = new JAXBElement<GetUserScoresRequest>(
+				new QName("Test"), GetUserScoresRequest.class, request);
+		GetUserScoreResponse response = parkResource.getGetUserScore(jaxbRequest);
+		
+		// validate response
+		List<Score> scores = response.getScores();
+		for (Score score: scores) {
+			assertEquals(testUserId, score.getUserId());
+			assertTrue(score.getScoreId() > 0);
+			assertTrue(score.getScore1() >= 0);
+			assertTrue(score.getScore2() >= 0);
+			assertTrue(score.getScore3() >= 0);
+		}
+	}
+	
+	public void testUpdateGetUserScore() {
+		ParkResource parkResource = new ParkResource();
+		
+		// create request object
+		UpdateUserScoreRequest request = new UpdateUserScoreRequest();
+		Score uScore = new Score();
+		uScore.setUserId(testUserId);
+		uScore.setScore1(5);
+		uScore.setScore2(10);
+		uScore.setScore3(15);
+		request.setScore(uScore);
+		
+		// call the ParkResource
+		JAXBElement<UpdateUserScoreRequest> jaxbRequest = new JAXBElement<UpdateUserScoreRequest>(
+				new QName("Test"), UpdateUserScoreRequest.class, request);
+		UpdateUserScoreResponse response = parkResource.updateGetUserScore(jaxbRequest);
+		
+		// check the response
+		assertTrue(response.isUpdateSuccessful());
+		
+		// create request object
+		GetUserScoresRequest request2 = new GetUserScoresRequest();
+		request2.setUserId(testUserId);
+		
+		// call the ParkResource
+		JAXBElement<GetUserScoresRequest> jaxbRequest2 = new JAXBElement<GetUserScoresRequest>(
+				new QName("Test"), GetUserScoresRequest.class, request2);
+		GetUserScoreResponse response2 = parkResource.getGetUserScore(jaxbRequest2);
+		
+		// validate response
+		List<Score> scores = response2.getScores();
+		Score score = scores.get(0);
+		assertEquals(testUserId, score.getUserId());
+		assertTrue(score.getScoreId() > 0);
+		assertEquals(5, score.getScore1());
+		assertEquals(10, score.getScore2());
+		assertEquals(15, score.getScore3());
+	}
 }
