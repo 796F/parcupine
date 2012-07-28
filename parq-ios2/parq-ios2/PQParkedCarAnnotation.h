@@ -10,5 +10,5 @@
 #import <CoreLocation/CoreLocation.h>
 
 @interface PQParkedCarAnnotation : MKPlacemark
-@property (weak, nonatomic) NSString *title;
+@property (retain, nonatomic) NSString *title;
 @end

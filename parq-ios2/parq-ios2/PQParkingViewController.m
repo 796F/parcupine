@@ -36,6 +36,8 @@ typedef enum {
 @end
 
 @implementation PQParkingViewController
+@synthesize paygFlagHidden;
+@synthesize prepaidFlagHidden;
 @dynamic rate;
 @dynamic address;
 @synthesize rateNumeratorCents;
@@ -141,12 +143,13 @@ typedef enum {
         [vc setUIType:type];
         [vc setModalPresentationStyle:UIModalPresentationFullScreen];
         [self presentModalViewController:vc animated:YES];
-    } else {
+    } else if(type ==2 || type == 3) {
         [self startTimerButtonAction];
-        
-        UIAlertView* askToHelpAlert = [[UIAlertView alloc] initWithTitle:@"Help Us!" message:@"please report open spots" delegate:self cancelButtonTitle:@"No Thanks" otherButtonTitles:@"Sure", nil];
+        UIAlertView* askToHelpAlert = [[UIAlertView alloc] initWithTitle:@"Earn Rewards!" message:@"By reporting open spots." delegate:self cancelButtonTitle:@"No Thanks" otherButtonTitles:@"Sure", nil];
         askToHelpAlert.tag = PLEASE_HELP_ALERT;
         [askToHelpAlert show];
+    }else{
+        [self startTimerButtonAction];
     }
 }
 
@@ -188,7 +191,7 @@ typedef enum {
 }
 
 - (void)infoButtonPressed {
-    UIAlertView *infoAlert = [[UIAlertView alloc] initWithTitle:@"Parking payment methods" message:@"Choose Prepaid if you would like to select how long you will be parking for.\nChoose Pay as you go if you would like to start the timer and pay for whatever you use." delegate:self cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
+    UIAlertView *infoAlert = [[UIAlertView alloc] initWithTitle:@"Parking payment methods" message:@"Choose Prepaid if you would like to select how long you will be parking.\n\nChoose Pay as you go if you would like to start the timer and pay for whatever you use." delegate:self cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
     infoAlert.tag = ALERTVIEW_INFO;
     [infoAlert show];
 }
@@ -369,8 +372,11 @@ typedef enum {
 - (void)paygSelected {
     [self resignPicker];
     if (paygFlag.hidden) {
+    //if (paygFlagHidden){    
         [self animateFlagIn:paygFlag];
+        //paygFlagHidden = NO;
         [self animateFlagOut:prepaidFlag];
+        //prepaidFlagHidden = YES;
     }
     meter.image = [UIImage imageNamed:@"meter_payg.png"];
     [expiresAtTimer invalidate];
@@ -395,8 +401,11 @@ typedef enum {
     paygCheck.image = [UIImage imageNamed:@"check_empty.png"];
     prepaidCheck.image = [UIImage imageNamed:@"check.png"];
     if (prepaidFlag.hidden) {
+    //if(prepaidFlagHidden){
         [self animateFlagOut:paygFlag];
+        //paygFlagHidden = YES;
         [self animateFlagIn:prepaidFlag];
+        //prepaidFlagHidden = NO;
     }
     extendButton.hidden = NO;
     expiresAtTime.hidden = NO;
@@ -501,6 +510,7 @@ typedef enum {
 #pragma mark - Animations
 - (void)animateFlagIn:(UIView *)flag {
     flag.hidden = NO;
+    
     [UIView animateWithDuration:0.5 delay:0.15 options:UIViewAnimationCurveEaseOut animations:^{
         flag.transform = CGAffineTransformRotate(CGAffineTransformIdentity, -M_PI/24);
     } completion:^(BOOL s){
@@ -515,12 +525,13 @@ typedef enum {
 }
 
 - (void)animateFlagOut:(UIView *)flag {
-    flag.hidden = YES;
-    [UIView animateWithDuration:0.5 delay:0.2 options:UIViewAnimationCurveEaseIn animations:^{
+//    flag.hidden = YES;
+    
+    [UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationCurveEaseIn animations:^{
         flag.transform = CGAffineTransformRotate(CGAffineTransformIdentity, M_PI/4);
     } completion:^(BOOL s) {
         //the waiting for .5 s to assign hidden=yes created race condition in PQParkingViewContr.m
-//        flag.hidden = YES;
+        flag.hidden = YES;
     }];
 }
 
@@ -631,6 +642,10 @@ typedef enum {
     prepaidFlag.layer.anchorPoint = CGPointMake(0.0,1.0);
     prepaidFlag.center = CGPointMake(0, 102);
     paygFlag.transform = CGAffineTransformRotate(CGAffineTransformIdentity, M_PI/4);
+
+    prepaidFlagHidden = YES; //start with pay as you go option.  
+    paygFlagHidden = NO;
+    
     [self animateFlagIn:paygFlag];
 }
 

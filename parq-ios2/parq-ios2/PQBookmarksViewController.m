@@ -173,6 +173,12 @@
 
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     NSLog(@"BOOKMARK index tapped %d\n", indexPath.row);
+    if(indexPath.row==0 && currentSelection ==kBookmarks){
+            //user tapped acc durrent location.  
+        [self loadEditBookmarkMap:indexPath OrCell:nil];
+        return;
+    }
+    
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     if(userIsEditing){
         //load the bookmark?

@@ -34,84 +34,61 @@
     {
         // try to dequeue an existing pin view first
         static NSString* parkedCarAnnotationIdentifier = @"parkedCarAnnotationIdentifier";
-        MKPinAnnotationView* pinView = (MKPinAnnotationView *)
-        [mapView dequeueReusableAnnotationViewWithIdentifier:parkedCarAnnotationIdentifier];
+        // if an existing pin view was not available, create one
+        MKPinAnnotationView* customPinView = [[MKPinAnnotationView alloc]
+                                              initWithAnnotation:annotation reuseIdentifier:parkedCarAnnotationIdentifier];
+        //customPinView.pinColor = MKPinAnnotationColorPurple;
+        NSLog(@"uitpe %d\n", UIType);
+        if(UIType ==1 || UIType == 3){
+            customPinView.image = [UIImage imageNamed:@"unknown.png"];
+            customPinView.tag = 1;
+        }else{
+            customPinView.tag = 0;
+            customPinView.image = [UIImage imageNamed:@"car.png"];
+        }
         
-        if (!pinView)
-        {
-            // if an existing pin view was not available, create one
-            MKPinAnnotationView* customPinView = [[MKPinAnnotationView alloc]
-                                                  initWithAnnotation:annotation reuseIdentifier:parkedCarAnnotationIdentifier];
-            //customPinView.pinColor = MKPinAnnotationColorPurple;
-            if(UIType ==1 || UIType == 3){
-                customPinView.image = [UIImage imageNamed:@"unknown.png"];
-                customPinView.tag = 1;
-            }else{
-                customPinView.tag = 2;
-                customPinView.image = [UIImage imageNamed:@"car.png"];
-            }
-            
-            customPinView.animatesDrop = YES;
-            customPinView.canShowCallout = YES;
-            return customPinView;
-        }
-        else
-        {
-            pinView.annotation = annotation;
-        }
-        return pinView;
+        customPinView.animatesDrop = YES;
+        customPinView.canShowCallout = YES;
+        return customPinView;
+        
     }
     
     return nil;
-}
--(void) mapView:(MKMapView *)mapView didDeselectAnnotationView:(MKAnnotationView *)view{
-    if(view.tag ==1){ // 1 = unknown
-        view.image = [UIImage imageNamed:@"unknown.png"];
-    }else if(view.tag == 2){ // 2 = car.  
-        view.image = [UIImage imageNamed:@"car.png"];
-    }else{  //0 = open
-        view.image = [UIImage imageNamed:@"open.png"];
-    }
-
-}
--(void) mapView:(MKMapView *)mapView didSelectAnnotationView:(MKAnnotationView *)view{
-    if(view.tag ==0){
-        //unknown
-        view.image = [UIImage imageNamed:@"unknown.png"];
-        view.tag = 1;
-    }else if(view.tag == 1){
-        //taken
-        view.image = [UIImage imageNamed:@"car.png"];
-        view.tag = 2;
-    }else{
-        //open
-        view.image = [UIImage imageNamed:@"open.png"];
-        view.tag = 0;
-    }
-    //deselect annotationf or next try.  
-    NSArray *selectedAnnotations = self.mapView.selectedAnnotations;
-    for(id annotation in selectedAnnotations) {
-        if(showTapMe){
-            [self.mapView selectAnnotation:annotation animated:YES];
-            showTapMe = NO;
-        }else{
-            [self.mapView deselectAnnotation:annotation animated:NO];
-        }
-    
-    }
 }
 
 -(void) handleSingleTap:(UIGestureRecognizer*) gestureRecognizer{
     if (gestureRecognizer.state != UIGestureRecognizerStateEnded)
         return;
     
+    [mapView deselectAnnotation:[mapView.selectedAnnotations objectAtIndex:0] animated:YES];
     CGPoint touchPoint = [gestureRecognizer locationInView:self.mapView];
     CLLocationCoordinate2D coord = [self.mapView convertPoint:touchPoint toCoordinateFromView:self.mapView];
-    NSLog(@"%f %f\n", coord.latitude, coord.longitude);
-    //self.parentViewController 
     
-    //PQParkedCarAnnotation *annotation = [[PQParkedCarAnnotation alloc] initWithCoordinate:coord addressDictionary:nil]; 
-    //[self.mapView addAnnotation:annotation];
+    double dist = 0.4; //only works for * 10000
+    PQParkedCarAnnotation* tappedAnno;
+    for(PQParkedCarAnnotation* anno in mapView.annotations){
+        //multiplied since it's too small.  
+        double dLat = (coord.latitude - anno.coordinate.latitude) * 10000;
+        double dLon = (coord.longitude - anno.coordinate.longitude) * 10000;
+        double thisDist = dLat*dLat + dLon*dLon;
+        if (thisDist < dist) {
+            dist = thisDist;
+            tappedAnno = anno;
+        }
+    }
+    //after loop, we would have selected closest annotation.  
+    
+    MKAnnotationView* view = [mapView viewForAnnotation:tappedAnno];
+    if(view.tag == 0){
+        view.image = [UIImage imageNamed:@"car.png"];
+        tappedAnno.title = [NSString stringWithFormat:@"%sTaken", [tappedAnno.title substringToIndex:3].UTF8String ];
+        view.tag = 1;
+    }else{
+        view.image = [UIImage imageNamed:@"open.png"];
+        tappedAnno.title = [NSString stringWithFormat:@"%sOpen", [tappedAnno.title substringToIndex:3].UTF8String];
+        view.tag = 0;
+    }
+    [mapView selectAnnotation:tappedAnno animated:YES];
 }
 
 -(IBAction)backButtonPressed:(id)sender{
@@ -136,25 +113,21 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    //UITapGestureRecognizer* tgs = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
-    showTapMe = YES;
-    
-    //[self.mapView addGestureRecognizer:tgs];
-    CLLocationCoordinate2D point = {42.357802, -71.094285};
+    UITapGestureRecognizer* tgs = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
+    [self.mapView addGestureRecognizer:tgs];
+    CLLocationCoordinate2D point = {42.357820, -71.094310};
     MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(point, 15, 15);
     [mapView setRegion:[mapView regionThatFits:viewRegion] animated:NO];
-
+    showTapMe = YES;
     for(NSString* string in [self loadSpots]){
         NSArray* components = [string componentsSeparatedByString:@","];
         double lat = [[components objectAtIndex:0] floatValue];
         double lon = [[components objectAtIndex:1] floatValue];
         CLLocationCoordinate2D coord =  CLLocationCoordinate2DMake(lat, lon);
         PQParkedCarAnnotation *annotation = [[PQParkedCarAnnotation alloc] initWithCoordinate:coord addressDictionary:nil]; 
-        annotation.title = @"Tap Me!";
+        annotation.title = [components objectAtIndex:2];
         [self.mapView addAnnotation:annotation];
-        [self.mapView selectAnnotation:annotation animated:NO];
     }
-    
 	// Do any additional setup after loading the view.
 }
 
@@ -171,12 +144,12 @@
 
 -(NSArray*) loadSpots{
     return [NSArray arrayWithObjects:
-            @"42.357767, -71.094471",  
-            @"42.357789, -71.094409", 
-            @"42.357812, -71.094344", 
-            @"42.357838, -71.094275", 
-            @"42.357855, -71.094215", 
-            @"42.357881, -71.094151",
+            @"42.357767, -71.094471, 1:",  
+            @"42.357789, -71.094409, 2:", 
+            @"42.357812, -71.094344, 3:", 
+            @"42.357838, -71.094275, 4:", 
+            @"42.357855, -71.094215, 5:", 
+            @"42.357881, -71.094151, 6:",
             nil];
 }
 

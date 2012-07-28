@@ -325,7 +325,8 @@ typedef struct{
                          [[NSDictionary alloc] initWithObjectsAndKeys:@"42.366163,-71.109171;42.363896,-71.108828", @"line", [NSNumber numberWithInt:1], @"color", nil],
                          [[NSDictionary alloc] initWithObjectsAndKeys:@"42.366623,-71.110158;42.363722,-71.109707", @"line", [NSNumber numberWithInt:3], @"color", nil],
                          [[NSDictionary alloc] initWithObjectsAndKeys:@"42.368938,-71.110308;42.367241,-71.111392", @"line", [NSNumber numberWithInt:1], @"color", nil],
-                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.366805,-71.110383;42.368375,-71.108806", @"line", [NSNumber numberWithInt:1], @"color", nil]
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.366805,-71.110383;42.368375,-71.108806", @"line", [NSNumber numberWithInt:1], @"color", nil],
+                         [[NSDictionary alloc] initWithObjectsAndKeys:@"42.357714,-71.094522;42.357888,-71.093986", @"line", [NSNumber numberWithInt:3], @"color", nil]
                          ,nil];
 
     NSMutableArray* segList = [[NSMutableArray alloc] initWithCapacity:data.count];
@@ -349,19 +350,20 @@ typedef struct{
 
 - (NSArray*)loadBlockData {
     NSArray* data = [NSArray arrayWithObjects:
-                     [[NSDictionary alloc] initWithObjectsAndKeys:@"42.364551,-71.113099;42.364753,-71.110776", @"line", [NSNumber numberWithInt:0], @"color", nil],
+                     [[NSDictionary alloc] initWithObjectsAndKeys:@"42.364551,-71.113099;42.364753,-71.110776", @"line", [NSNumber numberWithInt:1], @"color", nil],
+                     [[NSDictionary alloc] initWithObjectsAndKeys:@"42.357714,-71.094522;42.357888,-71.093986", @"line", [NSNumber numberWithInt:3], @"color", nil],
                      [[NSDictionary alloc] initWithObjectsAndKeys:@"42.36643,-71.111047;42.363285,-71.110543", @"line", [NSNumber numberWithInt:1], @"color", nil],
-                     [[NSDictionary alloc] initWithObjectsAndKeys:@"42.365352,-71.112211;42.364904,-71.112343", @"line", [NSNumber numberWithInt:2], @"color", nil],
-                     [[NSDictionary alloc] initWithObjectsAndKeys:@"42.364904,-71.112343;42.364618,-71.112311", @"line", [NSNumber numberWithInt:0], @"color", nil],
-                     [[NSDictionary alloc] initWithObjectsAndKeys:@"42.365352,-71.112211;42.365294,-71.111857", @"line", [NSNumber numberWithInt:4], @"color", nil],
+                     [[NSDictionary alloc] initWithObjectsAndKeys:@"42.365352,-71.112211;42.364904,-71.112343", @"line", [NSNumber numberWithInt:1], @"color", nil],
+                     [[NSDictionary alloc] initWithObjectsAndKeys:@"42.364904,-71.112343;42.364618,-71.112311", @"line", [NSNumber numberWithInt:1], @"color", nil],
+                     [[NSDictionary alloc] initWithObjectsAndKeys:@"42.365352,-71.112211;42.365294,-71.111857", @"line", [NSNumber numberWithInt:1], @"color", nil],
                      [[NSDictionary alloc] initWithObjectsAndKeys:@"42.365294,-71.111857;42.365383,-71.110889", @"line", [NSNumber numberWithInt:1], @"color", nil],
-                     [[NSDictionary alloc] initWithObjectsAndKeys:@"42.36532,-71.111565;42.366043,-71.111667", @"line", [NSNumber numberWithInt:3], @"color", nil],
-                     [[NSDictionary alloc] initWithObjectsAndKeys:@"42.366043,-71.111667;42.36622,-71.111839", @"line", [NSNumber numberWithInt:3], @"color", nil],
-                     [[NSDictionary alloc] initWithObjectsAndKeys:@"42.36622,-71.111839;42.366392,-71.112826", @"line", [NSNumber numberWithInt:3], @"color", nil],
-                     [[NSDictionary alloc] initWithObjectsAndKeys:@"42.366788,-71.11193;42.366412,-71.111031", @"line", [NSNumber numberWithInt:0], @"color", nil],
-                     [[NSDictionary alloc] initWithObjectsAndKeys:@"42.360075,-71.094794;42.359591,-71.094086", @"line", [NSNumber numberWithInt:3], @"color", nil],
-                     [[NSDictionary alloc] initWithObjectsAndKeys:@"42.359591,-71.094086;42.358925,-71.093528", @"line", [NSNumber numberWithInt:3], @"color", nil],
-                     [[NSDictionary alloc] initWithObjectsAndKeys:@"42.358925,-71.093528;42.357253,-71.092616", @"line", [NSNumber numberWithInt:3], @"color", nil],
+                     [[NSDictionary alloc] initWithObjectsAndKeys:@"42.36532,-71.111565;42.366043,-71.111667", @"line", [NSNumber numberWithInt:1], @"color", nil],
+                     [[NSDictionary alloc] initWithObjectsAndKeys:@"42.366043,-71.111667;42.36622,-71.111839", @"line", [NSNumber numberWithInt:1], @"color", nil],
+                     [[NSDictionary alloc] initWithObjectsAndKeys:@"42.36622,-71.111839;42.366392,-71.112826", @"line", [NSNumber numberWithInt:1], @"color", nil],
+                     [[NSDictionary alloc] initWithObjectsAndKeys:@"42.366788,-71.11193;42.366412,-71.111031", @"line", [NSNumber numberWithInt:1], @"color", nil],
+                     [[NSDictionary alloc] initWithObjectsAndKeys:@"42.360075,-71.094794;42.359591,-71.094086", @"line", [NSNumber numberWithInt:1], @"color", nil],
+                     [[NSDictionary alloc] initWithObjectsAndKeys:@"42.359591,-71.094086;42.358925,-71.093528", @"line", [NSNumber numberWithInt:1], @"color", nil],
+                     [[NSDictionary alloc] initWithObjectsAndKeys:@"42.358925,-71.093528;42.357253,-71.092616", @"line", [NSNumber numberWithInt:1], @"color", nil],
                      nil];
     
     NSMutableArray* segList = [[NSMutableArray alloc] initWithCapacity:2];
@@ -1345,7 +1347,12 @@ typedef struct{
         return view;
     } else if ([overlay isKindOfClass:[MKPolyline class]]) {
         MKPolylineView *view = [[MKPolylineView alloc] initWithOverlay:overlay];
+        
+        //FOR DEVICE
+        //view.lineWidth = 16;
+        //for simulator
         view.lineWidth = 8;
+        
         MKPolyline *polyline = (MKPolyline *)overlay;
         switch (displayedData) {
             case kAvailabilityData:
@@ -1403,8 +1410,10 @@ typedef struct{
         // Grey selection circle
         circleView.fillColor = [[UIColor blackColor] colorWithAlphaComponent:0.3];
         circleView.strokeColor = [UIColor whiteColor];
-
+        //for simulator
         circleView.lineWidth = 6;
+        //for device
+//        circleView.lineWidth = 12;
         return circleView;
     }
     return nil;
@@ -1630,11 +1639,9 @@ typedef struct{
         [self.map addAnnotation:pin];
         [self.map selectAnnotation:pin animated:YES];
         return;
+    }else if(map.selectedAnnotations.count!=0) {
+        [map deselectAnnotation:[self.map.selectedAnnotations objectAtIndex:0]  animated:YES]; 
     }
-//    else{
-//        [map deselectAnnotation:[self.map.selectedAnnotations objectAtIndex:0]  animated:YES]; 
-//    }
-    
     if(zoomState == kSpotZoomLevel){
         //snap the circle to the closest polyline.
         NSArray* segList = [self loadBlockData];
@@ -1753,6 +1760,8 @@ typedef struct{
 
 #pragma mark - MAP TOOLBARS
 - (IBAction)availabilityBarTapped {
+    
+    
     switch (self.availabilitySelectionBar.selectedSegmentIndex) {
         case 0:
             gradientIcon.image = [UIImage imageNamed:@"gradient_avail"];
@@ -1769,6 +1778,13 @@ typedef struct{
             displayedData = kNoneData;
             [self clearMap];
             break;
+    }
+    //hack fix.  
+    if(zoomState == kGridZoomLevel){
+        [self clearGrids];
+        [currentMicroBlockIds removeAllObjects];
+        CLLocationCoordinate2D coord = [map centerCoordinate];
+        [self showGridLevelWithCoordinates:&coord];
     }
 }
 

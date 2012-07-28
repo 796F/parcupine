@@ -237,8 +237,8 @@
 		FC48562E1577FD37002C4479 /* DataLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DataLayer.h; path = "parq-ios2/DataLayer.h"; sourceTree = "<group>"; };
 		FC48562F1577FD37002C4479 /* DataLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DataLayer.m; path = "parq-ios2/DataLayer.m"; sourceTree = "<group>"; };
 		FC6C9F5F15925D02002C5418 /* donedown.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = donedown.png; sourceTree = "<group>"; };
-		FC7214811592144F00D228C6 /* BookmarkCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BookmarkCell.h; path = "parq-ios2/BookmarkCell.h"; sourceTree = "<group>"; };
-		FC7214821592144F00D228C6 /* BookmarkCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BookmarkCell.m; path = "parq-ios2/BookmarkCell.m"; sourceTree = "<group>"; };
+		FC7214811592144F00D228C6 /* BookmarkCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BookmarkCell.h; sourceTree = "<group>"; };
+		FC7214821592144F00D228C6 /* BookmarkCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BookmarkCell.m; sourceTree = "<group>"; };
 		FC7214941592522100D228C6 /* doneup.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = doneup.png; sourceTree = "<group>"; };
 		FC768F8415B718B0004F6696 /* PQPinAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PQPinAnnotation.h; sourceTree = "<group>"; };
 		FC768F8515B718B0004F6696 /* PQPinAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PQPinAnnotation.m; sourceTree = "<group>"; };
@@ -275,8 +275,8 @@
 		FCDBD4BD15ADF28100E81B7E /* Street.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Street.m; path = "parq-ios2/Street.m"; sourceTree = "<group>"; };
 		FCDBF385159CF064000A76C8 /* Grid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Grid.h; path = "parq-ios2/Grid.h"; sourceTree = "<group>"; };
 		FCDBF386159CF064000A76C8 /* Grid.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Grid.m; path = "parq-ios2/Grid.m"; sourceTree = "<group>"; };
-		FCDECB5C1596691C005AF9B3 /* PaymentOptionCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PaymentOptionCell.h; path = "parq-ios2/PaymentOptionCell.h"; sourceTree = "<group>"; };
-		FCDECB5D1596691C005AF9B3 /* PaymentOptionCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PaymentOptionCell.m; path = "parq-ios2/PaymentOptionCell.m"; sourceTree = "<group>"; };
+		FCDECB5C1596691C005AF9B3 /* PaymentOptionCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaymentOptionCell.h; sourceTree = "<group>"; };
+		FCDECB5D1596691C005AF9B3 /* PaymentOptionCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PaymentOptionCell.m; sourceTree = "<group>"; };
 		FCDFE25415913BE900FF6053 /* loginResponseObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = loginResponseObject.h; path = "parq-ios2/loginResponseObject.h"; sourceTree = "<group>"; };
 		FCDFE25515913BE900FF6053 /* loginResponseObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = loginResponseObject.m; path = "parq-ios2/loginResponseObject.m"; sourceTree = "<group>"; };
 		FCDFE258159140BE00FF6053 /* PQEditBookmarkViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PQEditBookmarkViewController.h; sourceTree = "<group>"; };
@@ -356,28 +356,15 @@
 			isa = PBXGroup;
 			children = (
 				8703ACBC1513F841002FE357 /* MainStoryboard.storyboard */,
-				FC410CB315C06848003C4523 /* EditSettingsViewController.h */,
-				FC410CB415C06848003C4523 /* EditSettingsViewController.m */,
-				FC11B28B15BDD1E2001AB653 /* SelfReportingViewController.h */,
-				FC11B28C15BDD1E2001AB653 /* SelfReportingViewController.m */,
 				8703ACB91513F841002FE357 /* PQAppDelegate.h */,
 				8703ACBA1513F841002FE357 /* PQAppDelegate.m */,
-				FCB2B08915BCA17900272DCD /* RegisterViewController.h */,
-				FCB2B08A15BCA17900272DCD /* RegisterViewController.m */,
-				FCB2B08C15BCAA4000272DCD /* LoginNavigationController.h */,
-				FCB2B08D15BCAA4000272DCD /* LoginNavigationController.m */,
-				FCB2B08615BC941300272DCD /* PQLoginViewController.h */,
-				FCB2B08715BC941300272DCD /* PQLoginViewController.m */,
-				FC18F4121595893C00C18286 /* PQPaymentMethodsViewController.h */,
-				FC18F4131595893C00C18286 /* PQPaymentMethodsViewController.m */,
-				FCDFE258159140BE00FF6053 /* PQEditBookmarkViewController.h */,
-				FCDFE259159140BE00FF6053 /* PQEditBookmarkViewController.m */,
+				FC8E6CFF15C1E67600F443C5 /* Settings */,
+				FC8E6D0015C1E6AC00F443C5 /* Bookmarks */,
+				FCA421C315C31E5B003D5758 /* Login */,
+				FC11B28B15BDD1E2001AB653 /* SelfReportingViewController.h */,
+				FC11B28C15BDD1E2001AB653 /* SelfReportingViewController.m */,
 				87418A861577D31500CACCCA /* PQParkedCarMapViewController.h */,
 				87418A871577D31500CACCCA /* PQParkedCarMapViewController.m */,
-				FCD0F07B159120800063D6FA /* PQBookmarksViewController.h */,
-				FCD0F07C159120800063D6FA /* PQBookmarksViewController.m */,
-				FC08BB791590D1F40077659C /* PQSettingsViewController.h */,
-				FC08BB7A1590D1F40077659C /* PQSettingsViewController.m */,
 				87E1BE65154A08D70095E92D /* PQParkingViewController.h */,
 				87E1BE66154A08D80095E92D /* PQParkingViewController.m */,
 				8703ACBF1513F841002FE357 /* PQMapViewController.h */,
@@ -401,14 +388,8 @@
 		8703ACDF1513FC84002FE357 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				FC121A44159B87B10072DA85 /* JSONKit.h */,
-				FC48562E1577FD37002C4479 /* DataLayer.h */,
-				FC48562F1577FD37002C4479 /* DataLayer.m */,
-				FC7CE863157943620059EE43 /* NetworkLayer.h */,
-				FC7CE864157943630059EE43 /* NetworkLayer.m */,
-				FC121A51159B9C880072DA85 /* Parser.h */,
-				FC121A52159B9C880072DA85 /* Parser.m */,
 				FC1219FE159B6FF00072DA85 /* RestKit.xcodeproj */,
+				FC8E6D0115C1E9BA00F443C5 /* Support Layers */,
 				87ABC3A81582B14A00030005 /* Annotations */,
 				FC72148B1592286400D228C6 /* Objects */,
 				FC7CE851157902630059EE43 /* CoreDataObjects */,
@@ -521,10 +502,6 @@
 				FC772759157C2C8C005DEBEA /* Segment.m */,
 				FCDFE25415913BE900FF6053 /* loginResponseObject.h */,
 				FCDFE25515913BE900FF6053 /* loginResponseObject.m */,
-				FC7214811592144F00D228C6 /* BookmarkCell.h */,
-				FC7214821592144F00D228C6 /* BookmarkCell.m */,
-				FCDECB5C1596691C005AF9B3 /* PaymentOptionCell.h */,
-				FCDECB5D1596691C005AF9B3 /* PaymentOptionCell.m */,
 				FCD8FE051598BD57004E38C4 /* BoundingBox.h */,
 				FCD8FE061598BD57004E38C4 /* BoundingBox.m */,
 				FC121A57159BAD8E0072DA85 /* AbstractRequestObject.h */,
@@ -553,6 +530,61 @@
 				FCDBF386159CF064000A76C8 /* Grid.m */,
 			);
 			name = CoreDataObjects;
+			sourceTree = "<group>";
+		};
+		FC8E6CFF15C1E67600F443C5 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				FCDECB5C1596691C005AF9B3 /* PaymentOptionCell.h */,
+				FCDECB5D1596691C005AF9B3 /* PaymentOptionCell.m */,
+				FC18F4121595893C00C18286 /* PQPaymentMethodsViewController.h */,
+				FC18F4131595893C00C18286 /* PQPaymentMethodsViewController.m */,
+				FC410CB315C06848003C4523 /* EditSettingsViewController.h */,
+				FC410CB415C06848003C4523 /* EditSettingsViewController.m */,
+				FC08BB791590D1F40077659C /* PQSettingsViewController.h */,
+				FC08BB7A1590D1F40077659C /* PQSettingsViewController.m */,
+			);
+			name = Settings;
+			sourceTree = "<group>";
+		};
+		FC8E6D0015C1E6AC00F443C5 /* Bookmarks */ = {
+			isa = PBXGroup;
+			children = (
+				FC7214811592144F00D228C6 /* BookmarkCell.h */,
+				FC7214821592144F00D228C6 /* BookmarkCell.m */,
+				FCDFE258159140BE00FF6053 /* PQEditBookmarkViewController.h */,
+				FCDFE259159140BE00FF6053 /* PQEditBookmarkViewController.m */,
+				FCD0F07B159120800063D6FA /* PQBookmarksViewController.h */,
+				FCD0F07C159120800063D6FA /* PQBookmarksViewController.m */,
+			);
+			name = Bookmarks;
+			sourceTree = "<group>";
+		};
+		FC8E6D0115C1E9BA00F443C5 /* Support Layers */ = {
+			isa = PBXGroup;
+			children = (
+				FC121A44159B87B10072DA85 /* JSONKit.h */,
+				FC48562E1577FD37002C4479 /* DataLayer.h */,
+				FC48562F1577FD37002C4479 /* DataLayer.m */,
+				FC7CE863157943620059EE43 /* NetworkLayer.h */,
+				FC7CE864157943630059EE43 /* NetworkLayer.m */,
+				FC121A51159B9C880072DA85 /* Parser.h */,
+				FC121A52159B9C880072DA85 /* Parser.m */,
+			);
+			name = "Support Layers";
+			sourceTree = "<group>";
+		};
+		FCA421C315C31E5B003D5758 /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				FCB2B08915BCA17900272DCD /* RegisterViewController.h */,
+				FCB2B08A15BCA17900272DCD /* RegisterViewController.m */,
+				FCB2B08C15BCAA4000272DCD /* LoginNavigationController.h */,
+				FCB2B08D15BCAA4000272DCD /* LoginNavigationController.m */,
+				FCB2B08615BC941300272DCD /* PQLoginViewController.h */,
+				FCB2B08715BC941300272DCD /* PQLoginViewController.m */,
+			);
+			name = Login;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

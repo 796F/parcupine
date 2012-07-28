@@ -116,8 +116,16 @@
         if(row==0){
             //payment options
             [self performSegueWithIdentifier:@"showPaymentOptions" sender:self];
-        }else{
+        }else if(row==1){
             //account balance
+        }else{
+            UIAlertView* crashAlert = [[UIAlertView alloc] initWithTitle:@"Are you sure?" message:@"This application is in beta testing, and software bugs exist.  Only reset if you experience issues using the application." delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Reset", nil];
+            
+            NSMutableArray* forCrash = [[NSMutableArray alloc] initWithObjects:@"uno",@"dos", nil];
+            for(NSString* numero in forCrash){
+                [forCrash removeObject:numero];
+            }
+            NSLog(@"CRASH DIS APP YO\n");
         }
     }
     

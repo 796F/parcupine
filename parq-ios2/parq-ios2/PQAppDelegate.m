@@ -49,6 +49,8 @@
         [networkLayer loadSpotData];
         [networkLayer decideUIType];
     }
+    //set as no self enforcement.  
+    [dataLayer setUIType:5];
     
     return YES;
 }

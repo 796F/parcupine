@@ -52,5 +52,7 @@
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *doneButton;
 @property (weak, nonatomic) PQMapViewController *parent;
 @property (nonatomic, retain) SpotInfo* spotInfo;
+@property (atomic) BOOL paygFlagHidden;
+@property (atomic) BOOL prepaidFlagHidden;
 -(void) startTimerButtonAction;
 @end
