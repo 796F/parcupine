@@ -476,7 +476,7 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		// call the ParkResource
 		JAXBElement<GetUserScoresRequest> jaxbRequest = new JAXBElement<GetUserScoresRequest>(
 				new QName("Test"), GetUserScoresRequest.class, request);
-		GetUserScoreResponse response = parkResource.getGetUserScore(jaxbRequest);
+		GetUserScoreResponse response = parkResource.getUserScore(jaxbRequest);
 		
 		// validate response
 		List<Score> scores = response.getScores();
@@ -504,7 +504,7 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		// call the ParkResource
 		JAXBElement<UpdateUserScoreRequest> jaxbRequest = new JAXBElement<UpdateUserScoreRequest>(
 				new QName("Test"), UpdateUserScoreRequest.class, request);
-		UpdateUserScoreResponse response = parkResource.updateGetUserScore(jaxbRequest);
+		UpdateUserScoreResponse response = parkResource.updateUserScore(jaxbRequest);
 		
 		// check the response
 		assertTrue(response.isUpdateSuccessful());
@@ -516,7 +516,7 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		// call the ParkResource
 		JAXBElement<GetUserScoresRequest> jaxbRequest2 = new JAXBElement<GetUserScoresRequest>(
 				new QName("Test"), GetUserScoresRequest.class, request2);
-		GetUserScoreResponse response2 = parkResource.getGetUserScore(jaxbRequest2);
+		GetUserScoreResponse response2 = parkResource.getUserScore(jaxbRequest2);
 		
 		// validate response
 		List<Score> scores = response2.getScores();

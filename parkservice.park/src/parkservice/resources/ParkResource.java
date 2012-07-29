@@ -25,6 +25,7 @@ import AuthNet.Rebill.ProfileTransAuthCaptureType;
 import AuthNet.Rebill.ProfileTransactionType;
 import AuthNet.Rebill.ServiceSoap;
 
+import com.parq.server.dao.MiscellaneousDao;
 import com.parq.server.dao.ParkingRateDao;
 import com.parq.server.dao.ParkingStatusDao;
 import com.parq.server.dao.PaymentAccountDao;
@@ -33,6 +34,7 @@ import com.parq.server.dao.model.object.ParkingInstance;
 import com.parq.server.dao.model.object.ParkingRate;
 import com.parq.server.dao.model.object.ParkingSpace;
 import com.parq.server.dao.model.object.Payment;
+import com.parq.server.dao.model.object.UserSelfReporting;
 import com.parq.server.dao.model.object.Payment.PaymentType;
 import com.parq.server.dao.model.object.PaymentAccount;
 import com.parq.server.dao.model.object.User;
@@ -40,6 +42,7 @@ import com.parq.server.dao.model.object.UserScore;
 import com.parq.server.grid.GridManagementService;
 import com.parq.server.grid.model.object.GridWithFillRate;
 import com.parq.server.grid.model.object.ParkingLocationWithFillRate;
+import com.sun.research.ws.wadl.Response;
 
 import parkservice.gridservice.model.FindGridsByGPSCoordinateRequest;
 import parkservice.gridservice.model.FindGridsByGPSCoordinateResponse;
@@ -63,11 +66,18 @@ import parkservice.model.RefillRequest;
 import parkservice.model.RefillResponse;
 import parkservice.model.UnparkRequest;
 import parkservice.model.UnparkResponse;
+import parkservice.userscore.model.AddUserReportingRequest;
+import parkservice.userscore.model.AddUserReportingResponse;
+import parkservice.userscore.model.GetCountRequest;
+import parkservice.userscore.model.GetCountResponse;
+import parkservice.userscore.model.GetUserReportingHistoryRequest;
+import parkservice.userscore.model.GetUserReportingHistoryResponse;
 import parkservice.userscore.model.GetUserScoresRequest;
 import parkservice.userscore.model.GetUserScoreResponse;
 import parkservice.userscore.model.Score;
 import parkservice.userscore.model.UpdateUserScoreRequest;
 import parkservice.userscore.model.UpdateUserScoreResponse;
+import parkservice.userscore.model.UserParkingStatusReport;
 
 @Path("/")
 public class ParkResource {
@@ -618,7 +628,7 @@ public class ParkResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public GetUserScoreResponse
-			getGetUserScore(JAXBElement<GetUserScoresRequest> jaxbRequest) {
+			getUserScore(JAXBElement<GetUserScoresRequest> jaxbRequest) {
 		
 		GetUserScoresRequest request = jaxbRequest.getValue();
 		UserDao userDao = new UserDao();
@@ -645,7 +655,7 @@ public class ParkResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public UpdateUserScoreResponse
-			updateGetUserScore(JAXBElement<UpdateUserScoreRequest> jaxbRequest) {
+			updateUserScore(JAXBElement<UpdateUserScoreRequest> jaxbRequest) {
 	
 		UpdateUserScoreRequest request = jaxbRequest.getValue();
 		UserDao userDao = new UserDao();
@@ -660,6 +670,85 @@ public class ParkResource {
 		boolean updateSuccessful = userDao.updateUserScore(uScore);
 		UpdateUserScoreResponse response = new UpdateUserScoreResponse();
 		response.setUpdateSuccessful(updateSuccessful);
+		return response;
+	}
+	
+	@POST
+	@Path("/GetCountRequest")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public GetCountResponse getCount(JAXBElement<GetCountRequest> countRequest) {
+		MiscellaneousDao mDao = new MiscellaneousDao();
+		long countId = mDao.getNextCount();
+		GetCountResponse response = new GetCountResponse();
+		response.setCount((int)(countId % 4));
+		return response;
+	}
+	
+	@POST
+	@Path("/AddUserReportingRequest")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public AddUserReportingResponse addUserReporting(JAXBElement<AddUserReportingRequest> jaxbRequest) {
+		AddUserReportingRequest request = jaxbRequest.getValue();
+		ParkingStatusDao statusDao = new ParkingStatusDao();
+		MiscellaneousDao mDao = new MiscellaneousDao();
+		
+		String status = "AVAILABLE";
+		Date curTime = new Date(System.currentTimeMillis());
+		List<ParkingInstance> parkingInstance = 
+			statusDao.getParkingStatusBySpaceIds(new long[]{request.getSpaceId()});
+		if (parkingInstance.get(0).getParkingEndTime().compareTo(curTime) > 0) {
+			status = "PARKED";
+		}
+		
+		UserSelfReporting report = new UserSelfReporting();
+		report.setParkingSpaceStatus(status);
+		report.setReportDateTime(curTime);
+		report.setUserId(request.getUserId());
+		report.setSpaceId(request.getSpaceId());
+		report.setScore1(request.getScore1());
+		report.setScore2(request.getScore2());
+		report.setScore3(request.getScore3());
+		report.setScore4(request.getScore4());
+		report.setScore5(request.getScore5());
+		report.setScore6(request.getScore6());
+		
+		boolean isSucccessful = mDao.insertUserSelfReporting(report);
+		AddUserReportingResponse response = new AddUserReportingResponse();
+		response.setUpdateSuccessful(isSucccessful);
+		return response;
+	}
+	
+	@POST
+	@Path("/GetUserReportingHistoryRequest")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public GetUserReportingHistoryResponse getUserReportingHistory(
+			JAXBElement<GetUserReportingHistoryRequest> jaxbRequest) {
+	
+		GetUserReportingHistoryRequest request = jaxbRequest.getValue();
+		MiscellaneousDao mDao = new MiscellaneousDao();
+		List<UserSelfReporting> selfReports = mDao.getUserSelfReportingHistoryForUser(request.getUserId());
+		
+		List<UserParkingStatusReport> reports = new ArrayList<UserParkingStatusReport>();
+		for (UserSelfReporting sReport : selfReports) {
+			UserParkingStatusReport report = new UserParkingStatusReport();
+			report.setReportId(sReport.getReportId());
+			report.setSpaceId(sReport.getSpaceId());
+			report.setUserId(sReport.getUserId());
+			report.setReportDateTime(sReport.getReportDateTime());
+			report.setScore1(sReport.getScore1());
+			report.setScore2(sReport.getScore2());
+			report.setScore3(sReport.getScore3());
+			report.setScore4(sReport.getScore4());
+			report.setScore5(sReport.getScore5());
+			report.setScore6(sReport.getScore6());
+			reports.add(report);
+		}
+		
+		GetUserReportingHistoryResponse response = new GetUserReportingHistoryResponse();
+		response.setReports(reports);
 		return response;
 	}
 }
