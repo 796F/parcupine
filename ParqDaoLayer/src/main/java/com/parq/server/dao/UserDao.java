@@ -353,9 +353,17 @@ public class UserDao extends AbstractParqDaoParent {
 		User newlyCreatedUser = getUserByEmail(user.getEmail());
 		newUserCreated &= createPrePaidAccount(newlyCreatedUser.getUserID());
 		newUserCreated &= createUserScore(newlyCreatedUser.getUserID());
+		newUserCreated &= setPrePadBalanceForMitTrial(newlyCreatedUser.getUserID());
 		return newUserCreated;
 	}
 	
+	// TODO set the initial prepaid balance to $100, for the 2 week MIT trial only
+	// after the trial, delete this method
+	private boolean setPrePadBalanceForMitTrial(long userID) {
+		UserPrePaidAccountBalanceDao balanceDao = new UserPrePaidAccountBalanceDao();
+		return balanceDao.updateUserPrePaidAccountBalance(userID, 100);
+	}
+
 	private boolean createPrePaidAccount(long userId) {
 		PreparedStatement pstmt = null;
 		Connection con = null;

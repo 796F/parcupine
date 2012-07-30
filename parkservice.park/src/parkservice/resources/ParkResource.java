@@ -25,15 +25,19 @@ import AuthNet.Rebill.ProfileTransAuthCaptureType;
 import AuthNet.Rebill.ProfileTransactionType;
 import AuthNet.Rebill.ServiceSoap;
 
+import com.parq.server.dao.LicensePlateDao;
 import com.parq.server.dao.MiscellaneousDao;
 import com.parq.server.dao.ParkingRateDao;
 import com.parq.server.dao.ParkingStatusDao;
 import com.parq.server.dao.PaymentAccountDao;
 import com.parq.server.dao.UserDao;
+import com.parq.server.dao.UserPrePaidAccountBalanceDao;
+import com.parq.server.dao.model.object.LicensePlate;
 import com.parq.server.dao.model.object.ParkingInstance;
 import com.parq.server.dao.model.object.ParkingRate;
 import com.parq.server.dao.model.object.ParkingSpace;
 import com.parq.server.dao.model.object.Payment;
+import com.parq.server.dao.model.object.UserPrePaidAccountBalance;
 import com.parq.server.dao.model.object.UserSelfReporting;
 import com.parq.server.dao.model.object.Payment.PaymentType;
 import com.parq.server.dao.model.object.PaymentAccount;
@@ -59,6 +63,7 @@ import parkservice.gridservice.model.SearchArea;
 import parkservice.gridservice.model.SearchForStreetsRequest;
 import parkservice.gridservice.model.SearchForStreetsResponse;
 import parkservice.gridservice.model.SimpleParkingSpaceWithStatus;
+import parkservice.gridservice.model.UserLoginResponse;
 import parkservice.model.AuthRequest;
 import parkservice.model.ParkRequest;
 import parkservice.model.ParkResponse;
@@ -86,7 +91,7 @@ public class ParkResource {
 	/**
 	 * returns User_ID, or -1 if bad
 	 * */
-	private long innerAuthenticate(AuthRequest in){
+	private User innerAuthenticate(AuthRequest in){
 		UserDao userDb = new UserDao();
 		User user = null;
 		try{
@@ -94,9 +99,9 @@ public class ParkResource {
 		}catch(RuntimeException e){
 		}
 		if(user!=null&&user.getPassword().equals(in.getPassword())){
-			return user.getUserID();
+			return user;
 		}else{
-			return -1;
+			return null;
 		}
 	}
 
@@ -141,7 +146,8 @@ public class ParkResource {
 
 		long uid = in.getUid();
 		//does user supplied info authenticate?
-		if(uid == innerAuthenticate(in.getUserInfo())){
+		User user = innerAuthenticate(in.getUserInfo());
+		if(user != null && uid == user.getUserID()){
 
 			ParkingStatusDao psd = new ParkingStatusDao();
 			ParkingInstance ps = null;
@@ -271,7 +277,9 @@ public class ParkResource {
 		RefillRequest in = info.getValue();
 		long uid = in.getUid();
 		int payment_type = in.getPaymentType();
-		if(uid == innerAuthenticate(in.getUserInfo())){
+		
+		User user = innerAuthenticate(in.getUserInfo());
+		if(user != null && uid == user.getUserID()){
 			String parkingReference = in.getParkingReferenceNumber();
 			ParkingStatusDao psd = new ParkingStatusDao();
 			ParkingInstance pi = null; try{
@@ -371,7 +379,9 @@ public class ParkResource {
 		UnparkResponse  output = new UnparkResponse ();
 		UnparkRequest in = info.getValue();
 		long uid = in.getUid();
-		if(uid==innerAuthenticate(in.getUserInfo())){
+		
+		User user = innerAuthenticate(in.getUserInfo());
+		if(user != null && uid == user.getUserID()){
 			ParkingStatusDao psd = new ParkingStatusDao();
 			boolean result = false;
 			try{
@@ -749,6 +759,39 @@ public class ParkResource {
 		
 		GetUserReportingHistoryResponse response = new GetUserReportingHistoryResponse();
 		response.setReports(reports);
+		return response;
+	}
+	
+	@POST
+	@Path("/AuthRequest")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public UserLoginResponse login(JAXBElement<AuthRequest> jaxbRequest) {
+		AuthRequest authRequest = jaxbRequest.getValue();
+		
+		UserLoginResponse response = new UserLoginResponse();
+		User user = innerAuthenticate(authRequest);
+		if(user != null){
+			response.setAutherized(true);
+			response.setEmail(authRequest.getEmail());
+			response.setUid(user.getUserID());
+			//Get license plate
+			LicensePlateDao lpDao = new LicensePlateDao();
+			List<LicensePlate> plates = lpDao.getLicensePlateByUserId(user.getUserID());
+			if (plates != null && !plates.isEmpty()) {
+				response.setLicense(plates.get(0).getPlateNum());
+			}
+			// Get Prepaid account
+			UserPrePaidAccountBalanceDao prePaidDao = new UserPrePaidAccountBalanceDao();
+			UserPrePaidAccountBalance balance = 
+						prePaidDao.getUserPrePaidAccountBalance(user.getUserID());
+			if (balance != null) {
+				response.setBalance(balance.getAccountBalance());
+			}
+		} else {
+			response.setAutherized(false);
+		}
+		
 		return response;
 	}
 }

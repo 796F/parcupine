@@ -29,6 +29,8 @@ import parkservice.gridservice.model.SearchArea;
 import parkservice.gridservice.model.SearchForStreetsRequest;
 import parkservice.gridservice.model.SearchForStreetsResponse;
 import parkservice.resources.ParkResource;
+import parkservice.userscore.model.GetCountRequest;
+import parkservice.userscore.model.GetCountResponse;
 import parkservice.userscore.model.GetUserScoresRequest;
 import parkservice.userscore.model.GetUserScoreResponse;
 import parkservice.userscore.model.Score;
@@ -489,7 +491,7 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		}
 	}
 	
-	public void testUpdateGetUserScore() {
+	public void testUpdateUserScore() {
 		ParkResource parkResource = new ParkResource();
 		
 		// create request object
@@ -527,4 +529,41 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		assertEquals(10, score.getScore2());
 		assertEquals(15, score.getScore3());
 	}
+	
+	public void testGetCount() {
+		ParkResource parkResource = new ParkResource();
+		GetCountRequest request = new GetCountRequest();
+		
+		// call the ParkResource
+		JAXBElement<GetCountRequest> jaxbRequest = new JAXBElement<GetCountRequest>(
+				new QName("Test"), GetCountRequest.class, request);
+		
+		int pre = -1;
+		int cur = 0;
+		
+		int[] intArray = new int[5];
+		
+		for (int i = 0; i < 100; i++) {
+			GetCountResponse response = parkResource.getCount(jaxbRequest);
+			cur = response.getCount();
+			assertTrue(pre != cur);
+			assertTrue(cur >= 0);
+			assertTrue(cur <= 3);
+			pre = cur;
+			intArray[cur] = intArray[cur] + 1;
+		}
+		
+		assertTrue(intArray[0] > 10);
+		assertTrue(intArray[1] > 10);
+		assertTrue(intArray[2] > 10);
+		assertTrue(intArray[3] > 10);
+		assertEquals(0, intArray[4]);
+	}
+	
+	// TODO test addUserReporting
+	public void testAddUserReporting() {
+		
+	}
+	
+	// TODO test getUserReportingHistory
 }
