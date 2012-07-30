@@ -708,7 +708,9 @@ public class ParkResource {
 		Date curTime = new Date(System.currentTimeMillis());
 		List<ParkingInstance> parkingInstance = 
 			statusDao.getParkingStatusBySpaceIds(new long[]{request.getSpaceId()});
-		if (parkingInstance.get(0).getParkingEndTime().compareTo(curTime) > 0) {
+		if (parkingInstance != null && 
+				!parkingInstance.isEmpty() && 
+				parkingInstance.get(0).getParkingEndTime().compareTo(curTime) > 0) {
 			status = "PARKED";
 		}
 		
@@ -791,7 +793,6 @@ public class ParkResource {
 		} else {
 			response.setAutherized(false);
 		}
-		
 		return response;
 	}
 }

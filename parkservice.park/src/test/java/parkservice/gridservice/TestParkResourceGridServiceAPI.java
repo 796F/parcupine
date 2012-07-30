@@ -7,11 +7,15 @@ import java.util.List;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 
+import com.parq.server.dao.MiscellaneousDao;
+import com.parq.server.dao.ParkingSpaceDao;
 import com.parq.server.dao.ParkingStatusDao;
 import com.parq.server.dao.UserDao;
 import com.parq.server.dao.model.object.ParkingInstance;
+import com.parq.server.dao.model.object.ParkingSpace;
 import com.parq.server.dao.model.object.Payment;
 import com.parq.server.dao.model.object.User;
+import com.parq.server.dao.model.object.UserSelfReporting;
 import com.parq.server.dao.model.object.Payment.PaymentType;
 import com.parq.server.dao.support.SupportScriptForDaoTesting;
 import com.parq.server.grid.GridManagementService;
@@ -28,14 +32,21 @@ import parkservice.gridservice.model.GpsCoordinate;
 import parkservice.gridservice.model.SearchArea;
 import parkservice.gridservice.model.SearchForStreetsRequest;
 import parkservice.gridservice.model.SearchForStreetsResponse;
+import parkservice.gridservice.model.UserLoginResponse;
+import parkservice.model.AuthRequest;
 import parkservice.resources.ParkResource;
+import parkservice.userscore.model.AddUserReportingRequest;
+import parkservice.userscore.model.AddUserReportingResponse;
 import parkservice.userscore.model.GetCountRequest;
 import parkservice.userscore.model.GetCountResponse;
+import parkservice.userscore.model.GetUserReportingHistoryRequest;
+import parkservice.userscore.model.GetUserReportingHistoryResponse;
 import parkservice.userscore.model.GetUserScoresRequest;
 import parkservice.userscore.model.GetUserScoreResponse;
 import parkservice.userscore.model.Score;
 import parkservice.userscore.model.UpdateUserScoreRequest;
 import parkservice.userscore.model.UpdateUserScoreResponse;
+import parkservice.userscore.model.UserParkingStatusReport;
 import junit.framework.TestCase;
 
 public class TestParkResourceGridServiceAPI extends TestCase {
@@ -560,10 +571,95 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		assertEquals(0, intArray[4]);
 	}
 	
-	// TODO test addUserReporting
 	public void testAddUserReporting() {
+		ParkResource parkResource = new ParkResource();
+		AddUserReportingRequest addRequest = new AddUserReportingRequest();
 		
+		User user = new UserDao()
+				.getUserByEmail(SupportScriptForDaoTesting.userEmail);
+		ParkingSpace pSpace = new ParkingSpaceDao()
+			.getParkingSpaceBySpaceIdentifier(
+				SupportScriptForDaoTesting.parkingLocationNameMain, SupportScriptForDaoTesting.spaceNameMain);
+		
+		addRequest.setUserId(user.getUserID());
+		addRequest.setSpaceId(pSpace.getSpaceId());
+		addRequest.setScore1((int)(Math.random() * 1000));
+		addRequest.setScore2((int)(Math.random() * 1000));
+		addRequest.setScore3((int)(Math.random() * 1000));
+		addRequest.setScore4((int)(Math.random() * 1000));
+		addRequest.setScore5((int)(Math.random() * 1000));
+		addRequest.setScore6((int)(Math.random() * 1000));
+		
+		// call the ParkResource
+		JAXBElement<AddUserReportingRequest> jaxbRequest = new JAXBElement<AddUserReportingRequest>(
+				new QName("Test"), AddUserReportingRequest.class, addRequest);
+		AddUserReportingResponse response = 
+			parkResource.addUserReporting(jaxbRequest);
+		
+		// check the add result
+		assertTrue(response.isUpdateSuccessful());
+		
+		MiscellaneousDao miscDao = new MiscellaneousDao();
+		List<UserSelfReporting> reports = miscDao.getUserSelfReportingHistoryForUser(user.getUserID());
+		assertNotNull(reports);
+		assertTrue(reports.size() > 0);
+		UserSelfReporting userReport2 = reports.get(0);
+		
+		assertTrue(userReport2.getReportId() > 0);
+		assertNotNull(userReport2.getReportDateTime());
+		System.out.println(userReport2.getReportDateTime());
+		assertEquals(addRequest.getUserId(), userReport2.getUserId());
+		assertEquals(addRequest.getSpaceId(), userReport2.getSpaceId());
+		assertEquals(addRequest.getScore1(), userReport2.getScore1());
+		assertEquals(addRequest.getScore2(), userReport2.getScore2());
+		assertEquals(addRequest.getScore3(), userReport2.getScore3());
+		assertEquals(addRequest.getScore4(), userReport2.getScore4());
+		assertEquals(addRequest.getScore5(), userReport2.getScore5());
+		assertEquals(addRequest.getScore6(), userReport2.getScore6());
 	}
 	
-	// TODO test getUserReportingHistory
+	public void testGetUserReportingHistory() {
+		ParkResource parkResource = new ParkResource();
+		
+		GetUserReportingHistoryRequest getHistoryRequest
+			= new GetUserReportingHistoryRequest();
+		User user = new UserDao()
+			.getUserByEmail(SupportScriptForDaoTesting.userEmail);
+		getHistoryRequest.setUserId(user.getUserID());
+		
+		// call the ParkResource
+		JAXBElement<GetUserReportingHistoryRequest> jaxbRequest = 
+			new JAXBElement<GetUserReportingHistoryRequest>(
+				new QName("Test"), GetUserReportingHistoryRequest.class, getHistoryRequest);
+		GetUserReportingHistoryResponse response = 
+			parkResource.getUserReportingHistory(jaxbRequest);
+		
+		List<UserParkingStatusReport> reportsHistory = response.getReports();
+		assertTrue(reportsHistory.size() > 0);
+		assertEquals(user.getUserID(), reportsHistory.get(0).getUserId());
+		assertTrue(reportsHistory.get(0).getReportId() > 0);
+		// TEST parking time to the nearest minute
+		assertEquals(new Date(System.currentTimeMillis()).getTime() / 60000,
+				reportsHistory.get(0).getReportDateTime().getTime() / 60000);
+		assertTrue(reportsHistory.get(0).getScore1() > 0);
+	}
+	
+	public void testLogin() {
+		ParkResource parkResource = new ParkResource();
+		
+		AuthRequest authRequest = new AuthRequest();
+		authRequest.setEmail(SupportScriptForDaoTesting.userEmail);
+		authRequest.setPassword(SupportScriptForDaoTesting.userPassWord);
+		JAXBElement<AuthRequest> jaxbRequest = 
+			new JAXBElement<AuthRequest>(
+				new QName("Test"), AuthRequest.class, authRequest);
+		
+		UserLoginResponse response = parkResource.login(jaxbRequest);
+		assertTrue(response.getUid() > 0);
+		assertEquals(SupportScriptForDaoTesting.userEmail, response.getEmail());
+//		assertTrue(response.getLicense() != null);
+//		assertTrue(response.getLicense().length() > 0);
+//		System.out.println(response.getLicense());
+		assertTrue(response.getBalance() > 50);
+	}
 }
