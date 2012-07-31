@@ -26,7 +26,7 @@ public class TestGridDao extends TestCase {
 	}
 
 	public void testFindSimpleGridNearBy() {
-		List<SimpleGrid> grids = dao.findSimpleGridNearBy(-180, -180, 180, 180);
+		List<SimpleGrid> grids = dao.findSimpleGridNearBy(180, 180, -180, -180);
 		assertNotNull(grids);
 		assertTrue(grids.size() > 0);
 	}

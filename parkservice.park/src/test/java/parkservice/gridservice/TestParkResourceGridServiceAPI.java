@@ -104,7 +104,6 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 	}
 	
 	public void testBasicSearchForStreets() {
-
 		ParkResource parkResource = new ParkResource();
 		
 		SearchForStreetsRequest searchForStreetsRequest = new SearchForStreetsRequest();
