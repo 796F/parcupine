@@ -13,7 +13,7 @@
 #import "UserInfo.h"
 #import "EditSettingsViewController.h"
 
-@interface PQSettingsViewController : UITableViewController < UITableViewDataSource, UITableViewDelegate>{
+@interface PQSettingsViewController : UITableViewController < UITableViewDataSource, UITableViewDelegate, UIAlertViewDelegate>{
     NetworkLayer* networkLayer;
     DataLayer* dataLayer;
 }

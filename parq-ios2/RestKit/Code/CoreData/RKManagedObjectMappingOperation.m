@@ -53,7 +53,7 @@
 
     RKObjectRelationshipMapping* relationshipMapping = [self.objectMapping mappingForRelationship:relationshipName];
     RKObjectMappingDefinition *mapping = relationshipMapping.mapping;
-    NSAssert(mapping, @"Attempted to connect relationship for keyPath '%@' without a relationship mapping defined.");
+    NSAssert(mapping, @"Attempted to connect relationship for keyPath '' without a relationship mapping defined.");
     if (! [mapping isKindOfClass:[RKObjectMapping class]]) {
         RKLogWarning(@"Can only connect relationships for RKObjectMapping relationships. Found %@: Skipping...", NSStringFromClass([mapping class]));
         return;

@@ -342,8 +342,7 @@ typedef struct{
         for(i=0; i<raw_waypoints.count-1; i++){
             Segment* x =[[Segment alloc] initWithPointsA:&waypoints[i] andB:&waypoints[i+1] andColor:[[line objectForKey:@"color"] intValue]];
             [segList addObject:x];
-        }
-        
+        }        
     }
     return segList;
 }

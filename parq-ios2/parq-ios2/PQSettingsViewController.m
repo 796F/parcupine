@@ -8,6 +8,8 @@
 
 #import "PQSettingsViewController.h"
 #import "PQAppDelegate.h"
+#define SURE_TO_RESET 1
+
 @interface PQSettingsViewController ()
 
 @end
@@ -32,6 +34,22 @@
 @synthesize parent;
 @synthesize table;
 @synthesize userInfo;
+
+-(void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+        DLog(@"");
+    if(alertView.tag == SURE_TO_RESET && buttonIndex==1){
+        //log user out. 
+        [dataLayer setLoggedIn:NO];
+        //crash this bitch.  
+        NSMutableArray* forCrash = [[NSMutableArray alloc] initWithObjects:@"uno",@"dos", nil];
+        for(NSString* numero in forCrash){
+            [forCrash removeObject:numero];
+        }
+    }
+}
+-(void) alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex{
+    DLog(@"");
+}
 #pragma mark - Table view data source
 
 
@@ -120,12 +138,8 @@
             //account balance
         }else{
             UIAlertView* crashAlert = [[UIAlertView alloc] initWithTitle:@"Are you sure?" message:@"This application is in beta testing, and software bugs exist.  Only reset if you experience issues using the application." delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Reset", nil];
-            
-            NSMutableArray* forCrash = [[NSMutableArray alloc] initWithObjects:@"uno",@"dos", nil];
-            for(NSString* numero in forCrash){
-                [forCrash removeObject:numero];
-            }
-            NSLog(@"CRASH DIS APP YO\n");
+            crashAlert.tag = SURE_TO_RESET;
+            [crashAlert show];
         }
     }
     

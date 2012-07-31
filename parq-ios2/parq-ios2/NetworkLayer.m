@@ -403,8 +403,21 @@
 -(void) loadStreetData{
  // STORE THE street's information into core data.     
 }
+
+- (BOOL) validateEmail: (NSString *) candidate {
+    NSString *emailRegex = @"[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}";
+    NSPredicate *emailTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", emailRegex];
+    
+    return [emailTest evaluateWithObject:candidate];
+}
 -(User*) loginEmail:(NSString*) email AndPassword:(NSString*) pass{
     //send info to server.  
+    
+    //initial check of email.
+    if(![self validateEmail:email]){ //) || pass.length < 8){
+        //password was too short, o|| pass.length < 8r email did not validate.
+        return nil;
+    }
     
     NSArray* keys = [NSArray arrayWithObjects:@"email", @"password", nil];
     NSArray* value = [NSArray arrayWithObjects:email, pass, nil];
@@ -420,6 +433,7 @@
     NSDictionary* results = [Parser parseUserObjectString:[response bodyAsString]];  
     NSNumber* uid = [results objectForKey:@"uid"];
     if(uid.longValue > 0 || [email isEqualToString:@"abc"]){
+        
 //        //UNUSED 
 //        NSString* ccStub = [results objectForKey:@"creditCardStub"];
 //        NSNumber* parkState = [results objectForKey:@"parkState"];
@@ -431,7 +445,7 @@
 //        NSNumber* balance = [results objectForKey:@"balance"];
 //        NSNumber* payment = [results objectForKey:@"payment"];
 //        //unused 
-//        
+
         User* user = (User*)[NSEntityDescription insertNewObjectForEntityForName:@"User" inManagedObjectContext:dataLayer.managedObjectContext];
         
         [user setAddress:@"77 Massachusetts Avenue"];

@@ -224,7 +224,7 @@
     NSError *error = nil;
     NSArray *results = [managedObjectContext executeFetchRequest:request error:&error];
     if (error != nil){
-        [NSException raise:NSGenericException format:[error description]];
+        //error fetching.
     }    
     return [NSSet setWithArray:results];
 }
@@ -281,7 +281,7 @@
         obj_id = ((Spot*)object).spotNumber;
     }
     
-    NSString* sortKey = [NSString stringWithFormat:@"%ld",obj_id.longLongValue];
+    NSString* sortKey = [NSString stringWithFormat:@"%lld",obj_id.longLongValue];
 
     //set which entity type you want to search
     NSEntityDescription* entity = [NSEntityDescription entityForName:entityName inManagedObjectContext:managedObjectContext];
