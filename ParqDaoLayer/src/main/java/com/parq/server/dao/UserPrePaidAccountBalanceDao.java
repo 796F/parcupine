@@ -10,14 +10,14 @@ import com.parq.server.dao.model.object.UserPrePaidAccountBalance;
 public class UserPrePaidAccountBalanceDao extends AbstractParqDaoParent {
 
 	private static final String sqlGetUserAccountBalance = 
-		"SELECT account_balance, user_id FROM PrePaidAccountBalance " +
+		"SELECT account_balance, user_id FROM prepaidaccountbalance " +
 		"	WHERE user_id = ? AND is_deleted IS NOT TRUE";
 	
 	private static final String sqlUpdateUserAccountBalance = 
-		"UPDATE PrePaidAccountBalance SET account_balance = ? WHERE user_id = ?";
+		"UPDATE prepaidaccountbalance SET account_balance = ? WHERE user_id = ?";
 	
 	private static final String sqlDeleteUserPrePaidAccount = 
-		"UPDATE PrePaidAccountBalance SET is_deleted = TRUE WHERE user_id = ?";
+		"UPDATE prepaidaccountbalance SET is_deleted = TRUE WHERE user_id = ?";
 	
 	public UserPrePaidAccountBalance getUserPrePaidAccountBalance(long userId) {
 		if (userId <= 0) {

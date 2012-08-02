@@ -12,7 +12,7 @@ import com.parq.server.dao.model.object.UserSelfReporting;
 
 public class MiscellaneousDao extends AbstractParqDaoParent {
 
-	private static final String sqlUpdateCount = "INSERT INTO COUNT (tempValue) VALUE ('')";
+	private static final String sqlUpdateCount = "INSERT INTO count (tempValue) VALUE ('')";
 	private static final String sqlGetHighestCount = "SELECT count_id FROM count ORDER BY count_id DESC LIMIT 1";
 	
 	private static final String sqlInsertUserReport = "INSERT INTO userselfreporting "
