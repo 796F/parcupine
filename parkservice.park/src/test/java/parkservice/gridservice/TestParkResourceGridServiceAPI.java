@@ -24,6 +24,8 @@ import parkservice.gridservice.model.FindGridsByGPSCoordinateRequest;
 import parkservice.gridservice.model.FindGridsByGPSCoordinateResponse;
 import parkservice.gridservice.model.GetSpotLevelInfoRequest;
 import parkservice.gridservice.model.GetSpotLevelInfoResponse;
+import parkservice.gridservice.model.GetUpdatedGridInfoRequest;
+import parkservice.gridservice.model.GetUpdatedGridInfoRespone;
 import parkservice.gridservice.model.GetUpdatedSpotLevelInfoRequest;
 import parkservice.gridservice.model.GetUpdatedSpotLevelInfoResponse;
 import parkservice.gridservice.model.GetUpdatedStreetInfoRequest;
@@ -656,9 +658,57 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		UserLoginResponse response = parkResource.login(jaxbRequest);
 		assertTrue(response.getUid() > 0);
 		assertEquals(SupportScriptForDaoTesting.userEmail, response.getEmail());
-//		assertTrue(response.getLicense() != null);
-//		assertTrue(response.getLicense().length() > 0);
-//		System.out.println(response.getLicense());
+		// assertTrue(response.getLicense() != null);
+		// assertTrue(response.getLicense().length() > 0);
+		// System.out.println(response.getLicense());
 		assertTrue(response.getBalance() > 50);
+	}
+	
+	public void testGetUpdatedGridInfo() {
+		ParkResource parkResource = new ParkResource();
+		
+		FindGridsByGPSCoordinateRequest findGridByGPSCoordinateRequest = new FindGridsByGPSCoordinateRequest();
+		GpsCoordinate northEast = new GpsCoordinate();
+		northEast.setLatitude(180);
+		northEast.setLongitude(180);
+		GpsCoordinate southWest = new GpsCoordinate();
+		southWest.setLatitude(-180);
+		southWest.setLongitude(-180);
+		
+		findGridByGPSCoordinateRequest.setLastUpdateTime(0);
+		List<SearchArea> testSearchArea = new ArrayList<SearchArea>();
+		testSearchArea.add(new SearchArea());
+		testSearchArea.get(0).setNorthEastCorner(northEast);
+		testSearchArea.get(0).setSouthWestCorner(southWest);
+		findGridByGPSCoordinateRequest.setSearchArea(testSearchArea);
+		
+		JAXBElement<FindGridsByGPSCoordinateRequest> testRequest = new JAXBElement<FindGridsByGPSCoordinateRequest>(
+				new QName("Test"), FindGridsByGPSCoordinateRequest.class, findGridByGPSCoordinateRequest);
+		
+		FindGridsByGPSCoordinateResponse[] responses = parkResource.findGridByGPSCoor(testRequest);
+		
+		assertNotNull(responses);
+		assertTrue(responses.length > 0);	
+		
+		// retrieve the same information with the get updated grid info by id call
+		long[] gridIds = new long[responses.length];
+		for (int i = 0; i < gridIds.length; i++) {
+			gridIds[i] = responses[i].getGridId();
+		}
+		GetUpdatedGridInfoRequest getUpdatedGridInfoRequest = new GetUpdatedGridInfoRequest();
+		getUpdatedGridInfoRequest.setLastUpdateTime(0);
+		getUpdatedGridInfoRequest.setGridIds(gridIds);
+		
+		JAXBElement<GetUpdatedGridInfoRequest> getJaxbRequest = new JAXBElement<GetUpdatedGridInfoRequest>(
+				new QName("Test"), GetUpdatedGridInfoRequest.class, getUpdatedGridInfoRequest);
+		GetUpdatedGridInfoRespone[] getResponses = 
+				parkResource.getUpdatedGridInfo(getJaxbRequest);
+		
+		assertNotNull(getResponses);
+		assertEquals(responses.length, getResponses.length);
+		for (GetUpdatedGridInfoRespone response : getResponses) {
+			assertTrue(response.getGridId() > 0);
+			assertTrue(response.getFillRate() >= 0.0);
+		}
 	}
 }

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -52,6 +53,8 @@ import parkservice.gridservice.model.FindGridsByGPSCoordinateRequest;
 import parkservice.gridservice.model.FindGridsByGPSCoordinateResponse;
 import parkservice.gridservice.model.GetSpotLevelInfoRequest;
 import parkservice.gridservice.model.GetSpotLevelInfoResponse;
+import parkservice.gridservice.model.GetUpdatedGridInfoRequest;
+import parkservice.gridservice.model.GetUpdatedGridInfoRespone;
 import parkservice.gridservice.model.GetUpdatedSpotLevelInfoRequest;
 import parkservice.gridservice.model.GetUpdatedSpotLevelInfoResponse;
 import parkservice.gridservice.model.GetUpdatedStreetInfoRequest;
@@ -444,6 +447,30 @@ public class ParkResource {
 		
 		// return the array representation of the FindGridsByGPSCoordinateResponse
 		return responseList.toArray(new FindGridsByGPSCoordinateResponse[0]);
+	}
+	
+	@POST
+	@Path("/GetUpdatedGridInfoRequest")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public GetUpdatedGridInfoRespone[] getUpdatedGridInfo(
+				JAXBElement<GetUpdatedGridInfoRequest> jaxbRequest){
+		GridManagementService gridService = GridManagementService.getInstance();
+		GetUpdatedGridInfoRequest request = jaxbRequest.getValue();
+		List<Long> gridList = new ArrayList<Long>();
+		for (long gridId : request.getGridIds()) {
+			gridList.add(gridId);
+		}
+		
+		List<GridWithFillRate> gridFillRateList = gridService.getGridStatus(gridList);
+		GetUpdatedGridInfoRespone[] responses = new GetUpdatedGridInfoRespone[gridFillRateList.size()];
+		for (int i = 0; i < gridFillRateList.size(); i++) {
+			GetUpdatedGridInfoRespone grid = new GetUpdatedGridInfoRespone();
+			grid.setFillRate((0.0 + gridFillRateList.get(i).getFillRate()) / 100);
+			grid.setGridId(gridFillRateList.get(i).getGridId());
+			responses[i] = grid;
+		}
+		return responses;
 	}
 	
 	private List<GridWithFillRate> getGridWithFillRates(
