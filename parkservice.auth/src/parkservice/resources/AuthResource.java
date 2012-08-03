@@ -19,17 +19,18 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.ContextResolver;
 import javax.xml.bind.JAXBElement;
 
-import com.parq.server.dao.GeolocationDao;
+import com.parq.server.dao.GridDao;
 import com.parq.server.dao.ParkingRateDao;
 import com.parq.server.dao.ParkingSpaceDao;
 import com.parq.server.dao.ParkingStatusDao;
 import com.parq.server.dao.PaymentAccountDao;
 import com.parq.server.dao.UserDao;
-import com.parq.server.dao.model.object.Geolocation;
+import com.parq.server.dao.model.object.Grid;
 import com.parq.server.dao.model.object.ParkingInstance;
 import com.parq.server.dao.model.object.ParkingRate;
 import com.parq.server.dao.model.object.ParkingSpace;
 import com.parq.server.dao.model.object.PaymentAccount;
+import com.parq.server.dao.model.object.SimpleGrid;
 import com.parq.server.dao.model.object.User;
 
 import parkservice.model.AuthRequest;
@@ -128,8 +129,9 @@ public class AuthResource{
 				ParkingRateDao prd = new ParkingRateDao();
 				try{
 					ParkingRate pr = prd.getParkingRateBySpaceId(pi.getSpaceId());
-					GeolocationDao gld = new GeolocationDao();
-					Geolocation location = gld.getLocationById(pr.getLocationId());
+					GridDao gld = new GridDao();
+					SimpleGrid location = gld.getSimpleGridById(pr.getLocationId());
+//							gld.getLocationById(pr.getLocationId());
 					ParkingSpaceDao psdao = new ParkingSpaceDao();
 					ParkingSpace pspace = psdao.getParkingSpaceBySpaceId(pi.getSpaceId());
 					ParkSync sync = new ParkSync();

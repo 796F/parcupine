@@ -11,10 +11,10 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.ContextResolver;
 import javax.xml.bind.JAXBElement;
-
-import com.parq.server.dao.GeolocationDao;
+import com.parq.server.grid.GridManagementService;
+//import com.parq.server.dao.GeolocationDao;
+//import com.parq.server.dao.model.object.Geolocation;
 import com.parq.server.dao.UserDao;
-import com.parq.server.dao.model.object.Geolocation;
 import com.parq.server.dao.model.object.User;
 
 import parkservice.model.AuthRequest;
@@ -37,6 +37,7 @@ public class MapsResource {
 		if(in.getUid()==innerAuthenticate(userInfo)){
 			double x = in.getLat();
 			double y = in.getLon();
+			
 			GeolocationDao gld = new GeolocationDao();
 			List<Geolocation> list = null;
 			try{

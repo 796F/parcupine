@@ -31,9 +31,11 @@ import AuthNet.Rebill.PaymentType;
 import AuthNet.Rebill.ServiceSoap;
 import AuthNet.Rebill.ValidationModeEnum;
 
+import com.parq.server.dao.LicensePlateDao;
 import com.parq.server.dao.PaymentAccountDao;
 import com.parq.server.dao.UserDao;
 import com.parq.server.dao.exception.DuplicateEmailException;
+import com.parq.server.dao.model.object.LicensePlate;
 import com.parq.server.dao.model.object.PaymentAccount;
 import com.parq.server.dao.model.object.User;
 
@@ -99,7 +101,56 @@ public class RegisterResource {
 		}
 
 	}
-
+	
+	@POST
+	@Path("/pilotregister")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public RegisterResponse pilotregister(JAXBElement<RegisterRequest> input){
+		RegisterRequest info = input.getValue();
+		System.out.println(info.getEmail() + info.getCreditCard() + info.getPassword());
+		RegisterResponse output = new RegisterResponse();
+		UserDao userDb = new UserDao();
+		User existing = null;
+		existing = userDb.getUserByEmail(info.getEmail());
+		if(existing==null){
+			String email = info.getEmail();
+			String license = info.getCreditCard(); //temporarily use CC field as license plate.  
+			User newUser = new User();
+			newUser.setEmail(email);
+			newUser.setPassword(info.getPassword());
+			boolean result = false;
+			try{
+				//try to create user account, catching errors.  
+				result = userDb.createNewUser(newUser);
+				if(result){
+					LicensePlateDao lpd = new LicensePlateDao();
+					LicensePlate newLicensePlate = new LicensePlate();
+					newLicensePlate.setPlateNum(license);
+					existing = userDb.getUserByEmail(info.getEmail());
+					newLicensePlate.setUserID(existing.getUserID());
+					newLicensePlate.setDefault(true);
+					result = lpd.addLicensePlateForUser(newLicensePlate);
+					if(result){
+						output.setResp("OK");	
+					}else{
+						output.setResp("ADD_PLATE_FAIL");
+					}
+					
+				}else{
+					output.setResp("CREATE_USER_ERROR");
+				}
+			}catch(DuplicateEmailException dup){
+				output.setResp("USER_EXISTS");
+			}catch(IllegalStateException e){
+				output.setResp("DAO_ERROR");
+			}
+		}else{
+			output.setResp("USER_EXISTS");
+		}
+		return output;
+	}
+	
 	@POST
 	@Path("/register")
 	@Consumes(MediaType.APPLICATION_JSON)

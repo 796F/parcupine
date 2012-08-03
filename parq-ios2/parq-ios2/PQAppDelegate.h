@@ -17,6 +17,7 @@
     NSPersistentStoreCoordinator *persistentStoreCoordinator;
     DataLayer * dataLayer;
     NetworkLayer* networkLayer;
+    CLLocationManager *locationManager;
 }
 
 typedef enum{
@@ -34,6 +35,7 @@ typedef enum{
 @property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 @property (strong, nonatomic) DataLayer* dataLayer;
 @property (strong, nonatomic) NetworkLayer* networkLayer;
+@property (strong, nonatomic) CLLocationManager* locationManager;
 @property (atomic) UserAction userAction;
 
 - (void)saveContext;

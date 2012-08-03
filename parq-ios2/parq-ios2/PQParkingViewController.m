@@ -133,8 +133,8 @@ typedef enum {
 
 #pragma mark - Main button actions
 - (IBAction)startTimer:(id)sender {
-    
     int type = [dataLayer UIType];
+    [dataLayer logString:[NSString stringWithFormat:@"%s uiType:%d", __PRETTY_FUNCTION__, type]];
     if(type==0 || type == 1){
         //force them to help.  
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
@@ -199,10 +199,12 @@ typedef enum {
 #pragma mark - UIActionSheetDelegate
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (actionSheet.tag == ACTIONSHEET_UNPARK && buttonIndex == actionSheet.destructiveButtonIndex) {
+        [dataLayer logString:[NSString stringWithFormat:@"%@ %s",@"unpark", __PRETTY_FUNCTION__]];
         [timer invalidate];
         totalParkedSeconds = 0;
         [self dismissModalViewControllerAnimated:YES];
     } else if (actionSheet.tag == ACTIONSHEET_EXTEND && buttonIndex == actionSheet.firstOtherButtonIndex) {
+        [dataLayer logString:[NSString stringWithFormat:@"EXTEND %s", __PRETTY_FUNCTION__]];
         prepaidEndTime = [NSDate dateWithTimeInterval:datePicker.countDownDuration sinceDate:prepaidEndTime];
         totalParkedSeconds += datePicker.countDownDuration;
         
@@ -224,7 +226,8 @@ typedef enum {
     if (alertView.tag == ALERTVIEW_INFO) {
         [alertView dismissWithClickedButtonIndex:buttonIndex animated:YES];
     }else if(alertView.tag == PLEASE_HELP_ALERT && buttonIndex == 1){
-        //agreed to help.  
+        //agreed to help.
+        [dataLayer logString:[NSString stringWithFormat:@"agreed to enforce %s", __PRETTY_FUNCTION__]];
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
         SelfReportingViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"selfReporting"];
         [vc setParent:self];
@@ -427,6 +430,7 @@ typedef enum {
 
 #pragma mark - Bar Button actions
 - (IBAction)cancelButtonPressed:(id)sender {
+    [dataLayer logString:[NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__]];
     if (parkState == kParkingParkState) {
         NSIndexPath *paygIndexPath = [NSIndexPath indexPathForRow:0 inSection:0];
         if ([self.tableView indexPathForSelectedRow] != nil) { // Date picker is showing
@@ -442,6 +446,7 @@ typedef enum {
 }
 
 - (IBAction)doneWithPicker:(id)sender {
+    [dataLayer logString:[NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__]];
     if (parkState == kParkingParkState) {
         [self.tableView deselectRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0] animated:YES];
         prepaidAmount.textColor = [UIColor activeTextColor];
@@ -462,8 +467,10 @@ typedef enum {
         if (indexPath.section == 0) {
             if (indexPath.row == 0) {
                 [self paygSelected];
+                [dataLayer logString:[NSString stringWithFormat:@"%@",@"chose pay as go" ]];
                 [tableView deselectRowAtIndexPath:indexPath animated:YES];
             } else { // indexPath.row == 1
+                [dataLayer logString:[NSString stringWithFormat:@"chose prepaid"]];
                 [self prepaidSelected];
             }
         }
@@ -647,6 +654,8 @@ typedef enum {
     paygFlagHidden = NO;
     
     [self animateFlagIn:paygFlag];
+    
+    
 }
 
 - (void)viewDidUnload

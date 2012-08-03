@@ -11,10 +11,16 @@
 #import "PQSettingsViewController.h"
 #import "PQSpotAnnotation.h"
 #import "NetworkLayer.h"
+#import "MBProgressHUD.h"
 
 //calculation constants
 #define METERS_PER_MILE 1609.344
 #define MAX_CALLOUTS 8
+//maximum number that gets loaded until we start erasing.
+#define MAX_GRIDS 100
+#define MAX_STREETS 100
+#define MAX_SPOTS 200
+
 #define GREY_CIRCLE_R 12
 #define CALLOUT_LINE_LENGTH 0.00000018
 #define CALLOUT_WIDTH 0.00016
@@ -420,6 +426,7 @@ typedef struct{
 
 -(IBAction)justParkMeButtonPressed:(id)sender{
     DLog(@"");
+    [dataLayer logString:[NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__]];
     //show loading screen
     //request server for nearest open spot    
     //zoom user's map to that area
@@ -433,18 +440,20 @@ typedef struct{
 
 -(IBAction)dropPinButtonPressed:(id)sender{
     DLog(@"");
+    [dataLayer logString:[NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__]];
     [self showDropPinBar];
     [self hideAvailabilityBar];
 }
 -(IBAction)cancelDropPinButtonPressed:(id)sender{
-    
     DLog(@"");
+    [dataLayer logString:[NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__]];
     [self showTopAndBottomControls];
     [self hideDropPinBar];
 }
 
 -(IBAction)findMeButtonPressed:(id)sender{
     DLog(@"");
+    [dataLayer logString:[NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__]];
     CLLocationCoordinate2D userLocation = [[map userLocation] coordinate];
     [map setCenterCoordinate:userLocation animated:YES];
 //    [map setRegion:MKCoordinateRegionMakeWithDistance(userLocation, STREET_LEVEL_REGION_METERS, STREET_LEVEL_REGION_METERS) animated:YES];
@@ -781,7 +790,7 @@ typedef struct{
 //        
         
         if(fabs(dx) < CALLOUT_WIDTH && fabs(dy) < CALLOUT_HEIGHT){
-
+            [dataLayer logString:[NSString stringWithFormat:@"%s %@", __PRETTY_FUNCTION__, @"tapped callout"]];
             //check where user's location is.  
             CLLocationCoordinate2D spot_loc = c.circle.coordinate;
             desired_spot = c.circle;
@@ -1293,6 +1302,7 @@ typedef struct{
         }
 
     }
+    [dataLayer logString:[NSString stringWithFormat:@"%s %d", __PRETTY_FUNCTION__, zoomState]];
 }
 
 - (MKOverlayView *)mapView:(MKMapView *)myMapView viewForOverlay:(id<MKOverlay>)overlay {
@@ -1304,6 +1314,9 @@ typedef struct{
         switch (displayedData) {
             case kAvailabilityData:
                 switch (polygon.color) {
+                    case -1:
+                        view.fillColor = [[UIColor grayColor] colorWithAlphaComponent:0.2];
+                        break;
                     case 0:
                         view.fillColor = [[UIColor veryLowAvailabilityColor] colorWithAlphaComponent:0.2];
                         break;
@@ -1323,6 +1336,9 @@ typedef struct{
                 break;
             case kPriceData:
                 switch (polygon.color) {
+                    case -1:
+                        view.fillColor = [[UIColor grayColor] colorWithAlphaComponent:0.2];
+                        break;
                     case 0:
                         view.fillColor = [[UIColor veryHighPriceColor] colorWithAlphaComponent:0.2];
                         break;
@@ -1502,6 +1518,7 @@ typedef struct{
     //show an alert saying we saved it fine.  
     UIAlertView* comingSoonAlert = [[UIAlertView alloc] initWithTitle:@"Feature coming Soon!" message:nil delegate:self cancelButtonTitle:@"Cool!" otherButtonTitles:nil];
     [comingSoonAlert show];
+    [dataLayer logString:[NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__]];
 }
 #pragma mark - LINE PROJECTION
 
@@ -1569,6 +1586,7 @@ typedef struct{
 
     CGPoint touchPoint = [gestureRecognizer locationInView:self.map];
     CLLocationCoordinate2D coord = [self.map convertPoint:touchPoint toCoordinateFromView:self.map];
+    
     MKMapPoint mapPoint = MKMapPointForCoordinate(coord);
     if(isDroppingPin){
         //user is dropping pin.  do nothing on double tap.  
@@ -1734,6 +1752,7 @@ typedef struct{
 }
 
 - (void)searchBarBookmarkButtonClicked:(UISearchBar *)searchBar {
+    [dataLayer logString:[NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__]];
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
     PQBookmarksViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"BookmarksController"];
     [vc setParent:self]; //assignt he parent to be self.  
@@ -1742,6 +1761,7 @@ typedef struct{
 }
 
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
+    [dataLayer logString:[NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__]];
     [self setSearchBar:searchBar active:YES];
 }
 
@@ -1754,25 +1774,27 @@ typedef struct{
 }
 
 - (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
+    [dataLayer logString:[NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__]];
     [self setSearchBar:searchBar active:NO];
 }
 
 #pragma mark - MAP TOOLBARS
 - (IBAction)availabilityBarTapped {
-    
-    
     switch (self.availabilitySelectionBar.selectedSegmentIndex) {
         case 0:
+            [dataLayer logString:[NSString stringWithFormat:@"%s %@", __PRETTY_FUNCTION__, @"avail"]];
             gradientIcon.image = [UIImage imageNamed:@"gradient_avail"];
             displayedData = kAvailabilityData;
             [self mapView:map regionDidChangeAnimated:NO];
             break;
         case 1:
+            [dataLayer logString:[NSString stringWithFormat:@"%s %@", __PRETTY_FUNCTION__, @"price"]];
             gradientIcon.image = [UIImage imageNamed:@"gradient_price"];
             displayedData = kPriceData;
             [self mapView:map regionDidChangeAnimated:NO];
             break;
         case 2:
+            [dataLayer logString:[NSString stringWithFormat:@"%s %@", __PRETTY_FUNCTION__, @"none"]];
             gradientIcon.image = [UIImage imageNamed:@"gradient_none"];
             displayedData = kNoneData;
             [self clearMap];
@@ -1789,6 +1811,7 @@ typedef struct{
 
 -(IBAction)topSpotSegControlIndexChanged:(id)sender{
     int index = self.topSpotSelectionBar.selectedSegmentIndex;
+    [dataLayer logString:[NSString stringWithFormat:@"%s %@", __PRETTY_FUNCTION__, @"seg bar"]];
     int name = [[topSpotSelectionBar titleForSegmentAtIndex:index] intValue];
     for(PQSpotAnnotation* spot in allInsideCircle){
         //for each spot inside the circle, check match spot number.  
@@ -1886,6 +1909,7 @@ typedef struct{
 
 -(IBAction)settingsButtonPressed :(id)sender{
     DLog(@"");
+    [dataLayer logString:[NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__]];
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
     UINavigationController *vc = [storyboard instantiateViewControllerWithIdentifier:@"SettingsController"];
 
@@ -1947,14 +1971,16 @@ typedef struct{
 
 - (IBAction)noneButtonPressed:(id)sender {
     //[self hideMoreTextBox];
-    DLog(@"");
-    int olduitype = [dataLayer UIType];
-    if(olduitype==3) olduitype = -1;
-    [dataLayer setUIType:olduitype+1];
-    NSString* string = [NSString stringWithFormat:@"uitype = %d", olduitype+1];
-    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:nil message:string delegate:self cancelButtonTitle:@"ok" otherButtonTitles:nil];
-    [alert show];
-    //self.map = [[MKMapView alloc] initWithFrame:CGRectMake(0, 44, 320, 416)];
+//    [dataLayer logString:[NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__]];
+//    int olduitype = [dataLayer UIType];
+//    if(olduitype==3) olduitype = -1;
+//    [dataLayer setUIType:olduitype+1];
+//    NSString* string = [NSString stringWithFormat:@"uitype = %d", olduitype+1];
+//    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:nil message:string delegate:self cancelButtonTitle:@"ok" otherButtonTitles:nil];
+//    [alert show];
+    
+    
+//    self.map = [[MKMapView alloc] initWithFrame:CGRectMake(0, 44, 320, 416)];
     
 //    [self clearMap];
 //    [networkLayer testAsync];
@@ -2027,6 +2053,7 @@ typedef struct{
 #pragma mark - LOCATION
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation{
     user_loc = newLocation.coordinate;
+    
     if (MAX(newLocation.horizontalAccuracy, newLocation.verticalAccuracy) < ACCURACY_LIMIT) {
         if (!user_loc_isGood) {
             manager.distanceFilter = 30.0;
@@ -2060,6 +2087,10 @@ typedef struct{
     if(!networkLayer){
         networkLayer = ((PQAppDelegate*)[[UIApplication sharedApplication] delegate]).networkLayer;
         [networkLayer setMapController:self];
+    }
+    if(!locationManager){
+        locationManager = ((PQAppDelegate*)[[UIApplication sharedApplication] delegate]).locationManager;
+        locationManager.delegate = self;
     }
     
     if(gridMicroBlockMap==nil) gridMicroBlockMap = [[NSMutableDictionary alloc] init];
@@ -2169,11 +2200,12 @@ typedef struct{
     if(geocoder ==nil){
         geocoder = [[CLGeocoder alloc] init];
     }
-    locationManager=[[CLLocationManager alloc] init];
-    locationManager.delegate=self;
-    locationManager.desiredAccuracy=kCLLocationAccuracyNearestTenMeters;
     
-    [locationManager startUpdatingLocation];
+//    locationManager=[[CLLocationManager alloc] init];
+//    locationManager.delegate=self;
+//    locationManager.desiredAccuracy=kCLLocationAccuracyNearestTenMeters;
+    
+//    [locationManager startUpdatingLocation];
     
 }
 
@@ -2181,7 +2213,7 @@ typedef struct{
 {
 	[super viewWillDisappear:animated];
     
-    [locationManager stopUpdatingLocation];
+//    [locationManager stopUpdatingLocation];
 }
 
 - (void)viewDidDisappear:(BOOL)animated

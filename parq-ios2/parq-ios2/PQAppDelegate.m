@@ -20,9 +20,17 @@
 @synthesize dataLayer;    
 @synthesize networkLayer;
 @synthesize userAction;
-
+@synthesize locationManager;
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    
+    //check if after study date.
+    NSDate* studyEnd = [NSDate dateWithTimeIntervalSince1970:1347288851];
+    if([[NSDate date] earlierDate:studyEnd] == studyEnd){
+        [dataLayer setLoggedIn:NO];
+    }else{
+        NSLog(@"%f", [studyEnd timeIntervalSinceDate:[NSDate date]]);
+    }
 
     NSLog(@"app did finish launching\n");
     
@@ -42,22 +50,33 @@
 
     networkLayer = [[NetworkLayer alloc] init];
     networkLayer.dataLayer = dataLayer;
+    locationManager=[[CLLocationManager alloc] init];
+    locationManager.desiredAccuracy=kCLLocationAccuracyNearestTenMeters;
+    [locationManager startUpdatingLocation];
 
     if([dataLayer isFirstLaunch]){
         //first launch!  do something special.  
         [dataLayer loadMockData];
         [networkLayer loadSpotData];
         [networkLayer decideUIType];
+        char *saves = "LOG:\n";
+        NSData *data = [[NSData alloc] initWithBytes:saves length:3];
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+        NSString *documentsDirectory = [paths objectAtIndex:0];
+        NSString *appFile = [documentsDirectory stringByAppendingPathComponent:@"log.txt"];
+        [data writeToFile:appFile atomically:YES];
     }
     //set as no self enforcement.  
     [dataLayer setUIType:5];
     
+    [dataLayer logString:[NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__]];
     return YES;
 }
 							
 - (void)applicationWillResignActive:(UIApplication *)application
 {
     NSLog(@"app about to resign active state\n");
+    
     /*
      Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
      Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
@@ -67,6 +86,9 @@
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
     NSLog(@"app did enter backgrond\n");
+    [dataLayer logString:[NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__]];
+    [locationManager stopUpdatingLocation];
+
     /*
      Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
      If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
@@ -78,6 +100,8 @@
     NSLog(@"app about to enter foreground\n");
     //clear alert badges
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+    [locationManager startUpdatingLocation];
+    [dataLayer logString:[NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__]];
     /*
      Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
      */

@@ -65,6 +65,7 @@
 		FC121A15159B7D910072DA85 /* libRestKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FC121A0A159B6FF00072DA85 /* libRestKit.a */; };
 		FC121A53159B9C880072DA85 /* Parser.m in Sources */ = {isa = PBXBuildFile; fileRef = FC121A52159B9C880072DA85 /* Parser.m */; };
 		FC121A59159BAD8E0072DA85 /* AbstractRequestObject.m in Sources */ = {isa = PBXBuildFile; fileRef = FC121A58159BAD8E0072DA85 /* AbstractRequestObject.m */; };
+		FC131F4415C97EE600A3C54C /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = FC7E66C715C97CC60076793F /* MBProgressHUD.m */; };
 		FC18601615B8503600AFFF8E /* SpotInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = FC18601515B8503600AFFF8E /* SpotInfo.m */; };
 		FC18F4141595893C00C18286 /* PQPaymentMethodsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC18F4131595893C00C18286 /* PQPaymentMethodsViewController.m */; };
 		FC410CB215C04F25003C4523 /* greyback.png in Resources */ = {isa = PBXBuildFile; fileRef = FC410CB115C04F25003C4523 /* greyback.png */; };
@@ -246,6 +247,8 @@
 		FC772759157C2C8C005DEBEA /* Segment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Segment.m; path = "parq-ios2/Segment.m"; sourceTree = "<group>"; };
 		FC7CE863157943620059EE43 /* NetworkLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkLayer.h; path = "parq-ios2/NetworkLayer.h"; sourceTree = "<group>"; };
 		FC7CE864157943630059EE43 /* NetworkLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NetworkLayer.m; path = "parq-ios2/NetworkLayer.m"; sourceTree = "<group>"; };
+		FC7E66C615C97CC60076793F /* MBProgressHUD.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MBProgressHUD.h; sourceTree = "<group>"; };
+		FC7E66C715C97CC60076793F /* MBProgressHUD.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MBProgressHUD.m; sourceTree = "<group>"; };
 		FC97EE7215BB379500186182 /* login.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = login.png; sourceTree = "<group>"; };
 		FCA2ADBB15C0B88E00AB425E /* car.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = car.png; sourceTree = "<group>"; };
 		FCA2ADBF15C0BA5600AB425E /* open.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = open.png; sourceTree = "<group>"; };
@@ -388,6 +391,7 @@
 		8703ACDF1513FC84002FE357 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				FC7E66C515C97C9B0076793F /* MBProgressHUD */,
 				FC1219FE159B6FF00072DA85 /* RestKit.xcodeproj */,
 				FC8E6D0115C1E9BA00F443C5 /* Support Layers */,
 				87ABC3A81582B14A00030005 /* Annotations */,
@@ -530,6 +534,15 @@
 				FCDBF386159CF064000A76C8 /* Grid.m */,
 			);
 			name = CoreDataObjects;
+			sourceTree = "<group>";
+		};
+		FC7E66C515C97C9B0076793F /* MBProgressHUD */ = {
+			isa = PBXGroup;
+			children = (
+				FC7E66C615C97CC60076793F /* MBProgressHUD.h */,
+				FC7E66C715C97CC60076793F /* MBProgressHUD.m */,
+			);
+			name = MBProgressHUD;
 			sourceTree = "<group>";
 		};
 		FC8E6CFF15C1E67600F443C5 /* Settings */ = {
@@ -732,6 +745,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FC131F4415C97EE600A3C54C /* MBProgressHUD.m in Sources */,
 				FCF937C5157D4A780062A5A1 /* DataLayer.m in Sources */,
 				FCF937C6157D4A780062A5A1 /* NetworkLayer.m in Sources */,
 				FCF937C7157D4A780062A5A1 /* Segment.m in Sources */,

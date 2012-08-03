@@ -45,6 +45,8 @@ typedef enum {
 -(BOOL) isLoggedIn;
 -(void) setLoggedIn:(BOOL) yesORno;
 
+-(void) logString:(NSString*) string;
+
 //debug
 -(void) testFetch:(EntityType)entityType Microblocks:(NSArray*) microBlockIDs;
 -(void) loadMockData;

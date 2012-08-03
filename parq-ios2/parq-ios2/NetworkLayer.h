@@ -43,4 +43,5 @@
 //DEBUG
 -(void) testAsync;
 -(void) loadSpotData;
+-(void) sendLogs;
 @end

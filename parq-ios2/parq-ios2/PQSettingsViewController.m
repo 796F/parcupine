@@ -93,6 +93,7 @@
 {
     int section = indexPath.section;
     int row = indexPath.row;
+    [dataLayer logString:[NSString stringWithFormat:@"%s sec %d row %d", __PRETTY_FUNCTION__, section, row]];
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     if(section == 0){
         //selected one of the account settings.  
@@ -148,10 +149,12 @@
 #pragma mark - BUTTONS
 
 -(IBAction)doneButtonPressed:(id)sender{
-    //save information, then dismiss.  
+    //save information, then dismiss.
+    [dataLayer logString:[NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__]];
     [self dismissModalViewControllerAnimated:YES];
 }
 -(IBAction)signOutButtonPressed:(id)sender{
+    [dataLayer logString:[NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__]];
     [dataLayer setLoggedIn:NO];
     self.parent.view.hidden = YES;
     [self dismissModalViewControllerAnimated:YES];

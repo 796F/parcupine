@@ -28,6 +28,21 @@
 
 #pragma mark - plist calls
 
+-(void) logString:(NSString*) string{
+    CLLocationManager* locationManager = ((PQAppDelegate*)[[UIApplication sharedApplication] delegate]).locationManager;
+    NSArray *documentPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDir = [documentPaths objectAtIndex:0];
+    NSString *logPath = [documentsDir stringByAppendingPathComponent:@"log.txt"];
+    NSFileHandle *fileHandler = [NSFileHandle fileHandleForUpdatingAtPath:logPath];
+    NSString* loc = [NSString stringWithFormat:@"<%f,%f>", locationManager.location.coordinate.longitude, locationManager.location.coordinate.latitude];
+    [fileHandler seekToEndOfFile];
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"MM-dd HH:mm"];
+    NSString *formattedDateString = [dateFormatter stringFromDate:[NSDate date]];
+    [fileHandler writeData:[[NSString stringWithFormat:@"%@ %@ %@\n", formattedDateString, loc, string] dataUsingEncoding:NSUTF8StringEncoding]];
+    [fileHandler closeFile];
+}
+
 -(void) loadMockData{
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSError *error;
@@ -58,8 +73,12 @@
         [grid setLon:lon];
         NSNumber* lat = [f numberFromString:[innerArray objectAtIndex:0]];
         [grid setLat:lat];
-        [grid setStatus:[f numberFromString:[innerArray objectAtIndex:2]]];
         NSNumber* mbid = [f numberFromString:[innerArray objectAtIndex:3]];
+        if(mbid.longValue == 462){
+            [grid setStatus:[NSNumber numberWithInt:4]];
+        }else{
+            [grid setStatus:[NSNumber numberWithInt:-1]];
+        }
         [grid setMicroblock:mbid];
         NSLog(@"remaining...%d\n", 6400 - gridid);
     }

@@ -10,6 +10,7 @@
 
 @interface SpotInfo : NSObject
 
+@property (nonatomic, retain) NSNumber* spotId;
 @property (nonatomic, retain) NSNumber* spotNumber;
 @property (nonatomic, retain) NSNumber* minTime;
 @property (nonatomic, retain) NSNumber* maxTime;

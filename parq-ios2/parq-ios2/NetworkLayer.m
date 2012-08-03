@@ -42,6 +42,11 @@
 @synthesize dataLayer;
 @synthesize mapController;
 
+-(void) sendLogs{
+    //sends the log file to the server then erases its contents.
+    
+}
+
 -(void) testAsync{
 
     NSArray* keys = [NSArray arrayWithObjects:@"email", @"password", nil];
@@ -322,10 +327,19 @@
 #pragma mark - network status methods
 
 -(BOOL) isRecheableViaWifi{
-    return [[[RKClient sharedClient] reachabilityObserver] isReachableViaWiFi];
+    if([[[RKClient sharedClient] reachabilityObserver] isReachabilityDetermined]){
+        return [[[RKClient sharedClient] reachabilityObserver] isReachableViaWiFi];
+    }else{
+        return NO;
+    }
+
 }
 -(BOOL) isRecheableVia3G{
-    return [[[RKClient sharedClient] reachabilityObserver] isReachableViaWWAN];
+    if([[[RKClient sharedClient] reachabilityObserver] isReachabilityDetermined]){
+        return [[[RKClient sharedClient] reachabilityObserver] isReachableViaWWAN];
+    }else{
+        return NO;
+    }
 }
 
 //subscribe to status change, maybe use?
@@ -414,10 +428,10 @@
     //send info to server.  
     
     //initial check of email.
-    if(![self validateEmail:email]){ //) || pass.length < 8){
-        //password was too short, o|| pass.length < 8r email did not validate.
-        return nil;
-    }
+//    if(![self validateEmail:email]){ //) || pass.length < 8){
+//        //password was too short, o|| pass.length < 8r email did not validate.
+//        return nil;
+//    }
     
     NSArray* keys = [NSArray arrayWithObjects:@"email", @"password", nil];
     NSArray* value = [NSArray arrayWithObjects:email, pass, nil];
@@ -430,10 +444,9 @@
     [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
     RKResponse* response = [request sendSynchronously];
     NSLog(@"\nREQUEST >>> %@", [info description]);
-    NSDictionary* results = [Parser parseUserObjectString:[response bodyAsString]];  
-    NSNumber* uid = [results objectForKey:@"uid"];
-    if(uid.longValue > 0 || [email isEqualToString:@"abc"]){
-        
+    NSDictionary* results = [Parser parseUserObjectString:[response bodyAsString]];
+    if(results!=nil || [email isEqualToString:@"abc"]){
+
 //        //UNUSED 
 //        NSString* ccStub = [results objectForKey:@"creditCardStub"];
 //        NSNumber* parkState = [results objectForKey:@"parkState"];

@@ -8,9 +8,13 @@
 
 #import <Foundation/Foundation.h>
 #import "User.h"
+@class SpotInfo;
 @interface Parser : NSObject
 
 +(NSDictionary*) parseGridResponse:(NSString*) jsonResponse;
 +(NSDictionary*) parseUserObjectString:(NSString*) jsonResponse;
-
++(BOOL) parseUpdateUserResponse:(NSString*) jsonResponse;
++(BOOL) parseUnparkResponse:(NSString*) jsonResponse;
++(NSDictionary*) parseParkResponse:(NSString*) jsonResponse;
++(SpotInfo*) parseSpotInfo:(NSString*) jsonResponse;
 @end

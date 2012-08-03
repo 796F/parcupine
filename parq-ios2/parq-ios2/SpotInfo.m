@@ -10,6 +10,7 @@
 
 @implementation SpotInfo
 
+@synthesize spotId;
 @synthesize spotNumber;
 @synthesize minTime;
 @synthesize maxTime;

@@ -4,7 +4,8 @@ public class RateObject {
 	double lat;
 	double lon;
 	String location;
-	long spotId;
+	long spotId;	
+	String spotNumber;
 	
 	/*these are the defaults*/
 	int minTime;			//must park 1 hour
@@ -60,6 +61,12 @@ public class RateObject {
 	}
 	public void setMinIncrement(int minIncrement) {
 		this.minIncrement = minIncrement;
+	}
+	public String getSpotNumber() {
+		return spotNumber;
+	}
+	public void setSpotNumber(String spotNumber) {
+		this.spotNumber = spotNumber;
 	}
 	
 	
