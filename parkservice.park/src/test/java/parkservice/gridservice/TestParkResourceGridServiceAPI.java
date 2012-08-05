@@ -37,6 +37,8 @@ import parkservice.gridservice.model.SearchForStreetsResponse;
 import parkservice.gridservice.model.UserLoginResponse;
 import parkservice.model.AuthRequest;
 import parkservice.resources.ParkResource;
+import parkservice.userscore.model.AddUserActionLogRequest;
+import parkservice.userscore.model.AddUserActionLogResponse;
 import parkservice.userscore.model.AddUserReportingRequest;
 import parkservice.userscore.model.AddUserReportingResponse;
 import parkservice.userscore.model.GetCountRequest;
@@ -238,7 +240,6 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 				new QName("Test"), FindGridsByGPSCoordinateRequest.class, findGridByGPSCoordinateRequest);
 		
 		FindGridsByGPSCoordinateResponse[] responseGrid = parkResource.findGridByGPSCoor(testRequest);
-		
 		
 		long testGridId = responseGrid[0].getGridId();
 		double gridLat = responseGrid[0].getLatitude();
@@ -710,5 +711,19 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 			assertTrue(response.getGridId() > 0);
 			assertTrue(response.getFillRate() >= 0.0);
 		}
+	}
+	
+	public void testAddUserLogs() {
+		User user = new UserDao()
+			.getUserByEmail(SupportScriptForDaoTesting.userEmail);
+		AddUserActionLogRequest addUserActionLogRequest = new AddUserActionLogRequest();
+		addUserActionLogRequest.setLog("Test User Action Logs");
+		addUserActionLogRequest.setUserId(user.getUserID());
+		JAXBElement<AddUserActionLogRequest> jaxbRequest = new JAXBElement<AddUserActionLogRequest>(
+				new QName("Test"), AddUserActionLogRequest.class, addUserActionLogRequest);
+		ParkResource parkResource = new ParkResource();
+		AddUserActionLogResponse response = parkResource.addUserActionLogs(jaxbRequest);
+		
+		assertTrue(response.isSuccessful());
 	}
 }

@@ -206,3 +206,11 @@ CREATE TABLE count
 (count_id BIGINT NOT NULL AUTO_INCREMENT,
  tempValue TEXT(64),
  PRIMARY KEY (count_id));
+ 
+CREATE TABLE useractionlogs
+(action_log_id BIGINT NOT NULL AUTO_INCREMENT,
+ user_id BIGINT NOT NULL,
+ log_datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+ log LONGTEXT NOT NULL,
+ PRIMARY KEY (action_log_id),
+ FOREIGN KEY (user_id) references user(user_id));

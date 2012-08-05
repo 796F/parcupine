@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -19,35 +18,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.ContextResolver;
 import javax.xml.bind.JAXBElement;
-
-import AuthNet.Rebill.CreateCustomerProfileTransactionResponseType;
-import AuthNet.Rebill.OrderExType;
-import AuthNet.Rebill.ProfileTransAuthCaptureType;
-import AuthNet.Rebill.ProfileTransactionType;
-import AuthNet.Rebill.ServiceSoap;
-
-import com.parq.server.dao.LicensePlateDao;
-import com.parq.server.dao.MiscellaneousDao;
-import com.parq.server.dao.ParkingRateDao;
-import com.parq.server.dao.ParkingStatusDao;
-import com.parq.server.dao.PaymentAccountDao;
-import com.parq.server.dao.UserDao;
-import com.parq.server.dao.UserPrePaidAccountBalanceDao;
-import com.parq.server.dao.model.object.LicensePlate;
-import com.parq.server.dao.model.object.ParkingInstance;
-import com.parq.server.dao.model.object.ParkingRate;
-import com.parq.server.dao.model.object.ParkingSpace;
-import com.parq.server.dao.model.object.Payment;
-import com.parq.server.dao.model.object.UserPrePaidAccountBalance;
-import com.parq.server.dao.model.object.UserSelfReporting;
-import com.parq.server.dao.model.object.Payment.PaymentType;
-import com.parq.server.dao.model.object.PaymentAccount;
-import com.parq.server.dao.model.object.User;
-import com.parq.server.dao.model.object.UserScore;
-import com.parq.server.grid.GridManagementService;
-import com.parq.server.grid.model.object.GridWithFillRate;
-import com.parq.server.grid.model.object.ParkingLocationWithFillRate;
-import com.sun.research.ws.wadl.Response;
 
 import parkservice.gridservice.model.FindGridsByGPSCoordinateRequest;
 import parkservice.gridservice.model.FindGridsByGPSCoordinateResponse;
@@ -74,18 +44,48 @@ import parkservice.model.RefillRequest;
 import parkservice.model.RefillResponse;
 import parkservice.model.UnparkRequest;
 import parkservice.model.UnparkResponse;
+import parkservice.userscore.model.AddUserActionLogRequest;
+import parkservice.userscore.model.AddUserActionLogResponse;
 import parkservice.userscore.model.AddUserReportingRequest;
 import parkservice.userscore.model.AddUserReportingResponse;
 import parkservice.userscore.model.GetCountRequest;
 import parkservice.userscore.model.GetCountResponse;
 import parkservice.userscore.model.GetUserReportingHistoryRequest;
 import parkservice.userscore.model.GetUserReportingHistoryResponse;
-import parkservice.userscore.model.GetUserScoresRequest;
 import parkservice.userscore.model.GetUserScoreResponse;
+import parkservice.userscore.model.GetUserScoresRequest;
 import parkservice.userscore.model.Score;
 import parkservice.userscore.model.UpdateUserScoreRequest;
 import parkservice.userscore.model.UpdateUserScoreResponse;
 import parkservice.userscore.model.UserParkingStatusReport;
+import AuthNet.Rebill.CreateCustomerProfileTransactionResponseType;
+import AuthNet.Rebill.OrderExType;
+import AuthNet.Rebill.ProfileTransAuthCaptureType;
+import AuthNet.Rebill.ProfileTransactionType;
+import AuthNet.Rebill.ServiceSoap;
+
+import com.parq.server.dao.LicensePlateDao;
+import com.parq.server.dao.MiscellaneousDao;
+import com.parq.server.dao.ParkingRateDao;
+import com.parq.server.dao.ParkingStatusDao;
+import com.parq.server.dao.PaymentAccountDao;
+import com.parq.server.dao.UserDao;
+import com.parq.server.dao.UserPrePaidAccountBalanceDao;
+import com.parq.server.dao.model.object.LicensePlate;
+import com.parq.server.dao.model.object.ParkingInstance;
+import com.parq.server.dao.model.object.ParkingRate;
+import com.parq.server.dao.model.object.ParkingSpace;
+import com.parq.server.dao.model.object.Payment;
+import com.parq.server.dao.model.object.UserActionLog;
+import com.parq.server.dao.model.object.Payment.PaymentType;
+import com.parq.server.dao.model.object.PaymentAccount;
+import com.parq.server.dao.model.object.User;
+import com.parq.server.dao.model.object.UserPrePaidAccountBalance;
+import com.parq.server.dao.model.object.UserScore;
+import com.parq.server.dao.model.object.UserSelfReporting;
+import com.parq.server.grid.GridManagementService;
+import com.parq.server.grid.model.object.GridWithFillRate;
+import com.parq.server.grid.model.object.ParkingLocationWithFillRate;
 
 @Path("/")
 public class ParkResource {
@@ -820,6 +820,25 @@ public class ParkResource {
 		} else {
 			response.setAutherized(false);
 		}
+		return response;
+	}
+	
+	@POST
+	@Path("/AddUserActionLogRequest")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public AddUserActionLogResponse addUserActionLogs(JAXBElement<AddUserActionLogRequest> jaxbRequest) {
+		AddUserActionLogRequest logRequest = jaxbRequest.getValue();
+		
+		MiscellaneousDao miscDao = new MiscellaneousDao();
+		UserActionLog actionLog = new UserActionLog();
+		actionLog.setUserId(logRequest.getUserId());
+		actionLog.setLog(logRequest.getLog());
+		
+		AddUserActionLogResponse response = new AddUserActionLogResponse();
+		boolean isSuccessful = miscDao.insertUserActionLogging(actionLog);
+		response.setSuccessful(isSuccessful);
+		
 		return response;
 	}
 }

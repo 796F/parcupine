@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.parq.server.dao.model.object.UserActionLog;
 import com.parq.server.dao.model.object.UserSelfReporting;
 
 public class MiscellaneousDao extends AbstractParqDaoParent {
@@ -22,6 +23,9 @@ public class MiscellaneousDao extends AbstractParqDaoParent {
 	private static final String sqlGetAllUserReport = "SELECT "
 			+ " report_id, user_id, space_id, space_status, report_datetime, score_1, score_2, score_3, score_4, score_5, score_6"
 			+ " FROM userselfreporting WHERE user_id = ? ORDER BY report_id DESC";
+	
+	private static final String sqlInsertUserActionLog = "INSERT INTO useractionlogs "
+			+ "(user_id, log) VALUE (?, ?)";
 	
 	/**
 	 * Get the next highest count number
@@ -121,5 +125,26 @@ public class MiscellaneousDao extends AbstractParqDaoParent {
 			reportHistory.add(report);
 		}
 		return reportHistory;
+	}
+	
+	public boolean insertUserActionLogging(UserActionLog userLog) {
+		PreparedStatement pstmt = null;
+		Connection con = null;
+		boolean insertSuccessful = false;
+		try {
+			con = getConnection();
+			pstmt = con.prepareStatement(sqlInsertUserActionLog);
+			pstmt.setLong(1, userLog.getUserId());
+			pstmt.setString(2, userLog.getLog());
+			insertSuccessful = pstmt.executeUpdate() == 1;
+		} catch (SQLException sqle) {
+			System.out.println("SQL statement is invalid: " + pstmt);
+			sqle.printStackTrace();
+			throw new RuntimeException(sqle);
+		} finally {
+			closeConnection(con);
+		}
+		
+		return insertSuccessful;
 	}
 }

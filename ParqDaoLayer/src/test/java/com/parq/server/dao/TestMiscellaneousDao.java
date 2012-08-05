@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.parq.server.dao.model.object.ParkingSpace;
 import com.parq.server.dao.model.object.User;
+import com.parq.server.dao.model.object.UserActionLog;
 import com.parq.server.dao.model.object.UserSelfReporting;
 import com.parq.server.dao.support.SupportScriptForDaoTesting;
 
@@ -114,5 +115,14 @@ public class TestMiscellaneousDao extends TestCase {
 			assertTrue(userReport2.getScore3() - userReport2.getScore2() == 1);
 			assertTrue(userReport2.getScore2() - userReport2.getScore1() == 1);
 		}
+	}
+	
+	public void testInsertUserActionLogging() {
+		User user = new UserDao()
+			.getUserByEmail(SupportScriptForDaoTesting.userEmail);
+		UserActionLog userActionLog = new UserActionLog();
+		userActionLog.setLog("TEST LOGs");
+		userActionLog.setUserId(user.getUserID());
+		assertTrue(miscDao.insertUserActionLogging(userActionLog));
 	}
 }
