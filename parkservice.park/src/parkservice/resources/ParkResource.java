@@ -1,4 +1,4 @@
-package parkservice.resources;
+	package parkservice.resources;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -659,7 +659,7 @@ public class ParkResource {
 		// return the array representation of the GetUpdatedSpotLevelInfoResponse
 		return responseList.toArray(new GetUpdatedSpotLevelInfoResponse[0]);
 	}
-	
+
 	@POST
 	@Path("/GetUserScoreRequest")
 	@Consumes(MediaType.APPLICATION_JSON)

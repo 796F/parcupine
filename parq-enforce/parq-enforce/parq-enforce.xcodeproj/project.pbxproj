@@ -1,0 +1,290 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		FCA9913915CC9E0200879A10 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCA9913815CC9E0200879A10 /* UIKit.framework */; };
+		FCA9913B15CC9E0200879A10 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCA9913A15CC9E0200879A10 /* Foundation.framework */; };
+		FCA9913D15CC9E0200879A10 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCA9913C15CC9E0200879A10 /* CoreGraphics.framework */; };
+		FCA9913F15CC9E0200879A10 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCA9913E15CC9E0200879A10 /* CoreData.framework */; };
+		FCA9914515CC9E0200879A10 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = FCA9914315CC9E0200879A10 /* InfoPlist.strings */; };
+		FCA9914715CC9E0200879A10 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = FCA9914615CC9E0200879A10 /* main.m */; };
+		FCA9914B15CC9E0200879A10 /* PQAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = FCA9914A15CC9E0200879A10 /* PQAppDelegate.m */; };
+		FCA9914E15CC9E0200879A10 /* parq_enforce.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = FCA9914C15CC9E0200879A10 /* parq_enforce.xcdatamodeld */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		FCA9913415CC9E0200879A10 /* parq-enforce.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "parq-enforce.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		FCA9913815CC9E0200879A10 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		FCA9913A15CC9E0200879A10 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		FCA9913C15CC9E0200879A10 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		FCA9913E15CC9E0200879A10 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		FCA9914215CC9E0200879A10 /* parq-enforce-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "parq-enforce-Info.plist"; sourceTree = "<group>"; };
+		FCA9914415CC9E0200879A10 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		FCA9914615CC9E0200879A10 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		FCA9914815CC9E0200879A10 /* parq-enforce-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "parq-enforce-Prefix.pch"; sourceTree = "<group>"; };
+		FCA9914915CC9E0200879A10 /* PQAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PQAppDelegate.h; sourceTree = "<group>"; };
+		FCA9914A15CC9E0200879A10 /* PQAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PQAppDelegate.m; sourceTree = "<group>"; };
+		FCA9914D15CC9E0200879A10 /* parq_enforce.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = parq_enforce.xcdatamodel; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		FCA9913115CC9E0200879A10 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FCA9913915CC9E0200879A10 /* UIKit.framework in Frameworks */,
+				FCA9913B15CC9E0200879A10 /* Foundation.framework in Frameworks */,
+				FCA9913D15CC9E0200879A10 /* CoreGraphics.framework in Frameworks */,
+				FCA9913F15CC9E0200879A10 /* CoreData.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		FCA9912915CC9E0200879A10 = {
+			isa = PBXGroup;
+			children = (
+				FCA9914015CC9E0200879A10 /* parq-enforce */,
+				FCA9913715CC9E0200879A10 /* Frameworks */,
+				FCA9913515CC9E0200879A10 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		FCA9913515CC9E0200879A10 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FCA9913415CC9E0200879A10 /* parq-enforce.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		FCA9913715CC9E0200879A10 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				FCA9913815CC9E0200879A10 /* UIKit.framework */,
+				FCA9913A15CC9E0200879A10 /* Foundation.framework */,
+				FCA9913C15CC9E0200879A10 /* CoreGraphics.framework */,
+				FCA9913E15CC9E0200879A10 /* CoreData.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		FCA9914015CC9E0200879A10 /* parq-enforce */ = {
+			isa = PBXGroup;
+			children = (
+				FCA9914915CC9E0200879A10 /* PQAppDelegate.h */,
+				FCA9914A15CC9E0200879A10 /* PQAppDelegate.m */,
+				FCA9914C15CC9E0200879A10 /* parq_enforce.xcdatamodeld */,
+				FCA9914115CC9E0200879A10 /* Supporting Files */,
+			);
+			path = "parq-enforce";
+			sourceTree = "<group>";
+		};
+		FCA9914115CC9E0200879A10 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				FCA9914215CC9E0200879A10 /* parq-enforce-Info.plist */,
+				FCA9914315CC9E0200879A10 /* InfoPlist.strings */,
+				FCA9914615CC9E0200879A10 /* main.m */,
+				FCA9914815CC9E0200879A10 /* parq-enforce-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		FCA9913315CC9E0200879A10 /* parq-enforce */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FCA9915115CC9E0200879A10 /* Build configuration list for PBXNativeTarget "parq-enforce" */;
+			buildPhases = (
+				FCA9913015CC9E0200879A10 /* Sources */,
+				FCA9913115CC9E0200879A10 /* Frameworks */,
+				FCA9913215CC9E0200879A10 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "parq-enforce";
+			productName = "parq-enforce";
+			productReference = FCA9913415CC9E0200879A10 /* parq-enforce.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		FCA9912B15CC9E0200879A10 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = PQ;
+				LastUpgradeCheck = 0440;
+				ORGANIZATIONNAME = "Michael Xia";
+			};
+			buildConfigurationList = FCA9912E15CC9E0200879A10 /* Build configuration list for PBXProject "parq-enforce" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = FCA9912915CC9E0200879A10;
+			productRefGroup = FCA9913515CC9E0200879A10 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				FCA9913315CC9E0200879A10 /* parq-enforce */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		FCA9913215CC9E0200879A10 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FCA9914515CC9E0200879A10 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		FCA9913015CC9E0200879A10 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FCA9914715CC9E0200879A10 /* main.m in Sources */,
+				FCA9914B15CC9E0200879A10 /* PQAppDelegate.m in Sources */,
+				FCA9914E15CC9E0200879A10 /* parq_enforce.xcdatamodeld in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		FCA9914315CC9E0200879A10 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				FCA9914415CC9E0200879A10 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		FCA9914F15CC9E0200879A10 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		FCA9915015CC9E0200879A10 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		FCA9915215CC9E0200879A10 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "parq-enforce/parq-enforce-Prefix.pch";
+				INFOPLIST_FILE = "parq-enforce/parq-enforce-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		FCA9915315CC9E0200879A10 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "parq-enforce/parq-enforce-Prefix.pch";
+				INFOPLIST_FILE = "parq-enforce/parq-enforce-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		FCA9912E15CC9E0200879A10 /* Build configuration list for PBXProject "parq-enforce" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FCA9914F15CC9E0200879A10 /* Debug */,
+				FCA9915015CC9E0200879A10 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FCA9915115CC9E0200879A10 /* Build configuration list for PBXNativeTarget "parq-enforce" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FCA9915215CC9E0200879A10 /* Debug */,
+				FCA9915315CC9E0200879A10 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		FCA9914C15CC9E0200879A10 /* parq_enforce.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				FCA9914D15CC9E0200879A10 /* parq_enforce.xcdatamodel */,
+			);
+			currentVersion = FCA9914D15CC9E0200879A10 /* parq_enforce.xcdatamodel */;
+			path = parq_enforce.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
+	};
+	rootObject = FCA9912B15CC9E0200879A10 /* Project object */;
+}

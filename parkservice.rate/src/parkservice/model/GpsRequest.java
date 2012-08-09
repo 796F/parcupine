@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class GpsRequest {
 	long uid;
+	long spotId;
 	double lat;  //I think these come in as floats from Map API.  
 	double lon;
 	String spot; 
@@ -54,6 +55,12 @@ public class GpsRequest {
 	 */
 	public void setUserInfo(AuthRequest userInfo) {
 		this.userInfo = userInfo;
+	}
+	public long getSpotId() {
+		return spotId;
+	}
+	public void setSpotId(long spotId) {
+		this.spotId = spotId;
 	}
 	
 }

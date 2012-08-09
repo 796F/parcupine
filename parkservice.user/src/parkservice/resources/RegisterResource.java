@@ -37,6 +37,7 @@ import com.parq.server.dao.UserDao;
 import com.parq.server.dao.exception.DuplicateEmailException;
 import com.parq.server.dao.model.object.LicensePlate;
 import com.parq.server.dao.model.object.PaymentAccount;
+import com.parq.server.dao.model.object.PaymentMethod;
 import com.parq.server.dao.model.object.User;
 
 
@@ -109,6 +110,7 @@ public class RegisterResource {
 	public RegisterResponse pilotregister(JAXBElement<RegisterRequest> input){
 		RegisterRequest info = input.getValue();
 		System.out.println(info.getEmail() + info.getCreditCard() + info.getPassword());
+		LicensePlateDao lpd = new LicensePlateDao();
 		RegisterResponse output = new RegisterResponse();
 		UserDao userDb = new UserDao();
 		User existing = null;
@@ -119,18 +121,33 @@ public class RegisterResource {
 			User newUser = new User();
 			newUser.setEmail(email);
 			newUser.setPassword(info.getPassword());
+			newUser.setAccountType(PaymentMethod.PREFILL);
+			newUser.setPhoneNumber("000-000-0000");
 			boolean result = false;
 			try{
 				//try to create user account, catching errors.  
 				result = userDb.createNewUser(newUser);
 				if(result){
-					LicensePlateDao lpd = new LicensePlateDao();
+					
 					LicensePlate newLicensePlate = new LicensePlate();
 					newLicensePlate.setPlateNum(license);
-					existing = userDb.getUserByEmail(info.getEmail());
+
+					try{
+						existing = userDb.getUserByEmail(info.getEmail());
+					}catch(Exception e){
+						output.setResp("GET_BY_EMAIL_FAIL");
+						return output;
+					}
+
 					newLicensePlate.setUserID(existing.getUserID());
 					newLicensePlate.setDefault(true);
-					result = lpd.addLicensePlateForUser(newLicensePlate);
+					
+					try{
+						result = lpd.addLicensePlateForUser(newLicensePlate);	
+					}catch(IllegalStateException e){
+						output.setResp("PLATE_DAO_ERROR" + existing.getUserID() +" " + license);
+					}
+					
 					if(result){
 						output.setResp("OK");	
 					}else{
