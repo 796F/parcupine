@@ -41,6 +41,7 @@
     NSString *formattedDateString = [dateFormatter stringFromDate:[NSDate date]];
     [fileHandler writeData:[[NSString stringWithFormat:@"%@ %@ %@\n", formattedDateString, loc, string] dataUsingEncoding:NSUTF8StringEncoding]];
     [fileHandler closeFile];
+    
 }
 
 -(void) loadMockData{

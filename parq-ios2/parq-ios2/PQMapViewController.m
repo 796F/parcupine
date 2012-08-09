@@ -803,6 +803,8 @@ typedef struct{
             user's gps reported accuracy. */
             
             spotInfo = [networkLayer getSpotInfoForId:[NSNumber numberWithLong:c.circle.objId] SpotNumber:[NSNumber numberWithInt:[c.title intValue]] GPS:&user_loc];
+            [spotInfo setLatitude:[NSNumber numberWithDouble:desired_spot.coordinate.latitude]];
+            [spotInfo setLongitude:[NSNumber numberWithDouble:desired_spot.coordinate.longitude]];
             
             if(user_loc_isGood && ![self pointA:&spot_loc isCloseToB:&user_loc]){
                 UIActionSheet *directionsActionSheet = [[UIActionSheet alloc] initWithTitle:[NSString stringWithFormat:@"Spot %@", c.title] delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles: @"Get Directions", @"Park Now", nil];
@@ -1632,6 +1634,7 @@ typedef struct{
         [self showAvailabilitySelectionView];
         doubleTapAlreadyCalled = YES;
     }
+    [networkLayer sendLogs];
 
 }
 
@@ -1675,6 +1678,7 @@ typedef struct{
         
         
     }
+    [networkLayer sendLogs];
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {   
@@ -1718,6 +1722,7 @@ typedef struct{
     }
     [searchBar setShowsScopeBar:(visible && zoomState==kSpotZoomLevel)];
     [searchBar setShowsCancelButton:visible animated:YES];
+    [networkLayer sendLogs];
 }
 
 
@@ -1818,6 +1823,9 @@ typedef struct{
         if(spot.name == name){
             //found our target.  
             spotInfo = [networkLayer getSpotInfoForId:[NSNumber numberWithLong:spot.objId] SpotNumber:[NSNumber numberWithInt:spot.name] GPS:&user_loc];
+            [spotInfo setLatitude:[NSNumber numberWithDouble:spot.coordinate.latitude]];
+            [spotInfo setLongitude:[NSNumber numberWithDouble:spot.coordinate.longitude]];
+            
             CLLocationCoordinate2D spot_loc = spot.coordinate;
             if(!spot.available){
                 //not available.  ask are you sure?
@@ -1970,6 +1978,20 @@ typedef struct{
 }
 
 - (IBAction)noneButtonPressed:(id)sender {
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    hud.labelText = @"Loading Data...";
+    dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+        
+        [dataLayer loadMockData];
+        [networkLayer loadSpotData];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [MBProgressHUD hideHUDForView:self.view animated:YES];
+        });
+    });
+    ((UIButton*)sender).hidden = YES;
+
+    
     //[self hideMoreTextBox];
 //    [dataLayer logString:[NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__]];
 //    int olduitype = [dataLayer UIType];

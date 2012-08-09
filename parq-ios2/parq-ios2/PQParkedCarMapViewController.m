@@ -8,7 +8,7 @@
 
 #import "PQParkedCarMapViewController.h"
 #import "PQParkedCarAnnotation.h"
-
+#import "PQMapViewController.h"
 // Span distance in meters
 #define SPAN_DISTANCE 100
 
@@ -17,8 +17,10 @@
 @end
 
 @implementation PQParkedCarMapViewController
+@synthesize parent;
 @synthesize map;
 @synthesize parkedCarCoordinate;
+@synthesize spotInfo;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -35,13 +37,14 @@
     float latitude = self.parkedCarCoordinate.latitude;
     float longitude = self.parkedCarCoordinate.longitude;
     //int zoom = 26;
-    float user_lat = 42.359195;
-    float user_lon = -71.093764;
-    [self.navigationController popToRootViewControllerAnimated:YES];
+    float user_lat = parent.user_loc.latitude;
+    float user_lon = parent.user_loc.longitude;
+    
+
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://maps.google.com/maps?daddr=Spot+%d@%f,%f&saddr=Current+Location@%f,%f", 1106, latitude, longitude,user_lat, user_lon]]];
 
-    //!!!!  pop this view, so when user returns, it's in the unpark screen.  
-    
+    [self.navigationController popToRootViewControllerAnimated:NO];
+
 //    NSString *stringURL = [NSString stringWithFormat:@"http://maps.google.com/maps?q=%@@%1.6f,%1.6f&z=%d", title, latitude, longitude, zoom];
 //    NSURL *url = [NSURL URLWithString:stringURL];
 //    [[UIApplication sharedApplication] openURL:url];
@@ -91,16 +94,16 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
+    
     // Hardcode the location for now
-    CLLocationCoordinate2D point = {42.365077, -71.110838};
+    CLLocationCoordinate2D point = CLLocationCoordinate2DMake(spotInfo.latitude.doubleValue, spotInfo.longitude.doubleValue);
     self.parkedCarCoordinate = point;
 
     MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(self.parkedCarCoordinate, SPAN_DISTANCE, SPAN_DISTANCE);
     [map setRegion:[map regionThatFits:viewRegion] animated:NO];
 
 	PQParkedCarAnnotation *annotation = [[PQParkedCarAnnotation alloc] initWithCoordinate:self.parkedCarCoordinate addressDictionary:nil];
-	annotation.title = @"1106";
+	annotation.title = spotInfo.spotNumber.stringValue;
 
     [self.map addAnnotation:annotation];
     [self.map selectAnnotation:annotation animated:YES];

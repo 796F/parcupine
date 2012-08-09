@@ -55,9 +55,7 @@
     [locationManager startUpdatingLocation];
 
     if([dataLayer isFirstLaunch]){
-        //first launch!  do something special.  
-        [dataLayer loadMockData];
-        [networkLayer loadSpotData];
+        //first launch!  do something special.
         [networkLayer decideUIType];
         char *saves = "LOG:\n";
         NSData *data = [[NSData alloc] initWithBytes:saves length:3];
@@ -65,10 +63,7 @@
         NSString *documentsDirectory = [paths objectAtIndex:0];
         NSString *appFile = [documentsDirectory stringByAppendingPathComponent:@"log.txt"];
         [data writeToFile:appFile atomically:YES];
-    }
-    //set as no self enforcement.  
-    [dataLayer setUIType:5];
-    
+    }    
     [dataLayer logString:[NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__]];
     return YES;
 }

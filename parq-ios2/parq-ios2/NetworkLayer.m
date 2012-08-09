@@ -42,9 +42,45 @@
 @synthesize dataLayer;
 @synthesize mapController;
 
+
+-(BOOL)submitAvailablilityInformation:(NSArray*)value{
+    NSArray* keys = [NSArray arrayWithObjects:@"userId",@"spaceIds", @"score1",@"score2", @"score3", @"score4", @"score5", @"score6", nil];
+    NSArray* spaceIds = [NSArray arrayWithObjects:@"1",@"2",@"3",@"4",@"5",@"6", nil];
+    NSArray* top = [NSArray arrayWithObjects:[dataLayer getUser].uid, spaceIds, nil];
+    NSDictionary* info = [NSDictionary dictionaryWithObjects:[top arrayByAddingObjectsFromArray:value] forKeys:keys];
+    NSError *error;
+    NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
+    NSLog(@"%@", [info description]);
+    RKRequest* request = [[RKRequest alloc] initWithURL:[NSURL URLWithString:@"http://75.101.132.219/parkservice.park/AddUserReportingRequest"]];
+    [request setMethod:RKRequestMethodPOST];
+    [request setHTTPBody:jsonData];
+    [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
+    NSDictionary* result = [[[request sendSynchronously] bodyAsString] objectFromJSONString];
+    return [[result objectForKey:@"updateSuccessful"] boolValue];
+}
+
 -(void) sendLogs{
     //sends the log file to the server then erases its contents.
+    NSArray *documentPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDir = [documentPaths objectAtIndex:0];
+    NSString *logPath = [documentsDir stringByAppendingPathComponent:@"log.txt"];
+    NSString *logContent = [[NSString alloc] initWithContentsOfFile:logPath encoding:NSUTF8StringEncoding error:NULL];
     
+    NSArray* keys = [NSArray arrayWithObjects:@"userId", @"log", nil];
+    NSArray* value = [NSArray arrayWithObjects:[dataLayer getUser].uid.stringValue, logContent, nil];
+    NSDictionary* info = [NSDictionary dictionaryWithObjects:value forKeys:keys];
+    NSError *error;
+    NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
+    AbstractRequestObject* abs = [[AbstractRequestObject alloc] init];
+    [abs setBody:jsonData];
+    [abs setContentType:@"application/json"];
+    [[RKClient sharedClient] post:@"/parkservice.park/AddUserActionLogRequest" params:abs delegate:self];
+    char *saves = "LOG:\n";
+    NSData *data = [[NSData alloc] initWithBytes:saves length:3];
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *appFile = [documentsDirectory stringByAppendingPathComponent:@"log.txt"];
+    [data writeToFile:appFile atomically:YES];
 }
 
 -(void) testAsync{
@@ -63,11 +99,16 @@
 }
 
 -(void) decideUIType{
-    //send request to server, store the int value.  
-//    RKRequest* req = [[RKRequest alloc] initWithURL:[NSURL URLWithString:@"http://75.101.132.219/ui.php"]];
-//    RKResponse* result = [req sendSynchronously];
-//    int type = [result.bodyAsString intValue];
-    int type = 0;
+    //send request to server, store the int value.
+    NSDictionary* info = [NSDictionary dictionaryWithObject:@"0" forKey:@"userId"];
+    NSError *error;
+    NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
+    RKRequest* request = [[RKRequest alloc] initWithURL:[NSURL URLWithString:@"http://75.101.132.219/parkservice.park/GetCountRequest"]];
+    [request setMethod:RKRequestMethodPOST];
+    [request setHTTPBody:jsonData];
+    [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
+    NSDictionary* result = [[[request sendSynchronously] bodyAsString] objectFromJSONString];
+    int type = [[result objectForKey:@"count"] intValue];
     [dataLayer setUIType:type];
 }
 
@@ -384,6 +425,31 @@
                          @"42.357862,-71.094219,1,1403",
                          @"42.357888,-71.094139,1,1404",
                          @"42.357908,-71.094058,1,1405",
+                         @"42.365354,-71.110843,1,1410,0,1",
+                         @"42.365292,-71.110835,1,1412,0,2",
+                         @"42.365239,-71.110825,1,1414,0,3",
+                         @"42.365187,-71.110811,1,1416,0,4",
+                         @"42.365140,-71.110806,1,1418,0,5",
+                         @"42.365092,-71.110798,1,1420,0,6",
+                         @"42.365045,-71.110790,1,1422,0,7",
+                         @"42.364995,-71.110782,1,1424,0,8",
+                         @"42.364947,-71.110768,1,1426,0,9",
+                         @"42.364896,-71.110766,1,1428,0,10",
+                         @"42.364846,-71.110752,1,1430,0,11",
+                         @"42.364797,-71.110739,1,1432,0,12",
+
+                         @"42.365348,-71.110924,1,1411,0,13",
+                         @"42.365300,-71.110916,1,1413,0,14",
+                         @"42.365251,-71.110905,1,1415,0,15",
+                         @"42.365203,-71.110900,1,1417,0,16",
+                         @"42.365154,-71.110892,1,1419,0,17",
+                         @"42.365104,-71.110876,0,1421,0,18",
+                         @"42.365049,-71.110868,1,1423,0,19",
+                         @"42.364993,-71.110860,1,1425,0,20",
+                         @"42.364943,-71.110849,1,1427,0,21",
+                         @"42.364894,-71.110846,1,1429,0,22",
+                         @"42.364846,-71.110835,0,1431,0,23",
+                         @"42.364799,-71.110830,1,1433,0,24",
                          nil];
     int spotId = 0;
     for(NSString* spotString in spotData){
@@ -428,10 +494,10 @@
     //send info to server.  
     
     //initial check of email.
-//    if(![self validateEmail:email]){ //) || pass.length < 8){
-//        //password was too short, o|| pass.length < 8r email did not validate.
-//        return nil;
-//    }
+    if(![self validateEmail:email]){ //) || pass.length < 8){
+        //password was too short, o|| pass.length < 8r email did not validate.
+        return nil;
+    }
     
     NSArray* keys = [NSArray arrayWithObjects:@"email", @"password", nil];
     NSArray* value = [NSArray arrayWithObjects:email, pass, nil];
@@ -461,10 +527,10 @@
 
         User* user = (User*)[NSEntityDescription insertNewObjectForEntityForName:@"User" inManagedObjectContext:dataLayer.managedObjectContext];
         
-        [user setAddress:@"77 Massachusetts Avenue"];
-        [user setName:@"Eric Baczuk"];
-        [user setEmail:@"eric.baczuk@gmail.com"];
-        [user setLicense:@"EBY776J"];
+        [user setAddress:@"I Live in the lab."];
+        [user setName:@"Mike.  Mike Bond."];
+        [user setEmail:email];  //this should be returned by server.
+        [user setLicense:@"'d \"To Kill\""];
         [user setCity:@"Cambridge"];
         [user setPayment:[NSNumber numberWithInt:0]];
         [user setUid:[NSNumber numberWithLong:0]];
@@ -481,5 +547,75 @@
         //bad login
         return nil;
     }
+}
+
+-(User*) registerEmail:(NSString*) email AndPassword:(NSString*) pass AndPlate:(NSString*) plate{
+    if(![self validateEmail:email]){ //) || pass.length < 8){
+        //password was too short, o|| pass.length < 8r email did not validate.
+        return nil;
+    }
+    NSArray* keys = [NSArray arrayWithObjects:@"email", @"password", @"creditCard", nil];
+    NSArray* value = [NSArray arrayWithObjects:email, pass, plate, nil];
+    NSDictionary* info = [NSDictionary dictionaryWithObjects:value forKeys:keys];
+    NSError *error;
+    NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
+    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.user/pilotregister"];
+    [request setMethod:RKRequestMethodPOST];
+    [request setHTTPBody:jsonData];
+    [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
+    RKResponse* response = [request sendSynchronously];
+    BOOL regResults = [Parser parseRegisterResponseString:[response bodyAsString]];
+    if(regResults){
+        NSArray* keys = [NSArray arrayWithObjects:@"email", @"password", nil];
+        NSArray* value = [NSArray arrayWithObjects:email, pass, nil];
+        NSDictionary* info = [NSDictionary dictionaryWithObjects:value forKeys:keys];
+        NSError *error;
+        NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
+        RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.auth"];
+        [request setMethod:RKRequestMethodPOST];
+        [request setHTTPBody:jsonData];
+        [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
+        RKResponse* response = [request sendSynchronously];
+        NSDictionary* results = [Parser parseUserObjectString:[response bodyAsString]];
+        if(results!=nil){
+            //        //UNUSED
+            //        NSString* ccStub = [results objectForKey:@"creditCardStub"];
+            //        NSNumber* parkState = [results objectForKey:@"parkState"];
+            //        NSString* city = [results objectForKey:@"city"];
+            //        NSString* addr = [results objectForKey:@"addr"];
+            //        NSString* license = [results objectForKey:@"license"];
+            //        NSString* name = [results objectForKey:@"name"];
+            //        NSString* email = [results objectForKey:@"email"];
+            //        NSNumber* balance = [results objectForKey:@"balance"];
+            //        NSNumber* payment = [results objectForKey:@"payment"];
+            //        //unused
+            
+            User* user = (User*)[NSEntityDescription insertNewObjectForEntityForName:@"User" inManagedObjectContext:dataLayer.managedObjectContext];
+            
+            [user setAddress:@"I Live in the lab."];
+            [user setName:@"Mike.  Mike Bond."];
+            [user setEmail:email];  //this should be returned by server.
+            [user setLicense:@"'d \"To Kill\""];
+            [user setCity:@"Cambridge"];
+            [user setPayment:[NSNumber numberWithInt:0]];
+            [user setUid:[NSNumber numberWithLong:0]];
+            [user setBalance:[NSNumber numberWithInt:100]];
+            NSError* error;
+            if(![dataLayer.managedObjectContext save:&error]){
+                //logged in, but something wrong wtih core data. cannot store user.
+                [dataLayer.managedObjectContext deleteObject:user];
+                return nil;
+            }else{
+                return user;
+            }
+        }else{
+            //bad login
+            return nil;
+        }
+
+    }else{
+        return nil;
+    }
+    
 }
 @end

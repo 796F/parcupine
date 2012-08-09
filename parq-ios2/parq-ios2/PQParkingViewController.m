@@ -151,6 +151,7 @@ typedef enum {
     }else{
         [self startTimerButtonAction];
     }
+    
 }
 
 -(void) startTimerButtonAction{
@@ -219,6 +220,7 @@ typedef enum {
             extendButton.enabled = NO;
         }
     }
+    [networkLayer sendLogs];
 }
 
 #pragma mark - UIAlertViewDelegate
@@ -369,6 +371,7 @@ typedef enum {
         self.navigationItem.leftBarButtonItem = nil;
     }
     self.navigationItem.rightBarButtonItem = nil;
+    [networkLayer sendLogs];
 }
 
 #pragma mark - Table View actions
@@ -424,7 +427,9 @@ typedef enum {
 #pragma mark - UIViewController
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"showParkedCar"]) {
-//        PQParkedCarMapViewController *parkedCarVC = [segue destinationViewController];
+        PQParkedCarMapViewController *parkedCarVC = [segue destinationViewController];
+        [parkedCarVC setSpotInfo:spotInfo];
+        [parkedCarVC setParent:self.parent];
     }
 }
 
@@ -443,6 +448,7 @@ typedef enum {
     } else { // parkState == kExtendingParkState
         [self parkedAfterExtending];
     }
+    [networkLayer sendLogs];
 }
 
 - (IBAction)doneWithPicker:(id)sender {

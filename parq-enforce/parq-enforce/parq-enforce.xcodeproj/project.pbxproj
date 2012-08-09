@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FC25D51015CCA9C30025029C /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC25D50F15CCA9C30025029C /* AVFoundation.framework */; };
 		FCA9913915CC9E0200879A10 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCA9913815CC9E0200879A10 /* UIKit.framework */; };
 		FCA9913B15CC9E0200879A10 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCA9913A15CC9E0200879A10 /* Foundation.framework */; };
 		FCA9913D15CC9E0200879A10 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCA9913C15CC9E0200879A10 /* CoreGraphics.framework */; };
@@ -15,9 +16,12 @@
 		FCA9914715CC9E0200879A10 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = FCA9914615CC9E0200879A10 /* main.m */; };
 		FCA9914B15CC9E0200879A10 /* PQAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = FCA9914A15CC9E0200879A10 /* PQAppDelegate.m */; };
 		FCA9914E15CC9E0200879A10 /* parq_enforce.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = FCA9914C15CC9E0200879A10 /* parq_enforce.xcdatamodeld */; };
+		FCA9915815CC9E7300879A10 /* PQEnforceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FCA9915715CC9E7300879A10 /* PQEnforceViewController.m */; };
+		FCA9916615CCA41800879A10 /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FCA9916815CCA41800879A10 /* MainStoryboard.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		FC25D50F15CCA9C30025029C /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		FCA9913415CC9E0200879A10 /* parq-enforce.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "parq-enforce.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FCA9913815CC9E0200879A10 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		FCA9913A15CC9E0200879A10 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -30,6 +34,9 @@
 		FCA9914915CC9E0200879A10 /* PQAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PQAppDelegate.h; sourceTree = "<group>"; };
 		FCA9914A15CC9E0200879A10 /* PQAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PQAppDelegate.m; sourceTree = "<group>"; };
 		FCA9914D15CC9E0200879A10 /* parq_enforce.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = parq_enforce.xcdatamodel; sourceTree = "<group>"; };
+		FCA9915615CC9E7300879A10 /* PQEnforceViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PQEnforceViewController.h; sourceTree = "<group>"; };
+		FCA9915715CC9E7300879A10 /* PQEnforceViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PQEnforceViewController.m; sourceTree = "<group>"; };
+		FCA9916715CCA41800879A10 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,6 +44,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FC25D51015CCA9C30025029C /* AVFoundation.framework in Frameworks */,
 				FCA9913915CC9E0200879A10 /* UIKit.framework in Frameworks */,
 				FCA9913B15CC9E0200879A10 /* Foundation.framework in Frameworks */,
 				FCA9913D15CC9E0200879A10 /* CoreGraphics.framework in Frameworks */,
@@ -50,6 +58,7 @@
 		FCA9912915CC9E0200879A10 = {
 			isa = PBXGroup;
 			children = (
+				FC25D50F15CCA9C30025029C /* AVFoundation.framework */,
 				FCA9914015CC9E0200879A10 /* parq-enforce */,
 				FCA9913715CC9E0200879A10 /* Frameworks */,
 				FCA9913515CC9E0200879A10 /* Products */,
@@ -82,6 +91,9 @@
 				FCA9914A15CC9E0200879A10 /* PQAppDelegate.m */,
 				FCA9914C15CC9E0200879A10 /* parq_enforce.xcdatamodeld */,
 				FCA9914115CC9E0200879A10 /* Supporting Files */,
+				FCA9916815CCA41800879A10 /* MainStoryboard.storyboard */,
+				FCA9915615CC9E7300879A10 /* PQEnforceViewController.h */,
+				FCA9915715CC9E7300879A10 /* PQEnforceViewController.m */,
 			);
 			path = "parq-enforce";
 			sourceTree = "<group>";
@@ -150,6 +162,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FCA9914515CC9E0200879A10 /* InfoPlist.strings in Resources */,
+				FCA9916615CCA41800879A10 /* MainStoryboard.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -163,6 +176,7 @@
 				FCA9914715CC9E0200879A10 /* main.m in Sources */,
 				FCA9914B15CC9E0200879A10 /* PQAppDelegate.m in Sources */,
 				FCA9914E15CC9E0200879A10 /* parq_enforce.xcdatamodeld in Sources */,
+				FCA9915815CC9E7300879A10 /* PQEnforceViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -175,6 +189,14 @@
 				FCA9914415CC9E0200879A10 /* en */,
 			);
 			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		FCA9916815CCA41800879A10 /* MainStoryboard.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				FCA9916715CCA41800879A10 /* en */,
+			);
+			name = MainStoryboard.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -235,6 +257,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "parq-enforce/parq-enforce-Prefix.pch";
 				INFOPLIST_FILE = "parq-enforce/parq-enforce-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -246,6 +269,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "parq-enforce/parq-enforce-Prefix.pch";
 				INFOPLIST_FILE = "parq-enforce/parq-enforce-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -270,6 +294,7 @@
 				FCA9915315CC9E0200879A10 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 

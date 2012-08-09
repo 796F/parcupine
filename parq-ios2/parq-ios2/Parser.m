@@ -17,12 +17,19 @@
     return nil;
 }
 
-
++(BOOL) parseRegisterResponseString:(NSString*) resp{
+    NSDictionary* results = [resp objectFromJSONString];
+    if([[results objectForKey:@"resp"] isEqualToString:@"OK"]){
+        return YES;
+    }else{
+        return NO;
+    }
+}
 
 +(NSDictionary*) parseUserObjectString:(NSString *)jsonResponse{
     NSLog(@"RESPONSE >>> %@", jsonResponse);
     NSDictionary* results = [jsonResponse objectFromJSONString];
-    if([[results objectForKey:@"autherized"] boolValue]){
+    if([[results objectForKey:@"uid"] longValue] > 0){
         return results;
     }else{
         return nil;

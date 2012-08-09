@@ -13,6 +13,7 @@
 
 +(NSDictionary*) parseGridResponse:(NSString*) jsonResponse;
 +(NSDictionary*) parseUserObjectString:(NSString*) jsonResponse;
++(BOOL) parseRegisterResponseString:(NSString*) resp;
 +(BOOL) parseUpdateUserResponse:(NSString*) jsonResponse;
 +(BOOL) parseUnparkResponse:(NSString*) jsonResponse;
 +(NSDictionary*) parseParkResponse:(NSString*) jsonResponse;

@@ -156,6 +156,7 @@
 -(IBAction)signOutButtonPressed:(id)sender{
     [dataLayer logString:[NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__]];
     [dataLayer setLoggedIn:NO];
+    [dataLayer.managedObjectContext deleteObject:[dataLayer fetchObjectsForEntityName:@"User" withPredicate:nil].allObjects.lastObject];
     self.parent.view.hidden = YES;
     [self dismissModalViewControllerAnimated:YES];
       
@@ -195,6 +196,7 @@
  
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    [networkLayer sendLogs];
 }
 
 - (void)viewDidUnload{

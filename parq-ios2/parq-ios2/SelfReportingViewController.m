@@ -35,22 +35,21 @@
         // try to dequeue an existing pin view first
         static NSString* parkedCarAnnotationIdentifier = @"parkedCarAnnotationIdentifier";
         // if an existing pin view was not available, create one
-        MKPinAnnotationView* customPinView = [[MKPinAnnotationView alloc]
+        MKAnnotationView* customPinView = [[MKAnnotationView alloc]
                                               initWithAnnotation:annotation reuseIdentifier:parkedCarAnnotationIdentifier];
         //customPinView.pinColor = MKPinAnnotationColorPurple;
         NSLog(@"uitpe %d\n", UIType);
         if(UIType ==1 || UIType == 3){
             customPinView.image = [UIImage imageNamed:@"unknown.png"];
-            customPinView.tag = 1;
-        }else{
             customPinView.tag = 0;
+        }else{
+            //type 0, force report start on car.
             customPinView.image = [UIImage imageNamed:@"car.png"];
+            customPinView.tag = 1;
         }
-        
-        customPinView.animatesDrop = YES;
+        //customPinView.animatesDrop = YES;
         customPinView.canShowCallout = YES;
         return customPinView;
-        
     }
     
     return nil;
@@ -95,8 +94,30 @@
     [self dismissModalViewControllerAnimated:YES];
 }
 -(IBAction)submitButtonPressed:(id)sender{
-    //SUBMIT THE INFORMATION TO SERVER. 
-    //[networkLayer submitAvailablilityInformation]
+    //SUBMIT THE INFORMATION TO SERVER.
+    NSArray* sortedAnno = [[NSArray arrayWithArray:mapView.annotations] sortedArrayUsingComparator:^NSComparisonResult(PQParkedCarAnnotation* obj1, PQParkedCarAnnotation* obj2) {
+        int id1 = [[[obj1.title componentsSeparatedByString:@":"] objectAtIndex:0] intValue];
+        int id2 = [[[obj2.title componentsSeparatedByString:@":"] objectAtIndex:0] intValue];
+        if(id1 < id2){
+            return -1;
+        } else {
+            return 1;
+        }
+    }];
+    NSMutableArray* orderedAvailability = [[NSMutableArray alloc] initWithCapacity:6];
+    for(PQParkedCarAnnotation* anno in sortedAnno){
+        if([anno.title hasSuffix:@"Open"]){
+            [orderedAvailability addObject:[NSNumber numberWithInt:1]];
+        }else{
+            [orderedAvailability addObject:[NSNumber numberWithInt:0]];
+        }
+    }
+    BOOL reportOutcome = [networkLayer submitAvailablilityInformation:orderedAvailability];
+    if(reportOutcome){
+        //server got report
+    }else{
+        //fail
+    }
     [parent startTimerButtonAction];
     [self dismissModalViewControllerAnimated:YES];
 }
@@ -113,6 +134,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    if(!networkLayer){
+        networkLayer = ((PQAppDelegate*)[[UIApplication sharedApplication] delegate]).networkLayer;
+    }
     UITapGestureRecognizer* tgs = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
     [self.mapView addGestureRecognizer:tgs];
     CLLocationCoordinate2D point = {42.357820, -71.094310};

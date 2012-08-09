@@ -34,7 +34,7 @@
         parent.view.hidden = NO;
         [self dismissModalViewControllerAnimated:YES];
     }else{
-        //unhide email/password box.  
+        //unhide email/password box.
         passwordField.hidden = NO;
         emailField.hidden = NO;
         [dataLayer setLoggedIn:NO];
@@ -65,9 +65,14 @@
         [studyOver show];
         return NO;
     }
-
+    User* user;
     //call network layer to login.
-    User* user = [networkLayer loginEmail:emailField.text AndPassword:passwordField.text];
+    if(licensePlateField.hidden == NO){
+        //registering
+        user = [networkLayer registerEmail:emailField.text AndPassword:passwordField.text AndPlate:licensePlateField.text];
+    }else{
+        user = [networkLayer loginEmail:emailField.text AndPassword:passwordField.text];
+    }
     if(user!=nil){
         //correct!
         return YES;
@@ -116,9 +121,9 @@
 //        NSString* password = [passwordField text];
 //        NSString* email = [emailField text];
 //        NSString* license = licensePlateField.text;
-        [self removeKeyboard:nil];
-        [licensePlateField resignFirstResponder];
         [self submitButtonPressed:self];
+        [licensePlateField resignFirstResponder];
+        [self removeKeyboard:nil];
     }
     return YES;
 }

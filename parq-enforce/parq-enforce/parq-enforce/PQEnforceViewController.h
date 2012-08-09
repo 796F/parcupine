@@ -7,7 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <AVFoundation/AVFoundation.h>
 
-@interface PQEnforceViewController : UIViewController
+@interface PQEnforceViewController : UIViewController <AVCaptureVideoDataOutputSampleBufferDelegate>{
+    
+}
+
+@property (weak, nonatomic) IBOutlet UILabel* text;
+@property (weak, nonatomic) IBOutlet UIView* cameraView;
 
 @end
