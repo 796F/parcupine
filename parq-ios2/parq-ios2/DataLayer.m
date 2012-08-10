@@ -28,6 +28,20 @@
 
 #pragma mark - plist calls
 
+-(void) setSpotInfo:(SpotInfo*) spotInfo{
+    NSData* objData = [NSKeyedArchiver archivedDataWithRootObject:spotInfo];
+    NSString* path = [self getPlistPath];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
+    [data setObject:objData forKey:@"spotInfo"];
+    [data writeToFile:path atomically:YES];
+}
+
+-(SpotInfo*) getSpotInfo{
+    NSString* path = [self getPlistPath];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
+    return [NSKeyedUnarchiver unarchiveObjectWithData:[data objectForKey:@"spotInfo"]];
+}
+
 -(void) setSpotId:(NSNumber*) spotId{
     //set the currelyt parked spot's id for restore use.
     NSLog(@"setting spotId = %lu\n", [spotId longValue]);
@@ -42,6 +56,18 @@
     return [data objectForKey:@"spotId"];
 }
 
+-(void) setStartTime:(NSDate*) startTime{
+    NSString* path = [self getPlistPath];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
+    [data setObject:startTime forKey:@"startTime"];
+    [data writeToFile:path atomically:YES];
+}
+-(NSDate*) getStartTime{
+    NSString* path = [self getPlistPath];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
+    return [data objectForKey:@"startTime"];
+}
+
 -(void) setEndTime:(NSDate*) endTime{
     NSLog(@"setting endTime = %f\n", [endTime timeIntervalSince1970]);
     NSString* path = [self getPlistPath];
@@ -52,7 +78,12 @@
 -(NSDate*) getEndTime{
     NSString* path = [self getPlistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
-    return [data objectForKey:@"endTime"];
+    NSDate* endDate = [data objectForKey:@"endTime"];
+    if (endDate == nil) {
+        return [NSDate dateWithTimeIntervalSinceNow:-9000];
+    }else{
+        return endDate;
+    }
 }
 
 -(void) logString:(NSString*) string{

@@ -2055,9 +2055,19 @@ typedef struct{
 
 -(void) checkLoggedIn{
     if([dataLayer isLoggedIn]){
-        //already logged in.  dont' hsow login screen.  
-        self.view.hidden = NO;
-        NSLog(@"reveal the map\n");
+        //already logged in.  dont' hsow login screen.
+        NSDate* endTime = [dataLayer getEndTime];
+        if([endTime laterDate:[NSDate date]] == endTime){
+            //parked, keep map hidden, show timer.
+            self.spotInfo = [dataLayer getSpotInfo];
+            [self parkNow];
+//            UIAlertView* testAlert = [[UIAlertView alloc] initWithTitle:@"RESTORE APP YO" message:@"YOU DIED, WE HEAL YOU" delegate:self cancelButtonTitle:@"Yayyy" otherButtonTitles: nil];
+//            [testAlert show];
+        }else{
+            //not parked, show map.
+            self.view.hidden = NO;
+            NSLog(@"reveal the map\n");
+        }
     }else{
         self.view.hidden = YES;
         NSLog(@"hide the map\n");
@@ -2100,7 +2110,8 @@ typedef struct{
 - (void)viewDidLoad{
 
     [super viewDidLoad];
-    
+
+
     if(!dataLayer){
         //set pointer to data layer.
         dataLayer = ((PQAppDelegate*)[[UIApplication sharedApplication] delegate]).dataLayer;
@@ -2114,6 +2125,9 @@ typedef struct{
         locationManager = ((PQAppDelegate*)[[UIApplication sharedApplication] delegate]).locationManager;
         locationManager.delegate = self;
     }
+    
+    //initially hide, incase app was purged or user not logged in.
+    self.view.hidden = YES;
     
     if(gridMicroBlockMap==nil) gridMicroBlockMap = [[NSMutableDictionary alloc] init];
     if(spotMicroBlockMap==nil) spotMicroBlockMap = [[NSMutableDictionary alloc] init];
@@ -2184,7 +2198,7 @@ typedef struct{
 //                                             selector:@selector(keyboardAppearing:) 
 //                                                 name:UIKeyboardWillShowNotification
 //                                               object:nil];
-//    
+    
     user_loc_isGood = false;
     isDroppingPin = false;
 }

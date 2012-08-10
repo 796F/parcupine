@@ -8,7 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
-@interface SpotInfo : NSObject
+@interface SpotInfo : NSObject <NSCoding>{
+    
+}
 
 @property (nonatomic, retain) NSNumber* spotId;
 @property (nonatomic, retain) NSNumber* spotNumber;

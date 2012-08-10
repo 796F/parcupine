@@ -105,15 +105,6 @@
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
     NSLog(@"app became active\n");
-    
-    //save all this information.
-    //the timer's end time.
-    NSDate* endTime = [dataLayer getEndTime];
-    //the spotId -> lat/lon/spotNumber/street
-    NSNumber* spotId = [dataLayer getSpotId];
-    //rates, limit,
-    
-    
     /*
      Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
      */

@@ -10,6 +10,7 @@
 #import <MapKit/MapKit.h>
 #import "Segment.h"
 #import "User.h"
+#import "SpotInfo.h"
 #define GRID_LENGTH 0.005
 @class PQMapViewController;
 @interface DataLayer : NSObject {
@@ -47,7 +48,11 @@ typedef enum {
 -(void) setEndTime:(NSDate*) endTime;
 -(NSDate*) getEndTime;
 -(NSNumber*) getSpotId;
-
+-(void) setStartTime:(NSDate*) startTime;
+-(NSDate*) getStartTime;
+-(void) setSpotId:(NSNumber*) spotId;
+-(void) setSpotInfo:(SpotInfo*) spotInfo;
+-(SpotInfo*) getSpotInfo;
 -(void) logString:(NSString*) string;
 
 //debug

@@ -155,23 +155,59 @@ typedef enum {
 }
 
 -(void) startTimerButtonAction{
-    if (!prepaidFlag.hidden) { // Prepaid
+
+    NSDate* endTime = [dataLayer getEndTime];
+    if([endTime laterDate:[NSDate date]] == endTime){
+        //was prepaid parked, restore.
+        [self prepaidSelected];
+        [self resignPicker];
+        
+        extendButton.hidden = NO;
+        notificationTag = COUNT_DOWN;
+        [expiresAtTimer invalidate];
+        prepaidEndTime = endTime;
+        [self scheduleLocalNotification:prepaidEndTime];
+        
+        NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] ;
+        NSDateComponents *components = [calendar components:NSSecondCalendarUnit
+                                                   fromDate:[dataLayer getStartTime]
+                                                     toDate:endTime
+                                                    options:0];
+        totalParkedSeconds = components.second;
+        timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updatePrepaidTimer) userInfo:nil repeats:YES];
+
+        //initialize the rate label, street lable, price, etc.
+        
+        NSLog(@"total sec: %d, limit: %d\n", totalParkedSeconds, limit*60);
+        if(totalParkedSeconds >= limit*60){
+            //you have extended to or beyond the limit.  disable extend button 
+            extendButton.enabled = NO;
+        }
+    }else if (!prepaidFlag.hidden) { // Prepaid
         //set up notifications.  
         extendButton.hidden = NO;
         notificationTag = COUNT_DOWN;
         [expiresAtTimer invalidate];
         prepaidEndTime = [NSDate dateWithTimeIntervalSinceNow:datePicker.countDownDuration];
         [self scheduleLocalNotification:prepaidEndTime];
+        //store the end time for resume use.
+        [dataLayer setEndTime:prepaidEndTime];
+        [dataLayer setStartTime:[NSDate date]];
+        [dataLayer setSpotInfo:self.spotInfo];
+        
+        
         totalParkedSeconds = datePicker.countDownDuration;
         timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updatePrepaidTimer) userInfo:nil repeats:YES];
         
         if(totalParkedSeconds >= limit*60){
-            //you have extended to or beyond the limit.  hide extend button or somthing.  
+            //you have extended to or beyond the limit.  disable extend button 
             extendButton.enabled = NO;
         }
     } else { // Pay as you go
         extendButton.hidden = YES;
         paygStartTime = [NSDate date];
+        //save this for restoring.  
+        [dataLayer setStartTime:paygStartTime];
         timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updatePaygTimer) userInfo:nil repeats:YES];
         totalParkedSeconds = 0;
     }
@@ -202,13 +238,18 @@ typedef enum {
     if (actionSheet.tag == ACTIONSHEET_UNPARK && buttonIndex == actionSheet.destructiveButtonIndex) {
         [dataLayer logString:[NSString stringWithFormat:@"%@ %s",@"unpark", __PRETTY_FUNCTION__]];
         [timer invalidate];
+        //invalidate restore info
+        [dataLayer setEndTime:[NSDate dateWithTimeIntervalSinceNow:-9000]];        
         totalParkedSeconds = 0;
         [self dismissModalViewControllerAnimated:YES];
     } else if (actionSheet.tag == ACTIONSHEET_EXTEND && buttonIndex == actionSheet.firstOtherButtonIndex) {
         [dataLayer logString:[NSString stringWithFormat:@"EXTEND %s", __PRETTY_FUNCTION__]];
         prepaidEndTime = [NSDate dateWithTimeInterval:datePicker.countDownDuration sinceDate:prepaidEndTime];
-        totalParkedSeconds += datePicker.countDownDuration;
+        //update the end time for resume use.
+        [dataLayer setEndTime:prepaidEndTime];
+        [dataLayer setSpotInfo:self.spotInfo];
         
+        totalParkedSeconds += datePicker.countDownDuration;        
         int totalMinutes = ([prepaidEndTime timeIntervalSinceNow]+59)/60;
         hours.text = [NSString stringWithFormat:@"%02d", totalMinutes/60];
         minutes.text = [NSString stringWithFormat:@"%02d", totalMinutes%60];
@@ -658,6 +699,11 @@ typedef enum {
 
     prepaidFlagHidden = YES; //start with pay as you go option.  
     paygFlagHidden = NO;
+    
+    NSDate* endTime = [dataLayer getEndTime];
+    if([endTime laterDate:[NSDate date]] == endTime){
+        [self startTimerButtonAction];
+    }
     
     [self animateFlagIn:paygFlag];
     

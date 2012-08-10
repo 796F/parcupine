@@ -10,6 +10,7 @@
 #import <RestKit/RestKit.h>
 #import "DataLayer.h"
 #import "NetworkLayer.h"
+#import "SpotInfo.h"
 
 @interface PQAppDelegate : UIResponder <UIApplicationDelegate>{
     NSManagedObjectModel *managedObjectModel;
