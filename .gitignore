@@ -3,3 +3,6 @@
 */target/*
 */.settings/*
 *.settings*
+*.classpath*
+*build*
+parq-ios/*

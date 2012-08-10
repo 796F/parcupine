@@ -104,22 +104,33 @@
             return 1;
         }
     }];
+    BOOL badReport = NO;
     NSMutableArray* orderedAvailability = [[NSMutableArray alloc] initWithCapacity:6];
     for(PQParkedCarAnnotation* anno in sortedAnno){
         if([anno.title hasSuffix:@"Open"]){
             [orderedAvailability addObject:[NSNumber numberWithInt:1]];
-        }else{
+        }else if([anno.title hasSuffix:@"Taken"]){
             [orderedAvailability addObject:[NSNumber numberWithInt:0]];
+        }else{
+            //not everything was tapped.
+            badReport = YES;
         }
     }
-    BOOL reportOutcome = [networkLayer submitAvailablilityInformation:orderedAvailability];
-    if(reportOutcome){
-        //server got report
+    
+    if(badReport){
+        //alert that they need to fill everything in.
+        UIAlertView* fillAllAlert = [[UIAlertView alloc] initWithTitle:@"Uh Oh!" message:@"You missed a spot" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+        [fillAllAlert show];
     }else{
-        //fail
+        BOOL reportOutcome = [networkLayer submitAvailablilityInformation:orderedAvailability];
+        if(reportOutcome){
+            //server got report
+        }else{
+            //fail
+        }
+        [parent startTimerButtonAction];
+        [self dismissModalViewControllerAnimated:YES];
     }
-    [parent startTimerButtonAction];
-    [self dismissModalViewControllerAnimated:YES];
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -167,14 +178,26 @@
 }
 
 -(NSArray*) loadSpots{
-    return [NSArray arrayWithObjects:
-            @"42.357767, -71.094471, 1:",  
-            @"42.357789, -71.094409, 2:", 
-            @"42.357812, -71.094344, 3:", 
-            @"42.357838, -71.094275, 4:", 
-            @"42.357855, -71.094215, 5:", 
-            @"42.357881, -71.094151, 6:",
-            nil];
+    if(UIType == 0 || UIType == 1){
+        return [NSArray arrayWithObjects:
+                @"42.357767, -71.094471, 1:",
+                @"42.357789, -71.094409, 2:",
+                @"42.357812, -71.094344, 3:",
+                @"42.357838, -71.094275, 4:",
+                @"42.357855, -71.094215, 5:",
+                @"42.357881, -71.094151, 6:",
+                nil];
+    }else{
+        return [NSArray arrayWithObjects:
+                @"42.357767, -71.094471, 1:Taken",
+                @"42.357789, -71.094409, 2:Taken",
+                @"42.357812, -71.094344, 3:Taken",
+                @"42.357838, -71.094275, 4:Taken",
+                @"42.357855, -71.094215, 5:Taken",
+                @"42.357881, -71.094151, 6:Taken",
+                nil];
+    }
+    
 }
 
 @end

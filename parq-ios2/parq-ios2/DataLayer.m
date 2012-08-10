@@ -28,6 +28,33 @@
 
 #pragma mark - plist calls
 
+-(void) setSpotId:(NSNumber*) spotId{
+    //set the currelyt parked spot's id for restore use.
+    NSLog(@"setting spotId = %lu\n", [spotId longValue]);
+    NSString* path = [self getPlistPath];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
+    [data setObject:spotId forKey:@"spotId"];
+    [data writeToFile:path atomically:YES];
+}
+-(NSNumber*) getSpotId{
+    NSString* path = [self getPlistPath];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
+    return [data objectForKey:@"spotId"];
+}
+
+-(void) setEndTime:(NSDate*) endTime{
+    NSLog(@"setting endTime = %f\n", [endTime timeIntervalSince1970]);
+    NSString* path = [self getPlistPath];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
+    [data setObject:endTime forKey:@"endTime"];
+    [data writeToFile:path atomically:YES];
+}
+-(NSDate*) getEndTime{
+    NSString* path = [self getPlistPath];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
+    return [data objectForKey:@"endTime"];
+}
+
 -(void) logString:(NSString*) string{
     CLLocationManager* locationManager = ((PQAppDelegate*)[[UIApplication sharedApplication] delegate]).locationManager;
     NSArray *documentPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
