@@ -584,7 +584,15 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 				SupportScriptForDaoTesting.parkingLocationNameMain, SupportScriptForDaoTesting.spaceNameMain);
 		
 		addRequest.setUserId(user.getUserID());
-		addRequest.setSpaceId(pSpace.getSpaceId());
+		addRequest.setSpaceIds(new ArrayList<Long>());
+		// add same space id 6 times
+		addRequest.getSpaceIds().add(pSpace.getSpaceId());
+		addRequest.getSpaceIds().add(pSpace.getSpaceId());
+		addRequest.getSpaceIds().add(pSpace.getSpaceId());
+		addRequest.getSpaceIds().add(pSpace.getSpaceId());
+		addRequest.getSpaceIds().add(pSpace.getSpaceId());
+		addRequest.getSpaceIds().add(pSpace.getSpaceId());
+		// end of add
 		addRequest.setScore1((int)(Math.random() * 1000));
 		addRequest.setScore2((int)(Math.random() * 1000));
 		addRequest.setScore3((int)(Math.random() * 1000));
@@ -611,7 +619,12 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		assertNotNull(userReport2.getReportDateTime());
 		System.out.println(userReport2.getReportDateTime());
 		assertEquals(addRequest.getUserId(), userReport2.getUserId());
-		assertEquals(addRequest.getSpaceId(), userReport2.getSpaceId());
+		assertEquals(addRequest.getSpaceIds().get(0), userReport2.getSpaceIds().get(0));
+		assertEquals(addRequest.getSpaceIds().get(1), userReport2.getSpaceIds().get(1));
+		assertEquals(addRequest.getSpaceIds().get(2), userReport2.getSpaceIds().get(2));
+		assertEquals(addRequest.getSpaceIds().get(3), userReport2.getSpaceIds().get(3));
+		assertEquals(addRequest.getSpaceIds().get(4), userReport2.getSpaceIds().get(4));
+		assertEquals(addRequest.getSpaceIds().get(5), userReport2.getSpaceIds().get(5));
 		assertEquals(addRequest.getScore1(), userReport2.getScore1());
 		assertEquals(addRequest.getScore2(), userReport2.getScore2());
 		assertEquals(addRequest.getScore3(), userReport2.getScore3());

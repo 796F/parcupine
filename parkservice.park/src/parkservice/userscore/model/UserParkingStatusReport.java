@@ -1,6 +1,7 @@
 package parkservice.userscore.model;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -9,7 +10,8 @@ public class UserParkingStatusReport {
 
 	private long reportId;
 	private long userId;
-	private long spaceId;
+	private List<Long> spaceIds;
+	private List<String> status;
 	private Date reportDateTime;
 	private int score1;
 	private int score2;
@@ -34,12 +36,12 @@ public class UserParkingStatusReport {
 		this.userId = userId;
 	}
 
-	public long getSpaceId() {
-		return spaceId;
+	public List<Long> getSpaceIds() {
+		return spaceIds;
 	}
 
-	public void setSpaceId(long spaceId) {
-		this.spaceId = spaceId;
+	public void setSpaceIds(List<Long> spaceIds) {
+		this.spaceIds = spaceIds;
 	}
 
 	public int getScore1() {
@@ -98,4 +100,11 @@ public class UserParkingStatusReport {
 		return reportDateTime;
 	}
 
+	public List<String> getStatus() {
+		return status;
+	}
+
+	public void setStatus(List<String> status) {
+		this.status = status;
+	}
 }

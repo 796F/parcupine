@@ -733,19 +733,36 @@ public class ParkResource {
 		
 		String status = "AVAILABLE";
 		Date curTime = new Date(System.currentTimeMillis());
+		
+		long[] spaceIds =  new long[request.getSpaceIds().size()];
+		for (int i = 0; i < request.getSpaceIds().size(); i ++) {
+			spaceIds[i] = request.getSpaceIds().get(i);
+		}
 		List<ParkingInstance> parkingInstance = 
-			statusDao.getParkingStatusBySpaceIds(new long[]{request.getSpaceId()});
-		if (parkingInstance != null && 
-				!parkingInstance.isEmpty() && 
-				parkingInstance.get(0).getParkingEndTime().compareTo(curTime) > 0) {
-			status = "PARKED";
+			statusDao.getParkingStatusBySpaceIds(spaceIds);
+		
+		List<Long> spaces = new ArrayList<Long>();
+		List<String> statuses = new ArrayList<String>(); 
+		
+		for (int i = 0; i < spaceIds.length; i++ ) {
+			spaces.add(spaceIds[i]);
+			status = "AVAILABLE";
+			// use a loop to search for the space status
+			for (int j = 0; j < parkingInstance.size(); j++) {
+				if (parkingInstance.get(j).getSpaceId() == spaceIds[i] &&
+						parkingInstance.get(j).getParkingEndTime().compareTo(curTime) > 0) {
+					status = "PARKED";
+				}
+			}
+			statuses.add(status);
 		}
 		
+		
 		UserSelfReporting report = new UserSelfReporting();
-		report.setParkingSpaceStatus(status);
 		report.setReportDateTime(curTime);
 		report.setUserId(request.getUserId());
-		report.setSpaceId(request.getSpaceId());
+		report.setSpaceIds(spaces);
+		report.setParkingSpaceStatus(statuses);
 		report.setScore1(request.getScore1());
 		report.setScore2(request.getScore2());
 		report.setScore3(request.getScore3());
@@ -774,7 +791,8 @@ public class ParkResource {
 		for (UserSelfReporting sReport : selfReports) {
 			UserParkingStatusReport report = new UserParkingStatusReport();
 			report.setReportId(sReport.getReportId());
-			report.setSpaceId(sReport.getSpaceId());
+			report.setSpaceIds(sReport.getSpaceIds());
+			report.setStatus(sReport.getParkingSpaceStatus());
 			report.setUserId(sReport.getUserId());
 			report.setReportDateTime(sReport.getReportDateTime());
 			report.setScore1(sReport.getScore1());

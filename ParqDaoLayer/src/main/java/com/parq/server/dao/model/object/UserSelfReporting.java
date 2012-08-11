@@ -1,12 +1,13 @@
 package com.parq.server.dao.model.object;
 
 import java.util.Date;
+import java.util.List;
 
 public class UserSelfReporting {
 	private long reportId;
 	private long userId;
-	private long spaceId;
-	private String parkingSpaceStatus;
+	private List<Long> spaceIds;
+	private List<String> parkingSpaceStatus;
 	private Date reportDateTime;
 	private int score1;
 	private int score2;
@@ -31,19 +32,19 @@ public class UserSelfReporting {
 		this.userId = userId;
 	}
 
-	public long getSpaceId() {
-		return spaceId;
+	public List<Long> getSpaceIds() {
+		return spaceIds;
 	}
 
-	public void setSpaceId(long spaceId) {
-		this.spaceId = spaceId;
+	public void setSpaceIds(List<Long> spaceIds) {
+		this.spaceIds = spaceIds;
 	}
 
-	public String getParkingSpaceStatus() {
+	public List<String> getParkingSpaceStatus() {
 		return parkingSpaceStatus;
 	}
 
-	public void setParkingSpaceStatus(String parkingSpaceStatus) {
+	public void setParkingSpaceStatus(List<String> parkingSpaceStatus) {
 		this.parkingSpaceStatus = parkingSpaceStatus;
 	}
 

@@ -1,5 +1,6 @@
 package com.parq.server.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.parq.server.dao.model.object.ParkingSpace;
@@ -17,6 +18,7 @@ public class TestMiscellaneousDao extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		miscDao = new MiscellaneousDao();
+		SupportScriptForDaoTesting.insertMainTestDataSet();
 	}
 	
 	public void testGetNextCount() {
@@ -30,7 +32,7 @@ public class TestMiscellaneousDao extends TestCase {
 	}
 	
 	public void testGetUserReportWithNoReport() {
-		List<UserSelfReporting> report =  miscDao.getUserSelfReportingHistoryForUser(14);
+		List<UserSelfReporting> report =  miscDao.getUserSelfReportingHistoryForUser(1000);
 		assertNotNull(report);
 		assertTrue(report.isEmpty());
 	}
@@ -45,8 +47,12 @@ public class TestMiscellaneousDao extends TestCase {
 		
 		UserSelfReporting userReport = new UserSelfReporting();
 		userReport.setUserId(user.getUserID());
-		userReport.setSpaceId(pSpace.getSpaceId());
-		userReport.setParkingSpaceStatus(parkingStatus);
+		userReport.setSpaceIds(new ArrayList<Long>());
+		userReport.setParkingSpaceStatus(new ArrayList<String>());
+		for (int i = 0; i < 6; i++) {
+			userReport.getSpaceIds().add(pSpace.getSpaceId());
+			userReport.getParkingSpaceStatus().add(parkingStatus);
+		}
 		userReport.setScore1(1);
 		userReport.setScore2(3);
 		userReport.setScore3(5);
@@ -65,8 +71,14 @@ public class TestMiscellaneousDao extends TestCase {
 		assertNotNull(userReport2.getReportDateTime());
 		System.out.println(userReport2.getReportDateTime());
 		assertEquals(userReport.getUserId(), userReport2.getUserId());
-		assertEquals(userReport.getSpaceId(), userReport2.getSpaceId());
-		assertEquals(userReport.getParkingSpaceStatus(), userReport2.getParkingSpaceStatus());
+		assertEquals(userReport.getSpaceIds().size(), userReport2.getSpaceIds().size());
+		for (int i = 0; i < userReport.getSpaceIds().size(); i ++) {
+			assertEquals(userReport.getSpaceIds().get(i), userReport2.getSpaceIds().get(i));
+		}
+		assertEquals(userReport.getParkingSpaceStatus().size(), userReport2.getParkingSpaceStatus().size());
+		for (int i = 0; i < userReport.getParkingSpaceStatus().size(); i ++) {
+			assertEquals(userReport.getParkingSpaceStatus().get(i), userReport2.getParkingSpaceStatus().get(i));
+		}
 		assertEquals(userReport.getScore1(), userReport2.getScore1());
 		assertEquals(userReport.getScore2(), userReport2.getScore2());
 		assertEquals(userReport.getScore3(), userReport2.getScore3());
@@ -86,8 +98,12 @@ public class TestMiscellaneousDao extends TestCase {
 		for (int i = 10; i < 100; i+=7){
 			UserSelfReporting userReport = new UserSelfReporting();
 			userReport.setUserId(user.getUserID());
-			userReport.setSpaceId(pSpace.getSpaceId());
-			userReport.setParkingSpaceStatus(parkingStatus);
+			userReport.setSpaceIds(new ArrayList<Long>());
+			userReport.setParkingSpaceStatus(new ArrayList<String>());
+			for (int j = 0; j < 6; j++) {
+				userReport.getSpaceIds().add(pSpace.getSpaceId());
+				userReport.getParkingSpaceStatus().add(parkingStatus);
+			}
 			userReport.setScore1(i+1);
 			userReport.setScore2(i+2);
 			userReport.setScore3(i+3);
@@ -107,8 +123,12 @@ public class TestMiscellaneousDao extends TestCase {
 			assertNotNull(userReport2.getReportDateTime());
 			System.out.println(userReport2.getReportDateTime());
 			assertEquals(user.getUserID(), userReport2.getUserId());
-			assertEquals(pSpace.getSpaceId(), userReport2.getSpaceId());
-			assertEquals(parkingStatus, userReport2.getParkingSpaceStatus());
+			assertEquals(6, userReport2.getSpaceIds().size());
+			assertEquals(6, userReport2.getParkingSpaceStatus().size());
+			for (int j = 0; j < 6; j++) {
+				assertEquals(pSpace.getSpaceId(), (long) userReport2.getSpaceIds().get(j));
+				assertEquals(parkingStatus, userReport2.getParkingSpaceStatus().get(j));
+			}
 			assertTrue(userReport2.getScore6() - userReport2.getScore5() == 1);
 			assertTrue(userReport2.getScore5() - userReport2.getScore4() == 1);
 			assertTrue(userReport2.getScore4() - userReport2.getScore3() == 1);

@@ -1,5 +1,7 @@
 package parkservice.userscore.model;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -9,7 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class AddUserReportingRequest {
 
 	private long userId;
-	private long spaceId;
+	private List<Long> spaceIds;
 	private int score1;
 	private int score2;
 	private int score3;
@@ -25,12 +27,12 @@ public class AddUserReportingRequest {
 		this.userId = userId;
 	}
 
-	public long getSpaceId() {
-		return spaceId;
+	public List<Long> getSpaceIds() {
+		return spaceIds;
 	}
 
-	public void setSpaceId(long spaceId) {
-		this.spaceId = spaceId;
+	public void setSpaceIds(List<Long> spaceIds) {
+		this.spaceIds = spaceIds;
 	}
 
 	public int getScore1() {
