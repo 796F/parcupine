@@ -136,6 +136,52 @@ public class ParkResource {
 		return soap.createCustomerProfileTransaction(SoapAPIUtilities.getMerchantAuthentication(), trans, null);
 	}
 
+	@POST
+	@Path("/pilotpark")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public ParkResponse pilotParkUser(JAXBElement<ParkRequest> info){
+		ParkResponse output = new ParkResponse();
+		ParkRequest in = info.getValue();
+		//verify user
+		
+		//store the start time (and end time if specified)  
+		
+		//mark the spot taken on db  
+		
+		//return okay if all is clear.
+		return output;
+	}
+	@POST
+	@Path("/pilotunpark")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public UnparkResponse pilotUnparkUser(JAXBElement<UnparkRequest> info){
+		UnparkResponse output = new UnparkResponse();
+		UnparkRequest in = info.getValue();
+		//verify user information
+		
+		//record the unpark action, updating the end time.  
+		
+		//mark the spot open on db  
+		
+		//return okay if all is clear.
+		return output;
+	}
+	@POST
+	@Path("/pilotrefill")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public RefillResponse pilotRefillTime(JAXBElement<RefillRequest> info){
+		RefillResponse  output = new RefillResponse ();
+		RefillRequest in = info.getValue();
+		//verify user information
+		
+		//update the end time for the parking reference.  
+
+		//return okay if all is clear.
+		return output;
+	}
 
 	@POST
 	@Path("/park")
