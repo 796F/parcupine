@@ -170,12 +170,12 @@
     
     //so we may use id and gps, or num and gps, etc.  
     SpotInfo* spot = [[SpotInfo alloc] init];
-    [spot setMaxTime:[NSNumber numberWithFloat:120]];
-    [spot setMinTime:[NSNumber numberWithFloat:15]];
-    [spot setMinuteInterval:[NSNumber numberWithFloat:1]];
-    [spot setRateCents:[NSNumber numberWithFloat:25]];
+    [spot setMaxTime:[NSNumber numberWithInt:120]];
+    [spot setMinTime:[NSNumber numberWithInt:15]];
+    [spot setMinuteInterval:[NSNumber numberWithInt:15]];
+    [spot setRateCents:[NSNumber numberWithInt:0]];
     [spot setStreetName:@"Howard St, MA"];
-
+    [spot setSpotId:[NSNumber numberWithInt:0]];
     [spot setSpotNumber:spotNum]; //this should come from server, act as a check.  
     
     return spot;
@@ -603,13 +603,17 @@
 }
 
 -(BOOL) parkUserWithSpotInfo:(SpotInfo*) spotInfo AndDuration:(int)duration{
-    NSArray* keys = [NSArray arrayWithObjects:@"userInfo", @"paymentType", @"chargeAmount",@"durationMinutes",@"spotId",@"uid", nil];
+    NSArray* keys = [NSArray arrayWithObjects:@"userInfo", @"paymentType", @"chargeAmount",@"durationMinutes",@"uid",@"spotId", nil];
     User* user = [dataLayer getUser];
-    NSDictionary* userInfo = [[NSDictionary alloc] initWithObjectsAndKeys:@"email",user.email, @"password",user.password,nil];
+    
+    NSDictionary* userInfo = [[NSDictionary alloc] initWithObjectsAndKeys:user.email,@"email", user.password,@"password",nil];
+    NSLog(@"userInfo: %@", userInfo.description);
     NSNumber* paymentType = [NSNumber numberWithInt:0];
     NSNumber* chargeAmount = [NSNumber numberWithInt:spotInfo.rateCents.integerValue*duration/spotInfo.minuteInterval.integerValue];
     NSNumber* durationMinutes = [NSNumber numberWithInt:duration/60];
-    NSArray* value = [NSArray arrayWithObjects:userInfo,paymentType , chargeAmount, durationMinutes,spotInfo.spotId, user.uid, nil];
+    
+    NSArray* value = [NSArray arrayWithObjects:userInfo,paymentType , chargeAmount, durationMinutes, user.uid,spotInfo.spotId, nil];
+    
     NSDictionary* info = [NSDictionary dictionaryWithObjects:value forKeys:keys];
     NSError *error;
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];

@@ -141,15 +141,83 @@ public class ParkResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public ParkResponse pilotParkUser(JAXBElement<ParkRequest> info){
+		Date start = new Date();
 		ParkResponse output = new ParkResponse();
 		ParkRequest in = info.getValue();
 		//verify user
-		
-		//store the start time (and end time if specified)  
-		
-		//mark the spot taken on db  
-		
-		//return okay if all is clear.
+		long uid = in.getUid();
+		//does user supplied info authenticate?
+		User user = innerAuthenticate(in.getUserInfo());
+		if(user != null && uid == user.getUserID()){
+			ParkingStatusDao psd = new ParkingStatusDao();
+			ParkingInstance ps = null;
+			try{
+				ps = psd.getUserParkingStatus(uid);
+			}catch (Exception e){}
+			//was user previously parked?
+			if(ps==null||ps.getParkingEndTime().compareTo(start)<0){
+
+				long spot_id = in.getSpotId();
+
+				//nowtime is after previous end time.  user was not parked.  
+				ParkingRateDao prd = new ParkingRateDao();
+				ParkingRate pr = null; 
+				try{
+					pr = prd.getParkingRateBySpaceId(spot_id);
+				}catch(Exception e){}
+				if(pr!=null){
+					int durationMinutes = in.getDurationMinutes();
+					int payment_amount = in.getChargeAmount();
+					int payment_type = in.getPaymentType();
+
+					int iterations = durationMinutes/(pr.getTimeIncrementsMins());
+					if(iterations*pr.getParkingRateCents()==payment_amount){
+						//if the price, duration, and rate supplied match up,
+						Date end = new Date(); //end is iterations of increment + old time.  
+						long msec = 1000*durationMinutes*60;
+						end.setTime(start.getTime()+msec);
+						ParkingInstance newPark = new ParkingInstance();
+						newPark.setPaidParking(true);
+						newPark.setParkingBeganTime(start);
+						newPark.setParkingEndTime(end);
+						newPark.setUserId(uid);
+						newPark.setSpaceId(spot_id);
+						boolean result = false;
+						try{
+							result = psd.addNewParkingAndPayment(newPark);
+						}catch(Exception e){
+							System.out.println("add error");
+						}
+						//then set output to ok
+						if(result){
+							ParkingInstance finalInstance = psd.getUserParkingStatus(uid);
+							output.setParkingReferenceNumber(finalInstance.getParkingRefNumber());
+							output.setEndTime(end.getTime());
+							output.setResp("OK");
+
+							try{
+								File file = new File("/user_logs/ParkRequests.txt");
+					            file.createNewFile();
+					            FileOutputStream fout = new FileOutputStream(file, true);
+								fout.write(("Park() asked at "+new Date() + " INFO: spot id=" + spot_id + " uid=" + uid).getBytes());
+								fout.close();
+							}catch (Exception e){//Catch exception if any
+								System.err.println("Error: " + e.getMessage());
+							}
+							
+						}else{
+							output.setResp("DAO_ERROR");
+						}
+					}
+				}else{
+					//rate for spot doesnt exist.  
+				}
+			}else{
+				//user is parked	
+			}
+		}else{
+			//user doesn't exist
+		}
 		return output;
 	}
 	@POST

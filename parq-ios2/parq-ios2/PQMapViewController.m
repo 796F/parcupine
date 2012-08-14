@@ -801,10 +801,11 @@ typedef struct{
             
             user distance from spot.  
             user's gps reported accuracy. */
-            
+
             spotInfo = [networkLayer getSpotInfoForId:[NSNumber numberWithLong:c.circle.objId] SpotNumber:[NSNumber numberWithInt:[c.title intValue]] GPS:&user_loc];
             [spotInfo setLatitude:[NSNumber numberWithDouble:desired_spot.coordinate.latitude]];
             [spotInfo setLongitude:[NSNumber numberWithDouble:desired_spot.coordinate.longitude]];
+            [spotInfo setSpotId:[NSNumber numberWithLong:desired_spot.objId]];
             
             if(user_loc_isGood && ![self pointA:&spot_loc isCloseToB:&user_loc]){
                 UIActionSheet *directionsActionSheet = [[UIActionSheet alloc] initWithTitle:[NSString stringWithFormat:@"Spot %@", c.title] delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles: @"Get Directions", @"Park Now", nil];

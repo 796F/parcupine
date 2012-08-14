@@ -6,3 +6,9 @@
 *.classpath*
 *build*
 parq-ios/*
+parq-enforce/parq-enforce/parq-enforce.xcodeproj/project.xcworkspace/
+parq-enforce/parq-enforce/parq-enforce.xcodeproj/xcuserdata/
+parq-ios2/Parq.xcodeproj/project.xcworkspace/
+parq-ios2/Parq.xcodeproj/xcuserdata/
+parq-ios2/Parq2.xcodeproj/
+parq-ios2/clear_anno.png
