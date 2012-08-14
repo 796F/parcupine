@@ -21,6 +21,7 @@
 @synthesize networkLayer;
 @synthesize userAction;
 @synthesize locationManager;
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     
@@ -41,7 +42,7 @@
         NSLog(@"null\n");
     }
     //prepare the RK client for server calls upon load
-    NSURL* url = [NSURL URLWithString:@"http://75.101.132.219:80/"];
+    NSURL* url = [NSURL URLWithString:@"http://75.101.132.219/"];
     [RKClient clientWithBaseURL:url];
 
     //set up data layer

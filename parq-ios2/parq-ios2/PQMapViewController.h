@@ -64,6 +64,7 @@ UIAlertViewDelegate> {
 @property (weak, nonatomic) IBOutlet UIButton *parkMeButton;
 @property (weak, nonatomic) IBOutlet UIButton *dropPinButton;
 @property (weak, nonatomic) IBOutlet UIButton *cancelDropPinButton;
+@property (weak, nonatomic) IBOutlet UIButton *mockDataButton;
 //internal management stuff
 @property (weak, nonatomic) MKCircle* gCircle;
 @property (nonatomic, retain) NSMutableArray* callouts;

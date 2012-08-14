@@ -264,6 +264,7 @@
                         <outlet property="gradientIcon" destination="lAn-ft-Xqs" id="ixZ-vV-ZRl"/>
                         <outlet property="justParkSelectionView" destination="bqq-rg-1qc" id="Muu-hR-Pir"/>
                         <outlet property="map" destination="VpP-MP-pHv" id="LAh-bw-Q42"/>
+                        <outlet property="mockDataButton" destination="cGx-cc-8cz" id="htK-ON-p7Q"/>
                         <outlet property="navigationBar" destination="Rp5-eY-6wq" id="bu7-6i-bM5"/>
                         <outlet property="topSearchBar" destination="ZNG-Ah-8CZ" id="Xa3-LA-cBz"/>
                         <outlet property="topSpotSelectionBar" destination="apn-5B-zhp" id="Jp6-qQ-sdG"/>
@@ -1751,6 +1752,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                 <relationship kind="outlet" name="gradientIcon" candidateClass="UIImageView"/>
                 <relationship kind="outlet" name="justParkSelectionView" candidateClass="UIView"/>
                 <relationship kind="outlet" name="map" candidateClass="MKMapView"/>
+                <relationship kind="outlet" name="mockDataButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="navigationBar" candidateClass="UINavigationItem"/>
                 <relationship kind="outlet" name="parkMeButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="popOutSpotNumberField" candidateClass="UITextField"/>

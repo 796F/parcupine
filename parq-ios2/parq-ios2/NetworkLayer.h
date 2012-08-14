@@ -33,7 +33,7 @@
 //calculates MID's based on lat/long. 
 -(NSMutableArray*) getMBIDsWithType:(EntityType) entityType NE:(CLLocationCoordinate2D*) topRight SW:(CLLocationCoordinate2D*) botLeft;
 -(SpotInfo*) getSpotInfoForId:(NSNumber*)spotId SpotNumber:(NSNumber*)spotNum GPS:(CLLocationCoordinate2D*)coord;
-
+-(BOOL) parkUserWithSpotInfo:(SpotInfo*) spotInfo AndDuration:(int)duration;
 
 -(BOOL)submitAvailablilityInformation:(NSArray*)value;
 

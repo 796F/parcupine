@@ -75,11 +75,11 @@
 		FC7214831592144F00D228C6 /* BookmarkCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FC7214821592144F00D228C6 /* BookmarkCell.m */; };
 		FC7214951592522100D228C6 /* doneup.png in Resources */ = {isa = PBXBuildFile; fileRef = FC7214941592522100D228C6 /* doneup.png */; };
 		FC768F8615B718B0004F6696 /* PQPinAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = FC768F8515B718B0004F6696 /* PQPinAnnotation.m */; };
+		FC8367EB15DAA33000EF4FC6 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = FC8367EA15DAA33000EF4FC6 /* User.m */; };
 		FC97EE7315BB379600186182 /* login.png in Resources */ = {isa = PBXBuildFile; fileRef = FC97EE7215BB379500186182 /* login.png */; };
 		FCA2ADBC15C0B88E00AB425E /* car.png in Resources */ = {isa = PBXBuildFile; fileRef = FCA2ADBB15C0B88E00AB425E /* car.png */; };
 		FCB2B06F15BC700300272DCD /* blueplus.png in Resources */ = {isa = PBXBuildFile; fileRef = FCB2B06E15BC700200272DCD /* blueplus.png */; };
 		FCB2B07115BC70B500272DCD /* redminus.png in Resources */ = {isa = PBXBuildFile; fileRef = FCB2B07015BC70B500272DCD /* redminus.png */; };
-		FCB2B07415BC7E8200272DCD /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB2B07315BC7E8200272DCD /* User.m */; };
 		FCB2B08215BC8D8400272DCD /* register2.png in Resources */ = {isa = PBXBuildFile; fileRef = FCB2B08115BC8D8400272DCD /* register2.png */; };
 		FCB2B08815BC941300272DCD /* PQLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB2B08715BC941300272DCD /* PQLoginViewController.m */; };
 		FCB2B08B15BCA17A00272DCD /* RegisterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB2B08A15BCA17900272DCD /* RegisterViewController.m */; };
@@ -249,13 +249,13 @@
 		FC7CE864157943630059EE43 /* NetworkLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NetworkLayer.m; path = "parq-ios2/NetworkLayer.m"; sourceTree = "<group>"; };
 		FC7E66C615C97CC60076793F /* MBProgressHUD.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MBProgressHUD.h; sourceTree = "<group>"; };
 		FC7E66C715C97CC60076793F /* MBProgressHUD.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MBProgressHUD.m; sourceTree = "<group>"; };
+		FC8367E915DAA33000EF4FC6 /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = User.h; path = "parq-ios2/User.h"; sourceTree = "<group>"; };
+		FC8367EA15DAA33000EF4FC6 /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = User.m; path = "parq-ios2/User.m"; sourceTree = "<group>"; };
 		FC97EE7215BB379500186182 /* login.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = login.png; sourceTree = "<group>"; };
 		FCA2ADBB15C0B88E00AB425E /* car.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = car.png; sourceTree = "<group>"; };
 		FCA2ADBF15C0BA5600AB425E /* open.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = open.png; sourceTree = "<group>"; };
 		FCB2B06E15BC700200272DCD /* blueplus.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = blueplus.png; sourceTree = "<group>"; };
 		FCB2B07015BC70B500272DCD /* redminus.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = redminus.png; sourceTree = "<group>"; };
-		FCB2B07215BC7E8200272DCD /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = User.h; path = "parq-ios2/User.h"; sourceTree = "<group>"; };
-		FCB2B07315BC7E8200272DCD /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = User.m; path = "parq-ios2/User.m"; sourceTree = "<group>"; };
 		FCB2B08115BC8D8400272DCD /* register2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = register2.png; sourceTree = "<group>"; };
 		FCB2B08615BC941300272DCD /* PQLoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PQLoginViewController.h; sourceTree = "<group>"; };
 		FCB2B08715BC941300272DCD /* PQLoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PQLoginViewController.m; sourceTree = "<group>"; };
@@ -522,8 +522,8 @@
 			isa = PBXGroup;
 			children = (
 				FCF937BE157D49190062A5A1 /* parq.xcdatamodeld */,
-				FCB2B07215BC7E8200272DCD /* User.h */,
-				FCB2B07315BC7E8200272DCD /* User.m */,
+				FC8367E915DAA33000EF4FC6 /* User.h */,
+				FC8367EA15DAA33000EF4FC6 /* User.m */,
 				FCDBD4BC15ADF28100E81B7E /* Street.h */,
 				FCDBD4BD15ADF28100E81B7E /* Street.m */,
 				FCDBD4B915ADF28100E81B7E /* Spot.h */,
@@ -778,7 +778,6 @@
 				FCDBD4BE15ADF28100E81B7E /* Street.m in Sources */,
 				FC768F8615B718B0004F6696 /* PQPinAnnotation.m in Sources */,
 				FC18601615B8503600AFFF8E /* SpotInfo.m in Sources */,
-				FCB2B07415BC7E8200272DCD /* User.m in Sources */,
 				FCB2B08815BC941300272DCD /* PQLoginViewController.m in Sources */,
 				FCB2B08B15BCA17A00272DCD /* RegisterViewController.m in Sources */,
 				FCB2B08E15BCAA4000272DCD /* LoginNavigationController.m in Sources */,
@@ -786,6 +785,7 @@
 				FCBB8F4515BF1ECE00E65CD0 /* PopOutView.m in Sources */,
 				FC410CB515C06848003C4523 /* EditSettingsViewController.m in Sources */,
 				FC410CB815C06B67003C4523 /* UserInfo.m in Sources */,
+				FC8367EB15DAA33000EF4FC6 /* User.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

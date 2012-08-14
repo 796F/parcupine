@@ -33,7 +33,7 @@ typedef enum {
 
 //checks if an object, or if an mbid, is already stored in core data.  
 -(BOOL) objExistsInCoreData:(NSObject*)object EntityType:(EntityType) entityType;
--(BOOL) mbIdExistsInCoreData:(NSObject*)object EntityType:(EntityType) entityType;
+-(BOOL) mbIdExistsInCoreData:(NSNumber*)object EntityType:(EntityType) entityType;
 
 //call after server responds.  
 -(void) store:(EntityType)entityType WithData:(NSArray*)overlayList;
@@ -54,7 +54,8 @@ typedef enum {
 -(void) setSpotInfo:(SpotInfo*) spotInfo;
 -(SpotInfo*) getSpotInfo;
 -(void) logString:(NSString*) string;
-
+-(void) setParkingReference:(NSString*) ref;
+-(NSString*) getParkingReference;
 //debug
 -(void) testFetch:(EntityType)entityType Microblocks:(NSArray*) microBlockIDs;
 -(void) loadMockData;

@@ -29,7 +29,7 @@
 +(NSDictionary*) parseUserObjectString:(NSString *)jsonResponse{
     NSLog(@"RESPONSE >>> %@", jsonResponse);
     NSDictionary* results = [jsonResponse objectFromJSONString];
-    if([[results objectForKey:@"uid"] longValue] > 0){
+    if([[results objectForKey:@"autherized"] boolValue]){
         return results;
     }else{
         return nil;
@@ -53,6 +53,7 @@
 }
 //park response
 +(NSDictionary*) parseParkResponse:(NSString*) jsonResponse{
+    NSLog(@"RESPONSE >>>> %@\n", jsonResponse);
     NSDictionary* result = [jsonResponse objectFromJSONString];
     if([[result objectForKey:@"resp"] isEqualToString:@"Ok"]){
         return result;

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1171" systemVersion="11E53" minimumToolsVersion="Xcode 4.1" macOSVersion="Automatic" iOSVersion="Automatic">
+<model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1487" systemVersion="11E53" minimumToolsVersion="Xcode 4.1" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="Bookmark" syncable="YES">
         <attribute name="lat" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
         <attribute name="lon" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
@@ -23,6 +23,7 @@
         <attribute name="status" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <relationship name="parentWaypoint" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Waypoint" inverseName="childrenSpots" inverseEntity="Waypoint" syncable="YES"/>
     </entity>
+    <entity name="SpotInfo" syncable="YES"/>
     <entity name="Street" representedClassName="Street" syncable="YES">
         <attribute name="microblock" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
         <attribute name="streetId" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
@@ -36,6 +37,7 @@
         <attribute name="email" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="license" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="password" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="payment" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="uid" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
     </entity>
@@ -48,11 +50,12 @@
         <relationship name="parentStreet" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Street" inverseName="childrenWaypoints" inverseEntity="Street" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Bookmark" positionX="160" positionY="192" width="128" height="105"/>
-        <element name="Grid" positionX="72" positionY="-270" width="128" height="120"/>
-        <element name="Spot" positionX="-162" positionY="9" width="128" height="165"/>
-        <element name="Street" positionX="54" positionY="-135" width="144" height="105"/>
-        <element name="Waypoint" positionX="54" positionY="45" width="128" height="135"/>
-        <element name="User" positionX="160" positionY="192" width="128" height="165"/>
+        <element name="Bookmark" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="Grid" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="Spot" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="Street" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="User" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="Waypoint" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="SpotInfo" positionX="0" positionY="0" width="0" height="0"/>
     </elements>
 </model>

@@ -125,11 +125,18 @@
         BOOL reportOutcome = [networkLayer submitAvailablilityInformation:orderedAvailability];
         if(reportOutcome){
             //server got report
+            if([networkLayer parkUserWithSpotInfo:parent.spotInfo AndDuration:parent.datePicker.countDownDuration]){ //server accepted parking request
+                [parent startTimerButtonAction];
+                [self dismissModalViewControllerAnimated:YES];
+            }else{ //failed to park on server
+                UIAlertView* failedToPark = [[UIAlertView alloc] initWithTitle:@"Error Parking" message:@"Please try again" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+                [failedToPark show];
+            }
         }else{
             //fail
         }
-        [parent startTimerButtonAction];
-        [self dismissModalViewControllerAnimated:YES];
+//        [parent startTimerButtonAction];
+//        [self dismissModalViewControllerAnimated:YES];
     }
 }
 
@@ -178,7 +185,7 @@
 }
 
 -(NSArray*) loadSpots{
-    if(UIType == 0 || UIType == 1){
+    if(UIType == 3 || UIType == 1){
         return [NSArray arrayWithObjects:
                 @"42.357767, -71.094471, 1:",
                 @"42.357789, -71.094409, 2:",

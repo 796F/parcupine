@@ -46,12 +46,15 @@
 -(BOOL)submitAvailablilityInformation:(NSArray*)value{
     NSArray* keys = [NSArray arrayWithObjects:@"userId",@"spaceIds", @"score1",@"score2", @"score3", @"score4", @"score5", @"score6", nil];
     NSArray* spaceIds = [NSArray arrayWithObjects:@"1",@"2",@"3",@"4",@"5",@"6", nil];
+    
     NSArray* top = [NSArray arrayWithObjects:[dataLayer getUser].uid, spaceIds, nil];
     NSDictionary* info = [NSDictionary dictionaryWithObjects:[top arrayByAddingObjectsFromArray:value] forKeys:keys];
     NSError *error;
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
     NSLog(@"%@", [info description]);
-    RKRequest* request = [[RKRequest alloc] initWithURL:[NSURL URLWithString:@"http://75.101.132.219/parkservice.park/AddUserReportingRequest"]];
+    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.park/AddUserReportingRequest"];
+
+//    RKRequest* request = [[RKRequest alloc] initWithURL:[NSURL URLWithString:@"http://localhost:8080/parkservice.park/AddUserReportingRequest"]];
     [request setMethod:RKRequestMethodPOST];
     [request setHTTPBody:jsonData];
     [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
@@ -103,7 +106,8 @@
     NSDictionary* info = [NSDictionary dictionaryWithObject:@"0" forKey:@"userId"];
     NSError *error;
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
-    RKRequest* request = [[RKRequest alloc] initWithURL:[NSURL URLWithString:@"http://75.101.132.219/parkservice.park/GetCountRequest"]];
+    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.park/GetCountRequest"];
+//    RKRequest* request = [[RKRequest alloc] initWithURL:[NSURL URLWithString:@"http://75.101.132.219/parkservice.park/GetCountRequest"]];
     [request setMethod:RKRequestMethodPOST];
     [request setHTTPBody:jsonData];
     [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
@@ -425,31 +429,6 @@
                          @"42.357862,-71.094219,1,1403",
                          @"42.357888,-71.094139,1,1404",
                          @"42.357908,-71.094058,1,1405",
-                         @"42.365354,-71.110843,1,1410,0,1",
-                         @"42.365292,-71.110835,1,1412,0,2",
-                         @"42.365239,-71.110825,1,1414,0,3",
-                         @"42.365187,-71.110811,1,1416,0,4",
-                         @"42.365140,-71.110806,1,1418,0,5",
-                         @"42.365092,-71.110798,1,1420,0,6",
-                         @"42.365045,-71.110790,1,1422,0,7",
-                         @"42.364995,-71.110782,1,1424,0,8",
-                         @"42.364947,-71.110768,1,1426,0,9",
-                         @"42.364896,-71.110766,1,1428,0,10",
-                         @"42.364846,-71.110752,1,1430,0,11",
-                         @"42.364797,-71.110739,1,1432,0,12",
-
-                         @"42.365348,-71.110924,1,1411,0,13",
-                         @"42.365300,-71.110916,1,1413,0,14",
-                         @"42.365251,-71.110905,1,1415,0,15",
-                         @"42.365203,-71.110900,1,1417,0,16",
-                         @"42.365154,-71.110892,1,1419,0,17",
-                         @"42.365104,-71.110876,0,1421,0,18",
-                         @"42.365049,-71.110868,1,1423,0,19",
-                         @"42.364993,-71.110860,1,1425,0,20",
-                         @"42.364943,-71.110849,1,1427,0,21",
-                         @"42.364894,-71.110846,1,1429,0,22",
-                         @"42.364846,-71.110835,0,1431,0,23",
-                         @"42.364799,-71.110830,1,1433,0,24",
                          nil];
     int spotId = 0;
     for(NSString* spotString in spotData){
@@ -504,7 +483,7 @@
     NSDictionary* info = [NSDictionary dictionaryWithObjects:value forKeys:keys];
     NSError *error;
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
-    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.auth"];
+    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.park/AuthRequest"];
     [request setMethod:RKRequestMethodPOST];
     [request setHTTPBody:jsonData];
     [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
@@ -530,11 +509,13 @@
         [user setAddress:@"I Live in the lab."];
         [user setName:@"Mike.  Mike Bond."];
         [user setEmail:email];  //this should be returned by server.
-        [user setLicense:@"'d \"To Kill\""];
+        [user setPassword:pass];
+        [user setLicense:[results objectForKey:@"license"]];
         [user setCity:@"Cambridge"];
         [user setPayment:[NSNumber numberWithInt:0]];
-        [user setUid:[NSNumber numberWithLong:0]];
-        [user setBalance:[NSNumber numberWithInt:100]];
+        NSNumberFormatter* f = [[NSNumberFormatter alloc] init];
+        [user setUid:[f numberFromString:[results objectForKey:@"uid"]]];
+        [user setBalance:[f numberFromString:[results objectForKey:@"balance"]]];
         NSError* error;
         if(![dataLayer.managedObjectContext save:&error]){
             //logged in, but something wrong wtih core data. cannot store user.  
@@ -571,7 +552,7 @@
         NSDictionary* info = [NSDictionary dictionaryWithObjects:value forKeys:keys];
         NSError *error;
         NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
-        RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.auth"];
+        RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.park/AuthRequest"];
         [request setMethod:RKRequestMethodPOST];
         [request setHTTPBody:jsonData];
         [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
@@ -595,11 +576,13 @@
             [user setAddress:@"I Live in the lab."];
             [user setName:@"Mike.  Mike Bond."];
             [user setEmail:email];  //this should be returned by server.
-            [user setLicense:@"'d \"To Kill\""];
+            [user setPassword:pass];
+            [user setLicense:[results objectForKey:@"license"]];
             [user setCity:@"Cambridge"];
             [user setPayment:[NSNumber numberWithInt:0]];
-            [user setUid:[NSNumber numberWithLong:0]];
-            [user setBalance:[NSNumber numberWithInt:100]];
+            NSNumberFormatter* f = [[NSNumberFormatter alloc] init];
+            [user setUid:[f numberFromString:[results objectForKey:@"uid"]]];
+            [user setBalance:[f numberFromString:[results objectForKey:@"balance"]]];
             NSError* error;
             if(![dataLayer.managedObjectContext save:&error]){
                 //logged in, but something wrong wtih core data. cannot store user.
@@ -617,5 +600,32 @@
         return nil;
     }
     
+}
+
+-(BOOL) parkUserWithSpotInfo:(SpotInfo*) spotInfo AndDuration:(int)duration{
+    NSArray* keys = [NSArray arrayWithObjects:@"userInfo", @"paymentType", @"chargeAmount",@"durationMinutes",@"spotId",@"uid", nil];
+    User* user = [dataLayer getUser];
+    NSDictionary* userInfo = [[NSDictionary alloc] initWithObjectsAndKeys:@"email",user.email, @"password",user.password,nil];
+    NSNumber* paymentType = [NSNumber numberWithInt:0];
+    NSNumber* chargeAmount = [NSNumber numberWithInt:spotInfo.rateCents.integerValue*duration/spotInfo.minuteInterval.integerValue];
+    NSNumber* durationMinutes = [NSNumber numberWithInt:duration/60];
+    NSArray* value = [NSArray arrayWithObjects:userInfo,paymentType , chargeAmount, durationMinutes,spotInfo.spotId, user.uid, nil];
+    NSDictionary* info = [NSDictionary dictionaryWithObjects:value forKeys:keys];
+    NSError *error;
+    NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
+    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.park/pilotpark"];
+    [request setMethod:RKRequestMethodPOST];
+    [request setHTTPBody:jsonData];
+    [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
+    RKResponse* response = [request sendSynchronously];
+    NSDictionary* parkResults = [Parser parseParkResponse:[response bodyAsString]];
+    if(parkResults!=nil){
+        [dataLayer setEndTime:[NSDate dateWithTimeIntervalSince1970:[[parkResults objectForKey:@"endTime"] longValue]]];
+        [dataLayer setParkingReference:[parkResults objectForKey:@"parkingReferenceNumber"]];
+        return YES;
+    }else{
+        return NO;
+    }
+
 }
 @end

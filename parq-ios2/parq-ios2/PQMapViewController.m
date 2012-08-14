@@ -110,7 +110,7 @@ typedef struct{
 @synthesize gridMicroBlockMap;
 @synthesize streetMicroBlockMap;
 @synthesize spotMicroBlockMap;
-
+@synthesize mockDataButton;
 @synthesize currentMicroBlockIds;
 //@synthesize currentGridMBIDs;
 //@synthesize currentSpotMBIDs;
@@ -1982,7 +1982,7 @@ typedef struct{
     hud.labelText = @"Loading Data...";
     dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
         
-        [dataLayer loadMockData];
+        //[dataLayer loadMockData];
         [networkLayer loadSpotData];
         
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -2061,8 +2061,6 @@ typedef struct{
             //parked, keep map hidden, show timer.
             self.spotInfo = [dataLayer getSpotInfo];
             [self parkNow];
-//            UIAlertView* testAlert = [[UIAlertView alloc] initWithTitle:@"RESTORE APP YO" message:@"YOU DIED, WE HEAL YOU" delegate:self cancelButtonTitle:@"Yayyy" otherButtonTitles: nil];
-//            [testAlert show];
         }else{
             //not parked, show map.
             self.view.hidden = NO;
@@ -2110,7 +2108,7 @@ typedef struct{
 - (void)viewDidLoad{
 
     [super viewDidLoad];
-
+    
 
     if(!dataLayer){
         //set pointer to data layer.
@@ -2128,6 +2126,11 @@ typedef struct{
     
     //initially hide, incase app was purged or user not logged in.
     self.view.hidden = YES;
+    if([dataLayer mbIdExistsInCoreData:[NSNumber numberWithInt:1] EntityType:kSpotEntity]){
+        //already loaded stuff.
+        mockDataButton.hidden = YES;
+    }
+    
     
     if(gridMicroBlockMap==nil) gridMicroBlockMap = [[NSMutableDictionary alloc] init];
     if(spotMicroBlockMap==nil) spotMicroBlockMap = [[NSMutableDictionary alloc] init];

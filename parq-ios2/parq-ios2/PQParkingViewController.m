@@ -144,10 +144,16 @@ typedef enum {
         [vc setModalPresentationStyle:UIModalPresentationFullScreen];
         [self presentModalViewController:vc animated:YES];
     } else if(type ==2 || type == 3) {
-        [self startTimerButtonAction];
-        UIAlertView* askToHelpAlert = [[UIAlertView alloc] initWithTitle:@"Earn Rewards!" message:@"By reporting open spots." delegate:self cancelButtonTitle:@"No Thanks" otherButtonTitles:@"Sure", nil];
-        askToHelpAlert.tag = PLEASE_HELP_ALERT;
-        [askToHelpAlert show];
+        if([networkLayer parkUserWithSpotInfo:self.spotInfo AndDuration:datePicker.countDownDuration]){ //server accepted parking request
+            [self startTimerButtonAction];
+            UIAlertView* askToHelpAlert = [[UIAlertView alloc] initWithTitle:@"Earn Rewards!" message:@"By reporting open spots." delegate:self cancelButtonTitle:@"No Thanks" otherButtonTitles:@"Sure", nil];
+            askToHelpAlert.tag = PLEASE_HELP_ALERT;
+            [askToHelpAlert show];
+
+        }else{ //failed to park on server
+            UIAlertView* failedToPark = [[UIAlertView alloc] initWithTitle:@"Error Parking" message:@"Please try again" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+            [failedToPark show];
+        }
     }else{
         [self startTimerButtonAction];
     }

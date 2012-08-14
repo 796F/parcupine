@@ -42,6 +42,19 @@
     return [NSKeyedUnarchiver unarchiveObjectWithData:[data objectForKey:@"spotInfo"]];
 }
 
+-(void) setParkingReference:(NSString*) ref{
+    NSLog(@"setting ref = %@\n", ref);
+    NSString* path = [self getPlistPath];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
+    [data setObject:ref forKey:@"parkingReferenceNumber"];
+    [data writeToFile:path atomically:YES];
+}
+-(NSString*) getParkingReference{
+    NSString* path = [self getPlistPath];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
+    return [data objectForKey:@"parkingReferenceNumber"];
+}
+
 -(void) setSpotId:(NSNumber*) spotId{
     //set the currelyt parked spot's id for restore use.
     NSLog(@"setting spotId = %lu\n", [spotId longValue]);
@@ -57,6 +70,7 @@
 }
 
 -(void) setStartTime:(NSDate*) startTime{
+    NSLog(@"setting startTime = %f\n", [startTime timeIntervalSince1970]);
     NSString* path = [self getPlistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
     [data setObject:startTime forKey:@"startTime"];
@@ -133,7 +147,7 @@
         NSNumber* lat = [f numberFromString:[innerArray objectAtIndex:0]];
         [grid setLat:lat];
         NSNumber* mbid = [f numberFromString:[innerArray objectAtIndex:3]];
-        if(mbid.longValue == 462){
+        if(gridid==1886){
             [grid setStatus:[NSNumber numberWithInt:4]];
         }else{
             [grid setStatus:[NSNumber numberWithInt:-1]];
