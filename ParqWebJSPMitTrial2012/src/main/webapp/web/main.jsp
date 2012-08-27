@@ -1,0 +1,24 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+	<jsp:include page="/web/templates/nav.jsp" />
+	<jsp:include page="/web/templates/main_map.jsp" />
+</head>
+<body>
+	<div class="container-fluid">
+		<div class="sidebar">
+			<p class="well">Red Spaces are Taken.</p>
+			<p class="well">Green Spaces are Available.</p>
+		</div>
+		<div class="content">
+			<div id="map_canvas"></div>
+			<p style="clear: both"></p>
+		</div>
+	</div>
+</body>
+
+</html>
+
+
