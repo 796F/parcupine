@@ -42,7 +42,7 @@ UIAlertViewDelegate> {
 }
 //core data stuff
 @property (nonatomic, retain) NSManagedObjectContext *managedObjectContext;
-
+@property (nonatomic, retain) DataLayer* dataLayer;
 //map and some control stuff
 @property (weak, nonatomic) IBOutlet MKMapView *map;
 @property (weak, nonatomic) IBOutlet UISearchBar *topSearchBar;

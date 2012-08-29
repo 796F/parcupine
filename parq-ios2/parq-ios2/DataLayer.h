@@ -45,6 +45,8 @@ typedef enum {
 -(BOOL) isFirstLaunch;
 -(BOOL) isLoggedIn;
 -(void) setLoggedIn:(BOOL) yesORno;
+-(void) setLastReportTime:(NSDate*) lastReportTime;
+-(NSDate*) getLastReportTime;
 -(void) setEndTime:(NSDate*) endTime;
 -(NSDate*) getEndTime;
 -(NSNumber*) getSpotId;

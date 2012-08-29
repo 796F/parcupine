@@ -182,13 +182,18 @@
                                                 </connections>
                                             </barButtonItem>
                                             <barButtonItem style="plain" systemItem="flexibleSpace" id="0iM-ut-tc6"/>
+                                            <barButtonItem image="icon_court.png" width="30" id="Mpr-Qp-S2A">
+                                                <connections>
+                                                    <action selector="selfEnforcePressed:" destination="2" id="REu-bw-HpJ"/>
+                                                </connections>
+                                            </barButtonItem>
                                             <barButtonItem title="Just Park Me" id="Yhz-UD-Ki5">
                                                 <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                                 <connections>
                                                     <action selector="justParkMeButtonPressed:" destination="2" id="olV-cU-QM8"/>
                                                 </connections>
                                             </barButtonItem>
-                                            <barButtonItem style="plain" systemItem="flexibleSpace" id="Ysi-UB-4eg"/>
+                                            <barButtonItem width="63" style="plain" systemItem="fixedSpace" id="20i-pT-qhf"/>
                                             <barButtonItem image="pin.png" width="30" id="mQk-WD-Srh">
                                                 <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                                 <connections>
@@ -776,8 +781,8 @@
                             <rect key="frame" x="0.0" y="0.0" width="320" height="460"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
-                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="login.png" id="Y1j-gP-ju4">
-                                    <rect key="frame" x="0.0" y="0.0" width="320" height="460"/>
+                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="pqplogin.png" id="Y1j-gP-ju4">
+                                    <rect key="frame" x="0.0" y="14" width="320" height="460"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 </imageView>
                                 <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="t9f-6h-cL8">
@@ -858,7 +863,7 @@
                                         <action selector="submitButtonPressed:" destination="V9C-KW-Llm" eventType="touchDown" id="sTe-12-RJH"/>
                                     </connections>
                                 </button>
-                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="bottombar.png" id="Vkd-Gh-K1j">
+                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" id="Vkd-Gh-K1j">
                                     <rect key="frame" x="0.0" y="443" width="320" height="133"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 </imageView>
@@ -1663,7 +1668,6 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
     </scenes>
     <resources>
         <image name="blueplus.png" width="30" height="30"/>
-        <image name="bottombar.png" width="640" height="299"/>
         <image name="check.png" width="29" height="30"/>
         <image name="check_empty.png" width="30" height="30"/>
         <image name="colon.png" width="8" height="27"/>
@@ -1672,11 +1676,12 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         <image name="gradient_avail.png" width="58" height="59"/>
         <image name="grey_tabs_bar.png" width="603" height="94"/>
         <image name="greyback.png" width="320" height="113"/>
+        <image name="icon_court.png" width="21" height="21"/>
         <image name="left_arrow.png" width="20" height="20"/>
-        <image name="login.png" width="640" height="961"/>
         <image name="meter_payg.png" width="320" height="131"/>
         <image name="payg.png" width="139" height="99"/>
         <image name="pin.png" width="45" height="45"/>
+        <image name="pqplogin.png" width="640" height="961"/>
         <image name="prepaid.png" width="141" height="102"/>
         <image name="redminus.png" width="28" height="28"/>
         <image name="register2.png" width="640" height="961"/>

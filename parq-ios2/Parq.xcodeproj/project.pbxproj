@@ -68,12 +68,15 @@
 		FC131F4415C97EE600A3C54C /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = FC7E66C715C97CC60076793F /* MBProgressHUD.m */; };
 		FC18601615B8503600AFFF8E /* SpotInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = FC18601515B8503600AFFF8E /* SpotInfo.m */; };
 		FC18F4141595893C00C18286 /* PQPaymentMethodsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC18F4131595893C00C18286 /* PQPaymentMethodsViewController.m */; };
+		FC2F5EF515EEB2BF0093A592 /* icon_court.png in Resources */ = {isa = PBXBuildFile; fileRef = FC2F5EF415EEB2BF0093A592 /* icon_court.png */; };
 		FC410CB215C04F25003C4523 /* greyback.png in Resources */ = {isa = PBXBuildFile; fileRef = FC410CB115C04F25003C4523 /* greyback.png */; };
 		FC410CB515C06848003C4523 /* EditSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC410CB415C06848003C4523 /* EditSettingsViewController.m */; };
 		FC410CB815C06B67003C4523 /* UserInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = FC410CB715C06B67003C4523 /* UserInfo.m */; };
 		FC6C9F6015925D02002C5418 /* donedown.png in Resources */ = {isa = PBXBuildFile; fileRef = FC6C9F5F15925D02002C5418 /* donedown.png */; };
 		FC7214831592144F00D228C6 /* BookmarkCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FC7214821592144F00D228C6 /* BookmarkCell.m */; };
 		FC7214951592522100D228C6 /* doneup.png in Resources */ = {isa = PBXBuildFile; fileRef = FC7214941592522100D228C6 /* doneup.png */; };
+		FC72C0E015DD665C00271694 /* pqplogin.png in Resources */ = {isa = PBXBuildFile; fileRef = FC72C0DE15DD665C00271694 /* pqplogin.png */; };
+		FC72C0E115DD665C00271694 /* pqpregister.png in Resources */ = {isa = PBXBuildFile; fileRef = FC72C0DF15DD665C00271694 /* pqpregister.png */; };
 		FC768F8615B718B0004F6696 /* PQPinAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = FC768F8515B718B0004F6696 /* PQPinAnnotation.m */; };
 		FC8367EB15DAA33000EF4FC6 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = FC8367EA15DAA33000EF4FC6 /* User.m */; };
 		FC97EE7315BB379600186182 /* login.png in Resources */ = {isa = PBXBuildFile; fileRef = FC97EE7215BB379500186182 /* login.png */; };
@@ -230,6 +233,7 @@
 		FC18601515B8503600AFFF8E /* SpotInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpotInfo.m; path = "parq-ios2/SpotInfo.m"; sourceTree = "<group>"; };
 		FC18F4121595893C00C18286 /* PQPaymentMethodsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PQPaymentMethodsViewController.h; sourceTree = "<group>"; };
 		FC18F4131595893C00C18286 /* PQPaymentMethodsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PQPaymentMethodsViewController.m; sourceTree = "<group>"; };
+		FC2F5EF415EEB2BF0093A592 /* icon_court.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_court.png; sourceTree = "<group>"; };
 		FC410CB115C04F25003C4523 /* greyback.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = greyback.png; sourceTree = "<group>"; };
 		FC410CB315C06848003C4523 /* EditSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditSettingsViewController.h; sourceTree = "<group>"; };
 		FC410CB415C06848003C4523 /* EditSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditSettingsViewController.m; sourceTree = "<group>"; };
@@ -241,6 +245,8 @@
 		FC7214811592144F00D228C6 /* BookmarkCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BookmarkCell.h; sourceTree = "<group>"; };
 		FC7214821592144F00D228C6 /* BookmarkCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BookmarkCell.m; sourceTree = "<group>"; };
 		FC7214941592522100D228C6 /* doneup.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = doneup.png; sourceTree = "<group>"; };
+		FC72C0DE15DD665C00271694 /* pqplogin.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pqplogin.png; sourceTree = "<group>"; };
+		FC72C0DF15DD665C00271694 /* pqpregister.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pqpregister.png; sourceTree = "<group>"; };
 		FC768F8415B718B0004F6696 /* PQPinAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PQPinAnnotation.h; sourceTree = "<group>"; };
 		FC768F8515B718B0004F6696 /* PQPinAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PQPinAnnotation.m; sourceTree = "<group>"; };
 		FC772758157C2C8C005DEBEA /* Segment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Segment.h; path = "parq-ios2/Segment.h"; sourceTree = "<group>"; };
@@ -406,6 +412,9 @@
 		8703ACE01513FC8E002FE357 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				FC2F5EF415EEB2BF0093A592 /* icon_court.png */,
+				FC72C0DE15DD665C00271694 /* pqplogin.png */,
+				FC72C0DF15DD665C00271694 /* pqpregister.png */,
 				FC11B29415BDE6CD001AB653 /* crosshair.png */,
 				FCA2ADBB15C0B88E00AB425E /* car.png */,
 				FCA2ADBF15C0BA5600AB425E /* open.png */,
@@ -735,6 +744,9 @@
 				FC11B29F15BDF878001AB653 /* open.png in Resources */,
 				FC410CB215C04F25003C4523 /* greyback.png in Resources */,
 				FCA2ADBC15C0B88E00AB425E /* car.png in Resources */,
+				FC72C0E015DD665C00271694 /* pqplogin.png in Resources */,
+				FC72C0E115DD665C00271694 /* pqpregister.png in Resources */,
+				FC2F5EF515EEB2BF0093A592 /* icon_court.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

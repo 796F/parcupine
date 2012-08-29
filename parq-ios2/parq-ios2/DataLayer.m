@@ -69,8 +69,21 @@
     return [data objectForKey:@"spotId"];
 }
 
+-(void) setLastReportTime:(NSDate*) startTime{
+    NSLog(@"setting lastrepTime = %f\n", [startTime timeIntervalSince1970]);
+    NSString* path = [self getPlistPath];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
+    [data setObject:startTime forKey:@"lastReportTime"];
+    [data writeToFile:path atomically:YES];
+}
+-(NSDate*) getLastReportTime{
+    NSString* path = [self getPlistPath];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
+    return [data objectForKey:@"lastReportTime"];
+}
+
 -(void) setStartTime:(NSDate*) startTime{
-    NSLog(@"setting startTime = %f\n", [startTime timeIntervalSince1970]);
+    NSLog(@"setting lastrepTime = %f\n", [startTime timeIntervalSince1970]);
     NSString* path = [self getPlistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
     [data setObject:startTime forKey:@"startTime"];
@@ -140,15 +153,16 @@
         [f setNumberStyle:NSNumberFormatterNoStyle];
         
         
-        [grid setGridId:[NSNumber numberWithInt:gridid]];
+        [grid setGridId:[NSNumber numberWithLong:gridid]];
         gridid++;
         NSNumber* lon = [f numberFromString:[innerArray objectAtIndex:1]];
         [grid setLon:lon];
         NSNumber* lat = [f numberFromString:[innerArray objectAtIndex:0]];
         [grid setLat:lat];
         NSNumber* mbid = [f numberFromString:[innerArray objectAtIndex:3]];
-        if(gridid==1886){
-            [grid setStatus:[NSNumber numberWithInt:4]];
+        if(mbid.longValue == 462 && gridid == 4878){
+            //4870 4878 5390 5378
+            [grid setStatus:[NSNumber numberWithInt:5]];
         }else{
             [grid setStatus:[NSNumber numberWithInt:-1]];
         }

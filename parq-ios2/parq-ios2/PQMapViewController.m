@@ -437,6 +437,30 @@ typedef struct{
     
 }
 
+-(IBAction)selfEnforcePressed:(id)sender{
+    NSDate* lastReportTime = [dataLayer getLastReportTime];
+    NSDate* anHourAgo = [NSDate dateWithTimeIntervalSinceNow:-3600]; //an hour ago.
+    if([[lastReportTime earlierDate:anHourAgo] isEqualToDate:anHourAgo]){
+        //reporting happened less than an hour ago
+        NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] ;
+        NSDateComponents *components = [calendar components:NSMinuteCalendarUnit
+                                                   fromDate:lastReportTime
+                                                     toDate:[NSDate date]
+                                                    options:0];
+        NSString* waitString = [NSString stringWithFormat:@"Please try in %d minutes.",         60 - components.minute];
+        UIAlertView* waitXMinutes = [[UIAlertView alloc] initWithTitle:@"We just recieved a report!" message:waitString delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil];
+        [waitXMinutes show];
+    }else{
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
+        SelfReportingViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"selfReporting"];
+        [vc setParent:self];
+        [vc setIsNotParking:YES]; //user isn't parking, no need to trigger timer.
+        [vc setUIType:[dataLayer UIType]];
+        [vc setModalPresentationStyle:UIModalPresentationFullScreen];
+        [self presentModalViewController:vc animated:YES];
+    }
+}
+
 
 -(IBAction)dropPinButtonPressed:(id)sender{
     DLog(@"");
@@ -664,7 +688,8 @@ typedef struct{
     
     /* CALCULATE AVERAGES FOR BOTH SIDES */
     NSArray* segData = [self loadBlockData];
-    return [self newCalloutPlacementWithSegment:[segData objectAtIndex:1] andSpots:insideCircle];
+    //1 is the pilot area, is the demo area.
+    return [self newCalloutPlacementWithSegment:[segData objectAtIndex:2] andSpots:insideCircle];
     
 }
 
@@ -1589,20 +1614,24 @@ typedef struct{
 
     CGPoint touchPoint = [gestureRecognizer locationInView:self.map];
     CLLocationCoordinate2D coord = [self.map convertPoint:touchPoint toCoordinateFromView:self.map];
-    
+
     MKMapPoint mapPoint = MKMapPointForCoordinate(coord);
     if(isDroppingPin){
-        //user is dropping pin.  do nothing on double tap.  
+        //user is dropping pin.  do nothing on double tap.
         return;
     }
+    
     if(zoomState == kClearZoomLevel){
         [map setRegion:MKCoordinateRegionMakeWithDistance(coord, GRID_LEVEL_REGION_METERS, GRID_LEVEL_REGION_METERS) animated:YES];
     }else if (zoomState==kGridZoomLevel) {
-        for (id gridOverlay in self.map.overlays) {
+
+        for (MKPolygon* gridOverlay in self.map.overlays) {
+                
             MKPolygonView *polyView = (MKPolygonView*)[self.map viewForOverlay:gridOverlay];
             CGPoint polygonViewPoint = [polyView pointForMapPoint:mapPoint];
             
             if (CGPathContainsPoint(polyView.path, NULL, polygonViewPoint, NO)) {
+
                 MKCoordinateRegion reg = [self.map convertRect:polyView.bounds toRegionFromView:polyView];
                 //save this for when user wants to zoom out of spot level.  
                 oldStreetLevelRegion = [self.map regionThatFits:reg];
@@ -1928,7 +1957,6 @@ typedef struct{
     [vcTop setParent:self];
     //also pass rate information for the selected spot here.  
     [self presentModalViewController:vc animated:YES];
-
 }
 
 #pragma mark - Debug button actions
@@ -1983,7 +2011,7 @@ typedef struct{
     hud.labelText = @"Loading Data...";
     dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
         
-        //[dataLayer loadMockData];
+        [dataLayer loadMockData];
         [networkLayer loadSpotData];
         
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -2127,7 +2155,7 @@ typedef struct{
     
     //initially hide, incase app was purged or user not logged in.
     self.view.hidden = YES;
-    if([dataLayer mbIdExistsInCoreData:[NSNumber numberWithInt:1] EntityType:kSpotEntity]){
+    if([dataLayer mbIdExistsInCoreData:[NSNumber numberWithInt:0] EntityType:kGridEntity]){
         //already loaded stuff.
         mockDataButton.hidden = YES;
     }
@@ -2240,7 +2268,7 @@ typedef struct{
     if(geocoder ==nil){
         geocoder = [[CLGeocoder alloc] init];
     }
-    
+
 //    locationManager=[[CLLocationManager alloc] init];
 //    locationManager.delegate=self;
 //    locationManager.desiredAccuracy=kCLLocationAccuracyNearestTenMeters;

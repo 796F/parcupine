@@ -43,7 +43,7 @@
     }
     //prepare the RK client for server calls upon load
     NSURL* url = [NSURL URLWithString:@"http://75.101.132.219/"];
-    url = [NSURL URLWithString:@"http://localhost:8080/"];
+    //url = [NSURL URLWithString:@"http://localhost:8080/"];
     [RKClient clientWithBaseURL:url];
 
     //set up data layer

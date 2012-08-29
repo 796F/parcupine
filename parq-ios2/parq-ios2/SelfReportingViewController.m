@@ -9,6 +9,7 @@
 #import "SelfReportingViewController.h"
 
 #import "PQParkingViewController.h"
+#define THANKS_FOR_PLAYING_TAG 88
 @interface SelfReportingViewController ()
 
 @end
@@ -23,6 +24,7 @@
 @synthesize showTapMe;
 @synthesize UIType;
 @synthesize parent;
+@synthesize isNotParking;
 
 - (MKAnnotationView *)mapView:(MKMapView *)theMapView viewForAnnotation:(id <MKAnnotation>)annotation
 {
@@ -125,18 +127,35 @@
         BOOL reportOutcome = [networkLayer submitAvailablilityInformation:orderedAvailability];
         if(reportOutcome){
             //server got report
-            if([networkLayer parkUserWithSpotInfo:parent.spotInfo AndDuration:parent.datePicker.countDownDuration]){ //server accepted parking request
-                [parent startTimerButtonAction];
-                [self dismissModalViewControllerAnimated:YES];
-            }else{ //failed to park on server
-                UIAlertView* failedToPark = [[UIAlertView alloc] initWithTitle:@"Error Parking" message:@"Please try again" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-                [failedToPark show];
+            DataLayer* dataLayer = ((PQAppDelegate*)[[UIApplication sharedApplication] delegate]).dataLayer;
+            [dataLayer setLastReportTime:[NSDate date]];
+            if(isNotParking){
+
+            }else{
+                //uh, doesn't need to be casted.  just change parent field type to PQParkingViewController, and add an @Class to the .h file.
+                PQParkingViewController* castedParent = (PQParkingViewController*) parent;
+                if([networkLayer parkUserWithSpotInfo:castedParent.spotInfo AndDuration:castedParent.datePicker.countDownDuration]){ //server accepted parking request
+                    [castedParent startTimerButtonAction];
+                }else{ //failed to park on server
+                    UIAlertView* failedToPark = [[UIAlertView alloc] initWithTitle:@"Error Parking" message:@"Please try again" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+                    [failedToPark show];
+                }
             }
+            UIAlertView* thanksAlert = [[UIAlertView alloc] initWithTitle:@"Thanks for Helping" message:@"You earned 60 parking points" delegate:self cancelButtonTitle:nil otherButtonTitles:@"OK", nil ];
+            thanksAlert.tag = THANKS_FOR_PLAYING_TAG;
+            [thanksAlert show];
+            
         }else{
             //fail
         }
 //        [parent startTimerButtonAction];
 //        [self dismissModalViewControllerAnimated:YES];
+    }
+}
+
+-(void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+    if(alertView.tag == THANKS_FOR_PLAYING_TAG && buttonIndex == 0){
+        [self dismissModalViewControllerAnimated:YES];
     }
 }
 
