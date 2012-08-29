@@ -1,0 +1,86 @@
+a {color:#708CF3;}
+a:hover {color:#506C93; text-decoration:none;cursor:pointer;}
+
+p.clear {clear:both;margin:0px;padding:0px}
+.topbar {
+    background-image: -moz-linear-gradient(center top , #80D4FF, #80D4FF);
+    background-image: -webkit-linear-gradient(top, #80D4FF, #80D4FF);
+    background-image: -o-linear-gradient(top, #80D4FF, #80D4FF);
+    height:95px;
+}
+
+#modalWrapper #modal {border: none;}
+
+
+#header {
+    padding-top:60px;
+}
+
+#header ul {
+    list-style:none;
+    margin-top:10px;    
+    margin-bottom:0px;
+}
+
+#contentWrapper {min-height:400px;}
+
+#header ul li{
+    margin-bottom:5px;
+    font-weight:bold;
+}
+
+hr {border-color:#C1C2C3;}
+hr.stripped {margin:0px}
+
+#parqform-container p,table,form {padding:0px;margin:0px;}
+#parqform-container {border-bottom:solid thin #C1C2C3;}
+#parqform { padding:20px;margin-left:40px;}
+#parqform label {font-weight:bold; font-size:12pt;}
+#parqform input[type=text] {width:95%;font-size:14pt;height:28px;}
+
+#map_canvas {width:100%; height:600px;}
+
+
+/* about page */
+#about-block {background-color:#DDE4EA;margin-top:20px;}
+#about-team table tr td {vertical-align:middle;border:none;padding-left:10px;}
+#about-team table tr td p {margin-top:10px;}
+
+/* end about page */
+
+/* footer  */
+.footer {background-color:#FFF;}
+.footer ul {list-style:none; display:inline;}
+.footer ul li {margin-right:40px;display:inline;font-weight:bold;}
+
+#systemizer {padding-top:10px;padding-bottom:10px;color:#CCC;}
+#systemizer a {color:#999}
+#systemizer a:hover {cursor:pointer;color:#666;text-decoration:none;}
+
+.footer .icons {position:absolute;right:0;}
+/* end footer  */
+
+
+/* account */
+ul.payment-actions {list-style:none;display:inline}
+ul.payment-actions li {display:inline;padding:10px;}
+/* end account */
+
+/*twitter bootstrap hacks */
+.sidebar .tabs li {width:100%;border-bottom:solid thin #999;}
+.sidebar > p {font-size:large;font-weight:bold;margin-top:20px;text-align:center;}
+
+/* end twitter bootstrap hacks */
+
+/* autocomplete */
+.autocomplete {background:#CCC; padding:5px;}
+.autocomplete:hover {cursor:pointer}
+/* end autocomplete */
+
+.alert-message.renew {top:10px;}
+.text-large {font-size:large; font-weight:bold;}
+ul.stripped {list-style:none;}
+
+/* features */
+#features {margin-top:20px;}
+#faq {margin-top:20px;}

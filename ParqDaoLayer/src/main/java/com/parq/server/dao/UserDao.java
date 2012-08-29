@@ -52,7 +52,7 @@ public class UserDao extends AbstractParqDaoParent {
 	private static final String sqlGetUserScoreForUser = 
 		"SELECT score_id, user_id, score_1, score_2, score_3 FROM score s WHERE s.user_id = ? ORDER BY score_id DESC LIMIT 1";
 	private static final String sqlGetUserScoreHistoryForUser = 
-		"SELECT score_id, user_id, score_1, score_2, score_3 FROM score s WHERE s.user_id = ? ORDER BY score_id DESC";
+		"SELECT score_id, user_id, score_1, score_2, score_3, lastupdatedatetime FROM score s WHERE s.user_id = ? ORDER BY score_id DESC";
 	
 	
 	private static final String emailCache = "getUserByEmail:";
@@ -481,6 +481,7 @@ public class UserDao extends AbstractParqDaoParent {
 				userScore.setScore1(rs.getLong("score_1"));
 				userScore.setScore2(rs.getLong("score_2"));
 				userScore.setScore3(rs.getLong("score_3"));
+				userScore.setLastUpdatedDateTime(rs.getDate("lastupdatedatetime"));
 				scores.add(userScore);
 			}
 		} catch (SQLException sqle) {

@@ -1,6 +1,7 @@
 package com.parq.server.dao.model.object;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class UserScore implements Serializable {
 	/**
@@ -13,6 +14,7 @@ public class UserScore implements Serializable {
 	private long score1;
 	private long score2;
 	private long score3;
+	private Date lastUpdatedDateTime;
 	
 	/**
 	 * @return
@@ -78,5 +80,13 @@ public class UserScore implements Serializable {
 	 */
 	public void setScore3(long score3) {
 		this.score3 = score3;
+	}
+
+	public Date getLastUpdatedDateTime() {
+		return lastUpdatedDateTime;
+	}
+
+	public void setLastUpdatedDateTime(Date lastUpdatedDateTime) {
+		this.lastUpdatedDateTime = lastUpdatedDateTime;
 	}
 }

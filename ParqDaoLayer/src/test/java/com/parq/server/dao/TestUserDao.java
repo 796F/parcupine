@@ -142,6 +142,8 @@ public class TestUserDao extends TestCase {
 			assertTrue(score.getScore1() >= 0);
 			assertTrue(score.getScore2() >= 0);
 			assertTrue(score.getScore3() >= 0);
+			assertNotNull(score.getLastUpdatedDateTime());
+			assertTrue(1000 < score.getLastUpdatedDateTime().getTime());
 		}
 	}
 	
