@@ -2,15 +2,8 @@ a {color:#708CF3;}
 a:hover {color:#506C93; text-decoration:none;cursor:pointer;}
 
 p.clear {clear:both;margin:0px;padding:0px}
-.topbar {
-    background-image: -moz-linear-gradient(center top , #80D4FF, #80D4FF);
-    background-image: -webkit-linear-gradient(top, #80D4FF, #80D4FF);
-    background-image: -o-linear-gradient(top, #80D4FF, #80D4FF);
-    height:95px;
-}
 
 #modalWrapper #modal {border: none;}
-
 
 #header {
     padding-top:60px;

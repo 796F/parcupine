@@ -19,11 +19,11 @@ public class TestAccount extends TestCase {
 		assert (true);
 	}
 	
-	public void _testAdminAccount() {
+	public void testAdminAccount() {
 		ParqWebServiceImpl service = new ParqWebServiceImpl();
 		WebUser user = new WebUser();
-		user.setUsername("TestAdmin12@testCorp.com");
-		user.setPassword("password");
+		user.setUsername("TestUser@PaymentAccount.test");
+		user.setPassword("TestPassword");
 		boolean loginSuccessful = service.validateUser(user).isAuthenticated();
 		assertTrue(loginSuccessful);
 	}

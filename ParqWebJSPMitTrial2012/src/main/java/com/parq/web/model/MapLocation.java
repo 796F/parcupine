@@ -5,8 +5,8 @@ import java.util.List;
 
 public class MapLocation {
 	private String locationName;
-	private double latitude = 38.892319;
-	private double longitude = -77.031305;
+	private double latitude = 42.35788;
+	private double longitude = -71.094318;
 	private List<WebParkingLocation> parkingLocations;
 	
 	

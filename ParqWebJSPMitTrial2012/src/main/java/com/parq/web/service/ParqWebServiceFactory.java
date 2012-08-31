@@ -6,6 +6,7 @@ public final class ParqWebServiceFactory {
 	private ParqWebServiceFactory(){}
 
 	public static ParqWebService getParqWebServiceInstance() {
-		return new MockParqWebService();
+		// return new MockParqWebService();
+		return new ParqWebServiceImpl();
 	}
 }

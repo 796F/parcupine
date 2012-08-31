@@ -1301,7 +1301,10 @@ table .headerSortUp.purple, table .headerSortDown.purple {
  * Repeatable UI elements outside the base styles provided from the scaffolding
  * ---------------------------------------------------------------------------- */
 .topbar {
-  height: 95px;
+  background-image: -moz-linear-gradient(center top , #80D4FF, #80D4FF);
+  background-image: -webkit-linear-gradient(top, #80D4FF, #80D4FF);
+  background-image: -o-linear-gradient(top, #80D4FF, #80D4FF);
+  height:95px;
   position: fixed;
   top: 0;
   left: 0;

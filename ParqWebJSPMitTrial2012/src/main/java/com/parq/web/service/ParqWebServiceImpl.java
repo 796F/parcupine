@@ -11,11 +11,11 @@ import com.parq.server.dao.AdminDao;
 import com.parq.server.dao.AdminReportDao;
 import com.parq.server.dao.ClientDao;
 import com.parq.server.dao.ParkingLocationDao;
+import com.parq.server.dao.ParkingSpaceDao;
 import com.parq.server.dao.ParkingStatusDao;
 import com.parq.server.dao.UserDao;
 import com.parq.server.dao.exception.DuplicateEmailException;
 import com.parq.server.dao.model.object.Admin;
-import com.parq.server.dao.model.object.GeoPoint;
 import com.parq.server.dao.model.object.ParkingInstance;
 import com.parq.server.dao.model.object.ParkingLocation;
 import com.parq.server.dao.model.object.ParkingSpace;
@@ -24,13 +24,14 @@ import com.parq.server.dao.model.object.User;
 import com.parq.server.dao.model.object.UserPaymentReport;
 import com.parq.server.dao.model.object.UserPaymentReport.UserPaymentEntry;
 import com.parq.server.dao.model.object.UserScore;
+import com.parq.server.grid.GridManagementService;
+import com.parq.server.grid.model.object.ParkingLocationWithFillRate;
 import com.parq.web.PasswordChangeRequest;
 import com.parq.web.model.MapLocation;
 import com.parq.web.model.ParkingHistory;
 import com.parq.web.model.ParkingSpaceStatus;
 import com.parq.web.model.ReportingHistory;
 import com.parq.web.model.UserRegistration;
-import com.parq.web.model.WebGeoPoint;
 import com.parq.web.model.WebParkingLocation;
 import com.parq.web.model.WebUser;
 
@@ -344,39 +345,39 @@ public class ParqWebServiceImpl implements ParqWebService{
 		centerPointLat = ((int) (centerPointLat * 100)) / 100.00;
 		centerPointLong = ((int) (centerPointLong * 100)) / 100.00;
 		
-		
-		List<ParkingLocation> geoLocations = geoDao.findCloseByParkingLocation(
+		List<ParkingLocation> parkingStreet = geoDao.findCloseByParkingLocation(
 				centerPointLat - precision, centerPointLat + precision, 
 				centerPointLong - precision, centerPointLong + precision);
 		
-		if (geoLocations != null) {
-			for (ParkingLocation parkingLoc: geoLocations) {
-				WebParkingLocation parkLoc = new WebParkingLocation();
-				WebGeoPoint webGeoPoint = getCenterGeoLocation(parkingLoc);
-				parkLoc.setLatitude(webGeoPoint.getLatitude());
-				parkLoc.setLongitude(webGeoPoint.getLongitude());
-				parkLoc.setLocationName(parkingLoc.getLocationIdentifier());
-
-				parkingLocations.add(parkLoc);
+		GridManagementService gms = GridManagementService.getInstance();
+		ParkingStatusDao statusDao = new ParkingStatusDao();
+		
+		if (parkingStreet != null) {
+			for (ParkingLocation street: parkingStreet) {
+				List<Long> streetIds = new ArrayList<Long>();
+				streetIds.add(street.getLocationId());
+				ParkingLocationWithFillRate streetWithSpaces = 
+					gms.getParkingLocationStatus(streetIds).get(0);
+				for (ParkingSpace space : streetWithSpaces.getSpaces()) {
+					// get the parking status for the parking space
+					List<ParkingInstance> parkingStatus = 
+							statusDao.getParkingStatusBySpaceIds(new long[] {space.getSpaceId()});
+					// fill in the parking space information
+					WebParkingLocation parkSpace = new WebParkingLocation();
+					parkSpace.setLatitude(space.getLatitude());
+					parkSpace.setLongitude(space.getLongitude());
+					parkSpace.setLocationName(street.getLocationIdentifier());
+					if (parkingStatus == null || parkingStatus.isEmpty()) {
+						parkSpace.setAvailable(true);
+					} else {
+						parkSpace.setAvailable(
+								parkingStatus.get(0).getParkingEndTime().getTime() < System.currentTimeMillis());
+					}
+					parkingLocations.add(parkSpace);
+				}
 			}
 		}
 		return parkingLocations;
-	}
-
-
-	private WebGeoPoint getCenterGeoLocation(ParkingLocation parkingLoc) {
-		double avgLat = 0.0;
-		double avgLong = 0.0;
-		
-		for (GeoPoint gp : parkingLoc.getGeoPoints()) {
-			avgLat += gp.getLatitude();
-			avgLong += gp.getLongitude();
-		}
-		
-		avgLat = avgLat / parkingLoc.getGeoPoints().size();
-		avgLong = avgLong / parkingLoc.getGeoPoints().size();
-		
-		return new WebGeoPoint(avgLat, avgLong);
 	}
 
 
