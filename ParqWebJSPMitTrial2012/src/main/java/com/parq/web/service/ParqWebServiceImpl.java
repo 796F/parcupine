@@ -11,7 +11,6 @@ import com.parq.server.dao.AdminDao;
 import com.parq.server.dao.AdminReportDao;
 import com.parq.server.dao.ClientDao;
 import com.parq.server.dao.ParkingLocationDao;
-import com.parq.server.dao.ParkingSpaceDao;
 import com.parq.server.dao.ParkingStatusDao;
 import com.parq.server.dao.UserDao;
 import com.parq.server.dao.exception.DuplicateEmailException;

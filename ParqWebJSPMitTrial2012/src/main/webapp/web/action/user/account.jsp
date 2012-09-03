@@ -20,29 +20,28 @@
 	</script>
 </head>
 
-
+<% 
+	ParqWebService service = ParqWebServiceFactory.getParqWebServiceInstance();
+	List<ReportingHistory> pointHis = service.getReportingHistoryForUser(user); 
+%>
+		
 <body>
-
-
 <div class="container-fluid">
   <div class="content">
     <div class="pill-content">
-
       <div class="active" id="parking-history">
-		<h2>Welcome <%=user.getUsername()%></h2>
-		<% 
-			ParqWebService service = ParqWebServiceFactory.getParqWebServiceInstance();
-			List<ReportingHistory> pointHis = service.getReportingHistoryForUser(user); 
-		%>
-		<h2>Your Current Point Balance Is: <%= pointHis.get(0).getPoints() %> </h2>	
+      
+		<h2 class="span14" style="text-align: center; margin-top: 50px;">
+			<font style="color: #1D5169;">Welcome, <%=user.getUsername()%> <br/>
+			Your current point balance is:</font> <font style="color: #5EB3D2;"><%= pointHis.get(0).getPoints() %></font> 
+		</h2>	
 		
-		<table>
-			<tr>
-				<td style="width:49%">
+	
+		<div class="span14" style="margin-top:75px">
+				<div class="pull-left span7">
 					<!-- The Parking History Table -->
 					<table class="zebra-striped">
 					  <thead>
-					    <th>Date</th>
 					    <th>Location</th>
 					    <th>Start time</th>
 					    <th>End time</th>
@@ -53,13 +52,12 @@
 						if (pHis == null || pHis.isEmpty()) { %>
 						  <tr>
 						    <td colspan="4">
-						      <h6>No history on record</h6>
+						      <h6><small>No history on record</small></h6>
 						    </td>
 						  </tr>
 					  <% } else { 
 						  for (ParkingHistory his : pHis) {%>
 							  <tr>
-							    <td><%= his.getDate() %></td>
 							    <td><%= his.getLocationName() %></td>
 							    <td><%= his.getStartTime() %></td>
 							    <td><%= his.getEndTime() %></td>
@@ -67,10 +65,9 @@
 						  <% } %>
 					  <% } %>
 					</table>
-				</td>
+				</div>
 			<!-- Small Table Spacer  -->
-				<td style="width:2%"/td>
-				<td style="width:49%">
+				<div class="pull-right span7">
 					<!-- Point history table -->
 					<table class="zebra-striped">
 					  <thead>
@@ -95,14 +92,15 @@
 						<% } %>
 					  <% } %>
 					</table>
-				</td>
-			</tr>
-		</table>
+				</div>
+			</div>
+		</div>
+		
       </div>
     </div>
   </div>
 </div>
-
+<jsp:include page="/web/templates/footer.jsp" />
 </body>
 
 </html>

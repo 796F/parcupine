@@ -14,6 +14,7 @@
 html, body {
   margin: 0;
   padding: 0;
+  background-color: #EDEDED;
 }
 h1,
 h2,
@@ -90,6 +91,7 @@ html {
   font-size: 100%;
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
+  background-color: #EDEDED;
 }
 a:focus {
   outline: thin dotted;
@@ -181,8 +183,8 @@ textarea {
  * Basic and global styles for generating a grid system, structural layout, and page templates
  * ------------------------------------------------------------------------------------------- */
 body {
-  background-color: #ffffff;
-  margin: 100px;
+  background-color: #EDEDED;
+  margin: 80px;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 13px;
   font-weight: normal;
@@ -194,6 +196,7 @@ body {
   margin-left: auto;
   margin-right: auto;
   zoom: 1;
+  height: 100%;
 }
 .container:before, .container:after {
   display: table;
@@ -209,6 +212,7 @@ body {
   padding-left: 20px;
   padding-right: 20px;
   zoom: 1;
+  height: 100%;
 }
 .container-fluid:before, .container-fluid:after {
   display: table;
@@ -223,6 +227,9 @@ body {
   top: 0;
   left: 20px;
   width: 220px;
+  margin-top: 175px;
+  margin-left: 50px;
+  position: fixed;
 }
 .container-fluid > .content {
   margin-left: 240px;
@@ -232,6 +239,7 @@ a {
   text-decoration: none;
   line-height: inherit;
   font-weight: inherit;
+  
 }
 a:hover {
   color: #00438a;
@@ -414,7 +422,7 @@ h3 small,
 h4 small,
 h5 small,
 h6 small {
-  color: #bfbfbf;
+  color: #1D5169;
 }
 h1 {
   margin-bottom: 18px;
@@ -495,7 +503,7 @@ dl dd {
 hr {
   margin: 20px 0 19px;
   border: 0;
-  border-bottom: 1px solid #eee;
+  border-bottom: 2px solid #6A909B;
 }
 strong {
   font-style: inherit;
@@ -1301,10 +1309,10 @@ table .headerSortUp.purple, table .headerSortDown.purple {
  * Repeatable UI elements outside the base styles provided from the scaffolding
  * ---------------------------------------------------------------------------- */
 .topbar {
-  background-image: -moz-linear-gradient(center top , #80D4FF, #80D4FF);
-  background-image: -webkit-linear-gradient(top, #80D4FF, #80D4FF);
-  background-image: -o-linear-gradient(top, #80D4FF, #80D4FF);
-  height:95px;
+  background-image: -moz-linear-gradient(center top , #EDEDED, #EDEDED);
+  background-image: -webkit-linear-gradient(top, #EDEDED, #EDEDED);
+  background-image: -o-linear-gradient(top, #EDEDED, #EDEDED);
+  height:60px;
   position: fixed;
   top: 0;
   left: 0;
@@ -1791,7 +1799,10 @@ a.menu:after, .dropdown-toggle:after {
 footer {
   margin-top: 17px;
   padding-top: 17px;
-  border-top: 1px solid #eee;
+  border-top: 4px solid #6A909B
+  position:absolute;
+  bottom:0;
+  height:40px;   /* Height of the footer */
 }
 .page-header {
   margin-bottom: 17px;

@@ -17,7 +17,9 @@
 			<p style="clear: both"></p>
 		</div>
 	</div>
+	<jsp:include page="/web/templates/footer.jsp" />
 </body>
+
 
 </html>
 

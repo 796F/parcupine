@@ -31,7 +31,7 @@ hr.stripped {margin:0px}
 #parqform label {font-weight:bold; font-size:12pt;}
 #parqform input[type=text] {width:95%;font-size:14pt;height:28px;}
 
-#map_canvas {width:100%; height:600px;}
+#map_canvas {width:850px; height:400px;}
 
 
 /* about page */
@@ -42,7 +42,11 @@ hr.stripped {margin:0px}
 /* end about page */
 
 /* footer  */
-.footer {background-color:#FFF;}
+.footer { 
+  bottom:0px;
+  position:absolute;
+  background-color: #EDEDED;
+}
 .footer ul {list-style:none; display:inline;}
 .footer ul li {margin-right:40px;display:inline;font-weight:bold;}
 
