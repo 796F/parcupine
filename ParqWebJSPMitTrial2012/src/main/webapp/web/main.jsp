@@ -9,8 +9,8 @@
 <body>
 	<div class="container-fluid">
 		<div class="sidebar">
-			<p class="well">Red Spaces are Taken.</p>
-			<p class="well">Green Spaces are Available.</p>
+			<p class="well"><font style="color:red">Red Spaces</font> are Taken.</p>
+			<p class="well"><font style="color:green">Green Spaces</font> are Available.</p>
 		</div>
 		<div class="content">
 			<div id="map_canvas"></div>

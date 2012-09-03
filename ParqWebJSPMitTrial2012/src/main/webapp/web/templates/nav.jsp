@@ -50,6 +50,7 @@
 			</a>
 		</div>
 		<!-- Bottom line image -->
-		<hr class="span15"/>
+		<br/>
+		<img class="span15" style="height: 2px;" src="<%=request.getContextPath()%>/web/images/topbar.png">
 	</div>
 </div>
