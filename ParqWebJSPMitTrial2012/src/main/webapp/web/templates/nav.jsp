@@ -10,9 +10,8 @@
   <a href="<%=request.getContextPath()%>/index.jsp">
     <img class="pull-left" src="<%=request.getContextPath()%>/web/images/logo.png" />
   </a>
-  
   <!-- Right hand side nav link -->
-  <div class="pull-left span15">
+  <div class="pull-right span16">
 	    <ul class="pull-left">
 		  <li>
 		  	<a href="<%=request.getContextPath()%>/index.jsp">
@@ -51,6 +50,6 @@
 		</div>
 		<!-- Bottom line image -->
 		<br/>
-		<img class="span15" style="height: 2px;" src="<%=request.getContextPath()%>/web/images/topbar.png">
+		<img class="span16" style="height: 2px;" src="<%=request.getContextPath()%>/web/images/topbar.png">
 	</div>
 </div>
