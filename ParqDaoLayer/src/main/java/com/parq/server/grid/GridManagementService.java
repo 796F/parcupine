@@ -228,7 +228,7 @@ public class GridManagementService implements Runnable{
 
 	@Override
 	public void run() {
-		System.out.println("Parking Status Update Triggered");
+		System.out.println("Parking Status Update Triggered: " + new Date(System.currentTimeMillis()).toString());
 		updateParkingStatus();
 	}
 
