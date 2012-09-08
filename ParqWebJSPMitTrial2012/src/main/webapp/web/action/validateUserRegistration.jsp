@@ -8,6 +8,8 @@
 <html>
 	<%
 	ParqWebService service = ParqWebServiceFactory.getParqWebServiceInstance();
+	userRegistration.setPassword1("a");
+	userRegistration.setPassword2("a");
 	boolean registrationSuccessful = service.registerNewUser(userRegistration);
 
 	if (registrationSuccessful == false) {

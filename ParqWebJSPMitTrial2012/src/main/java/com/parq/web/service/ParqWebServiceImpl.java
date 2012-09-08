@@ -182,7 +182,7 @@ public class ParqWebServiceImpl implements ParqWebService{
 	private boolean validatePassword(String newPassword) {
 		boolean isValidPassword = true;
 		
-		if (newPassword == null	|| newPassword.isEmpty() || newPassword.length() < 6) {
+		if (newPassword == null	|| newPassword.isEmpty() || newPassword.length() < 1) {
 			isValidPassword = false;
 		}
 		return isValidPassword;

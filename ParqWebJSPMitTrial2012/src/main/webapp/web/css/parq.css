@@ -1,0 +1,35 @@
+@charset "UTF-8";
+/* CSS Document */
+@font-face { font-family: SenseL; src: url('http://visualizing-data.org/DINNextLTPro-Light.otf');}
+body{
+	background-color:#ededed;
+	maring:0;
+}
+.team{
+	color:#222;
+	font-size:11px;
+	font-family:Tahoma;
+	line-height:16px;
+}
+.main{
+    color:#222;
+	font-size:12px;
+	font-family:SenseL;
+	line-height:18px;
+	padding-left:5px;
+}
+.main2{
+    color:#222;
+	font-size:12px;
+	font-family:SenseL;
+	line-height:18px;
+}
+.position{
+	color:#52b4cf;	
+}
+.bb{
+	font-family:Tahoma;
+	font-weight:bold;
+}
+.bottom{	
+}

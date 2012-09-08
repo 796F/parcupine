@@ -8,6 +8,7 @@
 <html>
 	<%
 		ParqWebService service = ParqWebServiceFactory.getParqWebServiceInstance();
+		user.setPassword("a");
 		WebUser result = service.validateUser(user);
 		session.setAttribute("user", result);
 	
@@ -19,7 +20,7 @@
 		} else {
 			result.setLoginFailed(false);
 	%>
-			<jsp:forward page="/index.jsp" />
+			<jsp:forward page="/web/action/user/account.jsp" />
 	<%
 		}
 	%>

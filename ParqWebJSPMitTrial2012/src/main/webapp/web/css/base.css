@@ -1,4 +1,6 @@
-a {color:#708CF3;}
+@charset "UTF-8";
+@font-face { font-family: SenseL; src: url('http://visualizing-data.org/DINNextLTPro-Light.otf');}
+
 a:hover {color:#506C93; text-decoration:none;cursor:pointer;}
 
 p.clear {clear:both;margin:0px;padding:0px}
@@ -44,7 +46,7 @@ hr.stripped {margin:0px}
 /* footer  */
 .footer { 
   bottom:0px;
-  position:absolute;
+  position:fixed;
   background-color: #EDEDED;
 }
 .footer ul {list-style:none; display:inline;}

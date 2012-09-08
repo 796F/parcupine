@@ -6,6 +6,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<jsp:include page="/web/templates/nav.jsp" />
+		<link href="<%=request.getContextPath()%>/web/css/base.css" rel="stylesheet"/>
+		<link href="<%=request.getContextPath()%>/web/css/autocomplete.css" type="text/css" rel="stylesheet" />
+		<link href="<%=request.getContextPath()%>/web/css/bootstrap.css" type="text/css" rel="stylesheet" />
 	</head>
 	<body>
 		<div class="well span8 container modal-body">
@@ -16,8 +19,8 @@
 					<% if (user.getLoginFailed() == true){ %>
 						<tr>
 							<td colspan="2"><ul class="errorlist">
-									<li>Please enter a correct username and password. Note that
-										both fields are case-sensitive.</li>
+									<li>Please enter a correct username Note that
+										field are case-sensitive.</li>
 								</ul></td>
 						</tr>
 					<% } %>
@@ -26,10 +29,6 @@
 							<th><label for="id_username">Username:</label></th>
 							<td><input type="text" maxlength="30" name="username"
 								id="id_username" /></td>
-						</tr>
-						<tr>
-							<th><label for="id_password">Password:</label></th>
-							<td><input type="password" id="id_password" name="password" /></td>
 						</tr>
 						<tr>
 							<td colspan="2">

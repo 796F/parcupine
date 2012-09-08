@@ -8,6 +8,9 @@
 
 <head>
 	<jsp:include page="/web/templates/nav.jsp" />
+	<link href="<%=request.getContextPath()%>/web/css/base.css" rel="stylesheet"/>
+	<link href="<%=request.getContextPath()%>/web/css/autocomplete.css" type="text/css" rel="stylesheet" />
+	<link href="<%=request.getContextPath()%>/web/css/bootstrap.css" type="text/css" rel="stylesheet" />
 </head>
 
 <body>
@@ -47,16 +50,6 @@
     				<th><label for="id_username">Username:</label></th>
     				<td><input type="text" id="id_username" name="email"/></td>
     			</tr>
-				<tr>
-					<th><label for="id_password1">Password:</label></th>
-					<td><input type="password" id="id_password1" name="password1"/></td>
-				</tr>
-				<tr>
-					<th><label for="id_password2">Password confirmation:</label></th>
-					<td><input type="password" id="id_password2" name="password2"/>
-						<br/><span class="helptext">Enter the same password as above, for verification.</span>
-					</td>
-				</tr>
 		    	<tr>
 		      		<td colspan="2">
 						<center><input type="submit" value="Sign Up" class="btn large"/></center>

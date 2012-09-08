@@ -1,9 +1,7 @@
 <%@ page import="com.parq.web.model.WebUser"%>
 <jsp:useBean id="user" class="com.parq.web.model.WebUser" scope="session" />
 
-<link href="<%=request.getContextPath()%>/web/css/base.css" rel="stylesheet"/>
-<link href="<%=request.getContextPath()%>/web/css/autocomplete.css" type="text/css" rel="stylesheet" />
-<link href="<%=request.getContextPath()%>/web/css/bootstrap.css" type="text/css" rel="stylesheet" />
+<link href="<%=request.getContextPath()%>/web/css/nav.css" rel="stylesheet"/>
 
 <div class="topbar span21">
   <!-- PARQUPINE header image -->
@@ -14,31 +12,24 @@
   <div class="pull-right span16">
 	    <ul class="pull-left">
 		  <li>
-		  	<a href="<%=request.getContextPath()%>/index.jsp">
-		  		<img alt="Account" src="<%=request.getContextPath()%>/web/images/home.png"/>
-			</a>
+		  	<a href="<%=request.getContextPath()%>/index.jsp">Home</a>
+		  </li>
+		  <li>
+		  	<a href="<%=request.getContextPath()%>/web/map.jsp">Parking-Map</a>
 		  </li>
 		  <% if(user != null && user.isAuthenticated()) { %>
 			  <li>
-			  	<a href="<%=request.getContextPath()%>/web/action/user/account.jsp">
-					<img alt="Account" src="<%=request.getContextPath()%>/web/images/account.png"/>
-				</a>
+			  	<a href="<%=request.getContextPath()%>/web/action/user/account.jsp">Account</a>
 			  </li>
 			  <li>
-			  	<a href="<%=request.getContextPath()%>/web/action/logout.jsp">
-			  		<img alt="Logout" src="<%=request.getContextPath()%>/web/images/logout.png"/>
-			  	</a>
+			  	<a href="<%=request.getContextPath()%>/web/action/logout.jsp">Logout</a>
 			  </li>
 		  <% } else { %>
 		  	  <li>
-			  	<a href="<%=request.getContextPath()%>/web/action/signup.jsp">
-					<img alt="Register" src="<%=request.getContextPath()%>/web/images/register.png"/>
-				</a>
+			  	<a href="<%=request.getContextPath()%>/web/action/signup.jsp">Register</a>
 			  </li>
 			  <li>
-			  	<a href="<%=request.getContextPath()%>/web/action/login.jsp">
-			  		<img alt="Login" src="<%=request.getContextPath()%>/web/images/signin.png"/>
-			  	</a>
+			  	<a href="<%=request.getContextPath()%>/web/action/login.jsp">Login</a>
 			  </li>
 		  <% } %>
 		</ul>
@@ -49,7 +40,6 @@
 			</a>
 		</div>
 		<!-- Bottom line image -->
-		<br/>
-		<img class="span16" style="height: 2px;" src="<%=request.getContextPath()%>/web/images/topbar.png">
+		<img class="span16" style="height: 2px;" src="<%=request.getContextPath()%>/web/images/line.png">
 	</div>
 </div>

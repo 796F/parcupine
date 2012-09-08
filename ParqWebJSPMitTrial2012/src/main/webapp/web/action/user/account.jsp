@@ -12,6 +12,9 @@
 
 <head>
 	<jsp:include page="/web/templates/nav.jsp" />
+	<link href="<%=request.getContextPath()%>/web/css/base.css" rel="stylesheet"/>
+	<link href="<%=request.getContextPath()%>/web/css/autocomplete.css" type="text/css" rel="stylesheet" />
+	<link href="<%=request.getContextPath()%>/web/css/bootstrap.css" type="text/css" rel="stylesheet" />
 	<script type="text/javascript" src="<%=request.getContextPath()%>/web/js/bootstrap-tabs.js"></script>
 	<script type="text/javascript">
 	   $(document).ready(function() {
@@ -78,7 +81,7 @@
 						if (pointHis == null || pointHis.size() < 2) { %>
 						  <tr>
 						    <td colspan="3">
-						      <h6>No history on record</h6>
+						      <h6><small>No history on record</small></h6>
 						    </td>
 						  </tr>
 					  <% } else { 
