@@ -172,6 +172,7 @@
 		8705F842157D43530013DF29 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		8705F863157E9A6C0013DF29 /* colon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = colon.png; sourceTree = "<group>"; };
 		8705F87D157EB9EC0013DF29 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		8707811016029E11000B6D1E /* JSONKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = JSONKit.h; path = RestKit/Vendor/JSONKit/JSONKit.h; sourceTree = "<group>"; };
 		871E20FC152CD54C00D9452A /* UIColor+Parq.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+Parq.h"; sourceTree = "<group>"; };
 		871E20FD152CD54C00D9452A /* UIColor+Parq.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Parq.m"; sourceTree = "<group>"; };
 		871E2103152CE02100D9452A /* settings.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = settings.png; sourceTree = "<group>"; };
@@ -224,7 +225,6 @@
 		FC1219E5159B6CD10072DA85 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		FC1219E7159B6CE30072DA85 /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
 		FC1219FE159B6FF00072DA85 /* RestKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RestKit.xcodeproj; path = RestKit/RestKit.xcodeproj; sourceTree = "<group>"; };
-		FC121A44159B87B10072DA85 /* JSONKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = JSONKit.h; path = RestKit/Build/Headers/RestKit/JSONKit.h; sourceTree = "<group>"; };
 		FC121A51159B9C880072DA85 /* Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Parser.h; path = "parq-ios2/Parser.h"; sourceTree = "<group>"; };
 		FC121A52159B9C880072DA85 /* Parser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Parser.m; path = "parq-ios2/Parser.m"; sourceTree = "<group>"; };
 		FC121A57159BAD8E0072DA85 /* AbstractRequestObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AbstractRequestObject.h; path = "parq-ios2/AbstractRequestObject.h"; sourceTree = "<group>"; };
@@ -585,7 +585,7 @@
 		FC8E6D0115C1E9BA00F443C5 /* Support Layers */ = {
 			isa = PBXGroup;
 			children = (
-				FC121A44159B87B10072DA85 /* JSONKit.h */,
+				8707811016029E11000B6D1E /* JSONKit.h */,
 				FC48562E1577FD37002C4479 /* DataLayer.h */,
 				FC48562F1577FD37002C4479 /* DataLayer.m */,
 				FC7CE863157943620059EE43 /* NetworkLayer.h */,
