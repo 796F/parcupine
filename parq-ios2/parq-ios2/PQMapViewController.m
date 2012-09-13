@@ -696,7 +696,6 @@ typedef struct{
     }else{
         return [self newCalloutPlacementWithSegment:[segData objectAtIndex:2] andSpots:insideCircle];
     }
-
     
 }
 
