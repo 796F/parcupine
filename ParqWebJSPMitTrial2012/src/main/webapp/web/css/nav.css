@@ -211,7 +211,7 @@ body {
 }
 .container-fluid {
   position: relative;
-  min-width: 940px;
+  min-width: 600px;
   padding-left: 20px;
   padding-right: 20px;
   zoom: 1;
@@ -1775,7 +1775,6 @@ footer {
   margin-top: 17px;
   padding-top: 17px;
   border-top: 4px solid #6A909B;
-  position: fixed;
   bottom:0;
   height:40px;   /* Height of the footer */
 }

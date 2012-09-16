@@ -3,20 +3,21 @@
 
 <link href="<%=request.getContextPath()%>/web/css/nav.css" rel="stylesheet"/>
 
-<div class="topbar span21">
+<div class="topbar span19">
   <!-- PARQUPINE header image -->
   <a href="<%=request.getContextPath()%>/index.jsp">
     <img class="pull-left" src="<%=request.getContextPath()%>/web/images/logo.png" />
   </a>
   <!-- Right hand side nav link -->
-  <div class="pull-right span16">
+  <div class="pull-right span14">
 	    <ul class="pull-left">
 		  <li>
 		  	<a href="<%=request.getContextPath()%>/index.jsp">Home</a>
 		  </li>
-		  <li>
-		  	<a href="<%=request.getContextPath()%>/web/map.jsp">Parking-Map</a>
-		  </li>
+		  <!--
+			  <li>
+			  	<a href="<%=request.getContextPath()%>/web/map.jsp">Parking-Map</a>
+			  </li>
 		  <% if(user != null && user.isAuthenticated()) { %>
 			  <li>
 			  	<a href="<%=request.getContextPath()%>/web/action/user/account.jsp">Account</a>
@@ -32,6 +33,7 @@
 			  	<a href="<%=request.getContextPath()%>/web/action/login.jsp">Login</a>
 			  </li>
 		  <% } %>
+		-->
 		</ul>
     	<!-- Lab logo -->
     	<div class="pull-right">
@@ -40,6 +42,6 @@
 			</a>
 		</div>
 		<!-- Bottom line image -->
-		<img class="span16" style="height: 2px;" src="<%=request.getContextPath()%>/web/images/line.png">
+		<img class="span14" style="height: 2px;" src="<%=request.getContextPath()%>/web/images/line.png">
 	</div>
 </div>

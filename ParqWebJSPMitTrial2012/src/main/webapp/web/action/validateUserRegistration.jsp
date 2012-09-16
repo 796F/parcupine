@@ -12,30 +12,8 @@
 	userRegistration.setPassword2("a");
 	boolean registrationSuccessful = service.registerNewUser(userRegistration);
 
-	if (registrationSuccessful == false) {
 	%>
-		<jsp:forward page="/web/action/signup.jsp" />	
-	<%
-	} else {
-	%>
-		<head>
-			<jsp:include page="/web/templates/nav.jsp" />
-		</head>
-		<body>
-			<div class="well span8 container modal-body">
-					<h2>Success</h2>
-					<table>
-						<tbody xmlns="http://www.w3.org/1999/xhtml">
-							<tr>
-								<td colspan="2">
-									<ul class="errorlist">
-										<li>Your registration is complete. You can now sign-in</li>
-									</ul>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-			</div>
-		</body>
-	<% } %>
+
+	<jsp:forward page="/web/main.jsp"/>	
+	
 </html>

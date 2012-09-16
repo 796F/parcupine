@@ -2,23 +2,21 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<title>Parqupine</title>
+	<title>Parcupine</title>
 	<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/web/css/parq.css" />
 	<script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js'></script>
 	<script type='text/javascript' src='<%=request.getContextPath()%>/web/js/jquery.scrollTo-min.js'></script>
 	<script type='text/javascript' src='<%=request.getContextPath()%>/web/js/jquery.localscroll-min.js'></script>
-	<script type="text/javascript">
-		$(document).ready(function() {
-			$.localScroll({
-				duration:500,
-			});
-		});
-	</script>
+
 	<jsp:include page="/web/templates/nav.jsp" />
+	<jsp:include page="/web/templates/main_map.jsp" />
+	<link href="<%=request.getContextPath()%>/web/css/base.css" rel="stylesheet"/>
+	
+	<jsp:useBean id="userRegistration" class="com.parq.web.model.UserRegistration" scope="request" />
 </head>
 
-<body>
-    <table cellpadding="0" cellspacing="0" width=100%>
+<body>					
+    <table cellpadding="0" cellspacing="0" width="100%">
       <tr><td width="40px"/><td align="left">
       <table cellpadding="0" cellspacing="0">
          <tr>
@@ -35,9 +33,8 @@
                   <tr>
                      <td width="14px"></td>
                      <td colspan="7">
-                     	<!-- Video Frame, need to add link to youtube video -->
-                     	<iframe width=715px height=400px> 
-                     	</iframe>
+                     	<!-- Video Frame, need to add link to the correct PARQ youtube video -->
+                     	<iframe width="640" height="360" src="http://www.youtube.com/embed/ctJJrBw7e-c?feature=player_detailpage" frameborder="0" allowfullscreen></iframe>
                      </td>
                   </tr>
                   <tr>
@@ -125,7 +122,7 @@ Street parking spaces also comprise a huge chunk of public urban space that is i
                      	<table cellpadding="0" cellspacing="0">
                            <tr>
                               <td class="main" width="275px">
-                              Parkupine investigates how mobile technology can transform parking in cities. We hypothesize that using mobile phones to locate, pay for, and manage parking spaces can make both the price and availability of these spots transparent, in real-time, to everyone. By cutting down the time it takes to find an open spot and handling payment electronically, we can improve the experience of parking while greatly reducing energy use, air pollution, traffic congestion, and enforcement cost. We can do this without need for street meters or embedded car sensors, relying on digital traces and crowdsourced information to monitor the availability of spots. This would further reduce maintenance, collection, and enforcement costs.
+                              Parcupine investigates how mobile technology can transform parking in cities. We hypothesize that using mobile phones to locate, pay for, and manage parking spaces can make both the price and availability of these spots transparent, in real-time, to everyone. By cutting down the time it takes to find an open spot and handling payment electronically, we can improve the experience of parking while greatly reducing energy use, air pollution, traffic congestion, and enforcement cost. We can do this without need for street meters or embedded car sensors, relying on digital traces and crowdsourced information to monitor the availability of spots. This would further reduce maintenance, collection, and enforcement costs.
                               </td>
                               <td width="65px"></td>
                               <td valign="top"><img src="<%=request.getContextPath()%>/web/images/about_1.png" /></td>
@@ -137,7 +134,7 @@ Street parking spaces also comprise a huge chunk of public urban space that is i
                               <td width="275px" valign="top"><img src="<%=request.getContextPath()%>/web/images/about_2.png" / style="padding-left:5px;"/></td>
                               <td width="65px"></td>
                               <td class="main2" width="250px">
-                              The first phase of Parkupine is a pilot study on the MIT campus, where we will test our mobile app in the field with real drivers and parking spaces. We will observe how users interact with the system in several ways: finding parking spots using the real-time map, checking their car in and out of their spot, and reporting observed parking availability in other spots along the same street. There will be cash incentives to minimize parking time and contribute reports to the crowdsourced platform. Finally, we will experiment with utilizing the space for non-parking uses at different times of the day.
+                              The first phase of Parcupine is a pilot study on the MIT campus, where we will test our mobile app in the field with real drivers and parking spaces. We will observe how users interact with the system in several ways: finding parking spots using the real-time map, checking their car in and out of their spot, and reporting observed parking availability in other spots along the same street. There will be cash incentives to minimize parking time and contribute reports to the crowdsourced platform. Finally, we will experiment with utilizing the space for non-parking uses at different times of the day.
 
                               </td>
                            </tr>
@@ -165,7 +162,7 @@ Street parking spaces also comprise a huge chunk of public urban space that is i
             <td width="715px">
                <table cellpadding="0" cellspacing="0">
                   <tr>
-                     <td width="14px"></td>
+                     <td width="14px"><a name="participate"/></td>
                      <td colspan="7"><img src="<%=request.getContextPath()%>/web/images/header_2.png"/></td>
                   </tr>
                   <tr>
@@ -186,6 +183,76 @@ If interested, please visit this link to see the rules, confirm consent, and dow
                               <td valign="top"><img src="<%=request.getContextPath()%>/web/images/about_0.png" /></td>
                            </tr>
                         </table>
+                     </td>
+                  </tr>
+                  <tr><td colspan="8" height="15px"></td></tr>
+                  <tr>
+                  	<td width="14px"></td>
+                  	<td colspan = "7" class="main">
+                  		<div style="width: 600px">
+                  			If you want to participate in the trail, please provide us with your email address below. Few weeks before the pilot starts, we will send you an email with instruction how participate in the trial.
+                  		</div>
+                  	</td>
+                  </tr>
+                  <tr><td colspan="8" height="10px"></td></tr>
+                  <tr>
+                     <td width="14px"></td>
+                     <td colspan="7">
+                     	<form action="<%=request.getContextPath()%>/web/action/validateUserRegistration.jsp#participate" method="post">
+                     		<input type="text" style="margin-right: 20px" id="id_username" name="email"/>
+                     		<input type="submit" value="Pre-Register" class="btn"/>
+                     	</form>
+                     </td>
+                  </tr>
+                  <tr><td colspan="8" height="5px"></td></tr>
+                  <!-- Registration result -->
+				  <% if (userRegistration.isEmailAlreadyExist() == true){ %>
+				  <tr>
+				  	<td width="14px"></td>
+					<td colspan="7">
+						<p style="font-weight: bold; color: red;">This email address already exist, if you want to register another email address, please enter it now</p>
+					</td>
+				  </tr>
+				  <% } else if (userRegistration.getEmail() != null && !userRegistration.getEmail().isEmpty()){%>
+				  <tr>
+				  	<td width="14px"></td>
+					<td colspan="7">
+						<p style="font-weight: bold; color: green;">Thank you for your participation, we will email you when the trials starts.</p>
+					</td>
+				  </tr>
+				  <% } %>
+                  <tr>
+                     <td colspan="8" height="50px"></td>
+                  </tr>
+                  <tr>
+                     <td colspan="8"><img src="<%=request.getContextPath()%>/web/images/line.png" /></td>
+                  </tr>
+                  <tr>
+                     <td colspan="8" height="50px"></td>
+                  </tr>
+               </table>
+            </td>
+         </tr>
+      </table>
+      </td></tr>
+      <tr><td width="40px"/><td align="left">
+      <table cellpadding="0" cellspacing="0">
+         <tr>
+            <td width="200px"></td>
+            <td width="715px">
+               <table cellpadding="0" cellspacing="0">
+                  <tr>
+                     <td width="14px"></td>
+                     <td colspan="7"><img src="<%=request.getContextPath()%>/web/images/header_3.png" /></td>
+                  </tr>
+                  <tr>
+                     <td colspan="8" height="35px"></td>
+                  </tr>
+                  <tr>
+                     <td width="14px"></td>
+                     <td colspan="7">
+						<div id="map_canvas"></div>
+						<p style="clear: both"></p>
                      </td>
                   </tr>
                   <tr>
