@@ -15,8 +15,9 @@
 	<jsp:useBean id="userRegistration" class="com.parq.web.model.UserRegistration" scope="request" />
 </head>
 
-<body>					
-    <table cellpadding="0" cellspacing="0" width="100%">
+<body>
+    <table cellpadding="0" cellspacing="0" width=100% height=100%><tr><td align="center">					
+    <table cellpadding="0" cellspacing="0" width="965px">
       <tr><td width="40px"/><td align="left">
       <table cellpadding="0" cellspacing="0">
          <tr>
@@ -190,7 +191,7 @@ If interested, please visit this link to see the rules, confirm consent, and dow
                   	<td width="14px"></td>
                   	<td colspan = "7" class="main">
                   		<div style="width: 600px">
-                  			If you want to participate in the trail, please provide us with your email address below. Few weeks before the pilot starts, we will send you an email with instruction how participate in the trial.
+                  			If you want to participate in the pilot, please provide us with your email address. When the pilot starts, we will email you with instructions on how to participate.
                   		</div>
                   	</td>
                   </tr>
@@ -217,7 +218,7 @@ If interested, please visit this link to see the rules, confirm consent, and dow
 				  <tr>
 				  	<td width="14px"></td>
 					<td colspan="7">
-						<p style="font-weight: bold; color: green;">Thank you for your participation, we will email you when the trials starts.</p>
+						<p style="font-weight: bold; color: green;">Thank you for your participation, we will email you when the pilot starts.</p>
 					</td>
 				  </tr>
 				  <% } %>
@@ -314,6 +315,7 @@ If interested, please visit this link to see the rules, confirm consent, and dow
       </table>
       </td></tr>
     </table>
+    </td></tr></table>
     <jsp:include page="/web/templates/footer.jsp" />
 </body>
 </html>

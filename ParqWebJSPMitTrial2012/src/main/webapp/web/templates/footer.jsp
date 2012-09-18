@@ -1,4 +1,4 @@
-<div class="footer">
+<div class="footer span17">
     <div class="pull-left">
     	<hr style="border-bottom: 3px solid #6A909B;" class="span17" />
     	<div class="span2">

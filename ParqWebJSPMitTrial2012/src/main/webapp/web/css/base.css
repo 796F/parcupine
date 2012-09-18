@@ -47,6 +47,8 @@ hr.stripped {margin:0px}
 .footer { 
   bottom:0px;
   background-color: #EDEDED;
+  margin-left: auto;
+  margin-right: auto;
 }
 .footer ul {list-style:none; display:inline;}
 .footer ul li {margin-right:40px;display:inline;font-weight:bold;}

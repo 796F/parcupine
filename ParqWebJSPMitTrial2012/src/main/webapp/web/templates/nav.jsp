@@ -3,13 +3,13 @@
 
 <link href="<%=request.getContextPath()%>/web/css/nav.css" rel="stylesheet"/>
 
-<div class="topbar span19">
+<div class="topbar span17">
   <!-- PARQUPINE header image -->
   <a href="<%=request.getContextPath()%>/index.jsp">
     <img class="pull-left" src="<%=request.getContextPath()%>/web/images/logo.png" />
   </a>
   <!-- Right hand side nav link -->
-  <div class="pull-right span14">
+  <div class="pull-right span13">
 	    <ul class="pull-left">
 		  <li>
 		  	<a href="<%=request.getContextPath()%>/index.jsp">Home</a>
@@ -42,6 +42,6 @@
 			</a>
 		</div>
 		<!-- Bottom line image -->
-		<img class="span14" style="height: 2px;" src="<%=request.getContextPath()%>/web/images/line.png">
+		<img class="span13" style="height: 2px;" src="<%=request.getContextPath()%>/web/images/line.png">
 	</div>
 </div>
