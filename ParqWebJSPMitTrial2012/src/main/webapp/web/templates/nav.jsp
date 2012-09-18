@@ -6,7 +6,7 @@
 <div class="topbar span17">
   <!-- PARQUPINE header image -->
   <a href="<%=request.getContextPath()%>/index.jsp">
-    <img class="pull-left" src="<%=request.getContextPath()%>/web/images/logo.png" />
+    <img class="pull-left"  style="margin-bottom: -70px" src="<%=request.getContextPath()%>/web/images/logo.png" />
   </a>
   <!-- Right hand side nav link -->
   <div class="pull-right span13">
