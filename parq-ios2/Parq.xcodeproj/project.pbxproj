@@ -50,6 +50,14 @@
 		87E1BE64154888CE0095E92D /* grey_tabs_bar.png in Resources */ = {isa = PBXBuildFile; fileRef = 87E1BE63154888CE0095E92D /* grey_tabs_bar.png */; };
 		87E1BE67154A08D80095E92D /* PQParkingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 87E1BE66154A08D80095E92D /* PQParkingViewController.m */; };
 		87E1BE69154B35270095E92D /* payg.png in Resources */ = {isa = PBXBuildFile; fileRef = 87E1BE68154B35270095E92D /* payg.png */; };
+		87EAC199160AB52800D01A4C /* meter_payg@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 87EAC194160AB52800D01A4C /* meter_payg@2x.png */; };
+		87EAC19A160AB52800D01A4C /* meter_prepaid@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 87EAC195160AB52800D01A4C /* meter_prepaid@2x.png */; };
+		87EAC19B160AB52800D01A4C /* payg@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 87EAC196160AB52800D01A4C /* payg@2x.png */; };
+		87EAC19C160AB52800D01A4C /* prepaid@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 87EAC197160AB52800D01A4C /* prepaid@2x.png */; };
+		87EAC19D160AB52800D01A4C /* spot_free@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 87EAC198160AB52800D01A4C /* spot_free@2x.png */; };
+		87EAC19F160AB7CD00D01A4C /* spot_occupied@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 87EAC19E160AB7CD00D01A4C /* spot_occupied@2x.png */; };
+		87EAC1A1160AB85200D01A4C /* colon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 87EAC1A0160AB85200D01A4C /* colon@2x.png */; };
+		87EAC1A3160ABACB00D01A4C /* settings@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 87EAC1A2160ABACB00D01A4C /* settings@2x.png */; };
 		FC08BB7B1590D1F40077659C /* PQSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC08BB7A1590D1F40077659C /* PQSettingsViewController.m */; };
 		FC11B28A15BDC7D7001AB653 /* goMap.png in Resources */ = {isa = PBXBuildFile; fileRef = FC11B28915BDC7D7001AB653 /* goMap.png */; };
 		FC11B28D15BDD1E2001AB653 /* SelfReportingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC11B28C15BDD1E2001AB653 /* SelfReportingViewController.m */; };
@@ -210,6 +218,14 @@
 		87E1BE65154A08D70095E92D /* PQParkingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PQParkingViewController.h; sourceTree = "<group>"; };
 		87E1BE66154A08D80095E92D /* PQParkingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PQParkingViewController.m; sourceTree = "<group>"; };
 		87E1BE68154B35270095E92D /* payg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = payg.png; sourceTree = "<group>"; };
+		87EAC194160AB52800D01A4C /* meter_payg@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "meter_payg@2x.png"; sourceTree = "<group>"; };
+		87EAC195160AB52800D01A4C /* meter_prepaid@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "meter_prepaid@2x.png"; sourceTree = "<group>"; };
+		87EAC196160AB52800D01A4C /* payg@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "payg@2x.png"; sourceTree = "<group>"; };
+		87EAC197160AB52800D01A4C /* prepaid@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "prepaid@2x.png"; sourceTree = "<group>"; };
+		87EAC198160AB52800D01A4C /* spot_free@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "spot_free@2x.png"; sourceTree = "<group>"; };
+		87EAC19E160AB7CD00D01A4C /* spot_occupied@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "spot_occupied@2x.png"; sourceTree = "<group>"; };
+		87EAC1A0160AB85200D01A4C /* colon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "colon@2x.png"; sourceTree = "<group>"; };
+		87EAC1A2160ABACB00D01A4C /* settings@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "settings@2x.png"; sourceTree = "<group>"; };
 		FC08BB791590D1F40077659C /* PQSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PQSettingsViewController.h; sourceTree = "<group>"; };
 		FC08BB7A1590D1F40077659C /* PQSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PQSettingsViewController.m; sourceTree = "<group>"; };
 		FC11B28915BDC7D7001AB653 /* goMap.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = goMap.png; sourceTree = "<group>"; };
@@ -412,6 +428,14 @@
 		8703ACE01513FC8E002FE357 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				87EAC1A0160AB85200D01A4C /* colon@2x.png */,
+				87EAC194160AB52800D01A4C /* meter_payg@2x.png */,
+				87EAC195160AB52800D01A4C /* meter_prepaid@2x.png */,
+				87EAC196160AB52800D01A4C /* payg@2x.png */,
+				87EAC197160AB52800D01A4C /* prepaid@2x.png */,
+				87EAC1A2160ABACB00D01A4C /* settings@2x.png */,
+				87EAC198160AB52800D01A4C /* spot_free@2x.png */,
+				87EAC19E160AB7CD00D01A4C /* spot_occupied@2x.png */,
 				FC2F5EF415EEB2BF0093A592 /* icon_court.png */,
 				FC72C0DE15DD665C00271694 /* pqplogin.png */,
 				FC72C0DF15DD665C00271694 /* pqpregister.png */,
@@ -747,6 +771,14 @@
 				FC72C0E015DD665C00271694 /* pqplogin.png in Resources */,
 				FC72C0E115DD665C00271694 /* pqpregister.png in Resources */,
 				FC2F5EF515EEB2BF0093A592 /* icon_court.png in Resources */,
+				87EAC199160AB52800D01A4C /* meter_payg@2x.png in Resources */,
+				87EAC19A160AB52800D01A4C /* meter_prepaid@2x.png in Resources */,
+				87EAC19B160AB52800D01A4C /* payg@2x.png in Resources */,
+				87EAC19C160AB52800D01A4C /* prepaid@2x.png in Resources */,
+				87EAC19D160AB52800D01A4C /* spot_free@2x.png in Resources */,
+				87EAC19F160AB7CD00D01A4C /* spot_occupied@2x.png in Resources */,
+				87EAC1A1160AB85200D01A4C /* colon@2x.png in Resources */,
+				87EAC1A3160ABACB00D01A4C /* settings@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
