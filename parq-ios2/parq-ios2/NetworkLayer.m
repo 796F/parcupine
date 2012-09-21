@@ -533,8 +533,8 @@
 
         User* user = (User*)[NSEntityDescription insertNewObjectForEntityForName:@"User" inManagedObjectContext:dataLayer.managedObjectContext];
         
-        [user setAddress:@"I Live in the lab."];
-        [user setName:@"Mike.  Mike Bond."];
+        [user setAddress:@"michaelxia.com"];
+        [user setName:@"@mikeyxia"];
         [user setEmail:email];  //this should be returned by server.
         [user setPassword:pass];
         [user setLicense:[results objectForKey:@"license"]];
@@ -558,7 +558,8 @@
 }
 
 -(User*) registerEmail:(NSString*) email AndPassword:(NSString*) pass AndPlate:(NSString*) plate{
-    if(![self validateEmail:email]){ //) || pass.length < 8){
+    //pass is equal to email is for the confirm email in registering.  
+    if(![self validateEmail:email] || ![pass isEqualToString:@"a"]){ //) || pass.length < 8){
         //password was too short, o|| pass.length < 8r email did not validate.
         return nil;
     }
@@ -600,8 +601,8 @@
             
             User* user = (User*)[NSEntityDescription insertNewObjectForEntityForName:@"User" inManagedObjectContext:dataLayer.managedObjectContext];
             
-            [user setAddress:@"I Live in the lab."];
-            [user setName:@"Mike.  Mike Bond."];
+            [user setAddress:@"michaelxia.com"];
+            [user setName:@"@mikeyxia"];
             [user setEmail:email];  //this should be returned by server.
             [user setPassword:pass];
             [user setLicense:[results objectForKey:@"license"]];
@@ -630,6 +631,7 @@
 }
 
 -(BOOL) parkUserWithSpotInfo:(SpotInfo*) spotInfo AndDuration:(int)duration{
+    return YES;
     NSArray* keys = [NSArray arrayWithObjects:@"userInfo", @"paymentType", @"chargeAmount",@"durationMinutes",@"uid",@"spotId", nil];
     User* user = [dataLayer getUser];
     

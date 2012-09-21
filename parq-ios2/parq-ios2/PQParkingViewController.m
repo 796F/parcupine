@@ -201,6 +201,7 @@ typedef enum {
         [dataLayer setStartTime:[NSDate date]];
         [dataLayer setSpotInfo:self.spotInfo];
         
+        //REDUCE BALANCE. 
         
         totalParkedSeconds = datePicker.countDownDuration;
         timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updatePrepaidTimer) userInfo:nil repeats:YES];
@@ -245,8 +246,12 @@ typedef enum {
         [dataLayer logString:[NSString stringWithFormat:@"%@ %s",@"unpark", __PRETTY_FUNCTION__]];
         [timer invalidate];
         //invalidate restore info
-        [dataLayer setEndTime:[NSDate dateWithTimeIntervalSinceNow:-9000]];        
+        [dataLayer setEndTime:[NSDate dateWithTimeIntervalSinceNow:-9000]];
         totalParkedSeconds = 0;
+        if(self.extendButton.hidden == YES){
+            //was pas as you go.
+            //REDUCE BALANCE
+        }
         [self dismissModalViewControllerAnimated:YES];
     } else if (actionSheet.tag == ACTIONSHEET_EXTEND && buttonIndex == actionSheet.firstOtherButtonIndex) {
         [dataLayer logString:[NSString stringWithFormat:@"EXTEND %s", __PRETTY_FUNCTION__]];

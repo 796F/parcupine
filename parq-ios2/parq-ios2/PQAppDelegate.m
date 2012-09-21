@@ -26,7 +26,7 @@
 {
     
     //check if after study date.
-    NSDate* studyEnd = [NSDate dateWithTimeIntervalSince1970:1347288851];
+    NSDate* studyEnd = [NSDate dateWithTimeIntervalSince1970:1353490425];
     if([[NSDate date] earlierDate:studyEnd] == studyEnd){
         [dataLayer setLoggedIn:NO];
     }else{

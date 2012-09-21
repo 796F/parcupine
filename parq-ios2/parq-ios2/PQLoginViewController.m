@@ -35,7 +35,6 @@
         [self dismissModalViewControllerAnimated:YES];
     }else{
         //unhide email/password box.
-        passwordField.hidden = NO;
         emailField.hidden = NO;
         [dataLayer setLoggedIn:NO];
     }
@@ -43,7 +42,7 @@
 
 -(IBAction)registerButtonPressed:(id)sender{
     [dataLayer logString:[NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__]];
-    NSDate* studyEnd = [NSDate dateWithTimeIntervalSince1970:1347288851];
+    NSDate* studyEnd = [NSDate dateWithTimeIntervalSince1970:1353490425];
     if([[NSDate date] earlierDate:studyEnd] == studyEnd){
         [dataLayer setLoggedIn:NO];
         UIAlertView* studyOver = [[UIAlertView alloc] initWithTitle:@"Thank You" message:@"The study has concluded and systems shut down" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
@@ -59,7 +58,7 @@
 
 -(BOOL) tryLoggingIn{
     [dataLayer logString:[NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__]];
-    NSDate* studyEnd = [NSDate dateWithTimeIntervalSince1970:1347288851];
+    NSDate* studyEnd = [NSDate dateWithTimeIntervalSince1970:1353490425];
     if([[NSDate date] earlierDate:studyEnd] == studyEnd){
         UIAlertView* studyOver = [[UIAlertView alloc] initWithTitle:@"Thank You" message:@"The study has concluded and systems shut down" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
         [studyOver show];
@@ -67,11 +66,11 @@
     }
     User* user;
     //call network layer to login.
-    if(licensePlateField.hidden == NO){
+    if(confirmPasswordField.hidden == NO){
         //registering
-        user = [networkLayer registerEmail:emailField.text AndPassword:passwordField.text AndPlate:licensePlateField.text];
+        user = [networkLayer registerEmail:emailField.text AndPassword:@"a" AndPlate:confirmPasswordField.text];
     }else{
-        user = [networkLayer loginEmail:emailField.text AndPassword:passwordField.text];
+        user = [networkLayer loginEmail:emailField.text AndPassword:@"a"];
     }
     if(user!=nil){
         //correct!
@@ -87,15 +86,11 @@
 -(BOOL) textFieldShouldReturn:(UITextField *)textField{
     if (textField.tag==0) {
         //this is email field.  simply go next
-        [passwordField becomeFirstResponder];
-    }else if (textField.tag==1){
-        //hide the email/password box. 
-        if(passwordField.returnKeyType == UIReturnKeyGo){
-            //currently trying to log in.  
-            
+        if(passwordField.hidden == YES){
+            //logging in
             passwordField.hidden = YES;
             emailField.hidden = YES;
-            //display a LOADING CIRCLE thing.  
+            //display a LOADING CIRCLE thing.
             
             
             BOOL loginResp = [self tryLoggingIn];
@@ -104,19 +99,27 @@
                 parent.view.hidden = NO;
                 [self dismissModalViewControllerAnimated:YES];
             }else{
-                //unhide email/password box.  
-                passwordField.hidden = NO;
+                //unhide email/password box.
                 emailField.hidden = NO;
                 [dataLayer setLoggedIn:NO];
             }
+
         }else{
-            //in register mode.  
-            [confirmPasswordField becomeFirstResponder];
+            //in register mode.
+            
+//            [confirmPasswordField becomeFirstResponder];
+            [passwordField becomeFirstResponder];
         }
-    }else if (textField.tag ==2) {
-        //go next
-        [licensePlateField becomeFirstResponder];
-    }else {
+        
+    }else if (textField.tag==1){
+        //hide the email/password box.
+        [confirmPasswordField becomeFirstResponder];
+    }
+//    else if (textField.tag ==2) {
+//        //go next
+//        [licensePlateField becomeFirstResponder];
+//    }
+    else {
         //register the user.  
 //        NSString* password = [passwordField text];
 //        NSString* email = [emailField text];
@@ -155,13 +158,14 @@
         
         //expand the button to cover more space. 140 height
         [UIView animateWithDuration:0.25 animations:^{
-            whiteButton.frame = CGRectMake(whiteButton.frame.origin.x ,whiteButton.frame.origin.y , 227, 130);
+            whiteButton.frame = CGRectMake(whiteButton.frame.origin.x ,whiteButton.frame.origin.y , 227, 97);
             self.entireScreen.center = CGPointMake(entireScreen.center.x, entireScreen.center.y-80);
             registerButton.hidden = YES;
+            self.emailField.returnKeyType = UIReturnKeyNext;
             self.passwordField.returnKeyType = UIReturnKeyNext;
             submitButton.hidden = NO;
+            passwordField.hidden = NO;
             confirmPasswordField.hidden = NO;
-            licensePlateField.hidden = NO;
             emailField.text = @"";
             passwordField.text = @"";
         }];
@@ -185,10 +189,10 @@
     [UIView animateWithDuration:.25 animations:^{
         //x y width height
         self.entireScreen.frame = CGRectMake(0, 0, 320, 460);
-        whiteButton.frame = CGRectMake(whiteButton.frame.origin.x ,whiteButton.frame.origin.y , 227, 68);
-        self.passwordField.returnKeyType = UIReturnKeyGo;
+        whiteButton.frame = CGRectMake(whiteButton.frame.origin.x ,whiteButton.frame.origin.y , 227, 39);
         registerButton.hidden = NO;
         submitButton.hidden = YES;
+        passwordField.hidden = YES;
         confirmPasswordField.hidden = YES;
         licensePlateField.hidden = YES;
     }];

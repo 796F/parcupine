@@ -656,6 +656,7 @@ typedef struct{
     
     float avgLat=0, avgLon=0, count=0;
     for(NSNumber* MBID in spotMicroBlockMap){
+        
         NSDictionary* spotMap = [spotMicroBlockMap objectForKey:MBID];
         for(PQSpotAnnotation* spot in spotMap.allValues){
             CLLocation* spot_loc = [[CLLocation alloc] initWithLatitude:spot.coordinate.latitude longitude: spot.coordinate.longitude];
@@ -688,8 +689,14 @@ typedef struct{
     
     /* CALCULATE AVERAGES FOR BOTH SIDES */
     NSArray* segData = [self loadBlockData];
-    //1 is the pilot area, is the demo area.
-    return [self newCalloutPlacementWithSegment:[segData objectAtIndex:2] andSpots:insideCircle];
+    //1 is the pilot area, 2 is the demo area.
+    
+    if ([spotMicroBlockMap.allKeys containsObject:[NSNumber numberWithInt:114924]]) {
+        return [self newCalloutPlacementWithSegment:[segData objectAtIndex:1] andSpots:insideCircle];
+    }else{
+        return [self newCalloutPlacementWithSegment:[segData objectAtIndex:2] andSpots:insideCircle];
+    }
+
     
 }
 
