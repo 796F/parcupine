@@ -59,6 +59,8 @@
 		87EAC1A1160AB85200D01A4C /* colon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 87EAC1A0160AB85200D01A4C /* colon@2x.png */; };
 		87EAC1A3160ABACB00D01A4C /* settings@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 87EAC1A2160ABACB00D01A4C /* settings@2x.png */; };
 		87EC1FDF1613ED63006D9E2F /* libRestKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 87EC1FD41613EABC006D9E2F /* libRestKit.a */; };
+		BABA5AEB1618FA95004BF60B /* spot_free_report.png in Resources */ = {isa = PBXBuildFile; fileRef = BABA5AE91618FA95004BF60B /* spot_free_report.png */; };
+		BABA5AEC1618FA95004BF60B /* spot_free_report@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BABA5AEA1618FA95004BF60B /* spot_free_report@2x.png */; };
 		FC08BB7B1590D1F40077659C /* PQSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC08BB7A1590D1F40077659C /* PQSettingsViewController.m */; };
 		FC11B28A15BDC7D7001AB653 /* goMap.png in Resources */ = {isa = PBXBuildFile; fileRef = FC11B28915BDC7D7001AB653 /* goMap.png */; };
 		FC11B28D15BDD1E2001AB653 /* SelfReportingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC11B28C15BDD1E2001AB653 /* SelfReportingViewController.m */; };
@@ -227,6 +229,8 @@
 		87EAC1A2160ABACB00D01A4C /* settings@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "settings@2x.png"; sourceTree = "<group>"; };
 		87EC1FC81613EABC006D9E2F /* RestKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RestKit.xcodeproj; path = ../RestKit/RestKit.xcodeproj; sourceTree = "<group>"; };
 		87EC1FE01613F027006D9E2F /* JSONKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSONKit.h; sourceTree = "<group>"; };
+		BABA5AE91618FA95004BF60B /* spot_free_report.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spot_free_report.png; sourceTree = "<group>"; };
+		BABA5AEA1618FA95004BF60B /* spot_free_report@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "spot_free_report@2x.png"; sourceTree = "<group>"; };
 		FC08BB791590D1F40077659C /* PQSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PQSettingsViewController.h; sourceTree = "<group>"; };
 		FC08BB7A1590D1F40077659C /* PQSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PQSettingsViewController.m; sourceTree = "<group>"; };
 		FC11B28915BDC7D7001AB653 /* goMap.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = goMap.png; sourceTree = "<group>"; };
@@ -435,6 +439,7 @@
 				87EAC197160AB52800D01A4C /* prepaid@2x.png */,
 				87EAC1A2160ABACB00D01A4C /* settings@2x.png */,
 				87EAC198160AB52800D01A4C /* spot_free@2x.png */,
+				BABA5AEA1618FA95004BF60B /* spot_free_report@2x.png */,
 				87EAC19E160AB7CD00D01A4C /* spot_occupied@2x.png */,
 				FC2F5EF415EEB2BF0093A592 /* icon_court.png */,
 				FC72C0DE15DD665C00271694 /* pqplogin.png */,
@@ -468,6 +473,7 @@
 				87E1BE59154741190095E92D /* right_arrow.png */,
 				871E2103152CE02100D9452A /* settings.png */,
 				87ABC3B71582DBF900030005 /* spot_free.png */,
+				BABA5AE91618FA95004BF60B /* spot_free_report.png */,
 				FC97EE7215BB379500186182 /* login.png */,
 				FC11B29C15BDF7DD001AB653 /* unknown.png */,
 				FC11B29E15BDF878001AB653 /* open.png */,
@@ -779,6 +785,8 @@
 				87EAC19F160AB7CD00D01A4C /* spot_occupied@2x.png in Resources */,
 				87EAC1A1160AB85200D01A4C /* colon@2x.png in Resources */,
 				87EAC1A3160ABACB00D01A4C /* settings@2x.png in Resources */,
+				BABA5AEB1618FA95004BF60B /* spot_free_report.png in Resources */,
+				BABA5AEC1618FA95004BF60B /* spot_free_report@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

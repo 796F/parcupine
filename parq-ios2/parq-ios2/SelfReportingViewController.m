@@ -46,7 +46,7 @@
             customPinView.tag = 0;
         }else{
             //type 0, force report start on car.
-            customPinView.image = [UIImage imageNamed:@"car.png"];
+            customPinView.image = [UIImage imageNamed:@"spot_occupied.png"];
             customPinView.tag = 1;
         }
         //customPinView.animatesDrop = YES;
@@ -81,11 +81,11 @@
     
     MKAnnotationView* view = [mapView viewForAnnotation:tappedAnno];
     if(view.tag == 0){
-        view.image = [UIImage imageNamed:@"car.png"];
+        view.image = [UIImage imageNamed:@"spot_occupied.png"];
         tappedAnno.title = [NSString stringWithFormat:@"%sTaken", [tappedAnno.title substringToIndex:3].UTF8String ];
         view.tag = 1;
     }else{
-        view.image = [UIImage imageNamed:@"open.png"];
+        view.image = [UIImage imageNamed:@"spot_free_report.png"];
         tappedAnno.title = [NSString stringWithFormat:@"%sOpen", [tappedAnno.title substringToIndex:3].UTF8String];
         view.tag = 0;
     }
