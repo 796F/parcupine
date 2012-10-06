@@ -143,6 +143,7 @@ public class ParkResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public ParkResponse pilotParkUser(JAXBElement<ParkRequest> info){
+		System.out.println("ParkResource pilotpark is being called");
 		Date start = new Date();
 		ParkResponse output = new ParkResponse();
 		ParkRequest in = info.getValue();
@@ -151,87 +152,84 @@ public class ParkResource {
 		//does user supplied info authenticate?
 		User user = innerAuthenticate(in.getUserInfo());
 		if(user != null && uid == user.getUserID()){
+			System.out.println("ParkResource pilotpark: user is authenticated: " + uid);
 			ParkingStatusDao psd = new ParkingStatusDao();
 			ParkingInstance ps = null;
 			try{
 				ps = psd.getUserParkingStatus(uid);
-			}catch (Exception e){}
+			}catch (Exception e){
+				System.out.println("ParkResource pilotpark: parking status retrival encoutered an error:");
+				e.printStackTrace();
+			}
 			//was user previously parked?
 			if(ps==null||ps.getParkingEndTime().compareTo(start)<0){
-
+				System.out.println("ParkResource pilotpark: parking status was retrived correctly: " + ps);
 				long spot_id = in.getSpotId();
 
 				//nowtime is after previous end time.  user was not parked.  
-				ParkingRateDao prd = new ParkingRateDao();
-				ParkingRate pr = null; 
+				int durationMinutes = in.getDurationMinutes();
+				Date end = new Date(); //end is iterations of increment + old time.  
+				long msec = 1000*durationMinutes*60;
+				end.setTime(start.getTime()+msec);
+				ParkingInstance newPark = new ParkingInstance();
+				newPark.setPaidParking(true);
+				newPark.setParkingBeganTime(start);
+				newPark.setParkingEndTime(end);
+				newPark.setUserId(uid);
+				newPark.setSpaceId(spot_id);
+				
+				// setup a dummy payment during the MIT pilot
+				Payment pilotPayment = new Payment();
+				pilotPayment.setPaymentType(PaymentType.PrePaid);
+				pilotPayment.setPaymentRefNumber("MIT_PILOT");
+				pilotPayment.setPaymentDateTime(new Date(System.currentTimeMillis()));
+				pilotPayment.setAmountPaidCents(0);
+				pilotPayment.setAccountId(0L);
+				newPark.setPaymentInfo(pilotPayment);
+				
+				System.out.println("ParkResource pilotpark: attempting to insert parking status");
+				
+				boolean result = false;
 				try{
-					pr = prd.getParkingRateBySpaceId(spot_id);
-				}catch(Exception e){}
-				if(pr!=null){
-					int durationMinutes = in.getDurationMinutes();
-					int payment_amount = in.getChargeAmount();
-					int payment_type = in.getPaymentType();
-
-					int iterations = durationMinutes/(pr.getTimeIncrementsMins());
-					// during the pilot we ignore payment
-					if(true){
-						Date end = new Date(); //end is iterations of increment + old time.  
-						long msec = 1000*durationMinutes*60;
-						end.setTime(start.getTime()+msec);
-						ParkingInstance newPark = new ParkingInstance();
-						newPark.setPaidParking(true);
-						newPark.setParkingBeganTime(start);
-						newPark.setParkingEndTime(end);
-						newPark.setUserId(uid);
-						newPark.setSpaceId(spot_id);
-						
-						// setup a dummy payment during the MIT pilot
-						Payment pilotPayment = new Payment();
-						pilotPayment.setPaymentType(PaymentType.PrePaid);
-						pilotPayment.setPaymentRefNumber("MIT_PILOT");
-						pilotPayment.setPaymentDateTime(new Date(System.currentTimeMillis()));
-						pilotPayment.setAmountPaidCents(0);
-						pilotPayment.setAccountId(0L);
-						newPark.setPaymentInfo(pilotPayment);
-						
-						boolean result = false;
-						try{
-							result = psd.addNewParkingAndPayment(newPark);
-						}catch(Exception e){
-							System.out.println("add error");
-						}
-						//then set output to ok
-						if(result){
-							ParkingInstance finalInstance = psd.getUserParkingStatus(uid);
-							output.setParkingReferenceNumber(finalInstance.getParkingRefNumber());
-							output.setEndTime(end.getTime());
-							output.setResp("OK");
-
-							try{
-								File file = new File("/user_logs/ParkRequests.txt");
-					            file.createNewFile();
-					            FileOutputStream fout = new FileOutputStream(file, true);
-								fout.write(("Park() asked at "+new Date() + " INFO: spot id=" + spot_id + " uid=" + uid).getBytes());
-								fout.close();
-							}catch (Exception e){//Catch exception if any
-								System.err.println("Error: " + e.getMessage());
-							}
-							
-						}else{
-							output.setResp("DAO_ERROR");
-						}
-					}
-				}else{
-					//rate for spot doesnt exist.  
+					result = psd.addNewParkingAndPayment(newPark);
+				}catch(Exception e){
+					System.out.println("add error");
 				}
+				//then set output to ok
+				if(result){
+					ParkingInstance finalInstance = psd.getUserParkingStatus(uid);
+					output.setParkingReferenceNumber(finalInstance.getParkingRefNumber());
+					output.setEndTime(end.getTime());
+					output.setResp("OK");
+
+					System.out.println("ParkResource pilotpark: parking status update was successful");
+					
+					try{
+						File file = new File("/user_logs/ParkRequests.txt");
+			            file.createNewFile();
+			            FileOutputStream fout = new FileOutputStream(file, true);
+						fout.write(("Park() asked at "+new Date() + " INFO: spot id=" + spot_id + " uid=" + uid).getBytes());
+						fout.close();
+					}catch (Exception e){//Catch exception if any
+						System.err.println("Error: " + e.getMessage());
+					}
+					
+				}else{
+					output.setResp("DAO_ERROR");
+				}
+			
 			}else{
-				//user is parked	
+				//user is parked
+				System.out.println("ParkResources pilotPark: user:" + uid + " is currently parked");
 			}
 		}else{
 			//user doesn't exist
+			System.out.println("ParkResources pilotPark: user:" + in.getUserInfo().getEmail() + " does not exist, or is deleted, or have duplicate");
 		}
 		return output;
 	}
+	
+	
 	@POST
 	@Path("/pilotunpark")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -239,15 +237,34 @@ public class ParkResource {
 	public UnparkResponse pilotUnparkUser(JAXBElement<UnparkRequest> info){
 		UnparkResponse output = new UnparkResponse();
 		UnparkRequest in = info.getValue();
-		//verify user information
+
+		System.out.println("ParkResources pilotunpark: attempt to unpark user");
 		
-		//record the unpark action, updating the end time.  
+		User user = innerAuthenticate(in.getUserInfo());
+		if(user != null && in.getUid() == user.getUserID()){
+			ParkingStatusDao psd = new ParkingStatusDao();
+			boolean result = false;
+			System.out.println("ParkResources pilotunpark: unpark user: " + in.getUid() + " parkingRefNum: " + in.getParkingReferenceNumber());
+			try{
+				result = psd.unparkBySpaceIdAndParkingRefNum(in.getSpotId(),in.getParkingReferenceNumber(), new Date());
+			}catch(Exception e){
+				System.out.println("ParkResources pilotunpark: unpark failed");
+				output.setResp("EXCEPTION CAUGHT.  spotid:" + in.getSpotId() + " refNum" + in.getParkingReferenceNumber());
+				return output;
+			}
+			if(result){
+				output.setResp("OK");
+			}else{
+				output.setResp("dao FALSE.  spotid:" + in.getSpotId() + " refNum" + in.getParkingReferenceNumber());
+			}
+
+		}else{
+			output.setResp("BAD_AUTH");
+		}
 		
-		//mark the spot open on db  
-		
-		//return okay if all is clear.
 		return output;
 	}
+	
 	@POST
 	@Path("/pilotrefill")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -255,11 +272,58 @@ public class ParkResource {
 	public RefillResponse pilotRefillTime(JAXBElement<RefillRequest> info){
 		RefillResponse  output = new RefillResponse ();
 		RefillRequest in = info.getValue();
-		//verify user information
-		
-		//update the end time for the parking reference.  
 
-		//return okay if all is clear.
+		System.out.println("ParkResources pilotunpark: attempt to refill parking for user: " + in.getUid());
+		
+		User user = innerAuthenticate(in.getUserInfo());
+		if(user != null && in.getUid() == user.getUserID()){
+			String parkingReference = in.getParkingReferenceNumber();
+			ParkingStatusDao psd = new ParkingStatusDao();
+			ParkingInstance pi = null; try{
+				pi =psd.getUserParkingStatus(in.getUid());
+			}catch(Exception e){
+				System.out.println("ParkResource pilotrefil: dao error for ParkingStatusDao trying to get user status uid: " + in.getUid());
+			}
+
+			if(pi!=null && pi.getParkingRefNumber().equals(parkingReference)){
+				long spotid = in.getSpotId();
+				int durationMinutes = in.getDurationMinutes();
+
+				Date oldEndTime = pi.getParkingEndTime();
+				Date newEndTime= new Date();
+				long msec = 1000*durationMinutes*60;
+				newEndTime.setTime(oldEndTime.getTime()+msec);
+	
+				// setup a dummy payment during the MIT pilot
+				Payment pilotPayment = new Payment();
+				pilotPayment.setPaymentType(PaymentType.PrePaid);
+				pilotPayment.setPaymentRefNumber("MIT_PILOT");
+				pilotPayment.setPaymentDateTime(new Date(System.currentTimeMillis()));
+				pilotPayment.setAmountPaidCents(0);
+				pilotPayment.setAccountId(0L);
+				
+				boolean result = false; 
+				try{
+					result = psd.refillParkingForParkingSpace(spotid, newEndTime, pilotPayment);
+				}catch(Exception e){
+					System.out.println("ParkResource pilotrefil: dao error for ParkingStatusDao trying to refill user parking for user uid: " + in.getUid());
+				}
+				if(result){
+					ParkingInstance finalInstance = psd.getUserParkingStatus(in.getUid());
+					output.setParkingReferenceNumber(finalInstance.getParkingRefNumber());
+					output.setEndTime(newEndTime.getTime());
+					output.setResp("OK");
+				}else{
+					output.setResp("WAS_NOT_PARKED");
+				}
+
+			}else{
+				output.setResp("BAD_INST_REF");
+			}
+		}else{
+			output.setResp("BAD_AUTH");
+		}
+
 		return output;
 	}
 
