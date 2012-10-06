@@ -19,6 +19,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.ContextResolver;
 import javax.xml.bind.JAXBElement;
 
+import net.authorize.data.creditcard.CardType;
+
 import parkservice.gridservice.model.FindGridsByGPSCoordinateRequest;
 import parkservice.gridservice.model.FindGridsByGPSCoordinateResponse;
 import parkservice.gridservice.model.GetSpotLevelInfoRequest;
@@ -171,8 +173,8 @@ public class ParkResource {
 					int payment_type = in.getPaymentType();
 
 					int iterations = durationMinutes/(pr.getTimeIncrementsMins());
-					if(iterations*pr.getParkingRateCents()==payment_amount){
-						//if the price, duration, and rate supplied match up,
+					// during the pilot we ignore payment
+					if(true){
 						Date end = new Date(); //end is iterations of increment + old time.  
 						long msec = 1000*durationMinutes*60;
 						end.setTime(start.getTime()+msec);
@@ -182,6 +184,16 @@ public class ParkResource {
 						newPark.setParkingEndTime(end);
 						newPark.setUserId(uid);
 						newPark.setSpaceId(spot_id);
+						
+						// setup a dummy payment during the MIT pilot
+						Payment pilotPayment = new Payment();
+						pilotPayment.setPaymentType(PaymentType.PrePaid);
+						pilotPayment.setPaymentRefNumber("MIT_PILOT");
+						pilotPayment.setPaymentDateTime(new Date(System.currentTimeMillis()));
+						pilotPayment.setAmountPaidCents(0);
+						pilotPayment.setAccountId(0L);
+						newPark.setPaymentInfo(pilotPayment);
+						
 						boolean result = false;
 						try{
 							result = psd.addNewParkingAndPayment(newPark);

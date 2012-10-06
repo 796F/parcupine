@@ -44,7 +44,6 @@ public class ParkingRateDao extends AbstractParqDaoParent {
 		" FROM parkinglocation AS l, parkingspace AS s, parkingrate AS r " +
 		" WHERE l.location_id = s.location_id " +
 		" AND r.location_id = l.location_id " +
-		" AND (r.space_id = s.space_id OR r.space_id IS NULL)" +
 		" AND s.space_id = ? " +
 		" AND l.is_deleted IS NOT TRUE " +
 		" AND s.is_deleted IS NOT TRUE " +
