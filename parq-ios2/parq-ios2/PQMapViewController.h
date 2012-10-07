@@ -63,6 +63,7 @@ UIAlertViewDelegate> {
 @property (weak, nonatomic) IBOutlet UIButton *findMeButton;
 @property (weak, nonatomic) IBOutlet UIButton *parkMeButton;
 @property (weak, nonatomic) IBOutlet UIButton *dropPinButton;
+// dropPinButton originally on bottom-right of MapView: Should be in separate Bookmarks view, removed for trial run
 @property (weak, nonatomic) IBOutlet UIButton *cancelDropPinButton;
 @property (weak, nonatomic) IBOutlet UIButton *mockDataButton;
 //internal management stuff
