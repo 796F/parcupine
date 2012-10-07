@@ -2237,7 +2237,15 @@ typedef struct{
 //                                                 name:UIKeyboardWillShowNotification
 //                                               object:nil];
     
-    user_loc_isGood = false;
+    
+    CLLocationCoordinate2D pilot_street = CLLocationCoordinate2DMake(42.357835,-71.094333);
+    // @TODO(pilot) Change user_loc_isGood = false and remove default location
+    user_loc = pilot_street;
+    user_loc_isGood = true;
+    
+    [map setRegion:MKCoordinateRegionMakeWithDistance(pilot_street, SPOT_LEVEL_REGION_METERS, SPOT_LEVEL_REGION_METERS) animated:YES];
+    [self showSpotSelectionViews];
+    
     isDroppingPin = false;
 }
 
