@@ -186,7 +186,7 @@
                                                     <action selector="justParkMeButtonPressed:" destination="2" id="olV-cU-QM8"/>
                                                 </connections>
                                             </barButtonItem>
-                                            <barButtonItem width="61" style="plain" systemItem="fixedSpace" id="20i-pT-qhf"/>
+                                            <barButtonItem style="plain" systemItem="flexibleSpace" id="syA-4m-7RS"/>
                                             <barButtonItem image="icon_court.png" width="30" id="Mpr-Qp-S2A">
                                                 <connections>
                                                     <action selector="selfEnforcePressed:" destination="2" id="REu-bw-HpJ"/>
@@ -1738,6 +1738,19 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         <class className="PQMapViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/PQMapViewController.h"/>
             <relationships>
+                <relationship kind="action" name="botSpotSegControlIndexChanged:"/>
+                <relationship kind="action" name="cancelDropPinButtonPressed:"/>
+                <relationship kind="action" name="dropPinButtonPressed:"/>
+                <relationship kind="action" name="findMeButtonPressed:"/>
+                <relationship kind="action" name="gridButtonPressed:"/>
+                <relationship kind="action" name="justParkMeButtonPressed:"/>
+                <relationship kind="action" name="noneButtonPressed:"/>
+                <relationship kind="action" name="numPadSubmit:"/>
+                <relationship kind="action" name="selfEnforcePressed:"/>
+                <relationship kind="action" name="settingsButtonPressed:"/>
+                <relationship kind="action" name="spotButtonPressed:"/>
+                <relationship kind="action" name="streetButtonPressed:"/>
+                <relationship kind="action" name="topSpotSegControlIndexChanged:"/>
                 <relationship kind="outlet" name="availabilitySelectionBar" candidateClass="UISegmentedControl"/>
                 <relationship kind="outlet" name="availabilitySelectionView" candidateClass="UIView"/>
                 <relationship kind="outlet" name="bottomSpotSelectionBar" candidateClass="UISegmentedControl"/>
