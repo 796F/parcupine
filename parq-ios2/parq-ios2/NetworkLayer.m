@@ -631,7 +631,6 @@
 }
 
 -(BOOL) parkUserWithSpotInfo:(SpotInfo*) spotInfo AndDuration:(int)duration{
-    return YES;
     NSArray* keys = [NSArray arrayWithObjects:@"userInfo", @"paymentType", @"chargeAmount",@"durationMinutes",@"uid",@"spotId", nil];
     User* user = [dataLayer getUser];
     

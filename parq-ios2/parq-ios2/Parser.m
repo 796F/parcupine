@@ -55,7 +55,7 @@
 +(NSDictionary*) parseParkResponse:(NSString*) jsonResponse{
     NSLog(@"RESPONSE >>>> %@\n", jsonResponse);
     NSDictionary* result = [jsonResponse objectFromJSONString];
-    if([[result objectForKey:@"resp"] isEqualToString:@"Ok"]){
+    if([[result objectForKey:@"resp"] isEqualToString:@"OK"]){
         return result;
     }else{
         return nil;
@@ -64,7 +64,7 @@
 
 //unpark response
 +(BOOL) parseUnparkResponse:(NSString*) jsonResponse{
-    if([[[jsonResponse objectFromJSONString] objectForKey:@"resp"] isEqualToString:@"Ok"]){
+    if([[[jsonResponse objectFromJSONString] objectForKey:@"resp"] isEqualToString:@"OK"]){
         return YES;
     }else{
         return NO;
@@ -72,7 +72,7 @@
 }
 //edit setting response
 +(BOOL) parseUpdateUserResponse:(NSString*) jsonResponse{
-    if([[[jsonResponse objectFromJSONString] objectForKey:@"resp"] isEqualToString:@"Ok"]){
+    if([[[jsonResponse objectFromJSONString] objectForKey:@"resp"] isEqualToString:@"OK"]){
         return YES;
     }else{
         return NO;
