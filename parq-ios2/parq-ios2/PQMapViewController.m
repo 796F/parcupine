@@ -1850,10 +1850,15 @@ typedef struct{
     }
 }
 
--(IBAction)topSpotSegControlIndexChanged:(id)sender{
-    int index = self.topSpotSelectionBar.selectedSegmentIndex;
+// User selects a spot number in top or bottom UISegmentedControl of numbers - which changes
+// the selected index and calls this function to act: Let them Park or Get Directions
+// sender: topSpotSelectionBar or bottomSpotSelectionBar: Both handlers combined
+-(void)userSelectedSpotInSpotBar:(id)sender{
+    UISegmentedControl *spotSelectBar = (UISegmentedControl *) sender;
+    
+    int index = spotSelectBar.selectedSegmentIndex;
     [dataLayer logString:[NSString stringWithFormat:@"%s %@", __PRETTY_FUNCTION__, @"seg bar"]];
-    int name = [[topSpotSelectionBar titleForSegmentAtIndex:index] intValue];
+    int name = [[spotSelectBar titleForSegmentAtIndex:index] intValue];
     for(PQSpotAnnotation* spot in allInsideCircle){
         //for each spot inside the circle, check match spot number.  
         if(spot.name == name){
@@ -1876,43 +1881,14 @@ typedef struct{
                 
             }else{
                 [self parkNow];
-                
             }
         
         }
     }
 }
 
--(IBAction)botSpotSegControlIndexChanged:(id)sender{
-    int index = self.bottomSpotSelectionBar.selectedSegmentIndex;
-    int name = [[bottomSpotSelectionBar titleForSegmentAtIndex:index] intValue];
-    for(PQSpotAnnotation* spot in allInsideCircle){
-        //for each spot inside the circle, check match spot number.  
-        if(spot.name == name){
-            //found our target.  
-            spotInfo = [networkLayer getSpotInfoForId:[NSNumber numberWithLong:spot.objId] SpotNumber:[NSNumber numberWithInt:spot.name] GPS:&user_loc];
-            CLLocationCoordinate2D spot_loc = spot.coordinate;
-            if(!spot.available){
-                //not available.
-                NSString* title = [NSString stringWithFormat:@"Spot %d appears taken", name];
-                UIAlertView* spotTakenAlert = [[UIAlertView alloc] initWithTitle:title message:@"Are you sure you want to park?" delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Park", nil];
-                spotTakenAlert.tag = SPOT_LOOKS_TAKEN_ALERT;
-                [spotTakenAlert show];
-            }else if(user_loc_isGood && ![self pointA:&spot_loc isCloseToB:&user_loc]){
-                UIActionSheet *directionsActionSheet = [[UIActionSheet alloc] initWithTitle:[NSString stringWithFormat:@"Spot %d", name] delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles: @"Get Directions", @"Park Now", nil];
-                directionsActionSheet.tag = GPS_LAUNCH_ALERT;
-                [directionsActionSheet showInView:bottomSpotSelectionView];
-                
-            }else{
-                [self parkNow];
-                
-            }
-            
-        }
-    }
-}
-
-//IF NOT AVAILABLE, DARKEN THE BUTTON???? text red?
+// When selecting area on map, update spot numbers at top or bottom
+// TODO: IF NOT AVAILABLE, DARKEN THE BUTTON???? text red?
 -(void) updateSpotSegmentBar{
     int segIndex = 0; //0 and 5 are arrows.  
     while(segIndex < 7){
@@ -2209,6 +2185,10 @@ typedef struct{
     [self.bottomSpotSelectionBar setEnabled:NO forSegmentAtIndex:5];    
     [self.topSpotSelectionBar setEnabled:NO forSegmentAtIndex:0];
     [self.topSpotSelectionBar setEnabled:NO forSegmentAtIndex:5];
+    
+    // Event delegate for acting on top and bottom selection bars of spot numbers
+    [self.topSpotSelectionBar addTarget:self action:@selector(userSelectedSpotInSpotBar:) forControlEvents:UIControlEventValueChanged];
+    [self.bottomSpotSelectionBar addTarget:self action:@selector(userSelectedSpotInSpotBar:) forControlEvents:UIControlEventValueChanged];
 
     // Do any additional setup after loading the view, typically from a nib.
     self.map.delegate=self;
