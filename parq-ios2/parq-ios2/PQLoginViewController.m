@@ -159,7 +159,8 @@
         //expand the button to cover more space. 140 height
         [UIView animateWithDuration:0.25 animations:^{
             whiteButton.frame = CGRectMake(whiteButton.frame.origin.x ,whiteButton.frame.origin.y , 227, 97);
-            self.entireScreen.center = CGPointMake(entireScreen.center.x, entireScreen.center.y-80);
+//            self.entireScreen.center = CGPointMake(entireScreen.center.x, entireScreen.center.y-80);
+            [self textFieldDidBeginEditing:self.emailField];
             registerButton.hidden = YES;
             self.emailField.returnKeyType = UIReturnKeyNext;
             self.passwordField.returnKeyType = UIReturnKeyNext;
@@ -195,6 +196,7 @@
         passwordField.hidden = YES;
         confirmPasswordField.hidden = YES;
         licensePlateField.hidden = YES;
+        emailField.returnKeyType = UIReturnKeyGo;
     }];
     
 }
