@@ -775,6 +775,7 @@ typedef struct{
     }
 }
 
+// Selected a gray callout bubble on map containing spot number - user wants to park
 - (bool) tappedCalloutAtCoords:(CLLocationCoordinate2D*) coords{
     for(int i=0; i< callouts.count; i++){
         
@@ -941,13 +942,23 @@ typedef struct{
     
 }
 
+// After tapping map: Called by handleSingleTapGesture, determine location for gray circle,
+// snaps to grid, determines spots in radius and creates gray callout bubbles - shows
+// top and bottom availability by spot number views
 - (void)showSelectionCircle:(CLLocationCoordinate2D *)coord {
+    NSLog(@"showSelectionCircle after tapping map");
+    
     int radius = GREY_CIRCLE_R;
     
     NSArray *placement = [self calloutBubblePlacement:coord withR:radius];
-    if(placement.count >0){
+
+    if(placement.count > 0){
+        [self showSpotSelectionViews];
         [self.map setCenterCoordinate:*coord animated:YES];
+    }else{
+        [self showAvailabilitySelectionView];
     }
+    
     MKCircle *greyCircle= [MKCircle circleWithCenterCoordinate:*coord radius:radius];
     [greyCircle setColor:-1];
     [self.map addOverlay:greyCircle];
@@ -1184,6 +1195,7 @@ typedef struct{
     }
 }
 
+// Show the top and bottom bars to select individual numbered spots when most zoomed in
 - (void)showSpotSelectionViews {
     [UIView animateWithDuration:.7 animations:^{
                                                     //x y width height
@@ -1332,7 +1344,6 @@ typedef struct{
             zoomState = kSpotZoomLevel;
             [mapView setRegion:MKCoordinateRegionMake(center, MKCoordinateSpanMake(SPOT_LEVEL_SPAN, SPOT_LEVEL_SPAN)) animated:YES];
             [self showSpotLevelWithCoordinates:&center];
-            [self showSpotSelectionViews];            
         }
 
     }
@@ -1674,6 +1685,7 @@ typedef struct{
 
 }
 
+// 
 - (void)handleSingleTapGesture:(UIGestureRecognizer *)gestureRecognizer
 {
 
@@ -2218,13 +2230,14 @@ typedef struct{
 //                                               object:nil];
     
     
+    // For pilot: start off in Amherst Street on most-zoomed in level: Change user_loc_isGood=false
+    // and remove default location for actual app
     CLLocationCoordinate2D pilot_street = CLLocationCoordinate2DMake(42.357835,-71.094333);
-    // @TODO(pilot) Change user_loc_isGood = false and remove default location
     user_loc = pilot_street;
     user_loc_isGood = true;
     
     [map setRegion:MKCoordinateRegionMakeWithDistance(pilot_street, SPOT_LEVEL_REGION_METERS, SPOT_LEVEL_REGION_METERS) animated:YES];
-    [self showSpotSelectionViews];
+    [self showAvailabilitySelectionView];
     
     isDroppingPin = false;
 }
