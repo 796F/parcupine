@@ -46,6 +46,8 @@ public class GridManagementService implements Runnable{
 	// this value should be the size of at least 1 grid length or width
 	// TODO set the value to the correct grid size value
 	private static final double gridSearchEnlargement = 0.3;
+	
+	private static final boolean DEBUG_ENABLED = false;
 
 	
 	//singleton instance
@@ -228,7 +230,9 @@ public class GridManagementService implements Runnable{
 
 	@Override
 	public void run() {
-		System.out.println("Parking Status Update Triggered: " + new Date(System.currentTimeMillis()).toString());
+		if (DEBUG_ENABLED) {
+			System.out.println("Parking Status Update Triggered: " + new Date(System.currentTimeMillis()).toString());
+		}
 		updateParkingStatus();
 	}
 
