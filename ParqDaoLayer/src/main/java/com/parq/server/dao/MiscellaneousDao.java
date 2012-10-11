@@ -165,4 +165,5 @@ public class MiscellaneousDao extends AbstractParqDaoParent {
 		
 		return insertSuccessful;
 	}
+	
 }

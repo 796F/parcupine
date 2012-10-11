@@ -19,8 +19,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.ContextResolver;
 import javax.xml.bind.JAXBElement;
 
-//import net.authorize.data.creditcard.CardType;
-
 import parkservice.gridservice.model.FindGridsByGPSCoordinateRequest;
 import parkservice.gridservice.model.FindGridsByGPSCoordinateResponse;
 import parkservice.gridservice.model.GetSpotLevelInfoRequest;
@@ -54,9 +52,8 @@ import parkservice.userscore.model.GetCountRequest;
 import parkservice.userscore.model.GetCountResponse;
 import parkservice.userscore.model.GetUserReportingHistoryRequest;
 import parkservice.userscore.model.GetUserReportingHistoryResponse;
+import parkservice.userscore.model.GetUserScoreRequest;
 import parkservice.userscore.model.GetUserScoreResponse;
-import parkservice.userscore.model.GetUserScoresRequest;
-import parkservice.userscore.model.Score;
 import parkservice.userscore.model.UpdateUserScoreRequest;
 import parkservice.userscore.model.UpdateUserScoreResponse;
 import parkservice.userscore.model.UserParkingStatusReport;
@@ -78,10 +75,10 @@ import com.parq.server.dao.model.object.ParkingInstance;
 import com.parq.server.dao.model.object.ParkingRate;
 import com.parq.server.dao.model.object.ParkingSpace;
 import com.parq.server.dao.model.object.Payment;
-import com.parq.server.dao.model.object.UserActionLog;
 import com.parq.server.dao.model.object.Payment.PaymentType;
 import com.parq.server.dao.model.object.PaymentAccount;
 import com.parq.server.dao.model.object.User;
+import com.parq.server.dao.model.object.UserActionLog;
 import com.parq.server.dao.model.object.UserPrePaidAccountBalance;
 import com.parq.server.dao.model.object.UserScore;
 import com.parq.server.dao.model.object.UserSelfReporting;
@@ -154,15 +151,15 @@ public class ParkResource {
 		if(user != null && uid == user.getUserID()){
 			System.out.println("ParkResource pilotpark: user is authenticated: " + uid);
 			ParkingStatusDao psd = new ParkingStatusDao();
-			ParkingInstance ps = null;
+			List<ParkingInstance> ps = null;
 			try{
-				ps = psd.getUserParkingStatus(uid);
+				ps = psd.getParkingStatusBySpaceIds(new long[]{in.getSpotId()});
 			}catch (Exception e){
 				System.out.println("ParkResource pilotpark: parking status retrival encoutered an error:");
 				e.printStackTrace();
 			}
 			//was user previously parked?
-			if(ps==null||ps.getParkingEndTime().compareTo(start)<0){
+			if(ps==null || ps.isEmpty() || ps.get(0).getParkingEndTime().compareTo(start) < 0){
 				System.out.println("ParkResource pilotpark: parking status was retrived correctly: " + ps);
 				long spot_id = in.getSpotId();
 
@@ -201,8 +198,15 @@ public class ParkResource {
 					output.setParkingReferenceNumber(finalInstance.getParkingRefNumber());
 					output.setEndTime(end.getTime());
 					output.setResp("OK");
+					output.setStatusCode(0);
 
 					System.out.println("ParkResource pilotpark: parking status update was successful");
+					
+					// logic for updating the user points spend on parking
+					UserDao userDao = new UserDao();
+					UserScore currScore = userDao.getScoreForUser(uid);
+					currScore.setScore1(currScore.getScore1() - durationMinutes);
+					userDao.updateUserScore(currScore);
 					
 					try{
 						File file = new File("/user_logs/ParkRequests.txt");
@@ -212,18 +216,21 @@ public class ParkResource {
 						fout.close();
 					}catch (Exception e){//Catch exception if any
 						System.err.println("Error: " + e.getMessage());
-					}
-					
-				}else{
-					output.setResp("DAO_ERROR");
+					}	
+				} else {
+					output.setStatusCode(-1000);
+					output.setResp("DAO_Error: unable to insert parking status for user");
 				}
-			
-			}else{
+			} else {
 				//user is parked
+				output.setStatusCode(-1000);
+				output.setResp("USER_IS_PARKED");
 				System.out.println("ParkResources pilotPark: user:" + uid + " is currently parked");
 			}
-		}else{
+		} else {
 			//user doesn't exist
+			output.setStatusCode(-1000);
+			output.setResp("INVALID_USER");
 			System.out.println("ParkResources pilotPark: user:" + in.getUserInfo().getEmail() + " does not exist, or is deleted, or have duplicate");
 		}
 		return output;
@@ -255,11 +262,13 @@ public class ParkResource {
 			if(result){
 				output.setResp("OK");
 			}else{
-				output.setResp("dao FALSE.  spotid:" + in.getSpotId() + " refNum" + in.getParkingReferenceNumber());
+				output.setStatusCode(-1000);
+				output.setResp("FAILED_TO_UNPARK_USER");
 			}
 
 		}else{
-			output.setResp("BAD_AUTH");
+			output.setStatusCode(-1000);
+			output.setResp("USER_AUTHENTICATION_FAILED");
 		}
 		
 		return output;
@@ -313,15 +322,25 @@ public class ParkResource {
 					output.setParkingReferenceNumber(finalInstance.getParkingRefNumber());
 					output.setEndTime(newEndTime.getTime());
 					output.setResp("OK");
+					
+					// logic for updating the user points spend on parking
+					UserDao userDao = new UserDao();
+					UserScore currScore = userDao.getScoreForUser(user.getUserID());
+					currScore.setScore1(currScore.getScore1() - durationMinutes);
+					userDao.updateUserScore(currScore);
+					
 				}else{
-					output.setResp("WAS_NOT_PARKED");
+					output.setStatusCode(-1000);
+					output.setResp("FAILED_TO_UPDATE_USER_PARKING_STATUS");
 				}
 
 			}else{
-				output.setResp("BAD_INST_REF");
+				output.setStatusCode(-1000);
+				output.setResp("USER_IS_NOT_CURRENTLY_PARKED");
 			}
 		}else{
-			output.setResp("BAD_AUTH");
+			output.setStatusCode(-1000);
+			output.setResp("USER_AUTHENTICATION_FAILED");
 		}
 
 		return output;
@@ -855,51 +874,56 @@ public class ParkResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public GetUserScoreResponse
-			getUserScore(JAXBElement<GetUserScoresRequest> jaxbRequest) {
+			getUserScore(JAXBElement<GetUserScoreRequest> jaxbRequest) {
 		
-		GetUserScoresRequest request = jaxbRequest.getValue();
-		UserDao userDao = new UserDao();
-		List<UserScore> userScores = userDao.getScoreHistoryForUser(request.getUserId());
-		
-		List<Score> scores = new ArrayList<Score>();
-		for (UserScore uScore : userScores) {
-			Score score = new Score();
-			score.setScoreId(uScore.getScoreId());
-			score.setUserId(uScore.getUserId());
-			score.setScore1(uScore.getScore1());
-			score.setScore2(uScore.getScore2());
-			score.setScore3(uScore.getScore3());
-			scores.add(score);
-		}
-		
-		GetUserScoreResponse response = new GetUserScoreResponse();
-		response.setScores(scores);
-		return response;
+		GetUserScoreRequest request = jaxbRequest.getValue();
+		// call the helper method to get the user score
+		return getUserScore(request);
 	}
 	
+	private GetUserScoreResponse getUserScore(GetUserScoreRequest request) {
+		UserDao userDao = new UserDao();
+		UserScore userScore = userDao.getScoreForUser(request.getUserId());
+		
+		GetUserScoreResponse score = new GetUserScoreResponse();
+		if (userScore != null) {
+			score.setScoreId(userScore.getScoreId());
+			score.setUserId(userScore.getUserId());
+			score.setScore1(userScore.getScore1());
+			score.setScore2(userScore.getScore2());
+			score.setScore3(userScore.getScore3());
+		}
+		return score;
+	}
+
 	@POST
 	@Path("/UpdateUserScoreRequest")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public UpdateUserScoreResponse
 			updateUserScore(JAXBElement<UpdateUserScoreRequest> jaxbRequest) {
-	
 		UpdateUserScoreRequest request = jaxbRequest.getValue();
-		UserDao userDao = new UserDao();
+		// call the private helper method to peform the update
+		return updateUserScore(request);
+	}
+	
+	private UpdateUserScoreResponse updateUserScore(
+			UpdateUserScoreRequest request) {
 		
+		UserDao userDao = new UserDao();
 		UserScore uScore = new UserScore();
-		uScore.setScoreId(request.getScore().getScoreId());
-		uScore.setUserId(request.getScore().getUserId());
-		uScore.setScore1(request.getScore().getScore1());
-		uScore.setScore2(request.getScore().getScore2());
-		uScore.setScore3(request.getScore().getScore3());
+		uScore.setScoreId(request.getScoreId());
+		uScore.setUserId(request.getUserId());
+		uScore.setScore1(request.getScore1());
+		uScore.setScore2(request.getScore2());
+		uScore.setScore3(request.getScore3());
 		
 		boolean updateSuccessful = userDao.updateUserScore(uScore);
 		UpdateUserScoreResponse response = new UpdateUserScoreResponse();
 		response.setUpdateSuccessful(updateSuccessful);
 		return response;
 	}
-	
+
 	@POST
 	@Path("/GetCountRequest")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -963,6 +987,27 @@ public class ParkResource {
 		boolean isSucccessful = mDao.insertUserSelfReporting(report);
 		AddUserReportingResponse response = new AddUserReportingResponse();
 		response.setUpdateSuccessful(isSucccessful);
+		
+		// update the user scores
+		if (isSucccessful) {
+			GetUserScoreRequest getRequest = new GetUserScoreRequest();
+			getRequest.setUserId(request.getUserId());
+			GetUserScoreResponse getResponse = getUserScore(getRequest);
+			
+			UpdateUserScoreRequest updateRequest = new UpdateUserScoreRequest();
+			updateRequest.setUserId(request.getUserId());
+			// user get 10 points for each space status they report
+			updateRequest.setScore1(getResponse.getScore1() + (spaceIds.length * 10));
+			updateRequest.setScore2(getResponse.getScore2());
+			updateRequest.setScore3(getResponse.getScore3());
+			UpdateUserScoreResponse updateResponse = updateUserScore(updateRequest);
+			
+			response.setUpdateSuccessful(updateResponse.isUpdateSuccessful());
+			if (!updateResponse.isUpdateSuccessful()){
+				System.out.println("failed to give user points for reporting");
+			}
+		}
+		
 		return response;
 	}
 	

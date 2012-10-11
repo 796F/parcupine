@@ -7,7 +7,16 @@ public class RefillResponse {
 	String resp;
 	long endTime;
 	String parkingReferenceNumber;
+	int statusCode;
 	
+
+	public int getStatusCode() {
+		return statusCode;
+	}
+
+	public void setStatusCode(int statusCode) {
+		this.statusCode = statusCode;
+	}
 
 	public long getEndTime() {
 		return endTime;

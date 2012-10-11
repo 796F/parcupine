@@ -54,10 +54,13 @@ public class UserDao extends AbstractParqDaoParent {
 	private static final String sqlGetUserScoreHistoryForUser = 
 		"SELECT score_id, user_id, score_1, score_2, score_3, lastupdatedatetime FROM score s WHERE s.user_id = ? ORDER BY score_id DESC";
 	
-	
 	private static final String emailCache = "getUserByEmail:";
 	private static final String idCache = "getUserById:";
 
+	// TODO delete after MIT pilot
+	private static final int MIT_PILOT_USER_INITIAL_SCORE = 300;
+	
+	
 	public UserDao() {
 		super();
 		if (myCache == null) {
@@ -353,15 +356,19 @@ public class UserDao extends AbstractParqDaoParent {
 		User newlyCreatedUser = getUserByEmail(user.getEmail());
 		newUserCreated &= createPrePaidAccount(newlyCreatedUser.getUserID());
 		newUserCreated &= createUserScore(newlyCreatedUser.getUserID());
-		newUserCreated &= setPrePadBalanceForMitTrial(newlyCreatedUser.getUserID());
+		newUserCreated &= setPreInitialUserScoreForMitTrial(newlyCreatedUser.getUserID());
 		return newUserCreated;
 	}
 	
-	// TODO set the initial prepaid balance to $100, for the 2 week MIT trial only
+	// TODO set the initial user score to 300 points, for the 2 week MIT trial only
 	// after the trial, delete this method
-	private boolean setPrePadBalanceForMitTrial(long userID) {
-		UserPrePaidAccountBalanceDao balanceDao = new UserPrePaidAccountBalanceDao();
-		return balanceDao.updateUserPrePaidAccountBalance(userID, 100);
+	private boolean setPreInitialUserScoreForMitTrial(long userID) {
+		UserScore initialScore = new UserScore();
+		initialScore.setScore1(MIT_PILOT_USER_INITIAL_SCORE);
+		initialScore.setScore2(0L);
+		initialScore.setScore3(0L);
+		initialScore.setUserId(userID);
+		return updateUserScore(initialScore);
 	}
 
 	private boolean createPrePaidAccount(long userId) {
@@ -437,13 +444,14 @@ public class UserDao extends AbstractParqDaoParent {
 	public UserScore getScoreForUser(long userId) {
 		PreparedStatement pstmt = null;
 		Connection con = null;
-		UserScore score = new UserScore();
+		UserScore score = null;
 		try {
 			con = getConnection();
 			pstmt = con.prepareStatement(sqlGetUserScoreForUser);
 			pstmt.setLong(1, userId);
 			ResultSet rs = pstmt.executeQuery();
 			if (rs.first()) {
+				score = new UserScore();
 				score.setScoreId(rs.getLong("score_id"));
 				score.setUserId(rs.getLong("user_id"));
 				score.setScore1(rs.getLong("score_1"));
@@ -456,6 +464,18 @@ public class UserDao extends AbstractParqDaoParent {
 			throw new RuntimeException(sqle);
 		} finally {
 			closeConnection(con);
+		}
+		
+		if (score == null) {
+			// if we are dealing with a legacy user
+			if (createUserScore(userId)){
+				score = new UserScore();
+				score.setScoreId(-1);
+				score.setUserId(userId);
+				score.setScore1(MIT_PILOT_USER_INITIAL_SCORE);
+				score.setScore2(0);
+				score.setScore3(0);
+			}
 		}
 		return score;
 	}

@@ -7,9 +7,16 @@ public class ParkResponse {
 	String resp;
 	long endTime;
 	String parkingReferenceNumber;
+	int statusCode = -1000;
 	
-	
-	
+	public int getStatusCode() {
+		return statusCode;
+	}
+
+	public void setStatusCode(int statusCode) {
+		this.statusCode = statusCode;
+	}
+
 	public long getEndTime() {
 		return endTime;
 	}
