@@ -174,8 +174,9 @@
     [spot setMinTime:[NSNumber numberWithInt:15]];
     [spot setMinuteInterval:[NSNumber numberWithInt:15]];
     [spot setRateCents:[NSNumber numberWithInt:0]];
-    [spot setStreetName:@"Howard St, MA"];
-    [spot setSpotId:[NSNumber numberWithInt:0]];
+    [spot setStreetName:@"Amherst St"];
+    [spot setFullAddress:@"109-117 Amherst St, Cambridge, MA 02139"];
+    [spot setSpotId:spotId];
     [spot setSpotNumber:spotNum]; //this should come from server, act as a check.  
     
     return spot;

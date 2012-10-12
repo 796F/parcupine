@@ -416,7 +416,7 @@ typedef enum {
         self.tableView.frame = CGRectMake(0, 0, 320, 416);
         datePicker.frame = CGRectMake(0, 89, 320, 216);
     }];
-    NSString* title = [NSString stringWithFormat:@"%d, %s.\n", spotInfo.spotNumber.intValue, spotInfo.streetName.UTF8String];
+    NSString* title = [NSString stringWithFormat:@"%s, #%d", spotInfo.streetName.UTF8String, spotInfo.spotNumber.intValue];
     
     self.navigationItem.title = title;
     if (parkState == kParkedParkState) {
@@ -633,8 +633,8 @@ typedef enum {
         networkLayer = ((PQAppDelegate*)[[UIApplication sharedApplication] delegate]).networkLayer;
     }
     
-    self.navigationItem.title =[NSString stringWithFormat:@"%d, %s.\n", spotInfo.spotNumber.intValue, spotInfo.streetName.UTF8String];
-    addressLabel.text = spotInfo.streetName;
+    self.navigationItem.title =[NSString stringWithFormat:@"%s, #%d", spotInfo.streetName.UTF8String, spotInfo.spotNumber.intValue];
+    self.address = spotInfo.fullAddress;
     
     rateNumeratorCents = [spotInfo.rateCents intValue];
     rateDenominatorMinutes = [spotInfo.minuteInterval intValue];
