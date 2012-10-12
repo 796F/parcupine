@@ -89,9 +89,6 @@ typedef enum {
     [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0]].accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     [self.tableView reloadData];
     datePicker.countDownDuration = 0;
-    if ([prepaidEndTime timeIntervalSinceDate:startTime]/60 + [spotInfo.minuteInterval doubleValue] > limit) {
-        extendButton.enabled = NO;
-    }
 }
 
 - (void)extendingAfterParked {
@@ -120,9 +117,6 @@ typedef enum {
     [self.tableView reloadData];
     [self resignPicker];
     datePicker.countDownDuration = 0;
-    if ([prepaidEndTime timeIntervalSinceDate:startTime]/60 + [spotInfo.minuteInterval doubleValue] > limit) {
-        extendButton.enabled = NO;
-    }
 }
 
 #pragma mark - Parked state transitions
@@ -289,6 +283,7 @@ typedef enum {
         hours.text = [NSString stringWithFormat:@"%02d", totalMinutes/60];
         minutes.text = [NSString stringWithFormat:@"%02d", totalMinutes%60];
         colon.hidden = !colon.hidden;
+        extendButton.enabled = totalMinutes + [spotInfo.minuteInterval intValue] <= limit;
     } else { // parkState == kExtendingParkState
         int totalSeconds = round([prepaidEndTime timeIntervalSinceNow]);
         int totalMinutes = (totalSeconds+59)/60;
@@ -315,7 +310,7 @@ typedef enum {
 
 #pragma mark - Date Picker control
 - (IBAction)durationChanged:(id)sender {
-    int limit_remaining = limit*60 - [prepaidEndTime timeIntervalSinceDate:startTime];
+    int limit_remaining = limit*60 - [prepaidEndTime timeIntervalSinceNow];
     if (limit_remaining < datePicker.countDownDuration) {
         datePicker.countDownDuration = limit_remaining;
     }
