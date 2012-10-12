@@ -457,7 +457,7 @@
                          @"42.364799,-71.110830,1,1433,0,24",
 
                          nil];
-    int spotId = 0;
+    int spotId = 1;
     for(NSString* spotString in spotData){
         NSArray* innerArray = [spotString componentsSeparatedByString:@","];
         //create the grid object
@@ -476,7 +476,7 @@
         unsigned long arr[2];
         NSNumber* mbid = [NSNumber numberWithLong:[self get:kSpotEntity MBIDForPoint:&coord AndArray:arr]];
         [spot setMicroblock:mbid];
-        NSLog(@"%d remaining..\n", 24 - spotId);
+        NSLog(@"%d remaining..\n", 31 - spotId);
     }
     
     NSError* error;
