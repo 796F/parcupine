@@ -18,8 +18,6 @@
 @property (nonatomic) int rateNumeratorCents;
 @property (nonatomic) int rateDenominatorMinutes;
 @property (nonatomic) int limit;
-@property (atomic) int totalParkedSeconds;
-@property (atomic) int notificationTag;
 @property (nonatomic, copy) NSString *address;
 @property (weak, nonatomic) IBOutlet UIButton *startButton;
 @property (weak, nonatomic) IBOutlet UIButton *unparkButton;
@@ -52,7 +50,5 @@
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *doneButton;
 @property (weak, nonatomic) PQMapViewController *parent;
 @property (nonatomic, retain) SpotInfo* spotInfo;
-@property (atomic) BOOL paygFlagHidden;
-@property (atomic) BOOL prepaidFlagHidden;
 -(void) startTimerButtonAction;
 @end
