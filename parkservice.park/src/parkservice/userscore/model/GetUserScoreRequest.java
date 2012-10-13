@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
-public class GetUserScoresRequest {
+public class GetUserScoreRequest {
 
 	private long userId = -1;
 

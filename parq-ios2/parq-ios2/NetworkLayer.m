@@ -174,8 +174,9 @@
     [spot setMinTime:[NSNumber numberWithInt:15]];
     [spot setMinuteInterval:[NSNumber numberWithInt:15]];
     [spot setRateCents:[NSNumber numberWithInt:0]];
-    [spot setStreetName:@"Howard St, MA"];
-    [spot setSpotId:[NSNumber numberWithInt:0]];
+    [spot setStreetName:@"Amherst St"];
+    [spot setFullAddress:@"109-117 Amherst St, Cambridge, MA 02139"];
+    [spot setSpotId:spotId];
     [spot setSpotNumber:spotNum]; //this should come from server, act as a check.  
     
     return spot;
@@ -493,7 +494,7 @@
                          @"42.364799,-71.110830,1,1433,0,24",
 
                          nil];
-    int spotId = 0;
+    int spotId = 1;
     for(NSString* spotString in spotData){
         NSArray* innerArray = [spotString componentsSeparatedByString:@","];
         //create the grid object
@@ -512,7 +513,7 @@
         unsigned long arr[2];
         NSNumber* mbid = [NSNumber numberWithLong:[self get:kSpotEntity MBIDForPoint:&coord AndArray:arr]];
         [spot setMicroblock:mbid];
-        NSLog(@"%d remaining..\n", 24 - spotId);
+        NSLog(@"%d remaining..\n", 31 - spotId);
     }
     
     NSError* error;

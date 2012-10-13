@@ -17,6 +17,7 @@
 @synthesize rateCents;
 @synthesize minuteInterval;
 @synthesize streetName;
+@synthesize fullAddress;
 @synthesize latitude;
 @synthesize longitude;
 
@@ -30,6 +31,7 @@
     [coder encodeObject:rateCents forKey:@"rateCents"];
     [coder encodeObject:minuteInterval forKey:@"minuteInterval"];
     [coder encodeObject:streetName forKey:@"streetName"];
+    [coder encodeObject:fullAddress forKey:@"fullAddress"];
     [coder encodeObject:latitude forKey:@"latitude"];
     [coder encodeObject:longitude forKey:@"longitude"];
 }
@@ -44,6 +46,7 @@
     rateCents = [coder decodeObjectForKey: @"rateCents"];
     minuteInterval = [coder decodeObjectForKey: @"minuteInterval"];
     streetName = [coder decodeObjectForKey: @"streetName"];
+    fullAddress = [coder decodeObjectForKey:@"fullAddress"];
     latitude = [coder decodeObjectForKey: @"latitude"];
     longitude = [coder decodeObjectForKey: @"longitude"];
     return self;

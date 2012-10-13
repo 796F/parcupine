@@ -45,7 +45,7 @@ import parkservice.userscore.model.GetCountRequest;
 import parkservice.userscore.model.GetCountResponse;
 import parkservice.userscore.model.GetUserReportingHistoryRequest;
 import parkservice.userscore.model.GetUserReportingHistoryResponse;
-import parkservice.userscore.model.GetUserScoresRequest;
+import parkservice.userscore.model.GetUserScoreRequest;
 import parkservice.userscore.model.GetUserScoreResponse;
 import parkservice.userscore.model.Score;
 import parkservice.userscore.model.UpdateUserScoreRequest;
@@ -485,57 +485,52 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		ParkResource parkResource = new ParkResource();
 		
 		// create request object
-		GetUserScoresRequest request = new GetUserScoresRequest();
+		GetUserScoreRequest request = new GetUserScoreRequest();
 		request.setUserId(testUserId);
 		
 		// call the ParkResource
-		JAXBElement<GetUserScoresRequest> jaxbRequest = new JAXBElement<GetUserScoresRequest>(
-				new QName("Test"), GetUserScoresRequest.class, request);
+		JAXBElement<GetUserScoreRequest> jaxbRequest = new JAXBElement<GetUserScoreRequest>(
+				new QName("Test"), GetUserScoreRequest.class, request);
 		GetUserScoreResponse response = parkResource.getUserScore(jaxbRequest);
 		
 		// validate response
-		List<Score> scores = response.getScores();
-		for (Score score: scores) {
-			assertEquals(testUserId, score.getUserId());
-			assertTrue(score.getScoreId() > 0);
-			assertTrue(score.getScore1() >= 0);
-			assertTrue(score.getScore2() >= 0);
-			assertTrue(score.getScore3() >= 0);
-		}
+		Score score = response;
+		assertEquals(testUserId, score.getUserId());
+		assertTrue(score.getScoreId() > 0);
+		assertTrue(score.getScore1() >= 0);
+		assertTrue(score.getScore2() >= 0);
+		assertTrue(score.getScore3() >= 0);
 	}
 	
 	public void testUpdateUserScore() {
 		ParkResource parkResource = new ParkResource();
 		
 		// create request object
-		UpdateUserScoreRequest request = new UpdateUserScoreRequest();
-		Score uScore = new Score();
+		UpdateUserScoreRequest uScore = new UpdateUserScoreRequest();
 		uScore.setUserId(testUserId);
 		uScore.setScore1(5);
 		uScore.setScore2(10);
 		uScore.setScore3(15);
-		request.setScore(uScore);
 		
 		// call the ParkResource
 		JAXBElement<UpdateUserScoreRequest> jaxbRequest = new JAXBElement<UpdateUserScoreRequest>(
-				new QName("Test"), UpdateUserScoreRequest.class, request);
+				new QName("Test"), UpdateUserScoreRequest.class, uScore);
 		UpdateUserScoreResponse response = parkResource.updateUserScore(jaxbRequest);
 		
 		// check the response
 		assertTrue(response.isUpdateSuccessful());
 		
 		// create request object
-		GetUserScoresRequest request2 = new GetUserScoresRequest();
+		GetUserScoreRequest request2 = new GetUserScoreRequest();
 		request2.setUserId(testUserId);
 		
 		// call the ParkResource
-		JAXBElement<GetUserScoresRequest> jaxbRequest2 = new JAXBElement<GetUserScoresRequest>(
-				new QName("Test"), GetUserScoresRequest.class, request2);
+		JAXBElement<GetUserScoreRequest> jaxbRequest2 = new JAXBElement<GetUserScoreRequest>(
+				new QName("Test"), GetUserScoreRequest.class, request2);
 		GetUserScoreResponse response2 = parkResource.getUserScore(jaxbRequest2);
 		
 		// validate response
-		List<Score> scores = response2.getScores();
-		Score score = scores.get(0);
+		Score score = response2;
 		assertEquals(testUserId, score.getUserId());
 		assertTrue(score.getScoreId() > 0);
 		assertEquals(5, score.getScore1());

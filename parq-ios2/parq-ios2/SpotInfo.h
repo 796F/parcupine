@@ -19,6 +19,7 @@
 @property (nonatomic, retain) NSNumber* rateCents;
 @property (nonatomic, retain) NSNumber* minuteInterval;
 @property (nonatomic, retain) NSString* streetName;
+@property (nonatomic, retain) NSString* fullAddress;
 @property (nonatomic, retain) NSNumber* latitude;
 @property (nonatomic, retain) NSNumber* longitude;
 
