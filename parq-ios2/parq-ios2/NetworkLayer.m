@@ -206,10 +206,46 @@
 
 
 -(void) updateOverlayOfType:(EntityType) entityType WithNE:(CLLocationCoordinate2D*) topRight SW:(CLLocationCoordinate2D*) botLeft{
+    DLog(@"");
     //send request to server to get updated colors
-    
-    //package them properly for the map controller's function.  
-    [mapController updateOverlays:nil OfType:kGridEntity];
+    NSMutableDictionary* overlayUpdates = [[NSMutableDictionary alloc] init];
+    if(entityType==kGridEntity){
+        //request grids
+    }else if(entityType == kStreetEntity){
+        //request street types
+    }else if(entityType == kSpotEntity){
+        //request spot types
+        NSArray* keys = [NSArray arrayWithObjects:@"searchArea", nil];
+        NSMutableDictionary* SWCorner = [[NSMutableDictionary alloc] initWithCapacity:2];
+        [SWCorner setObject:@"42.353773" forKey:@"latitude"];
+        [SWCorner setObject:@"-71.100329" forKey:@"longitude"];
+        NSMutableDictionary* NECorner = [[NSMutableDictionary alloc] initWithCapacity:2];
+        [NECorner setObject:@"42.361415" forKey:@"latitude"];
+        [NECorner setObject:@"-71.089321" forKey:@"longitude"];
+        NSDictionary* pilotBox = [[NSDictionary alloc] initWithObjectsAndKeys:SWCorner,@"southWestCorner", NECorner,@"northEastCorner", nil];
+        NSArray* searchBoxes = [NSArray arrayWithObjects:pilotBox, nil];
+        NSArray* wrapper = [NSArray arrayWithObject:searchBoxes];
+
+        NSDictionary* info = [NSDictionary dictionaryWithObjects:wrapper forKeys:keys];
+        NSDictionary* requestWrapper = [[NSDictionary alloc] initWithObjectsAndKeys:info, @"GetUpdatedSpotLevelInfoRequest",nil ];
+        NSError *error;
+        NSData* jsonData = [NSJSONSerialization dataWithJSONObject:requestWrapper options:0 error:&error];
+        RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.park/GetUpdatedSpotLevelInfoRequest"];
+        [request setMethod:RKRequestMethodPOST];
+        [request setHTTPBody:jsonData];
+        NSLog(@"%@", request.HTTPBodyString);
+        
+        [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
+        RKResponse* response = [request sendSynchronously];
+        NSLog(@"\nREQUEST >>> %@", [requestWrapper description]);
+        NSDictionary* results = [Parser parseUserObjectString:[response bodyAsString]];
+    }else{
+        //error
+        return;
+    }
+    [mapController updateOverlays:overlayUpdates OfType:entityType];
+    //package them properly for the map controller's function.
+
 }
 
 #pragma mark - MICROBLOCK FUNCTIONS
