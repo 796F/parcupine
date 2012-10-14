@@ -21,6 +21,7 @@ import parkservice.userscore.model.UpdateUserScoreRequest;
 public class TestParkResource extends TestCase {
 	
 	private static final long UNIT_TEST_USER_ID = 14L;
+	private static final String PARKING_INST_REF_NUM = "14:111:1350181073";
 	private ParkResource parkResource = null;
 	
 	@Override
@@ -77,7 +78,7 @@ public class TestParkResource extends TestCase {
 		AuthRequest authRequest = new AuthRequest();
 		authRequest.setEmail("TestUser@PaymentAccount.test");
 		authRequest.setPassword("TestPassword");
-		refillRequest.setParkingReferenceNumber("14:111:1349923213");
+		refillRequest.setParkingReferenceNumber(PARKING_INST_REF_NUM);
 		refillRequest.setUserInfo(authRequest);
 		refillRequest.setUid(UNIT_TEST_USER_ID);
 		refillRequest.setDurationMinutes(1);

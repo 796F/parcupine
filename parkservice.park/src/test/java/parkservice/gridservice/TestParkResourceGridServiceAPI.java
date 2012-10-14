@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.ws.rs.core.GenericEntity;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 
@@ -55,685 +54,684 @@ import parkservice.userscore.model.UserParkingStatusReport;
 import junit.framework.TestCase;
 
 public class TestParkResourceGridServiceAPI extends TestCase {
-//	
-//	private long testUserId;
-//	
-//	public TestParkResourceGridServiceAPI() {
-//		UserDao userDao = new UserDao();
-//		User user = userDao.getUserByEmail(SupportScriptForDaoTesting.userEmail);
-//		testUserId = user.getUserID();
-//	}
-//	
-//	public void testBasicFindGridByGPSCoor() {
-//		ParkResource parkResource = new ParkResource();
-//		
-//		FindGridsByGPSCoordinateRequest findGridByGPSCoordinateRequest = new FindGridsByGPSCoordinateRequest();
-//		
-//		GpsCoordinate northEast = new GpsCoordinate();
-//		northEast.setLatitude(180);
-//		northEast.setLongitude(180);
-//		GpsCoordinate southWest = new GpsCoordinate();
-//		southWest.setLatitude(-180);
-//		southWest.setLongitude(-180);
-//		
-//		findGridByGPSCoordinateRequest.setLastUpdateTime(0);
-//		List<SearchArea> testSearchArea = new ArrayList<SearchArea>();
-//		testSearchArea.add(new SearchArea());
-//		testSearchArea.get(0).setNorthEastCorner(northEast);
-//		testSearchArea.get(0).setSouthWestCorner(southWest);
-//		findGridByGPSCoordinateRequest.setSearchArea(testSearchArea);
-//		
-//		JAXBElement<FindGridsByGPSCoordinateRequest> testRequest = new JAXBElement<FindGridsByGPSCoordinateRequest>(
-//				new QName("Test"), FindGridsByGPSCoordinateRequest.class, findGridByGPSCoordinateRequest);
-//		
-//		List<FindGridsByGPSCoordinateResponse> response = (List<FindGridsByGPSCoordinateResponse>) ((GenericEntity) parkResource.findGridByGPSCoor(testRequest).getEntity()).getEntity();
-//		
-//		assertNotNull(response);
-//		assertTrue(response.size() > 0);	
-//		
-//		// test for search with no result based on time stamp
-//		findGridByGPSCoordinateRequest.setLastUpdateTime(System.currentTimeMillis() + 10000);
-//		List<FindGridsByGPSCoordinateResponse> response1 = 
-//				(List<FindGridsByGPSCoordinateResponse>) ((GenericEntity) parkResource.findGridByGPSCoor(testRequest).getEntity()).getEntity();
-//		assertNotNull(response1);
-//		assertEquals(response1.size(), 0);
-//		
-//		// test for search with no result from small search area
-//		northEast.setLatitude(0.0);
-//		northEast.setLongitude(0.0);
-//		southWest.setLatitude(0.001);
-//		southWest.setLongitude(0.001);
-//		findGridByGPSCoordinateRequest.setLastUpdateTime(0);
-//		List<FindGridsByGPSCoordinateResponse> response2 = (List<FindGridsByGPSCoordinateResponse>) ((GenericEntity) parkResource.findGridByGPSCoor(testRequest).getEntity()).getEntity();
-//		assertNotNull(response2);
-//		assertEquals(response2.size(), 0);
-//	}
-//	
-//	public void testBasicSearchForStreets() {
-//		ParkResource parkResource = new ParkResource();
-//		
-//		SearchForStreetsRequest searchForStreetsRequest = new SearchForStreetsRequest();
-//		GpsCoordinate northEast = new GpsCoordinate();
-//		northEast.setLatitude(180);
-//		northEast.setLongitude(180);
-//		GpsCoordinate southWest = new GpsCoordinate();
-//		southWest.setLatitude(-180);
-//		southWest.setLongitude(-180);
-//		
-//		List<SearchArea> testSearchArea = new ArrayList<SearchArea>();
-//		testSearchArea.add(new SearchArea());
-//		testSearchArea.get(0).setNorthEastCorner(northEast);
-//		testSearchArea.get(0).setSouthWestCorner(southWest);
-//		searchForStreetsRequest.setSearchArea(testSearchArea);
-//		
-//		JAXBElement<SearchForStreetsRequest> jaxbTestRequest = new JAXBElement<SearchForStreetsRequest>(
-//				new QName("Test"), SearchForStreetsRequest.class, searchForStreetsRequest);
-//		
-//		List<SearchForStreetsResponse> response = parkResource.searchForStreets(jaxbTestRequest);
-//		assertNotNull(response);
-//		assertTrue(response.size() > 0);
-//		
-//		// test for search with no result
-//		southWest.setLatitude(0.0);
-//		southWest.setLongitude(0.0);
-//		northEast.setLatitude(0.001);
-//		northEast.setLongitude(0.001);
-//		List<SearchForStreetsResponse> response1 = parkResource.searchForStreets(jaxbTestRequest);
-//		assertNotNull(response1);
-//		assertEquals(response1.size(), 0);
-//	}
-//	
-//	public void testBasicGetUpdatedStreetInfo() {
-//		ParkResource parkResource = new ParkResource();
-//		
-//		GetUpdatedStreetInfoRequest getUpdatedStreetInfoRequest = new GetUpdatedStreetInfoRequest();
-//		GpsCoordinate northEast = new GpsCoordinate();
-//		northEast.setLatitude(180);
-//		northEast.setLongitude(180);
-//		GpsCoordinate southWest = new GpsCoordinate();
-//		southWest.setLatitude(-180);
-//		southWest.setLongitude(-180);
-//		
-//		List<SearchArea> testSearchArea = new ArrayList<SearchArea>();
-//		testSearchArea.add(new SearchArea());
-//		testSearchArea.get(0).setNorthEastCorner(northEast);
-//		testSearchArea.get(0).setSouthWestCorner(southWest);
-//		getUpdatedStreetInfoRequest.setSearchArea(testSearchArea);
-//		getUpdatedStreetInfoRequest.setLastUpdateTime(0);
-//		JAXBElement<GetUpdatedStreetInfoRequest> jaxbTestRequest = new JAXBElement<GetUpdatedStreetInfoRequest>(
-//				new QName("Test"), GetUpdatedStreetInfoRequest.class, getUpdatedStreetInfoRequest);
-//		
-//		List<GetUpdatedStreetInfoResponse> response = parkResource.getUpdatedStreetInfo(jaxbTestRequest);
-//		assertNotNull(response);
-//		assertTrue(response.size() > 0);
-//		
-//		// test for search with no result based on time stamp
-//		getUpdatedStreetInfoRequest.setLastUpdateTime(System.currentTimeMillis() + 10000);
-//		List<GetUpdatedStreetInfoResponse> response1 = parkResource.getUpdatedStreetInfo(jaxbTestRequest);
-//		assertNotNull(response1);
-//		assertEquals(response1.size(), 0);
-//		
-//		// test for search with no result from small search area
-//		southWest.setLatitude(0.0);
-//		southWest.setLongitude(0.0);
-//		northEast.setLatitude(0.001);
-//		northEast.setLongitude(0.001);
-//		getUpdatedStreetInfoRequest.setLastUpdateTime(0);
-//		List<GetUpdatedStreetInfoResponse> response2 = parkResource.getUpdatedStreetInfo(jaxbTestRequest);
-//		assertNotNull(response2);
-//		assertEquals(response2.size(), 0);
-//	}
-//	
-//	public void testBasicGetStreetInfo() {
-//		ParkResource parkResource = new ParkResource();
-//		
-//		GetSpotLevelInfoRequest getStreetInfoRequest = new GetSpotLevelInfoRequest();
-//		GpsCoordinate northEast = new GpsCoordinate();
-//		northEast.setLatitude(180);
-//		northEast.setLongitude(180);
-//		GpsCoordinate southWest = new GpsCoordinate();
-//		southWest.setLatitude(-180);
-//		southWest.setLongitude(-180);
-//		
-//		List<SearchArea> testSearchArea = new ArrayList<SearchArea>();
-//		testSearchArea.add(new SearchArea());
-//		testSearchArea.get(0).setNorthEastCorner(northEast);
-//		testSearchArea.get(0).setSouthWestCorner(southWest);
-//		getStreetInfoRequest.setSearchArea(testSearchArea);
-//		JAXBElement<GetSpotLevelInfoRequest> jaxbTestRequest = new JAXBElement<GetSpotLevelInfoRequest>(
-//				new QName("Test"), GetSpotLevelInfoRequest.class, getStreetInfoRequest);
-//		
-//		List<GetSpotLevelInfoResponse> response = parkResource.getStreetInfo(jaxbTestRequest);
-//		assertNotNull(response);
-//		assertTrue(response.size() > 0);
-//		assertTrue(response.get(0).getParkingSpace().get(0).getSegment() > 0);
-//		assertTrue(response.get(0).getParkingSpace().get(0).getSegment() < 100);
-//		assertNotNull(response.get(0).getParkingSpace().get(0).getSpaceName());
-//		assertNotNull(response.get(0).getParkingSpace().get(0).getSpaceName().length() > 0);
-//		
-//		// test for search with no result
-//		southWest.setLatitude(0.0);
-//		southWest.setLongitude(0.0);
-//		northEast.setLatitude(0.001);
-//		northEast.setLongitude(0.001);
-//		List<GetSpotLevelInfoResponse> response1 = parkResource.getStreetInfo(jaxbTestRequest);
-//		assertNotNull(response1);
-//		assertEquals(response1.size(), 0);
-//	}
-//	
-//	public void testConfinedSearchForGridAndStreet() {
-//		// get the test grid
-//		ParkResource parkResource = new ParkResource();
-//		FindGridsByGPSCoordinateRequest findGridByGPSCoordinateRequest = new FindGridsByGPSCoordinateRequest();
-//		GpsCoordinate northEast = new GpsCoordinate();
-//		northEast.setLatitude(180);
-//		northEast.setLongitude(180);
-//		GpsCoordinate southWest = new GpsCoordinate();
-//		southWest.setLatitude(-180);
-//		southWest.setLongitude(-180);
-//		
-//		List<SearchArea> testSearchArea = new ArrayList<SearchArea>();
-//		testSearchArea.add(new SearchArea());
-//		testSearchArea.get(0).setNorthEastCorner(northEast);
-//		testSearchArea.get(0).setSouthWestCorner(southWest);
-//		findGridByGPSCoordinateRequest.setSearchArea(testSearchArea);
-//		findGridByGPSCoordinateRequest.setLastUpdateTime(0);
-//		JAXBElement<FindGridsByGPSCoordinateRequest> testRequest = new JAXBElement<FindGridsByGPSCoordinateRequest>(
-//				new QName("Test"), FindGridsByGPSCoordinateRequest.class, findGridByGPSCoordinateRequest);
-//		
-//		List<FindGridsByGPSCoordinateResponse> responseGrid = (List<FindGridsByGPSCoordinateResponse>) ((GenericEntity) parkResource.findGridByGPSCoor(testRequest).getEntity()).getEntity();
-//		
-//		long testGridId = responseGrid.get(0).getGridId();
-//		double gridLat = responseGrid.get(0).getLatitude();
-//		double gridLong = responseGrid.get(0).getLongitude();
-//		double curFillRate = responseGrid.get(0).getFillRate();
-//		
-//		// test that the initial value is correct
-//		assertEquals(0.0, curFillRate);
-//		
-//		// do a confined grid search
-//		southWest.setLatitude(gridLat - 0.001);
-//		southWest.setLongitude(gridLong - 0.001);
-//		northEast.setLatitude(gridLat + 0.001);
-//		northEast.setLongitude(gridLong + 0.001);
-//		
-//		responseGrid = (List<FindGridsByGPSCoordinateResponse>) ((GenericEntity) parkResource.findGridByGPSCoor(testRequest).getEntity()).getEntity();
-//		assertNotNull(responseGrid);
-//		assertEquals(testGridId, responseGrid.get(0).getGridId());
-//		
-//		// search for streets in gps coor
-//		southWest.setLatitude(-180);
-//		southWest.setLongitude(-180);
-//		northEast.setLatitude(180);
-//		northEast.setLongitude(180);
-//		SearchForStreetsRequest searchForStreetsRequest = new SearchForStreetsRequest();
-//		searchForStreetsRequest.setSearchArea(testSearchArea);
-//	
-//		JAXBElement<SearchForStreetsRequest> jaxbTestRequest = new JAXBElement<SearchForStreetsRequest>(
-//				new QName("Test"), SearchForStreetsRequest.class, searchForStreetsRequest);
-//		List<SearchForStreetsResponse> responseStreet = parkResource.searchForStreets(jaxbTestRequest);
-//		assertNotNull(responseStreet);
-//		assertTrue(responseStreet.size() > 0);
-//		
-//		long testStreetId = responseStreet.get(0).getStreetId();
-//		//double streetLat = responseStreet.get(0).getGpsCoor().get(0).getLatitude();
-//		// double streetLong = responseStreet.get(0).getGpsCoor().get(0).getLongitude();
-//		double streetFillRate = responseStreet.get(0).getFillRate();
-//		
-//		// test that the initial value is correct
-//		assertEquals(0.0, streetFillRate);
-//		
-//		// do a confined street search
-//		southWest.setLatitude(-40);
-//		southWest.setLongitude(-180);
-//		northEast.setLatitude(80);
-//		northEast.setLongitude(180);
-//		responseStreet = parkResource.searchForStreets(jaxbTestRequest);
-//		assertNotNull(responseStreet);
-//		assertTrue(responseStreet.size() >= 1);
-//		assertEquals(testStreetId, responseStreet.get(0).getStreetId());
-//	}
-//
-//	public void testGetUpdatedSpotLevelInfoResponse() {
-//		// search for streets in gps coor
-//		ParkResource parkResource = new ParkResource();
-//		GpsCoordinate northEast = new GpsCoordinate();
-//		northEast.setLatitude(180);
-//		northEast.setLongitude(180);
-//		GpsCoordinate southWest = new GpsCoordinate();
-//		southWest.setLatitude(-180);
-//		southWest.setLongitude(-180);
-//		
-//		List<SearchArea> testSearchArea = new ArrayList<SearchArea>();
-//		testSearchArea.add(new SearchArea());
-//		testSearchArea.get(0).setNorthEastCorner(northEast);
-//		testSearchArea.get(0).setSouthWestCorner(southWest);
-//		
-//		GetUpdatedSpotLevelInfoRequest getStreetInfoRequest = new GetUpdatedSpotLevelInfoRequest();
-//		getStreetInfoRequest.setSearchArea(testSearchArea);
-//		
-//		JAXBElement<GetUpdatedSpotLevelInfoRequest> jaxbTestStreetRequest = new JAXBElement<GetUpdatedSpotLevelInfoRequest>(
-//				new QName("Test"), GetUpdatedSpotLevelInfoRequest.class, getStreetInfoRequest);
-//		
-//		List<GetUpdatedSpotLevelInfoResponse> responseStreet = parkResource.getUpdatedSpotLevelInfo(jaxbTestStreetRequest);
-//		assertNotNull(responseStreet);
-//		assertFalse(responseStreet.size() == 0);
-//		assertNotNull(responseStreet.get(0).getParkingSpace());
-//		assertFalse(responseStreet.get(0).getParkingSpace().size() == 0);
-//	}
-//	
-//	public void testFillRateUpdate() {
-//		// search for streets in gps coor
-//		ParkResource parkResource = new ParkResource();
-//		
-//		GetSpotLevelInfoRequest getStreetInfoRequest = new GetSpotLevelInfoRequest();
-//		GpsCoordinate northEast = new GpsCoordinate();
-//		northEast.setLatitude(180);
-//		northEast.setLongitude(180);
-//		GpsCoordinate southWest = new GpsCoordinate();
-//		southWest.setLatitude(-180);
-//		southWest.setLongitude(-180);
-//		
-//		List<SearchArea> testSearchArea = new ArrayList<SearchArea>();
-//		testSearchArea.add(new SearchArea());
-//		testSearchArea.get(0).setNorthEastCorner(northEast);
-//		testSearchArea.get(0).setSouthWestCorner(southWest);
-//		getStreetInfoRequest.setSearchArea(testSearchArea);
-//	
-//		JAXBElement<GetSpotLevelInfoRequest> jaxbTestRequest = new JAXBElement<GetSpotLevelInfoRequest>(
-//				new QName("Test"), GetSpotLevelInfoRequest.class, getStreetInfoRequest);
-//		List<GetSpotLevelInfoResponse> responseStreet = parkResource.getStreetInfo(jaxbTestRequest);
-//		assertNotNull(responseStreet);
-//		
-//		// park at the first street's first space for 5 second
-//		long spaceToParkAtId = responseStreet.get(0).getParkingSpace().get(0).getSpaceId();
-//		GridManagementService gms = GridManagementService.getInstance();
-//		gms.park(spaceToParkAtId, new Date(System.currentTimeMillis() + 5000));
-//		
-//		responseStreet = parkResource.getStreetInfo(jaxbTestRequest);
-//		assertTrue(responseStreet.get(0).getFillRate() > 0.01);
-//		assertTrue(responseStreet.get(0).getParkingSpace().get(0).getSegment() > 0);
-//		assertNotNull(responseStreet.get(0).getParkingSpace().get(0).getSpaceName());
-//		
-//		// make sure the grid data also is updated
-//		FindGridsByGPSCoordinateRequest findGridByGPSCoordinateRequest = new FindGridsByGPSCoordinateRequest();
-//		findGridByGPSCoordinateRequest.setLastUpdateTime(0);
-//		findGridByGPSCoordinateRequest.setSearchArea(testSearchArea);
-//		JAXBElement<FindGridsByGPSCoordinateRequest> testRequest = new JAXBElement<FindGridsByGPSCoordinateRequest>(
-//				new QName("Test"), FindGridsByGPSCoordinateRequest.class, findGridByGPSCoordinateRequest);
-//		
-//		List<FindGridsByGPSCoordinateResponse> responseGrid = (List<FindGridsByGPSCoordinateResponse>) ((GenericEntity) parkResource.findGridByGPSCoor(testRequest).getEntity()).getEntity();
-//		assertTrue(responseGrid.get(0).getFillRate() > 0.01);
-//		
-//		// wait 32 second to see if the status are updated correctly
-//		try {
-//			Thread.sleep(32000);
-//		} catch (InterruptedException ie) {}
-//		
-//		responseStreet = parkResource.getStreetInfo(jaxbTestRequest);
-//		assertEquals(responseStreet.get(0).getFillRate(), 0.0);
-//		
-//		responseGrid = (List<FindGridsByGPSCoordinateResponse>) ((GenericEntity) parkResource.findGridByGPSCoor(testRequest).getEntity()).getEntity();
-//		assertEquals(responseGrid.get(0).getFillRate(), 0.0);
-//	}
-//	
-//	public void testFullParkingScenrio() {
-//		// search for streets in gps coor
-//		ParkResource parkResource = new ParkResource();
-//		
-//		GetSpotLevelInfoRequest getStreetInfoRequest = new GetSpotLevelInfoRequest();
-//		GpsCoordinate northEast = new GpsCoordinate();
-//		northEast.setLatitude(180);
-//		northEast.setLongitude(180);
-//		GpsCoordinate southWest = new GpsCoordinate();
-//		southWest.setLatitude(-180);
-//		southWest.setLongitude(-180);
-//		
-//		List<SearchArea> testSearchArea = new ArrayList<SearchArea>();
-//		testSearchArea.add(new SearchArea());
-//		testSearchArea.get(0).setNorthEastCorner(northEast);
-//		testSearchArea.get(0).setSouthWestCorner(southWest);
-//		getStreetInfoRequest.setSearchArea(testSearchArea);
-//		
-//		JAXBElement<GetSpotLevelInfoRequest> jaxbTestStreetRequest = new JAXBElement<GetSpotLevelInfoRequest>(
-//				new QName("Test"), GetSpotLevelInfoRequest.class, getStreetInfoRequest);
-//		
-//		FindGridsByGPSCoordinateRequest findGridByGPSCoordinateRequest = new FindGridsByGPSCoordinateRequest();
-//		findGridByGPSCoordinateRequest.setLastUpdateTime(0);
-//		findGridByGPSCoordinateRequest.setSearchArea(testSearchArea);
-//		JAXBElement<FindGridsByGPSCoordinateRequest> jaxbTestGridRequest = new JAXBElement<FindGridsByGPSCoordinateRequest>(
-//				new QName("Test"), FindGridsByGPSCoordinateRequest.class, findGridByGPSCoordinateRequest);
-//		
-//		List<FindGridsByGPSCoordinateResponse> responseGrid = (List<FindGridsByGPSCoordinateResponse>) ((GenericEntity) parkResource.findGridByGPSCoor(jaxbTestGridRequest).getEntity()).getEntity();
-//		List<GetSpotLevelInfoResponse> responseStreet = parkResource.getStreetInfo(jaxbTestStreetRequest);
-//		long spaceToParkAtId = responseStreet.get(0).getParkingSpace().get(0).getSpaceId();
-//		//long streetToParkAtId = responseStreet.get(0).getStreetId();
-//		//long gridToParkAtId = responseGrid.get(0).getGridId();
-//		
-//		responseStreet = parkResource.getStreetInfo(jaxbTestStreetRequest);
-//		assertEquals(responseStreet.get(0).getFillRate(), 0.0);
-//		assertEquals(responseGrid.get(0).getFillRate(), 0.0);
-//		
-//		// park for 5 seconds
-//		ParkingInstance pi = new ParkingInstance();
-//		pi.setPaidParking(true);
-//		pi.setParkingBeganTime(new Date(System.currentTimeMillis()));
-//		pi.setParkingEndTime(new Date(System.currentTimeMillis() + 5000));
-//		pi.setSpaceId(spaceToParkAtId);
-//		pi.setUserId(testUserId);
-//		// set the payment type;
-//		Payment payment = new Payment();
-//		payment.setAmountPaidCents(15);
-//		payment.setPaymentRefNumber("Test");
-//		payment.setPaymentDateTime(new Date(System.currentTimeMillis()));
-//		payment.setPaymentType(PaymentType.PrePaid);
-//		payment.setAccountId(-1);
-//		pi.setPaymentInfo(payment);
-//		
-//		// park with the parking status dao
-//		ParkingStatusDao psDao = new ParkingStatusDao();
-//		psDao.addNewParkingAndPayment(pi);
-//		
-//		// make sure the grid and street data are updated
-//		responseGrid = (List<FindGridsByGPSCoordinateResponse>) ((GenericEntity) parkResource.findGridByGPSCoor(jaxbTestGridRequest).getEntity()).getEntity();
-//		assertTrue(responseGrid.get(0).getFillRate() > 0.01);
-//		responseStreet = parkResource.getStreetInfo(jaxbTestStreetRequest);
-//		assertTrue(responseStreet.get(0).getFillRate() > 0.01);
-//		
-//		// wait 32 second to see if the status are updated correctly
-//		try {
-//			Thread.sleep(32000);
-//		} catch (InterruptedException ie) {}
-//		responseStreet = parkResource.getStreetInfo(jaxbTestStreetRequest);
-//		assertEquals(responseStreet.get(0).getFillRate(), 0.0);
-//		responseGrid = (List<FindGridsByGPSCoordinateResponse>) ((GenericEntity) parkResource.findGridByGPSCoor(jaxbTestGridRequest).getEntity()).getEntity();
-//		assertEquals(responseGrid.get(0).getFillRate(), 0.0);
-//		
-//		// park for 500 second
-//		pi.setParkingEndTime(new Date(System.currentTimeMillis() + 500000));
-//		psDao.addNewParkingAndPayment(pi);
-//		
-//		// make sure the grid and street data are updated
-//		responseGrid = (List<FindGridsByGPSCoordinateResponse>) ((GenericEntity) parkResource.findGridByGPSCoor(jaxbTestGridRequest).getEntity()).getEntity();
-//		assertTrue(responseGrid.get(0).getFillRate() > 0.01);
-//		responseStreet = parkResource.getStreetInfo(jaxbTestStreetRequest);
-//		assertTrue(responseStreet.get(0).getFillRate() > 0.01);
-//		
-//		// wait 2 second then unpark
-//		try {
-//			Thread.sleep(2000);
-//		} catch (InterruptedException ie) {}
-//		
-//		// unpark
-//		List<ParkingInstance> piLists = psDao.getParkingStatusBySpaceIds(new long[]{spaceToParkAtId});
-//		psDao.unparkBySpaceIdAndParkingRefNum(spaceToParkAtId, 
-//				piLists.get(0).getParkingRefNumber(), new Date(System.currentTimeMillis()));
-//		
-//		responseStreet = parkResource.getStreetInfo(jaxbTestStreetRequest);
-//		assertEquals(responseStreet.get(0).getFillRate(), 0.0);
-//		responseGrid = (List<FindGridsByGPSCoordinateResponse>) ((GenericEntity) parkResource.findGridByGPSCoor(jaxbTestGridRequest).getEntity()).getEntity();
-//		assertEquals(responseGrid.get(0).getFillRate(), 0.0);
-//		
-//	}
-//	
-//	public void testGridServiceUpdateThreadIsRunning() {
-//		try {
-//			Thread.sleep(61000);
-//		} catch (InterruptedException ie) {}
-//		// expecting to see 2 system.out.println messages
-//	}
-//	
-//	public void testGetUserScore() {
-//		ParkResource parkResource = new ParkResource();
-//		
-//		// create request object
-//		GetUserScoreRequest request = new GetUserScoreRequest();
-//		request.setUserId(testUserId);
-//		
-//		// call the ParkResource
-//		JAXBElement<GetUserScoreRequest> jaxbRequest = new JAXBElement<GetUserScoreRequest>(
-//				new QName("Test"), GetUserScoreRequest.class, request);
-//		GetUserScoreResponse response = parkResource.getUserScore(jaxbRequest);
-//		
-//		// validate response
-//		Score score = response;
-//		assertEquals(testUserId, score.getUserId());
-//		assertTrue(score.getScoreId() > 0);
-//		assertTrue(score.getScore1() >= 0);
-//		assertTrue(score.getScore2() >= 0);
-//		assertTrue(score.getScore3() >= 0);
-//	}
-//	
-//	public void testUpdateUserScore() {
-//		ParkResource parkResource = new ParkResource();
-//		
-//		// create request object
-//		UpdateUserScoreRequest uScore = new UpdateUserScoreRequest();
-//		uScore.setUserId(testUserId);
-//		uScore.setScore1(5);
-//		uScore.setScore2(10);
-//		uScore.setScore3(15);
-//		
-//		// call the ParkResource
-//		JAXBElement<UpdateUserScoreRequest> jaxbRequest = new JAXBElement<UpdateUserScoreRequest>(
-//				new QName("Test"), UpdateUserScoreRequest.class, uScore);
-//		UpdateUserScoreResponse response = parkResource.updateUserScore(jaxbRequest);
-//		
-//		// check the response
-//		assertTrue(response.isUpdateSuccessful());
-//		
-//		// create request object
-//		GetUserScoreRequest request2 = new GetUserScoreRequest();
-//		request2.setUserId(testUserId);
-//		
-//		// call the ParkResource
-//		JAXBElement<GetUserScoreRequest> jaxbRequest2 = new JAXBElement<GetUserScoreRequest>(
-//				new QName("Test"), GetUserScoreRequest.class, request2);
-//		GetUserScoreResponse response2 = parkResource.getUserScore(jaxbRequest2);
-//		
-//		// validate response
-//		Score score = response2;
-//		assertEquals(testUserId, score.getUserId());
-//		assertTrue(score.getScoreId() > 0);
-//		assertEquals(5, score.getScore1());
-//		assertEquals(10, score.getScore2());
-//		assertEquals(15, score.getScore3());
-//	}
-//	
-//	public void testGetCount() {
-//		ParkResource parkResource = new ParkResource();
-//		GetCountRequest request = new GetCountRequest();
-//		
-//		// call the ParkResource
-//		JAXBElement<GetCountRequest> jaxbRequest = new JAXBElement<GetCountRequest>(
-//				new QName("Test"), GetCountRequest.class, request);
-//		
-//		int pre = -1;
-//		int cur = 0;
-//		
-//		int[] intArray = new int[5];
-//		
-//		for (int i = 0; i < 100; i++) {
-//			GetCountResponse response = parkResource.getCount(jaxbRequest);
-//			cur = response.getCount();
-//			assertTrue(pre != cur);
-//			assertTrue(cur >= 0);
-//			assertTrue(cur <= 3);
-//			pre = cur;
-//			intArray[cur] = intArray[cur] + 1;
-//		}
-//		
-//		assertTrue(intArray[0] > 10);
-//		assertTrue(intArray[1] > 10);
-//		assertTrue(intArray[2] > 10);
-//		assertTrue(intArray[3] > 10);
-//		assertEquals(0, intArray[4]);
-//	}
-//	
-//	public void testAddUserReporting() {
-//		ParkResource parkResource = new ParkResource();
-//		AddUserReportingRequest addRequest = new AddUserReportingRequest();
-//		
-//		User user = new UserDao()
-//				.getUserByEmail(SupportScriptForDaoTesting.userEmail);
-//		ParkingSpace pSpace = new ParkingSpaceDao()
-//			.getParkingSpaceBySpaceIdentifier(
-//				SupportScriptForDaoTesting.parkingLocationNameMain, SupportScriptForDaoTesting.spaceNameMain);
-//		
-//		addRequest.setUserId(user.getUserID());
-//		addRequest.setSpaceIds(new ArrayList<Long>());
-//		// add same space id 6 times
-//		addRequest.getSpaceIds().add(pSpace.getSpaceId());
-//		addRequest.getSpaceIds().add(pSpace.getSpaceId());
-//		addRequest.getSpaceIds().add(pSpace.getSpaceId());
-//		addRequest.getSpaceIds().add(pSpace.getSpaceId());
-//		addRequest.getSpaceIds().add(pSpace.getSpaceId());
-//		addRequest.getSpaceIds().add(pSpace.getSpaceId());
-//		// end of add
-//		addRequest.setScore1((int)(Math.random() * 1000));
-//		addRequest.setScore2((int)(Math.random() * 1000));
-//		addRequest.setScore3((int)(Math.random() * 1000));
-//		addRequest.setScore4((int)(Math.random() * 1000));
-//		addRequest.setScore5((int)(Math.random() * 1000));
-//		addRequest.setScore6((int)(Math.random() * 1000));
-//		
-//		// call the ParkResource
-//		JAXBElement<AddUserReportingRequest> jaxbRequest = new JAXBElement<AddUserReportingRequest>(
-//				new QName("Test"), AddUserReportingRequest.class, addRequest);
-//		AddUserReportingResponse response = 
-//			parkResource.addUserReporting(jaxbRequest);
-//		
-//		// check the add result
-//		assertTrue(response.isUpdateSuccessful());
-//		
-//		MiscellaneousDao miscDao = new MiscellaneousDao();
-//		List<UserSelfReporting> reports = miscDao.getUserSelfReportingHistoryForUser(user.getUserID());
-//		assertNotNull(reports);
-//		assertTrue(reports.size() > 0);
-//		UserSelfReporting userReport2 = reports.get(0);
-//		
-//		assertTrue(userReport2.getReportId() > 0);
-//		assertNotNull(userReport2.getReportDateTime());
-//		System.out.println(userReport2.getReportDateTime());
-//		assertEquals(addRequest.getUserId(), userReport2.getUserId());
-//		assertEquals(addRequest.getSpaceIds().get(0), userReport2.getSpaceIds().get(0));
-//		assertEquals(addRequest.getSpaceIds().get(1), userReport2.getSpaceIds().get(1));
-//		assertEquals(addRequest.getSpaceIds().get(2), userReport2.getSpaceIds().get(2));
-//		assertEquals(addRequest.getSpaceIds().get(3), userReport2.getSpaceIds().get(3));
-//		assertEquals(addRequest.getSpaceIds().get(4), userReport2.getSpaceIds().get(4));
-//		assertEquals(addRequest.getSpaceIds().get(5), userReport2.getSpaceIds().get(5));
-//		assertEquals(addRequest.getScore1(), userReport2.getScore1());
-//		assertEquals(addRequest.getScore2(), userReport2.getScore2());
-//		assertEquals(addRequest.getScore3(), userReport2.getScore3());
-//		assertEquals(addRequest.getScore4(), userReport2.getScore4());
-//		assertEquals(addRequest.getScore5(), userReport2.getScore5());
-//		assertEquals(addRequest.getScore6(), userReport2.getScore6());
-//	}
-//	
-//	public void testGetUserReportingHistory() {
-//		ParkResource parkResource = new ParkResource();
-//		
-//		GetUserReportingHistoryRequest getHistoryRequest
-//			= new GetUserReportingHistoryRequest();
-//		User user = new UserDao()
-//			.getUserByEmail(SupportScriptForDaoTesting.userEmail);
-//		getHistoryRequest.setUserId(user.getUserID());
-//		
-//		// call the ParkResource
-//		JAXBElement<GetUserReportingHistoryRequest> jaxbRequest = 
-//			new JAXBElement<GetUserReportingHistoryRequest>(
-//				new QName("Test"), GetUserReportingHistoryRequest.class, getHistoryRequest);
-//		GetUserReportingHistoryResponse response = 
-//			parkResource.getUserReportingHistory(jaxbRequest);
-//		
-//		List<UserParkingStatusReport> reportsHistory = response.getReports();
-//		assertTrue(reportsHistory.size() > 0);
-//		assertEquals(user.getUserID(), reportsHistory.get(0).getUserId());
-//		assertTrue(reportsHistory.get(0).getReportId() > 0);
-//		// TEST parking time to the nearest minute
-//		assertEquals(new Date(System.currentTimeMillis()).getTime() / 60000,
-//				reportsHistory.get(0).getReportDateTime().getTime() / 60000);
-//		assertTrue(reportsHistory.get(0).getScore1() > 0);
-//	}
-//	
-//	public void testLogin() {
-//		ParkResource parkResource = new ParkResource();
-//		
-//		AuthRequest authRequest = new AuthRequest();
-//		authRequest.setEmail(SupportScriptForDaoTesting.userEmail);
-//		authRequest.setPassword(SupportScriptForDaoTesting.userPassWord);
-//		JAXBElement<AuthRequest> jaxbRequest = 
-//			new JAXBElement<AuthRequest>(
-//				new QName("Test"), AuthRequest.class, authRequest);
-//		
-//		UserLoginResponse response = parkResource.login(jaxbRequest);
-//		assertTrue(response.getUid() > 0);
-//		assertEquals(SupportScriptForDaoTesting.userEmail, response.getEmail());
-//		// assertTrue(response.getLicense() != null);
-//		// assertTrue(response.getLicense().size()() > 0);
-//		// System.out.println(response.getLicense());
-//		assertTrue(response.getBalance() > 50);
-//	}
-//	
-//	public void testGetUpdatedGridInfo() {
-//		ParkResource parkResource = new ParkResource();
-//		
-//		FindGridsByGPSCoordinateRequest findGridByGPSCoordinateRequest = new FindGridsByGPSCoordinateRequest();
-//		GpsCoordinate northEast = new GpsCoordinate();
-//		northEast.setLatitude(180);
-//		northEast.setLongitude(180);
-//		GpsCoordinate southWest = new GpsCoordinate();
-//		southWest.setLatitude(-180);
-//		southWest.setLongitude(-180);
-//		
-//		findGridByGPSCoordinateRequest.setLastUpdateTime(0);
-//		List<SearchArea> testSearchArea = new ArrayList<SearchArea>();
-//		testSearchArea.add(new SearchArea());
-//		testSearchArea.get(0).setNorthEastCorner(northEast);
-//		testSearchArea.get(0).setSouthWestCorner(southWest);
-//		findGridByGPSCoordinateRequest.setSearchArea(testSearchArea);
-//		
-//		JAXBElement<FindGridsByGPSCoordinateRequest> testRequest = new JAXBElement<FindGridsByGPSCoordinateRequest>(
-//				new QName("Test"), FindGridsByGPSCoordinateRequest.class, findGridByGPSCoordinateRequest);
-//		
-//		List<FindGridsByGPSCoordinateResponse> responses = (List<FindGridsByGPSCoordinateResponse>) ((GenericEntity) parkResource.findGridByGPSCoor(testRequest).getEntity()).getEntity();
-//		
-//		assertNotNull(responses);
-//		assertTrue(responses.size() > 0);	
-//		
-//		// retrieve the same information with the get updated grid info by id call
-//		long[] gridIds = new long[responses.size()];
-//		for (int i = 0; i < gridIds.length; i++) {
-//			gridIds[i] = responses.get(i).getGridId();
-//		}
-//		GetUpdatedGridInfoRequest getUpdatedGridInfoRequest = new GetUpdatedGridInfoRequest();
-//		getUpdatedGridInfoRequest.setLastUpdateTime(0);
-//		getUpdatedGridInfoRequest.setGridIds(gridIds);
-//		
-//		JAXBElement<GetUpdatedGridInfoRequest> getJaxbRequest = new JAXBElement<GetUpdatedGridInfoRequest>(
-//				new QName("Test"), GetUpdatedGridInfoRequest.class, getUpdatedGridInfoRequest);
-//		List<GetUpdatedGridInfoResponse> getResponses = 
-//				parkResource.getUpdatedGridInfo(getJaxbRequest);
-//		
-//		assertNotNull(getResponses);
-//		assertEquals(responses.size(), getResponses.size());
-//		for (GetUpdatedGridInfoResponse response : getResponses) {
-//			assertTrue(response.getGridId() > 0);
-//			assertTrue(response.getFillRate() >= 0.0);
-//		}
-//	}
-//	
-//	public void testAddUserLogs() {
-//		User user = new UserDao()
-//			.getUserByEmail(SupportScriptForDaoTesting.userEmail);
-//		AddUserActionLogRequest addUserActionLogRequest = new AddUserActionLogRequest();
-//		addUserActionLogRequest.setLog("Test User Action Logs");
-//		addUserActionLogRequest.setUserId(user.getUserID());
-//		JAXBElement<AddUserActionLogRequest> jaxbRequest = new JAXBElement<AddUserActionLogRequest>(
-//				new QName("Test"), AddUserActionLogRequest.class, addUserActionLogRequest);
-//		ParkResource parkResource = new ParkResource();
-//		AddUserActionLogResponse response = parkResource.addUserActionLogs(jaxbRequest);
-//		
-//		assertTrue(response.isSuccessful());
+	
+	private long testUserId;
+	
+	public TestParkResourceGridServiceAPI() {
+		UserDao userDao = new UserDao();
+		User user = userDao.getUserByEmail(SupportScriptForDaoTesting.userEmail);
+		testUserId = user.getUserID();
+	}
+	
+	public void testBasicFindGridByGPSCoor() {
+		ParkResource parkResource = new ParkResource();
+		
+		FindGridsByGPSCoordinateRequest findGridByGPSCoordinateRequest = new FindGridsByGPSCoordinateRequest();
+		
+		GpsCoordinate northEast = new GpsCoordinate();
+		northEast.setLatitude(180);
+		northEast.setLongitude(180);
+		GpsCoordinate southWest = new GpsCoordinate();
+		southWest.setLatitude(-180);
+		southWest.setLongitude(-180);
+		
+		findGridByGPSCoordinateRequest.setLastUpdateTime(0);
+		List<SearchArea> testSearchArea = new ArrayList<SearchArea>();
+		testSearchArea.add(new SearchArea());
+		testSearchArea.get(0).setNorthEastCorner(northEast);
+		testSearchArea.get(0).setSouthWestCorner(southWest);
+		findGridByGPSCoordinateRequest.setSearchArea(testSearchArea);
+		
+		JAXBElement<FindGridsByGPSCoordinateRequest> testRequest = new JAXBElement<FindGridsByGPSCoordinateRequest>(
+				new QName("Test"), FindGridsByGPSCoordinateRequest.class, findGridByGPSCoordinateRequest);
+		
+		List<FindGridsByGPSCoordinateResponse> response = parkResource.findGridByGPSCoor(testRequest);
+		
+		assertNotNull(response);
+		assertTrue(response.size() > 0);	
+		
+		// test for search with no result based on time stamp
+		findGridByGPSCoordinateRequest.setLastUpdateTime(System.currentTimeMillis() + 10000);
+		List<FindGridsByGPSCoordinateResponse> response1 = parkResource.findGridByGPSCoor(testRequest);
+		assertNotNull(response1);
+		assertEquals(response1.size(), 0);
+		
+		// test for search with no result from small search area
+		northEast.setLatitude(0.0);
+		northEast.setLongitude(0.0);
+		southWest.setLatitude(0.001);
+		southWest.setLongitude(0.001);
+		findGridByGPSCoordinateRequest.setLastUpdateTime(0);
+		List<FindGridsByGPSCoordinateResponse> response2 = parkResource.findGridByGPSCoor(testRequest);
+		assertNotNull(response2);
+		assertEquals(response2.size(), 0);
+	}
+	
+	public void testBasicSearchForStreets() {
+		ParkResource parkResource = new ParkResource();
+		
+		SearchForStreetsRequest searchForStreetsRequest = new SearchForStreetsRequest();
+		GpsCoordinate northEast = new GpsCoordinate();
+		northEast.setLatitude(180);
+		northEast.setLongitude(180);
+		GpsCoordinate southWest = new GpsCoordinate();
+		southWest.setLatitude(-180);
+		southWest.setLongitude(-180);
+		
+		List<SearchArea> testSearchArea = new ArrayList<SearchArea>();
+		testSearchArea.add(new SearchArea());
+		testSearchArea.get(0).setNorthEastCorner(northEast);
+		testSearchArea.get(0).setSouthWestCorner(southWest);
+		searchForStreetsRequest.setSearchArea(testSearchArea);
+		
+		JAXBElement<SearchForStreetsRequest> jaxbTestRequest = new JAXBElement<SearchForStreetsRequest>(
+				new QName("Test"), SearchForStreetsRequest.class, searchForStreetsRequest);
+		
+		List<SearchForStreetsResponse> response = parkResource.searchForStreets(jaxbTestRequest);
+		assertNotNull(response);
+		assertTrue(response.size() > 0);
+		
+		// test for search with no result
+		southWest.setLatitude(0.0);
+		southWest.setLongitude(0.0);
+		northEast.setLatitude(0.001);
+		northEast.setLongitude(0.001);
+		List<SearchForStreetsResponse> response1 = parkResource.searchForStreets(jaxbTestRequest);
+		assertNotNull(response1);
+		assertEquals(response1.size(), 0);
+	}
+	
+	public void testBasicGetUpdatedStreetInfo() {
+		ParkResource parkResource = new ParkResource();
+		
+		GetUpdatedStreetInfoRequest getUpdatedStreetInfoRequest = new GetUpdatedStreetInfoRequest();
+		GpsCoordinate northEast = new GpsCoordinate();
+		northEast.setLatitude(180);
+		northEast.setLongitude(180);
+		GpsCoordinate southWest = new GpsCoordinate();
+		southWest.setLatitude(-180);
+		southWest.setLongitude(-180);
+		
+		List<SearchArea> testSearchArea = new ArrayList<SearchArea>();
+		testSearchArea.add(new SearchArea());
+		testSearchArea.get(0).setNorthEastCorner(northEast);
+		testSearchArea.get(0).setSouthWestCorner(southWest);
+		getUpdatedStreetInfoRequest.setSearchArea(testSearchArea);
+		getUpdatedStreetInfoRequest.setLastUpdateTime(0);
+		JAXBElement<GetUpdatedStreetInfoRequest> jaxbTestRequest = new JAXBElement<GetUpdatedStreetInfoRequest>(
+				new QName("Test"), GetUpdatedStreetInfoRequest.class, getUpdatedStreetInfoRequest);
+		
+		List<GetUpdatedStreetInfoResponse> response = parkResource.getUpdatedStreetInfo(jaxbTestRequest);
+		assertNotNull(response);
+		assertTrue(response.size() > 0);
+		
+		// test for search with no result based on time stamp
+		getUpdatedStreetInfoRequest.setLastUpdateTime(System.currentTimeMillis() + 10000);
+		List<GetUpdatedStreetInfoResponse> response1 = parkResource.getUpdatedStreetInfo(jaxbTestRequest);
+		assertNotNull(response1);
+		assertEquals(response1.size(), 0);
+		
+		// test for search with no result from small search area
+		southWest.setLatitude(0.0);
+		southWest.setLongitude(0.0);
+		northEast.setLatitude(0.001);
+		northEast.setLongitude(0.001);
+		getUpdatedStreetInfoRequest.setLastUpdateTime(0);
+		List<GetUpdatedStreetInfoResponse> response2 = parkResource.getUpdatedStreetInfo(jaxbTestRequest);
+		assertNotNull(response2);
+		assertEquals(response2.size(), 0);
+	}
+	
+	public void testBasicGetStreetInfo() {
+		ParkResource parkResource = new ParkResource();
+		
+		GetSpotLevelInfoRequest getStreetInfoRequest = new GetSpotLevelInfoRequest();
+		GpsCoordinate northEast = new GpsCoordinate();
+		northEast.setLatitude(180);
+		northEast.setLongitude(180);
+		GpsCoordinate southWest = new GpsCoordinate();
+		southWest.setLatitude(-180);
+		southWest.setLongitude(-180);
+		
+		List<SearchArea> testSearchArea = new ArrayList<SearchArea>();
+		testSearchArea.add(new SearchArea());
+		testSearchArea.get(0).setNorthEastCorner(northEast);
+		testSearchArea.get(0).setSouthWestCorner(southWest);
+		getStreetInfoRequest.setSearchArea(testSearchArea);
+		JAXBElement<GetSpotLevelInfoRequest> jaxbTestRequest = new JAXBElement<GetSpotLevelInfoRequest>(
+				new QName("Test"), GetSpotLevelInfoRequest.class, getStreetInfoRequest);
+		
+		List<GetSpotLevelInfoResponse> response = parkResource.getStreetInfo(jaxbTestRequest);
+		assertNotNull(response);
+		assertTrue(response.size() > 0);
+		assertTrue(response.get(0).getParkingSpace().get(0).getSegment() > 0);
+		assertTrue(response.get(0).getParkingSpace().get(0).getSegment() < 100);
+		assertNotNull(response.get(0).getParkingSpace().get(0).getSpaceName());
+		assertNotNull(response.get(0).getParkingSpace().get(0).getSpaceName().length() > 0);
+		
+		// test for search with no result
+		southWest.setLatitude(0.0);
+		southWest.setLongitude(0.0);
+		northEast.setLatitude(0.001);
+		northEast.setLongitude(0.001);
+		List<GetSpotLevelInfoResponse> response1 = parkResource.getStreetInfo(jaxbTestRequest);
+		assertNotNull(response1);
+		assertEquals(response1.size(), 0);
+	}
+	
+	public void testConfinedSearchForGridAndStreet() {
+		// get the test grid
+		ParkResource parkResource = new ParkResource();
+		FindGridsByGPSCoordinateRequest findGridByGPSCoordinateRequest = new FindGridsByGPSCoordinateRequest();
+		GpsCoordinate northEast = new GpsCoordinate();
+		northEast.setLatitude(180);
+		northEast.setLongitude(180);
+		GpsCoordinate southWest = new GpsCoordinate();
+		southWest.setLatitude(-180);
+		southWest.setLongitude(-180);
+		
+		List<SearchArea> testSearchArea = new ArrayList<SearchArea>();
+		testSearchArea.add(new SearchArea());
+		testSearchArea.get(0).setNorthEastCorner(northEast);
+		testSearchArea.get(0).setSouthWestCorner(southWest);
+		findGridByGPSCoordinateRequest.setSearchArea(testSearchArea);
+		findGridByGPSCoordinateRequest.setLastUpdateTime(0);
+		JAXBElement<FindGridsByGPSCoordinateRequest> testRequest = new JAXBElement<FindGridsByGPSCoordinateRequest>(
+				new QName("Test"), FindGridsByGPSCoordinateRequest.class, findGridByGPSCoordinateRequest);
+		
+		List<FindGridsByGPSCoordinateResponse> responseGrid = parkResource.findGridByGPSCoor(testRequest);
+		
+		long testGridId = responseGrid.get(0).getGridId();
+		double gridLat = responseGrid.get(0).getLatitude();
+		double gridLong = responseGrid.get(0).getLongitude();
+		double curFillRate = responseGrid.get(0).getFillRate();
+		
+		// test that the initial value is correct
+		assertEquals(0.0, curFillRate);
+		
+		// do a confined grid search
+		southWest.setLatitude(gridLat - 0.001);
+		southWest.setLongitude(gridLong - 0.001);
+		northEast.setLatitude(gridLat + 0.001);
+		northEast.setLongitude(gridLong + 0.001);
+		
+		responseGrid = parkResource.findGridByGPSCoor(testRequest);
+		assertNotNull(responseGrid);
+		assertEquals(testGridId, responseGrid.get(0).getGridId());
+		
+		// search for streets in gps coor
+		southWest.setLatitude(-180);
+		southWest.setLongitude(-180);
+		northEast.setLatitude(180);
+		northEast.setLongitude(180);
+		SearchForStreetsRequest searchForStreetsRequest = new SearchForStreetsRequest();
+		searchForStreetsRequest.setSearchArea(testSearchArea);
+	
+		JAXBElement<SearchForStreetsRequest> jaxbTestRequest = new JAXBElement<SearchForStreetsRequest>(
+				new QName("Test"), SearchForStreetsRequest.class, searchForStreetsRequest);
+		List<SearchForStreetsResponse> responseStreet = parkResource.searchForStreets(jaxbTestRequest);
+		assertNotNull(responseStreet);
+		assertTrue(responseStreet.size() > 0);
+		
+		long testStreetId = responseStreet.get(0).getStreetId();
+		//double streetLat = responseStreet.get(0).getGpsCoor().get(0).getLatitude();
+		// double streetLong = responseStreet.get(0).getGpsCoor().get(0).getLongitude();
+		double streetFillRate = responseStreet.get(0).getFillRate();
+		
+		// test that the initial value is correct
+		assertEquals(0.0, streetFillRate);
+		
+		// do a confined street search
+		southWest.setLatitude(-40);
+		southWest.setLongitude(-180);
+		northEast.setLatitude(80);
+		northEast.setLongitude(180);
+		responseStreet = parkResource.searchForStreets(jaxbTestRequest);
+		assertNotNull(responseStreet);
+		assertTrue(responseStreet.size() >= 1);
+		assertEquals(testStreetId, responseStreet.get(0).getStreetId());
+	}
+
+	public void testGetUpdatedSpotLevelInfoResponse() {
+		// search for streets in gps coor
+		ParkResource parkResource = new ParkResource();
+		GpsCoordinate northEast = new GpsCoordinate();
+		northEast.setLatitude(180);
+		northEast.setLongitude(180);
+		GpsCoordinate southWest = new GpsCoordinate();
+		southWest.setLatitude(-180);
+		southWest.setLongitude(-180);
+		
+		List<SearchArea> testSearchArea = new ArrayList<SearchArea>();
+		testSearchArea.add(new SearchArea());
+		testSearchArea.get(0).setNorthEastCorner(northEast);
+		testSearchArea.get(0).setSouthWestCorner(southWest);
+		
+		GetUpdatedSpotLevelInfoRequest getStreetInfoRequest = new GetUpdatedSpotLevelInfoRequest();
+		getStreetInfoRequest.setSearchArea(testSearchArea);
+		
+		JAXBElement<GetUpdatedSpotLevelInfoRequest> jaxbTestStreetRequest = new JAXBElement<GetUpdatedSpotLevelInfoRequest>(
+				new QName("Test"), GetUpdatedSpotLevelInfoRequest.class, getStreetInfoRequest);
+		
+		List<GetUpdatedSpotLevelInfoResponse> responseStreet = parkResource.getUpdatedSpotLevelInfo(jaxbTestStreetRequest);
+		assertNotNull(responseStreet);
+		assertFalse(responseStreet.size() == 0);
+		assertNotNull(responseStreet.get(0).getParkingSpace());
+		assertFalse(responseStreet.get(0).getParkingSpace().size() == 0);
+	}
+	
+	public void testFillRateUpdate() {
+		// search for streets in gps coor
+		ParkResource parkResource = new ParkResource();
+		
+		GetSpotLevelInfoRequest getStreetInfoRequest = new GetSpotLevelInfoRequest();
+		GpsCoordinate northEast = new GpsCoordinate();
+		northEast.setLatitude(180);
+		northEast.setLongitude(180);
+		GpsCoordinate southWest = new GpsCoordinate();
+		southWest.setLatitude(-180);
+		southWest.setLongitude(-180);
+		
+		List<SearchArea> testSearchArea = new ArrayList<SearchArea>();
+		testSearchArea.add(new SearchArea());
+		testSearchArea.get(0).setNorthEastCorner(northEast);
+		testSearchArea.get(0).setSouthWestCorner(southWest);
+		getStreetInfoRequest.setSearchArea(testSearchArea);
+	
+		JAXBElement<GetSpotLevelInfoRequest> jaxbTestRequest = new JAXBElement<GetSpotLevelInfoRequest>(
+				new QName("Test"), GetSpotLevelInfoRequest.class, getStreetInfoRequest);
+		List<GetSpotLevelInfoResponse> responseStreet = parkResource.getStreetInfo(jaxbTestRequest);
+		assertNotNull(responseStreet);
+		
+		// park at the first street's first space for 5 second
+		long spaceToParkAtId = responseStreet.get(0).getParkingSpace().get(0).getSpaceId();
+		GridManagementService gms = GridManagementService.getInstance();
+		gms.park(spaceToParkAtId, new Date(System.currentTimeMillis() + 5000));
+		
+		responseStreet = parkResource.getStreetInfo(jaxbTestRequest);
+		assertTrue(responseStreet.get(0).getFillRate() > 0.01);
+		assertTrue(responseStreet.get(0).getParkingSpace().get(0).getSegment() > 0);
+		assertNotNull(responseStreet.get(0).getParkingSpace().get(0).getSpaceName());
+		
+		// make sure the grid data also is updated
+		FindGridsByGPSCoordinateRequest findGridByGPSCoordinateRequest = new FindGridsByGPSCoordinateRequest();
+		findGridByGPSCoordinateRequest.setLastUpdateTime(0);
+		findGridByGPSCoordinateRequest.setSearchArea(testSearchArea);
+		JAXBElement<FindGridsByGPSCoordinateRequest> testRequest = new JAXBElement<FindGridsByGPSCoordinateRequest>(
+				new QName("Test"), FindGridsByGPSCoordinateRequest.class, findGridByGPSCoordinateRequest);
+		
+		List<FindGridsByGPSCoordinateResponse> responseGrid = parkResource.findGridByGPSCoor(testRequest);
+		assertTrue(responseGrid.get(0).getFillRate() > 0.01);
+		
+		// wait 32 second to see if the status are updated correctly
+		try {
+			Thread.sleep(32000);
+		} catch (InterruptedException ie) {}
+		
+		responseStreet = parkResource.getStreetInfo(jaxbTestRequest);
+		assertEquals(responseStreet.get(0).getFillRate(), 0.0);
+		
+		responseGrid = parkResource.findGridByGPSCoor(testRequest);
+		assertEquals(responseGrid.get(0).getFillRate(), 0.0);
+	}
+	
+	public void testFullParkingScenrio() {
+		// search for streets in gps coor
+		ParkResource parkResource = new ParkResource();
+		
+		GetSpotLevelInfoRequest getStreetInfoRequest = new GetSpotLevelInfoRequest();
+		GpsCoordinate northEast = new GpsCoordinate();
+		northEast.setLatitude(180);
+		northEast.setLongitude(180);
+		GpsCoordinate southWest = new GpsCoordinate();
+		southWest.setLatitude(-180);
+		southWest.setLongitude(-180);
+		
+		List<SearchArea> testSearchArea = new ArrayList<SearchArea>();
+		testSearchArea.add(new SearchArea());
+		testSearchArea.get(0).setNorthEastCorner(northEast);
+		testSearchArea.get(0).setSouthWestCorner(southWest);
+		getStreetInfoRequest.setSearchArea(testSearchArea);
+		
+		JAXBElement<GetSpotLevelInfoRequest> jaxbTestStreetRequest = new JAXBElement<GetSpotLevelInfoRequest>(
+				new QName("Test"), GetSpotLevelInfoRequest.class, getStreetInfoRequest);
+		
+		FindGridsByGPSCoordinateRequest findGridByGPSCoordinateRequest = new FindGridsByGPSCoordinateRequest();
+		findGridByGPSCoordinateRequest.setLastUpdateTime(0);
+		findGridByGPSCoordinateRequest.setSearchArea(testSearchArea);
+		JAXBElement<FindGridsByGPSCoordinateRequest> jaxbTestGridRequest = new JAXBElement<FindGridsByGPSCoordinateRequest>(
+				new QName("Test"), FindGridsByGPSCoordinateRequest.class, findGridByGPSCoordinateRequest);
+		
+		List<FindGridsByGPSCoordinateResponse> responseGrid = parkResource.findGridByGPSCoor(jaxbTestGridRequest);
+		List<GetSpotLevelInfoResponse> responseStreet = parkResource.getStreetInfo(jaxbTestStreetRequest);
+		long spaceToParkAtId = responseStreet.get(0).getParkingSpace().get(0).getSpaceId();
+		//long streetToParkAtId = responseStreet.get(0).getStreetId();
+		//long gridToParkAtId = responseGrid.get(0).getGridId();
+		
+		responseStreet = parkResource.getStreetInfo(jaxbTestStreetRequest);
+		assertEquals(responseStreet.get(0).getFillRate(), 0.0);
+		assertEquals(responseGrid.get(0).getFillRate(), 0.0);
+		
+		// park for 5 seconds
+		ParkingInstance pi = new ParkingInstance();
+		pi.setPaidParking(true);
+		pi.setParkingBeganTime(new Date(System.currentTimeMillis()));
+		pi.setParkingEndTime(new Date(System.currentTimeMillis() + 5000));
+		pi.setSpaceId(spaceToParkAtId);
+		pi.setUserId(testUserId);
+		// set the payment type;
+		Payment payment = new Payment();
+		payment.setAmountPaidCents(15);
+		payment.setPaymentRefNumber("Test");
+		payment.setPaymentDateTime(new Date(System.currentTimeMillis()));
+		payment.setPaymentType(PaymentType.PrePaid);
+		payment.setAccountId(-1);
+		pi.setPaymentInfo(payment);
+		
+		// park with the parking status dao
+		ParkingStatusDao psDao = new ParkingStatusDao();
+		psDao.addNewParkingAndPayment(pi);
+		
+		// make sure the grid and street data are updated
+		responseGrid = parkResource.findGridByGPSCoor(jaxbTestGridRequest);
+		assertTrue(responseGrid.get(0).getFillRate() > 0.01);
+		responseStreet = parkResource.getStreetInfo(jaxbTestStreetRequest);
+		assertTrue(responseStreet.get(0).getFillRate() > 0.01);
+		
+		// wait 32 second to see if the status are updated correctly
+		try {
+			Thread.sleep(32000);
+		} catch (InterruptedException ie) {}
+		responseStreet = parkResource.getStreetInfo(jaxbTestStreetRequest);
+		assertEquals(responseStreet.get(0).getFillRate(), 0.0);
+		responseGrid = parkResource.findGridByGPSCoor(jaxbTestGridRequest);
+		assertEquals(responseGrid.get(0).getFillRate(), 0.0);
+		
+		// park for 500 second
+		pi.setParkingEndTime(new Date(System.currentTimeMillis() + 500000));
+		psDao.addNewParkingAndPayment(pi);
+		
+		// make sure the grid and street data are updated
+		responseGrid = parkResource.findGridByGPSCoor(jaxbTestGridRequest);
+		assertTrue(responseGrid.get(0).getFillRate() > 0.01);
+		responseStreet = parkResource.getStreetInfo(jaxbTestStreetRequest);
+		assertTrue(responseStreet.get(0).getFillRate() > 0.01);
+		
+		// wait 2 second then unpark
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException ie) {}
+		
+		// unpark
+		List<ParkingInstance> piLists = psDao.getParkingStatusBySpaceIds(new long[]{spaceToParkAtId});
+		psDao.unparkBySpaceIdAndParkingRefNum(spaceToParkAtId, 
+				piLists.get(0).getParkingRefNumber(), new Date(System.currentTimeMillis()));
+		
+		responseStreet = parkResource.getStreetInfo(jaxbTestStreetRequest);
+		assertEquals(responseStreet.get(0).getFillRate(), 0.0);
+		responseGrid = parkResource.findGridByGPSCoor(jaxbTestGridRequest);
+		assertEquals(responseGrid.get(0).getFillRate(), 0.0);
+		
+	}
+	
+	public void testGridServiceUpdateThreadIsRunning() {
+		try {
+			Thread.sleep(61000);
+		} catch (InterruptedException ie) {}
+		// expecting to see 2 system.out.println messages
+	}
+	
+	public void testGetUserScore() {
+		ParkResource parkResource = new ParkResource();
+		
+		// create request object
+		GetUserScoreRequest request = new GetUserScoreRequest();
+		request.setUserId(testUserId);
+		
+		// call the ParkResource
+		JAXBElement<GetUserScoreRequest> jaxbRequest = new JAXBElement<GetUserScoreRequest>(
+				new QName("Test"), GetUserScoreRequest.class, request);
+		GetUserScoreResponse response = parkResource.getUserScore(jaxbRequest);
+		
+		// validate response
+		Score score = response;
+		assertEquals(testUserId, score.getUserId());
+		assertTrue(score.getScoreId() > 0);
+		assertTrue(score.getScore1() >= 0);
+		assertTrue(score.getScore2() >= 0);
+		assertTrue(score.getScore3() >= 0);
+	}
+	
+	public void testUpdateUserScore() {
+		ParkResource parkResource = new ParkResource();
+		
+		// create request object
+		UpdateUserScoreRequest uScore = new UpdateUserScoreRequest();
+		uScore.setUserId(testUserId);
+		uScore.setScore1(5);
+		uScore.setScore2(10);
+		uScore.setScore3(15);
+		
+		// call the ParkResource
+		JAXBElement<UpdateUserScoreRequest> jaxbRequest = new JAXBElement<UpdateUserScoreRequest>(
+				new QName("Test"), UpdateUserScoreRequest.class, uScore);
+		UpdateUserScoreResponse response = parkResource.updateUserScore(jaxbRequest);
+		
+		// check the response
+		assertTrue(response.isUpdateSuccessful());
+		
+		// create request object
+		GetUserScoreRequest request2 = new GetUserScoreRequest();
+		request2.setUserId(testUserId);
+		
+		// call the ParkResource
+		JAXBElement<GetUserScoreRequest> jaxbRequest2 = new JAXBElement<GetUserScoreRequest>(
+				new QName("Test"), GetUserScoreRequest.class, request2);
+		GetUserScoreResponse response2 = parkResource.getUserScore(jaxbRequest2);
+		
+		// validate response
+		Score score = response2;
+		assertEquals(testUserId, score.getUserId());
+		assertTrue(score.getScoreId() > 0);
+		assertEquals(5, score.getScore1());
+		assertEquals(10, score.getScore2());
+		assertEquals(15, score.getScore3());
+	}
+	
+	public void testGetCount() {
+		ParkResource parkResource = new ParkResource();
+		GetCountRequest request = new GetCountRequest();
+		
+		// call the ParkResource
+		JAXBElement<GetCountRequest> jaxbRequest = new JAXBElement<GetCountRequest>(
+				new QName("Test"), GetCountRequest.class, request);
+		
+		int pre = -1;
+		int cur = 0;
+		
+		int[] intArray = new int[5];
+		
+		for (int i = 0; i < 100; i++) {
+			GetCountResponse response = parkResource.getCount(jaxbRequest);
+			cur = response.getCount();
+			assertTrue(pre != cur);
+			assertTrue(cur >= 0);
+			assertTrue(cur <= 3);
+			pre = cur;
+			intArray[cur] = intArray[cur] + 1;
+		}
+		
+		assertTrue(intArray[0] > 10);
+		assertTrue(intArray[1] > 10);
+		assertTrue(intArray[2] > 10);
+		assertTrue(intArray[3] > 10);
+		assertEquals(0, intArray[4]);
+	}
+	
+	public void testAddUserReporting() {
+		ParkResource parkResource = new ParkResource();
+		AddUserReportingRequest addRequest = new AddUserReportingRequest();
+		
+		User user = new UserDao()
+				.getUserByEmail(SupportScriptForDaoTesting.userEmail);
+		ParkingSpace pSpace = new ParkingSpaceDao()
+			.getParkingSpaceBySpaceIdentifier(
+				SupportScriptForDaoTesting.parkingLocationNameMain, SupportScriptForDaoTesting.spaceNameMain);
+		
+		addRequest.setUserId(user.getUserID());
+		addRequest.setSpaceIds(new ArrayList<Long>());
+		// add same space id 6 times
+		addRequest.getSpaceIds().add(pSpace.getSpaceId());
+		addRequest.getSpaceIds().add(pSpace.getSpaceId());
+		addRequest.getSpaceIds().add(pSpace.getSpaceId());
+		addRequest.getSpaceIds().add(pSpace.getSpaceId());
+		addRequest.getSpaceIds().add(pSpace.getSpaceId());
+		addRequest.getSpaceIds().add(pSpace.getSpaceId());
+		// end of add
+		addRequest.setScore1((int)(Math.random() * 1000));
+		addRequest.setScore2((int)(Math.random() * 1000));
+		addRequest.setScore3((int)(Math.random() * 1000));
+		addRequest.setScore4((int)(Math.random() * 1000));
+		addRequest.setScore5((int)(Math.random() * 1000));
+		addRequest.setScore6((int)(Math.random() * 1000));
+		
+		// call the ParkResource
+		JAXBElement<AddUserReportingRequest> jaxbRequest = new JAXBElement<AddUserReportingRequest>(
+				new QName("Test"), AddUserReportingRequest.class, addRequest);
+		AddUserReportingResponse response = 
+			parkResource.addUserReporting(jaxbRequest);
+		
+		// check the add result
+		assertTrue(response.isUpdateSuccessful());
+		
+		MiscellaneousDao miscDao = new MiscellaneousDao();
+		List<UserSelfReporting> reports = miscDao.getUserSelfReportingHistoryForUser(user.getUserID());
+		assertNotNull(reports);
+		assertTrue(reports.size() > 0);
+		UserSelfReporting userReport2 = reports.get(0);
+		
+		assertTrue(userReport2.getReportId() > 0);
+		assertNotNull(userReport2.getReportDateTime());
+		System.out.println(userReport2.getReportDateTime());
+		assertEquals(addRequest.getUserId(), userReport2.getUserId());
+		assertEquals(addRequest.getSpaceIds().get(0), userReport2.getSpaceIds().get(0));
+		assertEquals(addRequest.getSpaceIds().get(1), userReport2.getSpaceIds().get(1));
+		assertEquals(addRequest.getSpaceIds().get(2), userReport2.getSpaceIds().get(2));
+		assertEquals(addRequest.getSpaceIds().get(3), userReport2.getSpaceIds().get(3));
+		assertEquals(addRequest.getSpaceIds().get(4), userReport2.getSpaceIds().get(4));
+		assertEquals(addRequest.getSpaceIds().get(5), userReport2.getSpaceIds().get(5));
+		assertEquals(addRequest.getScore1(), userReport2.getScore1());
+		assertEquals(addRequest.getScore2(), userReport2.getScore2());
+		assertEquals(addRequest.getScore3(), userReport2.getScore3());
+		assertEquals(addRequest.getScore4(), userReport2.getScore4());
+		assertEquals(addRequest.getScore5(), userReport2.getScore5());
+		assertEquals(addRequest.getScore6(), userReport2.getScore6());
+	}
+	
+	public void testGetUserReportingHistory() {
+		ParkResource parkResource = new ParkResource();
+		
+		GetUserReportingHistoryRequest getHistoryRequest
+			= new GetUserReportingHistoryRequest();
+		User user = new UserDao()
+			.getUserByEmail(SupportScriptForDaoTesting.userEmail);
+		getHistoryRequest.setUserId(user.getUserID());
+		
+		// call the ParkResource
+		JAXBElement<GetUserReportingHistoryRequest> jaxbRequest = 
+			new JAXBElement<GetUserReportingHistoryRequest>(
+				new QName("Test"), GetUserReportingHistoryRequest.class, getHistoryRequest);
+		GetUserReportingHistoryResponse response = 
+			parkResource.getUserReportingHistory(jaxbRequest);
+		
+		List<UserParkingStatusReport> reportsHistory = response.getReports();
+		assertTrue(reportsHistory.size() > 0);
+		assertEquals(user.getUserID(), reportsHistory.get(0).getUserId());
+		assertTrue(reportsHistory.get(0).getReportId() > 0);
+		// TEST parking time to the nearest minute
+		assertEquals(new Date(System.currentTimeMillis()).getTime() / 60000,
+				reportsHistory.get(0).getReportDateTime().getTime() / 60000);
+		assertTrue(reportsHistory.get(0).getScore1() > 0);
+	}
+	
+	public void testLogin() {
+		ParkResource parkResource = new ParkResource();
+		
+		AuthRequest authRequest = new AuthRequest();
+		authRequest.setEmail(SupportScriptForDaoTesting.userEmail);
+		authRequest.setPassword(SupportScriptForDaoTesting.userPassWord);
+		JAXBElement<AuthRequest> jaxbRequest = 
+			new JAXBElement<AuthRequest>(
+				new QName("Test"), AuthRequest.class, authRequest);
+		
+		UserLoginResponse response = parkResource.login(jaxbRequest);
+		assertTrue(response.getUid() > 0);
+		assertEquals(SupportScriptForDaoTesting.userEmail, response.getEmail());
+		// assertTrue(response.getLicense() != null);
+		// assertTrue(response.getLicense().size()() > 0);
+		// System.out.println(response.getLicense());
+		assertTrue(response.getBalance() > 50);
+	}
+	
+	public void testGetUpdatedGridInfo() {
+		ParkResource parkResource = new ParkResource();
+		
+		FindGridsByGPSCoordinateRequest findGridByGPSCoordinateRequest = new FindGridsByGPSCoordinateRequest();
+		GpsCoordinate northEast = new GpsCoordinate();
+		northEast.setLatitude(180);
+		northEast.setLongitude(180);
+		GpsCoordinate southWest = new GpsCoordinate();
+		southWest.setLatitude(-180);
+		southWest.setLongitude(-180);
+		
+		findGridByGPSCoordinateRequest.setLastUpdateTime(0);
+		List<SearchArea> testSearchArea = new ArrayList<SearchArea>();
+		testSearchArea.add(new SearchArea());
+		testSearchArea.get(0).setNorthEastCorner(northEast);
+		testSearchArea.get(0).setSouthWestCorner(southWest);
+		findGridByGPSCoordinateRequest.setSearchArea(testSearchArea);
+		
+		JAXBElement<FindGridsByGPSCoordinateRequest> testRequest = new JAXBElement<FindGridsByGPSCoordinateRequest>(
+				new QName("Test"), FindGridsByGPSCoordinateRequest.class, findGridByGPSCoordinateRequest);
+		
+		List<FindGridsByGPSCoordinateResponse> responses = parkResource.findGridByGPSCoor(testRequest);
+		
+		assertNotNull(responses);
+		assertTrue(responses.size() > 0);	
+		
+		// retrieve the same information with the get updated grid info by id call
+		long[] gridIds = new long[responses.size()];
+		for (int i = 0; i < gridIds.length; i++) {
+			gridIds[i] = responses.get(i).getGridId();
+		}
+		GetUpdatedGridInfoRequest getUpdatedGridInfoRequest = new GetUpdatedGridInfoRequest();
+		getUpdatedGridInfoRequest.setLastUpdateTime(0);
+		getUpdatedGridInfoRequest.setGridIds(gridIds);
+		
+		JAXBElement<GetUpdatedGridInfoRequest> getJaxbRequest = new JAXBElement<GetUpdatedGridInfoRequest>(
+				new QName("Test"), GetUpdatedGridInfoRequest.class, getUpdatedGridInfoRequest);
+		List<GetUpdatedGridInfoResponse> getResponses = 
+				parkResource.getUpdatedGridInfo(getJaxbRequest);
+		
+		assertNotNull(getResponses);
+		assertEquals(responses.size(), getResponses.size());
+		for (GetUpdatedGridInfoResponse response : getResponses) {
+			assertTrue(response.getGridId() > 0);
+			assertTrue(response.getFillRate() >= 0.0);
+		}
+	}
+	
+	public void testAddUserLogs() {
+		User user = new UserDao()
+			.getUserByEmail(SupportScriptForDaoTesting.userEmail);
+		AddUserActionLogRequest addUserActionLogRequest = new AddUserActionLogRequest();
+		addUserActionLogRequest.setLog("Test User Action Logs");
+		addUserActionLogRequest.setUserId(user.getUserID());
+		JAXBElement<AddUserActionLogRequest> jaxbRequest = new JAXBElement<AddUserActionLogRequest>(
+				new QName("Test"), AddUserActionLogRequest.class, addUserActionLogRequest);
+		ParkResource parkResource = new ParkResource();
+		AddUserActionLogResponse response = parkResource.addUserActionLogs(jaxbRequest);
+		
+		assertTrue(response.isSuccessful());
+	}
 }
-//}
