@@ -51,6 +51,28 @@
     [spot setRateCents:[results objectForKey:@"defaultRate"]];
     return spot;
 }
+
++(NSDictionary*) parseUpdateSpotsResponse:(NSString*) jsonResponse{
+    NSMutableDictionary* updateTheseSpots = [[NSMutableDictionary alloc] init];
+
+    NSDictionary * deserializedData = [jsonResponse objectFromJSONString];
+    NSNumberFormatter* f = [[NSNumberFormatter alloc] init];
+    NSDictionary* test = [[deserializedData objectForKey:@"getUpdatedSpotLevelInfoResponse"] objectForKey:@"parkingSpace"];
+    for (NSDictionary * dataDict in test) {
+        NSString * spaceId = [dataDict objectForKey:@"spaceId"];
+        NSNumber* status;
+        if([[dataDict objectForKey:@"status"] isEqualToString:@"available"]){
+            status = [NSNumber numberWithInt:1];
+        }else{
+            status = [NSNumber numberWithInt:0];
+        }
+        [updateTheseSpots setObject:status forKey:[f numberFromString:spaceId]];
+
+    }
+    NSLog(@"%@", updateTheseSpots.description);
+    return updateTheseSpots;
+}
+
 //park response
 +(NSDictionary*) parseParkResponse:(NSString*) jsonResponse{
     NSLog(@"RESPONSE >>>> %@\n", jsonResponse);

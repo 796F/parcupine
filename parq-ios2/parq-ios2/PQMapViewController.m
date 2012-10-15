@@ -416,7 +416,6 @@ typedef struct{
         }
     }else{
         [spotMicroBlockMap addEntriesFromDictionary:overlayMap];
-        NSLog(@"%d\n", spotMicroBlockMap.count);
         for(NSDictionary* overlayDictionary in overlayMap.allValues){
             [self.map addAnnotations:overlayDictionary.allValues];
         }
@@ -492,39 +491,65 @@ typedef struct{
     DLog(@"");
     if(updateMap==nil){
         return;
-    }
-    
-    for(NSDictionary* gridsDictionary in gridMicroBlockMap.allValues){
-        for(MKPolygon* overlay in gridsDictionary.allValues){
-            NSNumber* newAvailability = [updateMap objectForKey:[NSNumber numberWithLong: overlay.objId]];
-            if(newAvailability==nil){
-                NSLog(@"updated color data not found\n");
-                continue;
+    }else{
+        if(entityType == kGridEntity){
+            for(NSDictionary* gridsDictionary in gridMicroBlockMap.allValues){
+                for(MKPolygon* overlay in gridsDictionary.allValues){
+                    NSNumber* newAvailability = [updateMap objectForKey:[NSNumber numberWithLong: overlay.objId]];
+                    if(newAvailability==nil){
+                        NSLog(@"updated color data not found\n");
+                        continue;
+                    }
+                    MKPolygonView* view = (MKPolygonView*) [map viewForOverlay:overlay];
+                    switch (newAvailability.intValue) {
+                        case 0:
+                            view.fillColor = [[UIColor veryLowAvailabilityColor] colorWithAlphaComponent:0.2];
+                            break;
+                        case 1:
+                            view.fillColor = [[UIColor lowAvailabilityColor] colorWithAlphaComponent:0.2];
+                            break;
+                        case 2:
+                            view.fillColor = [[UIColor mediumAvailabilityColor] colorWithAlphaComponent:0.2];
+                            break;
+                        case 3:
+                            view.fillColor = [[UIColor highAvailabilityColor] colorWithAlphaComponent:0.2];
+                            break;
+                        case 4:
+                            view.fillColor = [[UIColor veryHighAvailabilityColor] colorWithAlphaComponent:0.2];
+                            break;
+                        default:
+                            //error??
+                            break;
+                    }
+                    
+                }
             }
-            MKPolygonView* view = (MKPolygonView*) [map viewForOverlay:overlay];
-            switch (newAvailability.intValue) {
-                case 0:
-                    view.fillColor = [[UIColor veryLowAvailabilityColor] colorWithAlphaComponent:0.2];
-                    break;
-                case 1:
-                    view.fillColor = [[UIColor lowAvailabilityColor] colorWithAlphaComponent:0.2];
-                    break;
-                case 2:
-                    view.fillColor = [[UIColor mediumAvailabilityColor] colorWithAlphaComponent:0.2];
-                    break;
-                case 3:
-                    view.fillColor = [[UIColor highAvailabilityColor] colorWithAlphaComponent:0.2];
-                    break;
-                case 4:
-                    view.fillColor = [[UIColor veryHighAvailabilityColor] colorWithAlphaComponent:0.2];
-                    break;
-                default:
-                    //error??
-                    break;
-            }
+        }else if(entityType == kStreetEntity){
             
+        }else if(entityType == kSpotEntity){
+            NSLog(@"%@", updateMap.description);
+            for(NSDictionary* spotDictionary in spotMicroBlockMap.allValues){
+                for(PQSpotAnnotation* anno in spotDictionary.allValues){
+                    NSNumber* newAvailability = [updateMap objectForKey:[NSNumber numberWithLong: anno.objId]];
+                    NSLog(@"%ld", anno.objId);
+                    if(newAvailability==nil){
+                        NSLog(@"updated color data not found\n");
+                        continue;
+                    }
+                    MKAnnotationView* annotationView = [map viewForAnnotation:anno];
+                    if(newAvailability.intValue == 0){
+                        annotationView.image = [UIImage imageNamed:@"spot_occupied.png"];
+                        [anno setAvailable:NO];
+                    }else{
+                        annotationView.image = [UIImage imageNamed:@"spot_free.png"];
+                        [anno setAvailable:YES];
+                    }
+                }
+            }
         }
     }
+    
+    
 
     
 }
@@ -1157,7 +1182,7 @@ typedef struct{
         [map removeAnnotations:[spotForMicroBlock allValues]];
         [spotMicroBlockMap removeObjectForKey:old];
     }
-    //add the grids that are missing, and update the rest.  
+    //add the spots that are missing, and update the rest.  
     [networkLayer addOverlayOfType:kSpotEntity ToMapForIDs:newMicroBlockIds AndUpdateForIDs:updateMicroBlockIds];
     
     //assign old to be a combination of new and update.  

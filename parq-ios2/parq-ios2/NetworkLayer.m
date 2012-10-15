@@ -209,7 +209,7 @@
 -(void) updateOverlayOfType:(EntityType) entityType WithNE:(CLLocationCoordinate2D*) topRight SW:(CLLocationCoordinate2D*) botLeft{
     DLog(@"");
     //send request to server to get updated colors
-    NSMutableDictionary* overlayUpdates = [[NSMutableDictionary alloc] init];
+    RKResponse* response;
     if(entityType==kGridEntity){
         //request grids
     }else if(entityType == kStreetEntity){
@@ -228,22 +228,21 @@
         NSArray* wrapper = [NSArray arrayWithObject:searchBoxes];
 
         NSDictionary* info = [NSDictionary dictionaryWithObjects:wrapper forKeys:keys];
-        NSDictionary* requestWrapper = [[NSDictionary alloc] initWithObjectsAndKeys:info, @"GetUpdatedSpotLevelInfoRequest",nil ];
         NSError *error;
-        NSData* jsonData = [NSJSONSerialization dataWithJSONObject:requestWrapper options:0 error:&error];
+        NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
         RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.park/GetUpdatedSpotLevelInfoRequest"];
         [request setMethod:RKRequestMethodPOST];
         [request setHTTPBody:jsonData];
-        NSLog(@"%@", request.HTTPBodyString);
-        
         [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
-        RKResponse* response = [request sendSynchronously];
-        NSLog(@"\nREQUEST >>> %@", [requestWrapper description]);
-        NSDictionary* results = [Parser parseUserObjectString:[response bodyAsString]];
+        response = [request sendSynchronously];
+        NSLog(@"\nREQUEST >>> %@", [info description]);
     }else{
         //error
         return;
     }
+    NSLog(@"%@", response.bodyAsString);
+    NSDictionary* overlayUpdates =[Parser parseUpdateSpotsResponse:[response bodyAsString]];
+
     [mapController updateOverlays:overlayUpdates OfType:entityType];
     //package them properly for the map controller's function.
 
@@ -561,34 +560,17 @@
 //        NSNumber* parkState = [results objectForKey:@"parkState"];
 //        NSString* city = [results objectForKey:@"city"];
 //        NSString* addr = [results objectForKey:@"addr"];
-//        NSString* license = [results objectForKey:@"license"];
+        NSString* license = [results objectForKey:@"license"];
 //        NSString* name = [results objectForKey:@"name"];
-//        NSString* email = [results objectForKey:@"email"];
-//        NSNumber* balance = [results objectForKey:@"balance"];
+        NSString* email = [results objectForKey:@"email"];
 //        NSNumber* payment = [results objectForKey:@"payment"];
-//        //unused 
-
-        User* user = (User*)[NSEntityDescription insertNewObjectForEntityForName:@"User" inManagedObjectContext:dataLayer.managedObjectContext];
-        
-        [user setAddress:@"michaelxia.com"];
-        [user setName:@"@mikeyxia"];
-        [user setEmail:email];  //this should be returned by server.
-        [user setPassword:pass];
-        [user setLicense:[results objectForKey:@"license"]];
-        [user setCity:@"Cambridge"];
-        [user setPayment:[NSNumber numberWithInt:0]];
+//        //unused
         NSNumberFormatter* f = [[NSNumberFormatter alloc] init];
-        [user setUid:[f numberFromString:[results objectForKey:@"uid"]]];
-        [user setBalance:[f numberFromString:[results objectForKey:@"balance"]]];
-        NSError* error;
-        if(![dataLayer.managedObjectContext save:&error]){
-            //logged in, but something wrong wtih core data. cannot store user.  
-            [dataLayer.managedObjectContext deleteObject:user];
-            return nil;
+        NSNumber* balance = [f numberFromString:[results objectForKey:@"balance"]];
+        NSNumber* uid = [f numberFromString:[results objectForKey:@"uid"]];
+        return [dataLayer saveUserWithEmail:email Pass:pass License:license UID:uid Balance:balance];
+        
         }else{
-            return user;
-        }
-    }else{
         //bad login
         return nil;
     }
@@ -696,5 +678,13 @@
         return NO;
     }
 
+}
+
+-(BOOL) userEarnedPoints:(NSNumber*) earnedPoints{
+    //some network call.  if responds well, then change user's points.  
+    return [dataLayer userAddPoints:earnedPoints];
+}
+-(BOOL) userLostPoints:(NSNumber*) lostPoints{
+    return [dataLayer userDecPoints:lostPoints];
 }
 @end

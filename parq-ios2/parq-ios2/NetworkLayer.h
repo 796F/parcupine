@@ -39,6 +39,11 @@
 
 -(User*) loginEmail:(NSString*) email AndPassword:(NSString*) pass;
 -(User*) registerEmail:(NSString*) email AndPassword:(NSString*) pass AndPlate:(NSString*) plate;
+
+//user points
+-(BOOL) userEarnedPoints:(NSNumber*) earnedPoints;
+-(BOOL) userLostPoints:(NSNumber*) lostPoints;
+
 //network status
 -(BOOL) isRecheableViaWifi;
 -(BOOL) isRecheableVia3G;
