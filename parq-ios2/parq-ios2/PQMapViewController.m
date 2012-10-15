@@ -424,17 +424,16 @@ typedef struct{
     
 }
 
+// Show loading screen - move to Amherst St, Cambridge and zoom into closest area
+// @PILOT fixed location - future will zoom to closest spot to center
 -(IBAction)justParkMeButtonPressed:(id)sender{
     DLog(@"");
     [dataLayer logString:[NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__]];
-    //show loading screen
-    //request server for nearest open spot    
-    //zoom user's map to that area
     CLLocationCoordinate2D coord = CLLocationCoordinate2DMake(42.357835,-71.094333);
     [map setRegion:MKCoordinateRegionMakeWithDistance(coord, SPOT_LEVEL_REGION_METERS, SPOT_LEVEL_REGION_METERS) animated:YES];
-    [self showSpotSelectionViews];
-    //make callouts appear.
-    
+    // Do not add top/bottom bar w/ views: Possible confusion if user is already zoomed in
+    // starting at pilot area: Button will literally do nothing - and not immediately apparent they should click on spot next. Should Just Park Me select a spot (make a tap on the map) for user?
+    // [self showSpotSelectionViews];
 }
 
 -(IBAction)selfEnforcePressed:(id)sender{
