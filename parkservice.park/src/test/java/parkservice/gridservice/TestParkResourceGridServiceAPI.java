@@ -25,7 +25,7 @@ import parkservice.gridservice.model.FindGridsByGPSCoordinateResponse;
 import parkservice.gridservice.model.GetSpotLevelInfoRequest;
 import parkservice.gridservice.model.GetSpotLevelInfoResponse;
 import parkservice.gridservice.model.GetUpdatedGridInfoRequest;
-import parkservice.gridservice.model.GetUpdatedGridInfoRespone;
+import parkservice.gridservice.model.GetUpdatedGridInfoResponse;
 import parkservice.gridservice.model.GetUpdatedSpotLevelInfoRequest;
 import parkservice.gridservice.model.GetUpdatedSpotLevelInfoResponse;
 import parkservice.gridservice.model.GetUpdatedStreetInfoRequest;
@@ -85,16 +85,16 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		JAXBElement<FindGridsByGPSCoordinateRequest> testRequest = new JAXBElement<FindGridsByGPSCoordinateRequest>(
 				new QName("Test"), FindGridsByGPSCoordinateRequest.class, findGridByGPSCoordinateRequest);
 		
-		FindGridsByGPSCoordinateResponse[] response = parkResource.findGridByGPSCoor(testRequest);
+		List<FindGridsByGPSCoordinateResponse> response = parkResource.findGridByGPSCoor(testRequest);
 		
 		assertNotNull(response);
-		assertTrue(response.length > 0);	
+		assertTrue(response.size() > 0);	
 		
 		// test for search with no result based on time stamp
 		findGridByGPSCoordinateRequest.setLastUpdateTime(System.currentTimeMillis() + 10000);
-		FindGridsByGPSCoordinateResponse[] response1 = parkResource.findGridByGPSCoor(testRequest);
+		List<FindGridsByGPSCoordinateResponse> response1 = parkResource.findGridByGPSCoor(testRequest);
 		assertNotNull(response1);
-		assertEquals(response1.length, 0);
+		assertEquals(response1.size(), 0);
 		
 		// test for search with no result from small search area
 		northEast.setLatitude(0.0);
@@ -102,9 +102,9 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		southWest.setLatitude(0.001);
 		southWest.setLongitude(0.001);
 		findGridByGPSCoordinateRequest.setLastUpdateTime(0);
-		FindGridsByGPSCoordinateResponse[] response2 = parkResource.findGridByGPSCoor(testRequest);
+		List<FindGridsByGPSCoordinateResponse> response2 = parkResource.findGridByGPSCoor(testRequest);
 		assertNotNull(response2);
-		assertEquals(response2.length, 0);
+		assertEquals(response2.size(), 0);
 	}
 	
 	public void testBasicSearchForStreets() {
@@ -127,18 +127,18 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		JAXBElement<SearchForStreetsRequest> jaxbTestRequest = new JAXBElement<SearchForStreetsRequest>(
 				new QName("Test"), SearchForStreetsRequest.class, searchForStreetsRequest);
 		
-		SearchForStreetsResponse[] response = parkResource.searchForStreets(jaxbTestRequest);
+		List<SearchForStreetsResponse> response = parkResource.searchForStreets(jaxbTestRequest);
 		assertNotNull(response);
-		assertTrue(response.length > 0);
+		assertTrue(response.size() > 0);
 		
 		// test for search with no result
 		southWest.setLatitude(0.0);
 		southWest.setLongitude(0.0);
 		northEast.setLatitude(0.001);
 		northEast.setLongitude(0.001);
-		SearchForStreetsResponse[] response1 = parkResource.searchForStreets(jaxbTestRequest);
+		List<SearchForStreetsResponse> response1 = parkResource.searchForStreets(jaxbTestRequest);
 		assertNotNull(response1);
-		assertEquals(response1.length, 0);
+		assertEquals(response1.size(), 0);
 	}
 	
 	public void testBasicGetUpdatedStreetInfo() {
@@ -161,15 +161,15 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		JAXBElement<GetUpdatedStreetInfoRequest> jaxbTestRequest = new JAXBElement<GetUpdatedStreetInfoRequest>(
 				new QName("Test"), GetUpdatedStreetInfoRequest.class, getUpdatedStreetInfoRequest);
 		
-		GetUpdatedStreetInfoResponse[] response = parkResource.getUpdatedStreetInfo(jaxbTestRequest);
+		List<GetUpdatedStreetInfoResponse> response = parkResource.getUpdatedStreetInfo(jaxbTestRequest);
 		assertNotNull(response);
-		assertTrue(response.length > 0);
+		assertTrue(response.size() > 0);
 		
 		// test for search with no result based on time stamp
 		getUpdatedStreetInfoRequest.setLastUpdateTime(System.currentTimeMillis() + 10000);
-		GetUpdatedStreetInfoResponse[] response1 = parkResource.getUpdatedStreetInfo(jaxbTestRequest);
+		List<GetUpdatedStreetInfoResponse> response1 = parkResource.getUpdatedStreetInfo(jaxbTestRequest);
 		assertNotNull(response1);
-		assertEquals(response1.length, 0);
+		assertEquals(response1.size(), 0);
 		
 		// test for search with no result from small search area
 		southWest.setLatitude(0.0);
@@ -177,9 +177,9 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		northEast.setLatitude(0.001);
 		northEast.setLongitude(0.001);
 		getUpdatedStreetInfoRequest.setLastUpdateTime(0);
-		GetUpdatedStreetInfoResponse[] response2 = parkResource.getUpdatedStreetInfo(jaxbTestRequest);
+		List<GetUpdatedStreetInfoResponse> response2 = parkResource.getUpdatedStreetInfo(jaxbTestRequest);
 		assertNotNull(response2);
-		assertEquals(response2.length, 0);
+		assertEquals(response2.size(), 0);
 	}
 	
 	public void testBasicGetStreetInfo() {
@@ -201,22 +201,22 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		JAXBElement<GetSpotLevelInfoRequest> jaxbTestRequest = new JAXBElement<GetSpotLevelInfoRequest>(
 				new QName("Test"), GetSpotLevelInfoRequest.class, getStreetInfoRequest);
 		
-		GetSpotLevelInfoResponse[] response = parkResource.getStreetInfo(jaxbTestRequest);
+		List<GetSpotLevelInfoResponse> response = parkResource.getStreetInfo(jaxbTestRequest);
 		assertNotNull(response);
-		assertTrue(response.length > 0);
-		assertTrue(response[0].getParkingSpace().get(0).getSegment() > 0);
-		assertTrue(response[0].getParkingSpace().get(0).getSegment() < 100);
-		assertNotNull(response[0].getParkingSpace().get(0).getSpaceName());
-		assertNotNull(response[0].getParkingSpace().get(0).getSpaceName().length() > 0);
+		assertTrue(response.size() > 0);
+		assertTrue(response.get(0).getParkingSpace().get(0).getSegment() > 0);
+		assertTrue(response.get(0).getParkingSpace().get(0).getSegment() < 100);
+		assertNotNull(response.get(0).getParkingSpace().get(0).getSpaceName());
+		assertNotNull(response.get(0).getParkingSpace().get(0).getSpaceName().length() > 0);
 		
 		// test for search with no result
 		southWest.setLatitude(0.0);
 		southWest.setLongitude(0.0);
 		northEast.setLatitude(0.001);
 		northEast.setLongitude(0.001);
-		GetSpotLevelInfoResponse[] response1 = parkResource.getStreetInfo(jaxbTestRequest);
+		List<GetSpotLevelInfoResponse> response1 = parkResource.getStreetInfo(jaxbTestRequest);
 		assertNotNull(response1);
-		assertEquals(response1.length, 0);
+		assertEquals(response1.size(), 0);
 	}
 	
 	public void testConfinedSearchForGridAndStreet() {
@@ -239,12 +239,12 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		JAXBElement<FindGridsByGPSCoordinateRequest> testRequest = new JAXBElement<FindGridsByGPSCoordinateRequest>(
 				new QName("Test"), FindGridsByGPSCoordinateRequest.class, findGridByGPSCoordinateRequest);
 		
-		FindGridsByGPSCoordinateResponse[] responseGrid = parkResource.findGridByGPSCoor(testRequest);
+		List<FindGridsByGPSCoordinateResponse> responseGrid = parkResource.findGridByGPSCoor(testRequest);
 		
-		long testGridId = responseGrid[0].getGridId();
-		double gridLat = responseGrid[0].getLatitude();
-		double gridLong = responseGrid[0].getLongitude();
-		double curFillRate = responseGrid[0].getFillRate();
+		long testGridId = responseGrid.get(0).getGridId();
+		double gridLat = responseGrid.get(0).getLatitude();
+		double gridLong = responseGrid.get(0).getLongitude();
+		double curFillRate = responseGrid.get(0).getFillRate();
 		
 		// test that the initial value is correct
 		assertEquals(0.0, curFillRate);
@@ -257,7 +257,7 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		
 		responseGrid = parkResource.findGridByGPSCoor(testRequest);
 		assertNotNull(responseGrid);
-		assertEquals(testGridId, responseGrid[0].getGridId());
+		assertEquals(testGridId, responseGrid.get(0).getGridId());
 		
 		// search for streets in gps coor
 		southWest.setLatitude(-180);
@@ -269,27 +269,27 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 	
 		JAXBElement<SearchForStreetsRequest> jaxbTestRequest = new JAXBElement<SearchForStreetsRequest>(
 				new QName("Test"), SearchForStreetsRequest.class, searchForStreetsRequest);
-		SearchForStreetsResponse[] responseStreet = parkResource.searchForStreets(jaxbTestRequest);
+		List<SearchForStreetsResponse> responseStreet = parkResource.searchForStreets(jaxbTestRequest);
 		assertNotNull(responseStreet);
-		assertTrue(responseStreet.length > 0);
+		assertTrue(responseStreet.size() > 0);
 		
-		long testStreetId = responseStreet[0].getStreetId();
-		//double streetLat = responseStreet[0].getGpsCoor().get(0).getLatitude();
-		// double streetLong = responseStreet[0].getGpsCoor().get(0).getLongitude();
-		double streetFillRate = responseStreet[0].getFillRate();
+		long testStreetId = responseStreet.get(0).getStreetId();
+		//double streetLat = responseStreet.get(0).getGpsCoor().get(0).getLatitude();
+		// double streetLong = responseStreet.get(0).getGpsCoor().get(0).getLongitude();
+		double streetFillRate = responseStreet.get(0).getFillRate();
 		
 		// test that the initial value is correct
 		assertEquals(0.0, streetFillRate);
 		
 		// do a confined street search
-		southWest.setLatitude(0);
-		southWest.setLongitude(0);
-		northEast.setLatitude(6);
-		northEast.setLongitude(6);
+		southWest.setLatitude(-40);
+		southWest.setLongitude(-180);
+		northEast.setLatitude(80);
+		northEast.setLongitude(180);
 		responseStreet = parkResource.searchForStreets(jaxbTestRequest);
 		assertNotNull(responseStreet);
-		assertTrue(responseStreet.length >= 1);
-		assertEquals(testStreetId, responseStreet[0].getStreetId());
+		assertTrue(responseStreet.size() >= 1);
+		assertEquals(testStreetId, responseStreet.get(0).getStreetId());
 	}
 
 	public void testGetUpdatedSpotLevelInfoResponse() {
@@ -313,11 +313,11 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		JAXBElement<GetUpdatedSpotLevelInfoRequest> jaxbTestStreetRequest = new JAXBElement<GetUpdatedSpotLevelInfoRequest>(
 				new QName("Test"), GetUpdatedSpotLevelInfoRequest.class, getStreetInfoRequest);
 		
-		GetUpdatedSpotLevelInfoResponse[] responseStreet = parkResource.getUpdatedSpotLevelInfo(jaxbTestStreetRequest);
+		List<GetUpdatedSpotLevelInfoResponse> responseStreet = parkResource.getUpdatedSpotLevelInfo(jaxbTestStreetRequest);
 		assertNotNull(responseStreet);
-		assertFalse(responseStreet.length == 0);
-		assertNotNull(responseStreet[0].getParkingSpace());
-		assertFalse(responseStreet[0].getParkingSpace().size() == 0);
+		assertFalse(responseStreet.size() == 0);
+		assertNotNull(responseStreet.get(0).getParkingSpace());
+		assertFalse(responseStreet.get(0).getParkingSpace().size() == 0);
 	}
 	
 	public void testFillRateUpdate() {
@@ -340,18 +340,18 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 	
 		JAXBElement<GetSpotLevelInfoRequest> jaxbTestRequest = new JAXBElement<GetSpotLevelInfoRequest>(
 				new QName("Test"), GetSpotLevelInfoRequest.class, getStreetInfoRequest);
-		GetSpotLevelInfoResponse[] responseStreet = parkResource.getStreetInfo(jaxbTestRequest);
+		List<GetSpotLevelInfoResponse> responseStreet = parkResource.getStreetInfo(jaxbTestRequest);
 		assertNotNull(responseStreet);
 		
 		// park at the first street's first space for 5 second
-		long spaceToParkAtId = responseStreet[0].getParkingSpace().get(0).getSpaceId();
+		long spaceToParkAtId = responseStreet.get(0).getParkingSpace().get(0).getSpaceId();
 		GridManagementService gms = GridManagementService.getInstance();
 		gms.park(spaceToParkAtId, new Date(System.currentTimeMillis() + 5000));
 		
 		responseStreet = parkResource.getStreetInfo(jaxbTestRequest);
-		assertTrue(responseStreet[0].getFillRate() > 0.01);
-		assertTrue(responseStreet[0].getParkingSpace().get(0).getSegment() > 0);
-		assertNotNull(responseStreet[0].getParkingSpace().get(0).getSpaceName());
+		assertTrue(responseStreet.get(0).getFillRate() > 0.01);
+		assertTrue(responseStreet.get(0).getParkingSpace().get(0).getSegment() > 0);
+		assertNotNull(responseStreet.get(0).getParkingSpace().get(0).getSpaceName());
 		
 		// make sure the grid data also is updated
 		FindGridsByGPSCoordinateRequest findGridByGPSCoordinateRequest = new FindGridsByGPSCoordinateRequest();
@@ -360,8 +360,8 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		JAXBElement<FindGridsByGPSCoordinateRequest> testRequest = new JAXBElement<FindGridsByGPSCoordinateRequest>(
 				new QName("Test"), FindGridsByGPSCoordinateRequest.class, findGridByGPSCoordinateRequest);
 		
-		FindGridsByGPSCoordinateResponse[] responseGrid = parkResource.findGridByGPSCoor(testRequest);
-		assertTrue(responseGrid[0].getFillRate() > 0.01);
+		List<FindGridsByGPSCoordinateResponse> responseGrid = parkResource.findGridByGPSCoor(testRequest);
+		assertTrue(responseGrid.get(0).getFillRate() > 0.01);
 		
 		// wait 32 second to see if the status are updated correctly
 		try {
@@ -369,10 +369,10 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		} catch (InterruptedException ie) {}
 		
 		responseStreet = parkResource.getStreetInfo(jaxbTestRequest);
-		assertEquals(responseStreet[0].getFillRate(), 0.0);
+		assertEquals(responseStreet.get(0).getFillRate(), 0.0);
 		
 		responseGrid = parkResource.findGridByGPSCoor(testRequest);
-		assertEquals(responseGrid[0].getFillRate(), 0.0);
+		assertEquals(responseGrid.get(0).getFillRate(), 0.0);
 	}
 	
 	public void testFullParkingScenrio() {
@@ -402,15 +402,15 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		JAXBElement<FindGridsByGPSCoordinateRequest> jaxbTestGridRequest = new JAXBElement<FindGridsByGPSCoordinateRequest>(
 				new QName("Test"), FindGridsByGPSCoordinateRequest.class, findGridByGPSCoordinateRequest);
 		
-		FindGridsByGPSCoordinateResponse[] responseGrid = parkResource.findGridByGPSCoor(jaxbTestGridRequest);
-		GetSpotLevelInfoResponse[] responseStreet = parkResource.getStreetInfo(jaxbTestStreetRequest);
-		long spaceToParkAtId = responseStreet[0].getParkingSpace().get(0).getSpaceId();
-		//long streetToParkAtId = responseStreet[0].getStreetId();
-		//long gridToParkAtId = responseGrid[0].getGridId();
+		List<FindGridsByGPSCoordinateResponse> responseGrid = parkResource.findGridByGPSCoor(jaxbTestGridRequest);
+		List<GetSpotLevelInfoResponse> responseStreet = parkResource.getStreetInfo(jaxbTestStreetRequest);
+		long spaceToParkAtId = responseStreet.get(0).getParkingSpace().get(0).getSpaceId();
+		//long streetToParkAtId = responseStreet.get(0).getStreetId();
+		//long gridToParkAtId = responseGrid.get(0).getGridId();
 		
 		responseStreet = parkResource.getStreetInfo(jaxbTestStreetRequest);
-		assertEquals(responseStreet[0].getFillRate(), 0.0);
-		assertEquals(responseGrid[0].getFillRate(), 0.0);
+		assertEquals(responseStreet.get(0).getFillRate(), 0.0);
+		assertEquals(responseGrid.get(0).getFillRate(), 0.0);
 		
 		// park for 5 seconds
 		ParkingInstance pi = new ParkingInstance();
@@ -434,18 +434,18 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		
 		// make sure the grid and street data are updated
 		responseGrid = parkResource.findGridByGPSCoor(jaxbTestGridRequest);
-		assertTrue(responseGrid[0].getFillRate() > 0.01);
+		assertTrue(responseGrid.get(0).getFillRate() > 0.01);
 		responseStreet = parkResource.getStreetInfo(jaxbTestStreetRequest);
-		assertTrue(responseStreet[0].getFillRate() > 0.01);
+		assertTrue(responseStreet.get(0).getFillRate() > 0.01);
 		
 		// wait 32 second to see if the status are updated correctly
 		try {
 			Thread.sleep(32000);
 		} catch (InterruptedException ie) {}
 		responseStreet = parkResource.getStreetInfo(jaxbTestStreetRequest);
-		assertEquals(responseStreet[0].getFillRate(), 0.0);
+		assertEquals(responseStreet.get(0).getFillRate(), 0.0);
 		responseGrid = parkResource.findGridByGPSCoor(jaxbTestGridRequest);
-		assertEquals(responseGrid[0].getFillRate(), 0.0);
+		assertEquals(responseGrid.get(0).getFillRate(), 0.0);
 		
 		// park for 500 second
 		pi.setParkingEndTime(new Date(System.currentTimeMillis() + 500000));
@@ -453,9 +453,9 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		
 		// make sure the grid and street data are updated
 		responseGrid = parkResource.findGridByGPSCoor(jaxbTestGridRequest);
-		assertTrue(responseGrid[0].getFillRate() > 0.01);
+		assertTrue(responseGrid.get(0).getFillRate() > 0.01);
 		responseStreet = parkResource.getStreetInfo(jaxbTestStreetRequest);
-		assertTrue(responseStreet[0].getFillRate() > 0.01);
+		assertTrue(responseStreet.get(0).getFillRate() > 0.01);
 		
 		// wait 2 second then unpark
 		try {
@@ -468,9 +468,9 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 				piLists.get(0).getParkingRefNumber(), new Date(System.currentTimeMillis()));
 		
 		responseStreet = parkResource.getStreetInfo(jaxbTestStreetRequest);
-		assertEquals(responseStreet[0].getFillRate(), 0.0);
+		assertEquals(responseStreet.get(0).getFillRate(), 0.0);
 		responseGrid = parkResource.findGridByGPSCoor(jaxbTestGridRequest);
-		assertEquals(responseGrid[0].getFillRate(), 0.0);
+		assertEquals(responseGrid.get(0).getFillRate(), 0.0);
 		
 	}
 	
@@ -668,7 +668,7 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		assertTrue(response.getUid() > 0);
 		assertEquals(SupportScriptForDaoTesting.userEmail, response.getEmail());
 		// assertTrue(response.getLicense() != null);
-		// assertTrue(response.getLicense().length() > 0);
+		// assertTrue(response.getLicense().size()() > 0);
 		// System.out.println(response.getLicense());
 		assertTrue(response.getBalance() > 50);
 	}
@@ -694,15 +694,15 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		JAXBElement<FindGridsByGPSCoordinateRequest> testRequest = new JAXBElement<FindGridsByGPSCoordinateRequest>(
 				new QName("Test"), FindGridsByGPSCoordinateRequest.class, findGridByGPSCoordinateRequest);
 		
-		FindGridsByGPSCoordinateResponse[] responses = parkResource.findGridByGPSCoor(testRequest);
+		List<FindGridsByGPSCoordinateResponse> responses = parkResource.findGridByGPSCoor(testRequest);
 		
 		assertNotNull(responses);
-		assertTrue(responses.length > 0);	
+		assertTrue(responses.size() > 0);	
 		
 		// retrieve the same information with the get updated grid info by id call
-		long[] gridIds = new long[responses.length];
+		long[] gridIds = new long[responses.size()];
 		for (int i = 0; i < gridIds.length; i++) {
-			gridIds[i] = responses[i].getGridId();
+			gridIds[i] = responses.get(i).getGridId();
 		}
 		GetUpdatedGridInfoRequest getUpdatedGridInfoRequest = new GetUpdatedGridInfoRequest();
 		getUpdatedGridInfoRequest.setLastUpdateTime(0);
@@ -710,12 +710,12 @@ public class TestParkResourceGridServiceAPI extends TestCase {
 		
 		JAXBElement<GetUpdatedGridInfoRequest> getJaxbRequest = new JAXBElement<GetUpdatedGridInfoRequest>(
 				new QName("Test"), GetUpdatedGridInfoRequest.class, getUpdatedGridInfoRequest);
-		GetUpdatedGridInfoRespone[] getResponses = 
+		List<GetUpdatedGridInfoResponse> getResponses = 
 				parkResource.getUpdatedGridInfo(getJaxbRequest);
 		
 		assertNotNull(getResponses);
-		assertEquals(responses.length, getResponses.length);
-		for (GetUpdatedGridInfoRespone response : getResponses) {
+		assertEquals(responses.size(), getResponses.size());
+		for (GetUpdatedGridInfoResponse response : getResponses) {
 			assertTrue(response.getGridId() > 0);
 			assertTrue(response.getFillRate() >= 0.0);
 		}

@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
-public class GetUpdatedGridInfoRespone {
+public class GetUpdatedGridInfoResponse {
 	private long gridId;
 	private double fillRate;
 

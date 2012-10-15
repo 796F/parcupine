@@ -10,11 +10,6 @@
 
 #import "PQParkingViewController.h"
 #define THANKS_FOR_PLAYING_TAG 88
-@interface SelfReportingViewController ()
-
-@end
-
-
 
 @implementation SelfReportingViewController
 @synthesize mapView;
@@ -27,7 +22,7 @@
 @synthesize isNotParking;
 
 - (MKAnnotationView *)mapView:(MKMapView *)theMapView viewForAnnotation:(id <MKAnnotation>)annotation
-{
+{    
     // if it's the user location, just return nil.
     if ([annotation isKindOfClass:[MKUserLocation class]])
         return nil;
@@ -174,22 +169,29 @@
     if(!networkLayer){
         networkLayer = ((PQAppDelegate*)[[UIApplication sharedApplication] delegate]).networkLayer;
     }
-    UITapGestureRecognizer* tgs = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
-    [self.mapView addGestureRecognizer:tgs];
+    
+    // Set up map view: Single taps to turn on/off reporting
+    UITapGestureRecognizer* singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];    
+    [self.mapView addGestureRecognizer:singleTap];
+    
+    // @TODO(PILOT) Static (no zoom/scroll) map at certain point
     CLLocationCoordinate2D point = {42.357820, -71.094310};
-    MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(point, 15, 15);
+    self.mapView.scrollEnabled = NO;
+    self.mapView.zoomEnabled = NO;
+    MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(point, 14, 14);
     [mapView setRegion:[mapView regionThatFits:viewRegion] animated:NO];
+    
+    // Load spots
     showTapMe = YES;
     for(NSString* string in [self loadSpots]){
         NSArray* components = [string componentsSeparatedByString:@","];
         double lat = [[components objectAtIndex:0] floatValue];
         double lon = [[components objectAtIndex:1] floatValue];
-        CLLocationCoordinate2D coord =  CLLocationCoordinate2DMake(lat, lon);
+        CLLocationCoordinate2D coord = CLLocationCoordinate2DMake(lat, lon);
         PQParkedCarAnnotation *annotation = [[PQParkedCarAnnotation alloc] initWithCoordinate:coord addressDictionary:nil]; 
         annotation.title = [components objectAtIndex:2];
         [self.mapView addAnnotation:annotation];
     }
-	// Do any additional setup after loading the view.
 }
 
 - (void)viewDidUnload

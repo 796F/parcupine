@@ -423,17 +423,24 @@ typedef struct{
     
 }
 
+// Show loading screen - move to Amherst St, Cambridge and zoom into closest area
+// @PILOT fixed location - future will zoom to closest spot to center
 -(IBAction)justParkMeButtonPressed:(id)sender{
     DLog(@"");
+    // Allow use to "Just Park Me" in availability bar "None" mode by switching to Availability
+    if (self.availabilitySelectionBar.selectedSegmentIndex == 2) {
+        self.availabilitySelectionBar.selectedSegmentIndex = 0;
+        gradientIcon.image = [UIImage imageNamed:@"gradient_avail"];
+        displayedData = kAvailabilityData;
+        [self mapView:map regionDidChangeAnimated:NO];
+    }
+
     [dataLayer logString:[NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__]];
-    //show loading screen
-    //request server for nearest open spot    
-    //zoom user's map to that area
     CLLocationCoordinate2D coord = CLLocationCoordinate2DMake(42.357835,-71.094333);
     [map setRegion:MKCoordinateRegionMakeWithDistance(coord, SPOT_LEVEL_REGION_METERS, SPOT_LEVEL_REGION_METERS) animated:YES];
-    [self showSpotSelectionViews];
-    //make callouts appear.
-    
+    // Do not add top/bottom bar w/ views: Possible confusion if user is already zoomed in
+    // starting at pilot area: Button will literally do nothing - and not immediately apparent they should click on spot next. Should Just Park Me select a spot (make a tap on the map) for user?
+    // [self showSpotSelectionViews];
 }
 
 -(IBAction)selfEnforcePressed:(id)sender{
@@ -1859,19 +1866,19 @@ typedef struct{
 #pragma mark - MAP TOOLBARS
 - (IBAction)availabilityBarTapped {
     switch (self.availabilitySelectionBar.selectedSegmentIndex) {
-        case 0:
+        case 0:     // Availability
             [dataLayer logString:[NSString stringWithFormat:@"%s %@", __PRETTY_FUNCTION__, @"avail"]];
             gradientIcon.image = [UIImage imageNamed:@"gradient_avail"];
             displayedData = kAvailabilityData;
             [self mapView:map regionDidChangeAnimated:NO];
             break;
-        case 1:
+        case 1:     // Price
             [dataLayer logString:[NSString stringWithFormat:@"%s %@", __PRETTY_FUNCTION__, @"price"]];
             gradientIcon.image = [UIImage imageNamed:@"gradient_price"];
             displayedData = kPriceData;
             [self mapView:map regionDidChangeAnimated:NO];
             break;
-        case 2:
+        case 2:     // None
             [dataLayer logString:[NSString stringWithFormat:@"%s %@", __PRETTY_FUNCTION__, @"none"]];
             gradientIcon.image = [UIImage imageNamed:@"gradient_none"];
             displayedData = kNoneData;
@@ -2015,6 +2022,7 @@ typedef struct{
 
     }];
 }
+
 -(void) showMoreTextBox{
     [UIView animateWithDuration:.35 animations:^{
         //show
@@ -2025,7 +2033,7 @@ typedef struct{
     }];
 }
 
-- (IBAction)noneButtonPressed:(id)sender {
+- (IBAction)loadMockData:(id)sender {
     MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     hud.labelText = @"Loading Data...";
     dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
@@ -2038,32 +2046,33 @@ typedef struct{
         });
     });
     ((UIButton*)sender).hidden = YES;
-
+    
     
     //[self hideMoreTextBox];
-//    [dataLayer logString:[NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__]];
-//    int olduitype = [dataLayer UIType];
-//    if(olduitype==3) olduitype = -1;
-//    [dataLayer setUIType:olduitype+1];
-//    NSString* string = [NSString stringWithFormat:@"uitype = %d", olduitype+1];
-//    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:nil message:string delegate:self cancelButtonTitle:@"ok" otherButtonTitles:nil];
-//    [alert show];
+    //    [dataLayer logString:[NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__]];
+    //    int olduitype = [dataLayer UIType];
+    //    if(olduitype==3) olduitype = -1;
+    //    [dataLayer setUIType:olduitype+1];
+    //    NSString* string = [NSString stringWithFormat:@"uitype = %d", olduitype+1];
+    //    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:nil message:string delegate:self cancelButtonTitle:@"ok" otherButtonTitles:nil];
+    //    [alert show];
     
     
-//    self.map = [[MKMapView alloc] initWithFrame:CGRectMake(0, 44, 320, 416)];
+    //    self.map = [[MKMapView alloc] initWithFrame:CGRectMake(0, 44, 320, 416)];
     
-//    [self clearMap];
-//    [networkLayer testAsync];
-
-//    int loop = 0;
-//    NSLog(@"map annotation count%d\n", map.annotations.count);
-//    for(PQSpotAnnotation* anno in map.annotations){
-//        loop++;
-//        NSLog(@"looped %d\n", loop);
-//        MKAnnotationView* view = [map viewForAnnotation:anno];
-//        view.image = [UIImage imageNamed:@"spot_occupied.png"];
-//    }
+    //    [self clearMap];
+    //    [networkLayer testAsync];
+    
+    //    int loop = 0;
+    //    NSLog(@"map annotation count%d\n", map.annotations.count);
+    //    for(PQSpotAnnotation* anno in map.annotations){
+    //        loop++;
+    //        NSLog(@"looped %d\n", loop);
+    //        MKAnnotationView* view = [map viewForAnnotation:anno];
+    //        view.image = [UIImage imageNamed:@"spot_occupied.png"];
+    //    }
 }
+
 
 - (void)keyboardWillShow:(NSNotification *)note { 
 

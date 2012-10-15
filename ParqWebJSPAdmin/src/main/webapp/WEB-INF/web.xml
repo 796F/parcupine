@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="ParqWebJSF" version="2.5"
+	xmlns="http://java.sun.com/xml/ns/j2ee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_5.xsd">
+    
+	<session-config>
+		<session-timeout>600</session-timeout>    <!-- 600 minutes, 10 hours -->
+	</session-config>
+    
+	<welcome-file-list>
+		<welcome-file>/web/spaceadmin.jsp</welcome-file>  
+	</welcome-file-list> 
+	
+</web-app>

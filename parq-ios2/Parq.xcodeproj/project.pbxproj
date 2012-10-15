@@ -938,7 +938,7 @@
 					"-ObjC",
 					"-all_load",
 				);
-				PRODUCT_NAME = Parq;
+				PRODUCT_NAME = Parcupine;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -955,7 +955,7 @@
 					"-ObjC",
 					"-all_load",
 				);
-				PRODUCT_NAME = Parq;
+				PRODUCT_NAME = Parcupine;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

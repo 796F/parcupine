@@ -24,7 +24,7 @@ import parkservice.gridservice.model.FindGridsByGPSCoordinateResponse;
 import parkservice.gridservice.model.GetSpotLevelInfoRequest;
 import parkservice.gridservice.model.GetSpotLevelInfoResponse;
 import parkservice.gridservice.model.GetUpdatedGridInfoRequest;
-import parkservice.gridservice.model.GetUpdatedGridInfoRespone;
+import parkservice.gridservice.model.GetUpdatedGridInfoResponse;
 import parkservice.gridservice.model.GetUpdatedSpotLevelInfoRequest;
 import parkservice.gridservice.model.GetUpdatedSpotLevelInfoResponse;
 import parkservice.gridservice.model.GetUpdatedStreetInfoRequest;
@@ -633,7 +633,7 @@ public class ParkResource {
 	@Path("/FindGridsByGPSCoordinateRequest")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public FindGridsByGPSCoordinateResponse[] findGridByGPSCoor(JAXBElement<FindGridsByGPSCoordinateRequest> jaxbRequest){
+	public ArrayList<FindGridsByGPSCoordinateResponse> findGridByGPSCoor(JAXBElement<FindGridsByGPSCoordinateRequest> jaxbRequest){
 		FindGridsByGPSCoordinateRequest request = jaxbRequest.getValue();
 		long lastUpdateDateTime = request.getLastUpdateTime();
 		List<SearchArea> searchArea = request.getSearchArea();
@@ -641,7 +641,7 @@ public class ParkResource {
 		// get all the grids with fill status with in the given bounding box
 		List<GridWithFillRate> gridWFillRate = getGridWithFillRates(searchArea);
 		
-		List<FindGridsByGPSCoordinateResponse> responseList = new ArrayList<FindGridsByGPSCoordinateResponse>();
+		ArrayList<FindGridsByGPSCoordinateResponse> responseList = new ArrayList<FindGridsByGPSCoordinateResponse>();
 		for (GridWithFillRate grid: gridWFillRate) {
 			// only send the items that has been recently updated
 			if (grid.getLastUpdatedDateTime() > lastUpdateDateTime) {
@@ -655,14 +655,14 @@ public class ParkResource {
 		}
 		
 		// return the array representation of the FindGridsByGPSCoordinateResponse
-		return responseList.toArray(new FindGridsByGPSCoordinateResponse[0]);
+		return responseList;
 	}
 	
 	@POST
 	@Path("/GetUpdatedGridInfoRequest")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public GetUpdatedGridInfoRespone[] getUpdatedGridInfo(
+	public ArrayList<GetUpdatedGridInfoResponse> getUpdatedGridInfo(
 				JAXBElement<GetUpdatedGridInfoRequest> jaxbRequest){
 		GridManagementService gridService = GridManagementService.getInstance();
 		GetUpdatedGridInfoRequest request = jaxbRequest.getValue();
@@ -672,12 +672,12 @@ public class ParkResource {
 		}
 		
 		List<GridWithFillRate> gridFillRateList = gridService.getGridStatus(gridList);
-		GetUpdatedGridInfoRespone[] responses = new GetUpdatedGridInfoRespone[gridFillRateList.size()];
+		ArrayList<GetUpdatedGridInfoResponse> responses = new ArrayList<GetUpdatedGridInfoResponse>();
 		for (int i = 0; i < gridFillRateList.size(); i++) {
-			GetUpdatedGridInfoRespone grid = new GetUpdatedGridInfoRespone();
+			GetUpdatedGridInfoResponse grid = new GetUpdatedGridInfoResponse();
 			grid.setFillRate((0.0 + gridFillRateList.get(i).getFillRate()) / 100);
 			grid.setGridId(gridFillRateList.get(i).getGridId());
-			responses[i] = grid;
+			responses.add(grid);
 		}
 		return responses;
 	}
@@ -707,14 +707,14 @@ public class ParkResource {
 	@Path("/SearchForStreetsRequest")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public SearchForStreetsResponse[] searchForStreets(JAXBElement<SearchForStreetsRequest> jaxbRequest){
+	public ArrayList<SearchForStreetsResponse> searchForStreets(JAXBElement<SearchForStreetsRequest> jaxbRequest){
 		
 		SearchForStreetsRequest request = jaxbRequest.getValue();
 		List<SearchArea> searchArea = request.getSearchArea();
 		// get all the Parking Blocks with fill status within the given gps bounding box
 		List<ParkingLocationWithFillRate> parkingLocationsWithFillRate = getParkingLocaitonWithFillRate(searchArea);
 
-		List<SearchForStreetsResponse> responseList = new ArrayList<SearchForStreetsResponse>();
+		ArrayList<SearchForStreetsResponse> responseList = new ArrayList<SearchForStreetsResponse>();
 		// create the individual street response
 		for (ParkingLocationWithFillRate pl : parkingLocationsWithFillRate) {
 			SearchForStreetsResponse response = new SearchForStreetsResponse();
@@ -732,7 +732,7 @@ public class ParkResource {
 		}
 		
 		// return the array representation of the StreetStatusList
-		return responseList.toArray(new SearchForStreetsResponse[0]);
+		return responseList;
 	}
 	
 	private List<ParkingLocationWithFillRate> getParkingLocaitonWithFillRate(
@@ -761,12 +761,12 @@ public class ParkResource {
 	@Path("/GetUpdatedStreetInfoRequest")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public GetUpdatedStreetInfoResponse[] getUpdatedStreetInfo(JAXBElement<GetUpdatedStreetInfoRequest> jaxbRequest){
+	public ArrayList<GetUpdatedStreetInfoResponse> getUpdatedStreetInfo(JAXBElement<GetUpdatedStreetInfoRequest> jaxbRequest){
 		GetUpdatedStreetInfoRequest request = jaxbRequest.getValue();
 		long lastUpdateDateTime = request.getLastUpdateTime();
 		List<SearchArea> searchArea = request.getSearchArea();
 		
-		List<GetUpdatedStreetInfoResponse> responseList = new ArrayList<GetUpdatedStreetInfoResponse>();
+		ArrayList<GetUpdatedStreetInfoResponse> responseList = new ArrayList<GetUpdatedStreetInfoResponse>();
 		List<ParkingLocationWithFillRate> parkingLocationsWithFillRate = 
 				getParkingLocaitonWithFillRate(searchArea);
 		
@@ -781,19 +781,19 @@ public class ParkResource {
 		}
 
 		// return the array representation of the GetUpdatedStreetInfoResponse
-		return responseList.toArray(new GetUpdatedStreetInfoResponse[0]);
+		return responseList;
 	}
 	
 	@POST
 	@Path("/GetStreetInfoRequest")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public GetSpotLevelInfoResponse[] getStreetInfo(JAXBElement<GetSpotLevelInfoRequest> jaxbRequest){
+	public ArrayList<GetSpotLevelInfoResponse> getStreetInfo(JAXBElement<GetSpotLevelInfoRequest> jaxbRequest){
 		
 		GetSpotLevelInfoRequest request = jaxbRequest.getValue();
 		List<SearchArea> searchArea = request.getSearchArea();
 		
-		List<GetSpotLevelInfoResponse> responseList = new ArrayList<GetSpotLevelInfoResponse>();
+		ArrayList<GetSpotLevelInfoResponse> responseList = new ArrayList<GetSpotLevelInfoResponse>();
 		
 		// get all the Parking Blocks with fill status within the given gps bounding box
 		Set<ParkingLocationWithFillRate> parkingLocationsWithFillRate = 
@@ -826,20 +826,20 @@ public class ParkResource {
 		}
 		
 		// return the array representation of the GetUpdatedStreetInfoResponse
-		return responseList.toArray(new GetSpotLevelInfoResponse[0]);
+		return responseList;
 	}
 	
 	@POST
 	@Path("/GetUpdatedSpotLevelInfoRequest")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public GetUpdatedSpotLevelInfoResponse[]
+	public ArrayList<GetUpdatedSpotLevelInfoResponse>
 			getUpdatedSpotLevelInfo(JAXBElement<GetUpdatedSpotLevelInfoRequest> jaxbRequest) {
 		
 		GetUpdatedSpotLevelInfoRequest request = jaxbRequest.getValue();
 		List<SearchArea> searchArea = request.getSearchArea();
 		
-		List<GetUpdatedSpotLevelInfoResponse> responseList = new ArrayList<GetUpdatedSpotLevelInfoResponse>();
+		ArrayList<GetUpdatedSpotLevelInfoResponse> responseList = new ArrayList<GetUpdatedSpotLevelInfoResponse>();
 		
 		// get all the Parking Blocks with fill status within the given gps bounding box
 		Set<ParkingLocationWithFillRate> parkingLocationsWithFillRate = new HashSet<ParkingLocationWithFillRate>(
@@ -866,7 +866,7 @@ public class ParkResource {
 		}
 		
 		// return the array representation of the GetUpdatedSpotLevelInfoResponse
-		return responseList.toArray(new GetUpdatedSpotLevelInfoResponse[0]);
+		return responseList;
 	}
 
 	@POST
