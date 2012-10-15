@@ -428,6 +428,14 @@ typedef struct{
 // @PILOT fixed location - future will zoom to closest spot to center
 -(IBAction)justParkMeButtonPressed:(id)sender{
     DLog(@"");
+    // Allow use to "Just Park Me" in availability bar "None" mode by switching to Availability
+    if (self.availabilitySelectionBar.selectedSegmentIndex == 2) {
+        self.availabilitySelectionBar.selectedSegmentIndex = 0;
+        gradientIcon.image = [UIImage imageNamed:@"gradient_avail"];
+        displayedData = kAvailabilityData;
+        [self mapView:map regionDidChangeAnimated:NO];
+    }
+
     [dataLayer logString:[NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__]];
     CLLocationCoordinate2D coord = CLLocationCoordinate2DMake(42.357835,-71.094333);
     [map setRegion:MKCoordinateRegionMakeWithDistance(coord, SPOT_LEVEL_REGION_METERS, SPOT_LEVEL_REGION_METERS) animated:YES];
@@ -1833,19 +1841,19 @@ typedef struct{
 #pragma mark - MAP TOOLBARS
 - (IBAction)availabilityBarTapped {
     switch (self.availabilitySelectionBar.selectedSegmentIndex) {
-        case 0:
+        case 0:     // Availability
             [dataLayer logString:[NSString stringWithFormat:@"%s %@", __PRETTY_FUNCTION__, @"avail"]];
             gradientIcon.image = [UIImage imageNamed:@"gradient_avail"];
             displayedData = kAvailabilityData;
             [self mapView:map regionDidChangeAnimated:NO];
             break;
-        case 1:
+        case 1:     // Price
             [dataLayer logString:[NSString stringWithFormat:@"%s %@", __PRETTY_FUNCTION__, @"price"]];
             gradientIcon.image = [UIImage imageNamed:@"gradient_price"];
             displayedData = kPriceData;
             [self mapView:map regionDidChangeAnimated:NO];
             break;
-        case 2:
+        case 2:     // None
             [dataLayer logString:[NSString stringWithFormat:@"%s %@", __PRETTY_FUNCTION__, @"none"]];
             gradientIcon.image = [UIImage imageNamed:@"gradient_none"];
             displayedData = kNoneData;
@@ -1989,6 +1997,7 @@ typedef struct{
 
     }];
 }
+
 -(void) showMoreTextBox{
     [UIView animateWithDuration:.35 animations:^{
         //show
