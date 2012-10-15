@@ -422,6 +422,31 @@
 
 }
 
+-(BOOL) userAddPoints:(NSNumber*) earnedPoints{
+    User* user = [self getUser];
+    [user setBalance:[NSNumber numberWithInt:user.balance.integerValue + earnedPoints.integerValue]];
+    NSError* error;
+    if(![managedObjectContext save:&error]){
+        //ERROR
+        return NO;
+    }else{
+        return YES;
+    }
+    
+}
+-(BOOL) userDecPoints:(NSNumber*) decreasePoints{
+    User* user = [self getUser];
+
+    [user setBalance:[NSNumber numberWithInt:user.balance.integerValue - decreasePoints.integerValue]];
+    NSError* error;
+    if(![managedObjectContext save:&error]){
+        //ERROR
+        return NO;
+    }else{
+        return YES;
+    }
+}
+
 -(User*) getUser{
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"User" inManagedObjectContext:managedObjectContext];
@@ -431,5 +456,27 @@
     return (User*) [returnedObjects lastObject];
 }
 
+-(User*) saveUserWithEmail:(NSString*)email Pass:(NSString*)pass License:(NSString*)license UID:(NSNumber*) uid Balance:(NSNumber*) balance{
+    User* user = (User*)[NSEntityDescription insertNewObjectForEntityForName:@"User" inManagedObjectContext:managedObjectContext];
+    
+    [user setAddress:@"michaelxia.com"];
+    [user setName:@"@mikeyxia"];
+    [user setEmail:email];  //this should be returned by server.
+    [user setPassword:pass];
+    [user setLicense:license];
+    [user setCity:@"Cambridge"];
+    [user setPayment:[NSNumber numberWithInt:0]];
+    [user setUid:uid];
+    [user setBalance:balance];
+    NSError* error;
+    if(![managedObjectContext save:&error]){
+        //logged in, but something wrong wtih core data. cannot store user.
+        [managedObjectContext deleteObject:user];
+        return nil;
+    }else{
+        return user;
+    }
+
+}
 
 @end

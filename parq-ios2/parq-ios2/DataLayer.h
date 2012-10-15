@@ -30,6 +30,9 @@ typedef enum {
                        withPredicate:(id)stringOrPredicate;
 
 -(User*) getUser;
+-(User*) saveUserWithEmail:(NSString*)email Pass:(NSString*)pass License:(NSString*)license UID:(NSNumber*) uid Balance:(NSNumber*) balance;
+-(BOOL) userAddPoints:(NSNumber*) earnedPoints;
+-(BOOL) userDecPoints:(NSNumber*) decreasePoints;
 
 //checks if an object, or if an mbid, is already stored in core data.  
 -(BOOL) objExistsInCoreData:(NSObject*)object EntityType:(EntityType) entityType;
