@@ -310,9 +310,13 @@ typedef enum {
 
 #pragma mark - Date Picker control
 - (IBAction)durationChanged:(id)sender {
-    int limit_remaining = limit*60 - [prepaidEndTime timeIntervalSinceNow];
-    if (limit_remaining < datePicker.countDownDuration) {
-        datePicker.countDownDuration = limit_remaining;
+    if (datePicker.countDownDuration < datePicker.minuteInterval*60) {
+        datePicker.countDownDuration = datePicker.minuteInterval*60;
+    } else {
+        const int limit_remaining = limit*60 - [prepaidEndTime timeIntervalSinceNow];
+        if (limit_remaining < datePicker.countDownDuration) {
+            datePicker.countDownDuration = limit_remaining;
+        }
     }
     int totalMinutes = datePicker.countDownDuration/60;
     int hoursPart = totalMinutes/60;
