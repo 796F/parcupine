@@ -13,7 +13,6 @@
 @class PQMapViewController;
 @interface PQParkedCarMapViewController : UIViewController <MKMapViewDelegate>
 @property (weak, nonatomic) IBOutlet MKMapView *map;
-@property (nonatomic) CLLocationCoordinate2D parkedCarCoordinate;
 @property (nonatomic, retain) SpotInfo* spotInfo;
 
 @property (weak, nonatomic) PQMapViewController* parent;
