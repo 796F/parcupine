@@ -17,6 +17,14 @@
 
 //using @class to avoid cycle, which breaks the compiler.  sigh
 @class PQMapViewController;
+
+@protocol PQNetworkLayerDelegate <NSObject>
+
+@optional
+-(void) afterFetchUserPointsBalance:(NSInteger)balance;
+
+@end
+
 @interface NetworkLayer : NSObject <RKRequestDelegate>{
     DataLayer* dataLayer;
 }
@@ -41,6 +49,7 @@
 -(User*) registerEmail:(NSString*) email AndPassword:(NSString*) pass AndPlate:(NSString*) plate;
 
 //user points
++ (void)fetchUserPointsBalanceWithUid:(unsigned long long)uid andDelegate:(id<PQNetworkLayerDelegate>)delegate;
 -(BOOL) userEarnedPoints:(NSNumber*) earnedPoints;
 -(BOOL) userLostPoints:(NSNumber*) lostPoints;
 

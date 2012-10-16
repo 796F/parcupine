@@ -101,5 +101,9 @@
     }
 }
 
++ (NSInteger)parseFetchUserPointsResponse:(NSString *)jsonResponse {
+    return [[[jsonResponse objectFromJSONString] objectForKey:@"score1"] intValue];
+}
+
 
 @end

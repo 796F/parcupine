@@ -116,33 +116,6 @@
     [dataLayer setUIType:type];
 }
 
-
-#pragma mark - RESTKIT callbacks
-//ALL SERVER REQUESTS WILL GET HANDLED BY THIS METHOD ASYNCHRONOUSLY.  
--(void) request:(RKRequest *)request didLoadResponse:(RKResponse *)response{    
-    //handle background data download to improve the user experience.  
-    NSLog(@"\nRESULT >>> %@", [response bodyAsString]);
-    
-    //add overlays returned using
-    [mapController addNewOverlays:nil OfType:kGridEntity];
-    //update overlays returned using this.  
-    [mapController updateOverlays:nil OfType:kGridEntity];
-    
-    //this method will be saving the server responses
-    [dataLayer store:kGridEntity WithData:nil];
-}
-
--(void) request:(RKRequest *)request didFailLoadWithError:(NSError *)error{
-    if(error.code==-1004){
-        NSLog(@"body%s\n", request.HTTPBodyString.UTF8String);
-        NSLog(@"couldn't connect to server\n");
-    }
-}
-
--(void) requestDidTimeout:(RKRequest *)request{
-    NSLog(@"timed out\n");    
-}
-
 -(void) request:(EntityType) entityType WithIDs:(NSArray*)IDsToRequest{
     if(IDsToRequest.count>0){
         
@@ -677,7 +650,23 @@
     }else{
         return NO;
     }
+}
 
++ (RKRequest *)requestWithResourcePath:(NSString *)resourcePath delegate:(id<PQNetworkLayerDelegate>)delegate httpBody:(NSData *)data {
+    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:resourcePath];
+    request.delegate = [NetworkLayer requestDelegate];
+    request.method = RKRequestMethodPOST;
+    request.HTTPBody = data;
+    request.additionalHTTPHeaders = @{ @"content-type" : @"application/json"};
+    request.userData = delegate;
+    return request;
+}
+
++ (void)fetchUserPointsBalanceWithUid:(unsigned long long)uid andDelegate:(id<PQNetworkLayerDelegate>)delegate {
+    NSDictionary *info = [NSDictionary dictionaryWithObjects:@[[NSNumber numberWithUnsignedLongLong:uid]] forKeys:@[@"userId"]];
+    NSError *error;
+    NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
+    [[NetworkLayer requestWithResourcePath:@"/parkservice.park/GetUserScoreRequest" delegate:delegate httpBody:jsonData] send];
 }
 
 -(BOOL) userEarnedPoints:(NSNumber*) earnedPoints{
@@ -686,5 +675,33 @@
 }
 -(BOOL) userLostPoints:(NSNumber*) lostPoints{
     return [dataLayer userDecPoints:lostPoints];
+}
+
+#pragma mark - RKRequestDelegate
++ (id<RKRequestDelegate>)requestDelegate {
+    static id<RKRequestDelegate> requestDelegate;
+    if (requestDelegate == nil)
+        requestDelegate = ((PQAppDelegate *)[UIApplication sharedApplication].delegate).networkLayer;
+    return requestDelegate;
+}
+
+- (void)request:(RKRequest *)request didLoadResponse:(RKResponse *)response {
+    if (response.isSuccessful) {
+        NSString *endpoint = response.URL.lastPathComponent;
+        if ([endpoint isEqualToString:@"GetUserScoreRequest"]) {
+            [request.userData afterFetchUserPointsBalance:[Parser parseFetchUserPointsResponse:[response bodyAsString]]];
+        }
+    }
+}
+
+-(void) request:(RKRequest *)request didFailLoadWithError:(NSError *)error{
+    if(error.code==-1004){
+        NSLog(@"body%s\n", request.HTTPBodyString.UTF8String);
+        NSLog(@"couldn't connect to server\n");
+    }
+}
+
+-(void) requestDidTimeout:(RKRequest *)request{
+    NSLog(@"timed out\n");
 }
 @end

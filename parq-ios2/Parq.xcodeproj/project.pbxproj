@@ -162,7 +162,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		8703ACA61513F841002FE357 /* Parq.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Parq.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8703ACA61513F841002FE357 /* Parcupine.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Parcupine.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8703ACAA1513F841002FE357 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		8703ACAC1513F841002FE357 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		8703ACAE1513F841002FE357 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -356,7 +356,7 @@
 		8703ACA71513F841002FE357 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8703ACA61513F841002FE357 /* Parq.app */,
+				8703ACA61513F841002FE357 /* Parcupine.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -657,7 +657,7 @@
 			);
 			name = Parq;
 			productName = "parq-ios2";
-			productReference = 8703ACA61513F841002FE357 /* Parq.app */;
+			productReference = 8703ACA61513F841002FE357 /* Parcupine.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */

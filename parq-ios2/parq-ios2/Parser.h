@@ -19,4 +19,5 @@
 +(NSDictionary*) parseParkResponse:(NSString*) jsonResponse;
 +(SpotInfo*) parseSpotInfo:(NSString*) jsonResponse;
 +(NSDictionary*) parseUpdateSpotsResponse:(NSString*) jsonResponse;
++ (NSInteger)parseFetchUserPointsResponse:(NSString *)jsonResponse;
 @end

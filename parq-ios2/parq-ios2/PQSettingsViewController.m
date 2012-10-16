@@ -162,6 +162,12 @@
       
 }
 
+#pragma mark - PQNetworkLayerDelegate
+- (void)afterFetchUserPointsBalance:(NSInteger)balance {
+    balanceLabel.text = [NSString stringWithFormat:@"%ld", (long)balance];
+    [dataLayer getUser].balance = [NSNumber numberWithInteger:balance];
+}
+
 #pragma mark - VIEW LIFECYCLE
 
 - (id)initWithStyle:(UITableViewStyle)style
@@ -196,6 +202,7 @@
  
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    [NetworkLayer fetchUserPointsBalanceWithUid:[user.uid unsignedLongLongValue] andDelegate:self];
     [networkLayer sendLogs];
 }
 
