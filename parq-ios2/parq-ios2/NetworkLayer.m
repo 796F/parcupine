@@ -146,7 +146,7 @@
     [spot setMaxTime:[NSNumber numberWithInt:120]];
     [spot setMinTime:[NSNumber numberWithInt:15]];
     [spot setMinuteInterval:[NSNumber numberWithInt:15]];
-    [spot setRateCents:[NSNumber numberWithInt:0]];
+    [spot setRateCents:[NSNumber numberWithInt:15]];
     [spot setStreetName:@"Amherst St"];
     [spot setFullAddress:@"109-117 Amherst St, Cambridge, MA 02139"];
     [spot setSpotId:spotId];

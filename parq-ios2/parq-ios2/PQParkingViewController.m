@@ -322,24 +322,22 @@ typedef enum {
     int hoursPart = totalMinutes/60;
     int minutesPart = totalMinutes%60;
 
-    int totalCents = ceil(self.rate * totalMinutes);
-    int dollarsPart = totalCents/100;
-    int centsPart = totalCents%100;
+    int totalPoints = ceil(self.rate * totalMinutes);
 
     if (parkState == kParkingParkState) {
         hours.text = [NSString stringWithFormat:@"%02d", hoursPart];
         minutes.text = [NSString stringWithFormat:@"%02d", minutesPart];
         expiresAtTime.text = [dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSinceNow:datePicker.countDownDuration]];
         if (hoursPart == 0) {
-            prepaidAmount.text = [NSString stringWithFormat:@"%dm ($%d.%02d)", minutesPart, dollarsPart, centsPart];
+            prepaidAmount.text = [NSString stringWithFormat:@"%dm (%d points)", minutesPart, totalPoints];
         } else {
-            prepaidAmount.text = [NSString stringWithFormat:@"%dh %02dm ($%d.%02d)", hoursPart, minutesPart, dollarsPart, centsPart];
+            prepaidAmount.text = [NSString stringWithFormat:@"%dh %02dm (%d points)", hoursPart, minutesPart, totalPoints];
         }
     } else { // parkState == kExtendingParkState
         if (hoursPart == 0) {
-            extendAmount.text = [NSString stringWithFormat:@"%dm ($%d.%02d)", minutesPart, dollarsPart, centsPart];
+            extendAmount.text = [NSString stringWithFormat:@"%dm (%d points)", minutesPart, totalPoints];
         } else {
-            extendAmount.text = [NSString stringWithFormat:@"%dh %02dm ($%d.%02d)", hoursPart, minutesPart, dollarsPart, centsPart];
+            extendAmount.text = [NSString stringWithFormat:@"%dh %02dm (%d points)", hoursPart, minutesPart, totalPoints];
         }
     }
 }
@@ -449,8 +447,8 @@ typedef enum {
         prepaidAmount.textColor = [UIColor activeTextColor];
         [self resignPicker];
     } else {
-        int totalCents = ceil(self.rate * (datePicker.countDownDuration/60));
-        UIActionSheet *extendActionSheet = [[UIActionSheet alloc] initWithTitle:[NSString stringWithFormat:@"After extending, you will be charged $%d.%02d and your parking will expire at %@.", totalCents/100, totalCents%100, [dateFormatter stringFromDate:[NSDate dateWithTimeInterval:datePicker.countDownDuration sinceDate:prepaidEndTime]]] delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Extend", nil];
+        int totalPoints = ceil(self.rate * (datePicker.countDownDuration/60));
+        UIActionSheet *extendActionSheet = [[UIActionSheet alloc] initWithTitle:[NSString stringWithFormat:@"After extending, you will be charged %d points and your parking will expire at %@.", totalPoints, [dateFormatter stringFromDate:[NSDate dateWithTimeInterval:datePicker.countDownDuration sinceDate:prepaidEndTime]]] delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Extend", nil];
         extendActionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
         extendActionSheet.tag = ACTIONSHEET_EXTEND;
         [extendActionSheet showInView:self.tableView];
@@ -589,6 +587,8 @@ typedef enum {
     hours.font = [UIFont fontWithName:@"OCR B Std" size:60];
     minutes.font = [UIFont fontWithName:@"OCR B Std" size:60];
 
+
+/*
     // rateNumerator
     int dollarsPart = rateNumeratorCents/100;
     int centsPart = rateNumeratorCents%100;
@@ -616,6 +616,7 @@ typedef enum {
             rateDenominator.text = [NSString stringWithFormat:@"/%dh %02dm", hoursPart, minutesPart];
         }
     }
+ */
 
     // limitValue and limitUnit
     if (limit<60) {
