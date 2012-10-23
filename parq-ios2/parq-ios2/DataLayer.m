@@ -459,8 +459,8 @@
 -(User*) saveUserWithEmail:(NSString*)email Pass:(NSString*)pass License:(NSString*)license UID:(NSNumber*) uid Balance:(NSNumber*) balance{
     User* user = (User*)[NSEntityDescription insertNewObjectForEntityForName:@"User" inManagedObjectContext:managedObjectContext];
     
-    [user setAddress:@"michaelxia.com"];
-    [user setName:@"@mikeyxia"];
+    [user setAddress:@"Room 9-209"];
+    [user setName:@"Peter Parker"];
     [user setEmail:email];  //this should be returned by server.
     [user setPassword:pass];
     [user setLicense:license];
