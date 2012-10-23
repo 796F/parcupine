@@ -13,13 +13,11 @@
 @implementation PQAppDelegate
 
 @synthesize window = _window;
-@synthesize managedObjectContext = __managedObjectContext;
-@synthesize managedObjectModel = __managedObjectModel;
-@synthesize persistentStoreCoordinator = __persistentStoreCoordinator;
-@synthesize undoManager;
+@synthesize managedObjectContext = _managedObjectContext;
+@synthesize managedObjectModel = _managedObjectModel;
+@synthesize persistentStoreCoordinator = _persistentStoreCoordinator;
 @synthesize dataLayer;    
 @synthesize networkLayer;
-@synthesize userAction;
 @synthesize locationManager;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -33,22 +31,12 @@
         NSLog(@"%f", [studyEnd timeIntervalSinceDate:[NSDate date]]);
     }
 
-    NSLog(@"app did finish launching\n");
-    
-    NSManagedObjectContext* context  = [self managedObjectContext];
-    if(!context){
-        //this is coming out as nil.
-        //context = [[NSManagedObjectContext alloc] init];
-        NSLog(@"null\n");
-    }
     //prepare the RK client for server calls upon load
-    NSURL* url = [NSURL URLWithString:@"http://75.101.132.219/"];
-    //url = [NSURL URLWithString:@"http://localhost:8080/"];
-    [RKClient clientWithBaseURL:url];
+    [RKClient clientWithBaseURL:[NSURL URLWithString:@"http://75.101.132.219/"]];
 
     //set up data layer
     dataLayer = [[DataLayer alloc] init];
-    dataLayer.managedObjectContext = __managedObjectContext;
+    dataLayer.managedObjectContext = self.managedObjectContext;
 
     networkLayer = [[NetworkLayer alloc] init];
     networkLayer.dataLayer = dataLayer;
@@ -72,8 +60,6 @@
 							
 - (void)applicationWillResignActive:(UIApplication *)application
 {
-    NSLog(@"app about to resign active state\n");
-    
     /*
      Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
      Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
@@ -82,7 +68,6 @@
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
-    NSLog(@"app did enter backgrond\n");
     [dataLayer logString:[NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__]];
     [locationManager stopUpdatingLocation];
     
@@ -94,7 +79,6 @@
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
-    NSLog(@"app about to enter foreground\n");
     //clear alert badges
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
     [locationManager startUpdatingLocation];
@@ -106,7 +90,6 @@
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
-    NSLog(@"app became active\n");
     /*
      Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
      */
@@ -114,24 +97,25 @@
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
-    NSLog(@"app about to termiante\n");
     /*
      Called when the application is about to terminate.
      Save data if appropriate.
      See also applicationDidEnterBackground:.
      */
+    [self saveContext];
 }
+
 - (void)saveContext
 {
     NSError *error = nil;
-    //NSManagedObjectContext *managedObjectContext = self.managedObjectContext;
-    if (managedObjectContext != nil) {
-        if ([managedObjectContext hasChanges] && ![managedObjectContext save:&error]) {
+    NSManagedObjectContext *moc = self.managedObjectContext;
+    if (moc != nil) {
+        if ([moc hasChanges] && ![moc save:&error]) {
             // Replace this implementation with code to handle the error appropriately.
-            // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. 
+            // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
             NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
             abort();
-        } 
+        }
     }
 }
 
@@ -141,56 +125,48 @@
 // If the context doesn't already exist, it is created and bound to the persistent store coordinator for the application.
 - (NSManagedObjectContext *)managedObjectContext
 {
-    if (__managedObjectContext != nil) {
-        return __managedObjectContext;
+    if (_managedObjectContext != nil) {
+        return _managedObjectContext;
     }
     
     NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
     if (coordinator != nil) {
-        __managedObjectContext = [[NSManagedObjectContext alloc] init];
-        [__managedObjectContext setPersistentStoreCoordinator:coordinator];
+        _managedObjectContext = [[NSManagedObjectContext alloc] init];
+        [_managedObjectContext setPersistentStoreCoordinator:coordinator];
     }
-    if(__managedObjectContext.persistentStoreCoordinator.managedObjectModel==nil){
-        NSLog(@"moc function nil\n");
-    }
-    return __managedObjectContext;
+    return _managedObjectContext;
 }
 
 // Returns the managed object model for the application.
 // If the model doesn't already exist, it is created from the application's model.
 - (NSManagedObjectModel *)managedObjectModel
 {
-    if (__managedObjectModel != nil) {
-        return __managedObjectModel;
+    if (_managedObjectModel != nil) {
+        return _managedObjectModel;
     }
     //the following works only in simulator, but not on actual devices.  
 //    NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"Parq" withExtension:@"momd"];
-//    __managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
+//    _managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
     
-    __managedObjectModel = [NSManagedObjectModel mergedModelFromBundles:nil] ;    
+    _managedObjectModel = [NSManagedObjectModel mergedModelFromBundles:nil];
     
-    if(__managedObjectModel==nil){
-        
-        NSLog(@"mom function nil\n");
-    }
-    
-    
-    return __managedObjectModel;
+    return _managedObjectModel;
 }
 
 // Returns the persistent store coordinator for the application.
 // If the coordinator doesn't already exist, it is created and the application's store added to it.
 - (NSPersistentStoreCoordinator *)persistentStoreCoordinator
 {
-    if (__persistentStoreCoordinator != nil) {
-        return __persistentStoreCoordinator;
+    if (_persistentStoreCoordinator != nil) {
+        return _persistentStoreCoordinator;
     }
     
     NSURL *storeURL = [[self applicationDocumentsDirectory] URLByAppendingPathComponent:@"Parq.sqlite"];
     
     NSError *error = nil;
-    __persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
-    if (![__persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error]) {
+    NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption, [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption, nil];
+    _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
+    if (![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:options error:&error]) {
         /*
          Replace this implementation with code to handle the error appropriately.
          
@@ -216,11 +192,8 @@
          */
         NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
         abort();
-    }    
-    if(__persistentStoreCoordinator.managedObjectModel==nil){
-        NSLog(@"persistence function nil\n");
     }
-    return __persistentStoreCoordinator;
+    return _persistentStoreCoordinator;
 }
 
 #pragma mark - Application's Documents directory
