@@ -253,7 +253,8 @@ public class ParkResource {
 			boolean result = false;
 			System.out.println("ParkResources pilotunpark: unpark user: " + in.getUid() + " parkingRefNum: " + in.getParkingReferenceNumber());
 			try{
-				result = psd.unparkBySpaceIdAndParkingRefNum(in.getSpotId(),in.getParkingReferenceNumber(), new Date());
+				long spotId = psd.getSpaceIdByParkingRefNum(in.getParkingReferenceNumber());
+				result = psd.unparkBySpaceIdAndParkingRefNum(spotId,in.getParkingReferenceNumber(), new Date());
 			}catch(Exception e){
 				System.out.println("ParkResources pilotunpark: unpark failed");
 				output.setResp("EXCEPTION CAUGHT.  spotid:" + in.getSpotId() + " refNum" + in.getParkingReferenceNumber());
@@ -295,7 +296,7 @@ public class ParkResource {
 			}
 
 			if(pi!=null && pi.getParkingRefNumber().equals(parkingReference)){
-				long spotid = in.getSpotId();
+				long spotid = psd.getSpaceIdByParkingRefNum(parkingReference);
 				int durationMinutes = in.getDurationMinutes();
 
 				Date oldEndTime = pi.getParkingEndTime();
@@ -499,7 +500,7 @@ public class ParkResource {
 			}catch(Exception e){}
 
 			if(pi!=null && pi.getParkingRefNumber().equals(parkingReference)){
-				long spotid = in.getSpotId();
+				long spotid = psd.getSpaceIdByParkingRefNum(parkingReference);
 				int durationMinutes = in.getDurationMinutes();
 				int pay_amount = in.getChargeAmount();
 				ParkingRateDao prd = new ParkingRateDao();
@@ -597,7 +598,8 @@ public class ParkResource {
 			ParkingStatusDao psd = new ParkingStatusDao();
 			boolean result = false;
 			try{
-				result = psd.unparkBySpaceIdAndParkingRefNum(in.getSpotId(),in.getParkingReferenceNumber(), new Date());
+				long spotId = psd.getSpaceIdByParkingRefNum(in.getParkingReferenceNumber());
+				result = psd.unparkBySpaceIdAndParkingRefNum(spotId,in.getParkingReferenceNumber(), new Date());
 			}catch(Exception e){
 				output.setResp("EXCEPTION CAUGHT.  spotid:" + in.getSpotId() + " refNum" + in.getParkingReferenceNumber());
 				return output;
