@@ -156,7 +156,7 @@
 -(IBAction)signOutButtonPressed:(id)sender{
     [dataLayer logString:[NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__]];
     [dataLayer setLoggedIn:NO];
-    [dataLayer.managedObjectContext deleteObject:[dataLayer fetchObjectsForEntityName:@"User" withPredicate:nil].allObjects.lastObject];
+    [[DataLayer managedObjectContext] deleteObject:[dataLayer fetchObjectsForEntityName:@"User" withPredicate:nil].allObjects.lastObject];
     self.parent.view.hidden = YES;
     [self dismissModalViewControllerAnimated:YES];
       
@@ -165,7 +165,7 @@
 #pragma mark - PQNetworkLayerDelegate
 - (void)afterFetchUserPointsBalance:(NSInteger)balance {
     balanceLabel.text = [NSString stringWithFormat:@"%ld", (long)balance];
-    [dataLayer getUser].balance = [NSNumber numberWithInteger:balance];
+    [DataLayer fetchUser].balance = [NSNumber numberWithInteger:balance];
 }
 
 #pragma mark - VIEW LIFECYCLE
@@ -190,7 +190,7 @@
     if(!dataLayer){
         dataLayer = ((PQAppDelegate*)[[UIApplication sharedApplication] delegate]).dataLayer;
     }
-    user = [dataLayer getUser];
+    user = [DataLayer fetchUser];
     nameLabel.text = user.name;
     addrLabel.text = user.address;
     emailLabel.text = user.email;

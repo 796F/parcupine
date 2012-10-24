@@ -202,6 +202,7 @@ typedef enum {
         [timer invalidate];
         //invalidate restore info
         [dataLayer setEndTime:[NSDate distantPast]];
+        [NetworkLayer unparkUserWithDelegate:nil];
         [self dismissModalViewControllerAnimated:YES];
     } else if (actionSheet.tag == ACTIONSHEET_EXTEND && buttonIndex == actionSheet.firstOtherButtonIndex) {
         [dataLayer logString:[NSString stringWithFormat:@"EXTEND %s", __PRETTY_FUNCTION__]];

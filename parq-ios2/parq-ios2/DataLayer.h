@@ -13,9 +13,7 @@
 #import "SpotInfo.h"
 #define GRID_LENGTH 0.005
 @class PQMapViewController;
-@interface DataLayer : NSObject {
-        NSManagedObjectContext *managedObjectContext;
-}
+@interface DataLayer : NSObject
 
 typedef enum {
     kSpotEntity,
@@ -24,12 +22,10 @@ typedef enum {
 } EntityType;
 
 @property (nonatomic,retain) PQMapViewController* mapController;
-@property (nonatomic, retain) NSManagedObjectContext *managedObjectContext;
 
 - (NSSet *)fetchObjectsForEntityName:(NSString *)newEntityName
                        withPredicate:(id)stringOrPredicate;
 
--(User*) getUser;
 -(User*) saveUserWithEmail:(NSString*)email Pass:(NSString*)pass License:(NSString*)license UID:(NSNumber*) uid Balance:(NSNumber*) balance;
 -(BOOL) userAddPoints:(NSNumber*) earnedPoints;
 -(BOOL) userDecPoints:(NSNumber*) decreasePoints;
@@ -59,9 +55,12 @@ typedef enum {
 -(void) setSpotInfo:(SpotInfo*) spotInfo;
 -(SpotInfo*) getSpotInfo;
 -(void) logString:(NSString*) string;
--(void) setParkingReference:(NSString*) ref;
--(NSString*) getParkingReference;
++ (void)setParkingReference:(NSString*) ref;
++ (NSString*)parkingReference;
 //debug
 -(void) testFetch:(EntityType)entityType Microblocks:(NSArray*) microBlockIDs;
 -(void) loadMockData;
+
++ (User *)fetchUser;
++ (NSManagedObjectContext *)managedObjectContext;
 @end

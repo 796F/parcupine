@@ -47,7 +47,7 @@
     NSArray* keys = [NSArray arrayWithObjects:@"userId",@"spaceIds", @"score1",@"score2", @"score3", @"score4", @"score5", @"score6", nil];
     NSArray* spaceIds = [NSArray arrayWithObjects:@"1",@"2",@"3",@"4",@"5",@"6", nil];
     
-    NSArray* top = [NSArray arrayWithObjects:[dataLayer getUser].uid, spaceIds, nil];
+    NSArray* top = [NSArray arrayWithObjects:[DataLayer fetchUser].uid, spaceIds, nil];
     NSDictionary* info = [NSDictionary dictionaryWithObjects:[top arrayByAddingObjectsFromArray:value] forKeys:keys];
     NSError *error;
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
@@ -70,7 +70,7 @@
     NSString *logContent = [[NSString alloc] initWithContentsOfFile:logPath encoding:NSUTF8StringEncoding error:NULL];
     
     NSArray* keys = [NSArray arrayWithObjects:@"userId", @"log", nil];
-    NSArray* value = [NSArray arrayWithObjects:[dataLayer getUser].uid.stringValue, logContent, nil];
+    NSArray* value = [NSArray arrayWithObjects:[DataLayer fetchUser].uid.stringValue, logContent, nil];
     NSDictionary* info = [NSDictionary dictionaryWithObjects:value forKeys:keys];
     NSError *error;
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
@@ -470,7 +470,7 @@
     for(NSString* spotString in spotData){
         NSArray* innerArray = [spotString componentsSeparatedByString:@","];
         //create the grid object
-        Spot* spot = (Spot*)[NSEntityDescription insertNewObjectForEntityForName:@"Spot" inManagedObjectContext:dataLayer.managedObjectContext];
+        Spot* spot = (Spot*)[NSEntityDescription insertNewObjectForEntityForName:@"Spot" inManagedObjectContext:[DataLayer managedObjectContext]];
         NSNumberFormatter * f = [[NSNumberFormatter alloc] init];
         [f setNumberStyle:NSNumberFormatterNoStyle];
         [spot setSpotId:[NSNumber numberWithInt:spotId]];
@@ -489,7 +489,7 @@
     }
     
     NSError* error;
-    if(![dataLayer.managedObjectContext save:&error]){
+    if(![[DataLayer managedObjectContext] save:&error]){
         //oh noes, cant' store this grid.  wtf to do.
         NSLog(@"error saving!!!\n");
     }
@@ -591,7 +591,7 @@
             //        NSNumber* payment = [results objectForKey:@"payment"];
             //        //unused
             
-            User* user = (User*)[NSEntityDescription insertNewObjectForEntityForName:@"User" inManagedObjectContext:dataLayer.managedObjectContext];
+            User* user = (User*)[NSEntityDescription insertNewObjectForEntityForName:@"User" inManagedObjectContext:[DataLayer managedObjectContext]];
             
             [user setAddress:@"michaelxia.com"];
             [user setName:@"@mikeyxia"];
@@ -604,9 +604,9 @@
             [user setUid:[f numberFromString:[results objectForKey:@"uid"]]];
             [user setBalance:[f numberFromString:[results objectForKey:@"balance"]]];
             NSError* error;
-            if(![dataLayer.managedObjectContext save:&error]){
+            if(![[DataLayer managedObjectContext] save:&error]){
                 //logged in, but something wrong wtih core data. cannot store user.
-                [dataLayer.managedObjectContext deleteObject:user];
+                [[DataLayer managedObjectContext] deleteObject:user];
                 return nil;
             }else{
                 return user;
@@ -624,7 +624,7 @@
 
 -(BOOL) parkUserWithSpotInfo:(SpotInfo*) spotInfo AndDuration:(int)duration{
     NSArray* keys = [NSArray arrayWithObjects:@"userInfo", @"paymentType", @"chargeAmount",@"durationMinutes",@"uid",@"spotId", nil];
-    User* user = [dataLayer getUser];
+    User* user = [DataLayer fetchUser];
     
     NSDictionary* userInfo = [[NSDictionary alloc] initWithObjectsAndKeys:user.email,@"email", user.password,@"password",nil];
     NSLog(@"userInfo: %@", userInfo.description);
@@ -645,7 +645,7 @@
     NSDictionary* parkResults = [Parser parseParkResponse:[response bodyAsString]];
     if(parkResults!=nil){
         [dataLayer setEndTime:[NSDate dateWithTimeIntervalSince1970:[[parkResults objectForKey:@"endTime"] longValue]]];
-        [dataLayer setParkingReference:[parkResults objectForKey:@"parkingReferenceNumber"]];
+        [DataLayer setParkingReference:[parkResults objectForKey:@"parkingReferenceNumber"]];
         return YES;
     }else{
         return NO;
@@ -654,7 +654,7 @@
 
 + (RKRequest *)requestWithResourcePath:(NSString *)resourcePath delegate:(id<PQNetworkLayerDelegate>)delegate httpBody:(NSData *)data {
     RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:resourcePath];
-    request.delegate = [NetworkLayer requestDelegate];
+    request.delegate = [[self class] requestDelegate];
     request.method = RKRequestMethodPOST;
     request.HTTPBody = data;
     request.additionalHTTPHeaders = @{ @"content-type" : @"application/json"};
@@ -663,10 +663,10 @@
 }
 
 + (void)fetchUserPointsBalanceWithUid:(unsigned long long)uid andDelegate:(id<PQNetworkLayerDelegate>)delegate {
-    NSDictionary *info = [NSDictionary dictionaryWithObjects:@[[NSNumber numberWithUnsignedLongLong:uid]] forKeys:@[@"userId"]];
+    NSDictionary *info = [NSDictionary dictionaryWithObject:[NSNumber numberWithUnsignedLongLong:uid] forKey:@"userId"];
     NSError *error;
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
-    [[NetworkLayer requestWithResourcePath:@"/parkservice.park/GetUserScoreRequest" delegate:delegate httpBody:jsonData] send];
+    [[self requestWithResourcePath:@"/parkservice.park/GetUserScoreRequest" delegate:delegate httpBody:jsonData] send];
 }
 
 -(BOOL) userEarnedPoints:(NSNumber*) earnedPoints{
@@ -675,6 +675,17 @@
 }
 -(BOOL) userLostPoints:(NSNumber*) lostPoints{
     return [dataLayer userDecPoints:lostPoints];
+}
+
++ (void)unparkUserWithDelegate:(id<PQNetworkLayerDelegate>)delegate {
+    NSString *parkingReference = [DataLayer parkingReference];
+    User *user = [DataLayer fetchUser];
+
+    NSDictionary *info = [NSDictionary dictionaryWithObjects:@[user.uid, parkingReference, @{@"email" : user.email, @"password" : user.password}] forKeys:@[@"uid", @"parkingReferenceNumber", @"userInfo"]];
+
+    NSError *error;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
+    [[self requestWithResourcePath:@"/parkservice.park/pilotunpark" delegate:delegate httpBody:jsonData] send];
 }
 
 #pragma mark - RKRequestDelegate
@@ -690,6 +701,8 @@
         NSString *endpoint = response.URL.lastPathComponent;
         if ([endpoint isEqualToString:@"GetUserScoreRequest"]) {
             [request.userData afterFetchUserPointsBalance:[Parser parseFetchUserPointsResponse:[response bodyAsString]]];
+        } else if ([endpoint isEqualToString:@"Unpark"]) {
+            [request.userData afterUnpark:[Parser parseUnparkResponse:[response bodyAsString]]];
         }
     }
 }

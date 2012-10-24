@@ -21,15 +21,6 @@
     CLLocationManager *locationManager;
 }
 
-typedef enum{
-    LookingAtMap,
-    GettingDirectionOutside,
-    GettingDirectionInside,
-    DownwardPark,
-    UpwardPark,
-    TimerTickingClosedApp
-} UserAction;
-
 @property (strong, nonatomic) UIWindow *window;
 @property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
@@ -37,7 +28,6 @@ typedef enum{
 @property (strong, nonatomic) DataLayer* dataLayer;
 @property (strong, nonatomic) NetworkLayer* networkLayer;
 @property (strong, nonatomic) CLLocationManager* locationManager;
-@property (atomic) UserAction userAction;
 
 - (void)saveContext;
 - (NSURL *)applicationDocumentsDirectory;
