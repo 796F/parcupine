@@ -21,7 +21,8 @@
 @protocol PQNetworkLayerDelegate <NSObject>
 
 @optional
--(void) afterFetchUserPointsBalance:(NSInteger)balance;
+- (void)afterFetchUserPointsBalance:(NSInteger)balance;
+- (void)afterUnpark:(BOOL)success;
 
 @end
 
@@ -52,6 +53,8 @@
 + (void)fetchUserPointsBalanceWithUid:(unsigned long long)uid andDelegate:(id<PQNetworkLayerDelegate>)delegate;
 -(BOOL) userEarnedPoints:(NSNumber*) earnedPoints;
 -(BOOL) userLostPoints:(NSNumber*) lostPoints;
+
++ (void)unparkUserWithDelegate:(id<PQNetworkLayerDelegate>)delegate;
 
 //network status
 -(BOOL) isRecheableViaWifi;

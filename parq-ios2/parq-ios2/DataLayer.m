@@ -20,90 +20,73 @@
 #import "MKShape+Color.h"
 #import "UIColor+Parq.h"
 
-//
-
 @implementation DataLayer
-@synthesize managedObjectContext;
 @synthesize mapController;
 
 #pragma mark - plist calls
-
 -(void) setSpotInfo:(SpotInfo*) spotInfo{
     NSData* objData = [NSKeyedArchiver archivedDataWithRootObject:spotInfo];
-    NSString* path = [self getPlistPath];
+    NSString* path = [[self class] plistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
     [data setObject:objData forKey:@"spotInfo"];
     [data writeToFile:path atomically:YES];
 }
 
 -(SpotInfo*) getSpotInfo{
-    NSString* path = [self getPlistPath];
+    NSString* path = [[self class] plistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
     return [NSKeyedUnarchiver unarchiveObjectWithData:[data objectForKey:@"spotInfo"]];
-}
-
--(void) setParkingReference:(NSString*) ref{
-    NSLog(@"setting ref = %@\n", ref);
-    NSString* path = [self getPlistPath];
-    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
-    [data setObject:ref forKey:@"parkingReferenceNumber"];
-    [data writeToFile:path atomically:YES];
-}
--(NSString*) getParkingReference{
-    NSString* path = [self getPlistPath];
-    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
-    return [data objectForKey:@"parkingReferenceNumber"];
 }
 
 -(void) setSpotId:(NSNumber*) spotId{
     //set the currelyt parked spot's id for restore use.
     NSLog(@"setting spotId = %lu\n", [spotId longValue]);
-    NSString* path = [self getPlistPath];
+    NSString* path = [[self class] plistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
     [data setObject:spotId forKey:@"spotId"];
     [data writeToFile:path atomically:YES];
 }
 -(NSNumber*) getSpotId{
-    NSString* path = [self getPlistPath];
+    NSString* path = [[self class] plistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
     return [data objectForKey:@"spotId"];
 }
 
 -(void) setLastReportTime:(NSDate*) startTime{
     NSLog(@"setting lastrepTime = %f\n", [startTime timeIntervalSince1970]);
-    NSString* path = [self getPlistPath];
+    NSString* path = [[self class] plistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
     [data setObject:startTime forKey:@"lastReportTime"];
     [data writeToFile:path atomically:YES];
 }
 -(NSDate*) getLastReportTime{
-    NSString* path = [self getPlistPath];
+    NSString* path = [[self class] plistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
     return [data objectForKey:@"lastReportTime"];
 }
 
 -(void) setStartTime:(NSDate*) startTime{
     NSLog(@"setting lastrepTime = %f\n", [startTime timeIntervalSince1970]);
-    NSString* path = [self getPlistPath];
+    NSString* path = [[self class] plistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
     [data setObject:startTime forKey:@"startTime"];
     [data writeToFile:path atomically:YES];
 }
 -(NSDate*) getStartTime{
-    NSString* path = [self getPlistPath];
+    NSString* path = [[self class] plistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
     return [data objectForKey:@"startTime"];
 }
 
 -(void) setEndTime:(NSDate*) endTime{
     NSLog(@"setting endTime = %f\n", [endTime timeIntervalSince1970]);
-    NSString* path = [self getPlistPath];
+    NSString* path = [[self class] plistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
     [data setObject:endTime forKey:@"endTime"];
     [data writeToFile:path atomically:YES];
 }
 -(NSDate*) getEndTime{
-    NSString* path = [self getPlistPath];
+    NSString* path = [[self class] plistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
     NSDate* endDate = [data objectForKey:@"endTime"];
     if (endDate == nil) {
@@ -148,7 +131,7 @@
     for(NSString* innerString in data.allValues){
         NSArray* innerArray = [innerString componentsSeparatedByString:@","];
         //create the grid object
-        Grid* grid = (Grid*)[NSEntityDescription insertNewObjectForEntityForName:@"Grid" inManagedObjectContext:managedObjectContext];
+        Grid* grid = (Grid*)[NSEntityDescription insertNewObjectForEntityForName:@"Grid" inManagedObjectContext:[[self class] managedObjectContext]];
         NSNumberFormatter * f = [[NSNumberFormatter alloc] init];
         [f setNumberStyle:NSNumberFormatterNoStyle];
         
@@ -170,28 +153,14 @@
         NSLog(@"remaining...%d\n", 6400 - gridid);
     }
     
-    if(![managedObjectContext save:&error]){
+    if(![[[self class] managedObjectContext] save:&error]){
         //oh noes, cant' store this grid.  wtf to do.
         NSLog(@"error saving!!!\n");
     }
 }
 
-
--(NSString*) getPlistPath{
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSError *error;
-    NSString *documentsDirectory = [paths objectAtIndex:0];
-    NSString *path = [documentsDirectory stringByAppendingPathComponent:@"parq.plist"];
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    if (![fileManager fileExistsAtPath: path]){
-        //if the file doesn't exist yet, create it and do write.  
-        NSString *bundle = [[NSBundle mainBundle] pathForResource:@"parq" ofType:@"plist"];
-        [fileManager copyItemAtPath:bundle toPath: path error:&error]; 
-    }
-    return path;
-}
 -(BOOL) isFirstLaunch{
-    NSString* path = [self getPlistPath];
+    NSString* path = [[self class] plistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
     if(![data objectForKey:@"previouslyLaunched"]){
         //now mark the app as launched.  
@@ -204,13 +173,13 @@
     }
 }
 -(int) UIType{
-    NSString* path = [self getPlistPath];
+    NSString* path = [[self class] plistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
     return [[data objectForKey:@"uiType"] intValue];
 }
 
 -(BOOL) isLoggedIn{
-    NSString* path = [self getPlistPath];
+    NSString* path = [[self class] plistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
     if([[data objectForKey:@"isLoggedIn"] boolValue]){
         //isLoggedIn 
@@ -222,13 +191,13 @@
 }
 -(void) setLoggedIn:(BOOL) yesORno{
     NSLog(@"setting loggedIn = %d\n", yesORno);
-    NSString* path = [self getPlistPath];
+    NSString* path = [[self class] plistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
     [data setObject:[NSNumber numberWithBool:yesORno] forKey:@"isLoggedIn"];        
     [data writeToFile: path atomically:YES];
 }
 -(void) setUIType:(int) type{
-    NSString* path = [self getPlistPath];
+    NSString* path = [[self class] plistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
     [data setObject:[NSNumber numberWithInt:type] forKey:@"uiType"];        
     [data writeToFile: path atomically:YES];
@@ -252,14 +221,14 @@
         NSString* sortKey = [NSString stringWithFormat:@"%ld",mbid.longValue];
         
         //set which entity type you want to search
-        NSEntityDescription* entity = [NSEntityDescription entityForName:entityName inManagedObjectContext:managedObjectContext];
+        NSEntityDescription* entity = [NSEntityDescription entityForName:entityName inManagedObjectContext:[[self class] managedObjectContext]];
         [request setEntity:entity];
         //set the sorting params
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K == %@", @"microblock", sortKey];
         [request setPredicate:predicate];
         
         NSError *error = nil;
-        NSArray* returnedObjects = [managedObjectContext executeFetchRequest:request error:&error];
+        NSArray* returnedObjects = [[[self class] managedObjectContext] executeFetchRequest:request error:&error];
 //        NSUInteger count = [managedObjectContext countForFetchRequest:request error:&error];
         for(Grid* grid in returnedObjects){
             //for each returned grid
@@ -283,13 +252,13 @@
         //extract them from core data
         NSFetchRequest *request = [[NSFetchRequest alloc] init];
         
-        NSEntityDescription *entity = [NSEntityDescription entityForName:entityName inManagedObjectContext:managedObjectContext];
+        NSEntityDescription *entity = [NSEntityDescription entityForName:entityName inManagedObjectContext:[[self class] managedObjectContext]];
         [request setEntity:entity];
         NSString* sortKey = [NSString stringWithFormat:@"%ld",mbid.longValue];
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K == %@",  @"microblock", sortKey];
         [request setPredicate:predicate];
         NSError *error = nil;
-        NSArray* returnedObjects = [managedObjectContext executeFetchRequest:request error:&error];
+        NSArray* returnedObjects = [[[self class] managedObjectContext] executeFetchRequest:request error:&error];
         NSMutableDictionary* overlayMap = [[NSMutableDictionary alloc] initWithCapacity:returnedObjects.count];
         for(id object in returnedObjects){
             //these all belong to one microblock id.  
@@ -328,7 +297,7 @@
     }
     
     NSError *error = nil;
-    NSArray *results = [managedObjectContext executeFetchRequest:request error:&error];
+    NSArray *results = [[[self class] managedObjectContext] executeFetchRequest:request error:&error];
     if (error != nil){
         //error fetching.
     }    
@@ -351,14 +320,14 @@
     
     
     //set which entity type you want to search
-    NSEntityDescription* entity = [NSEntityDescription entityForName:entityName inManagedObjectContext:managedObjectContext];
+    NSEntityDescription* entity = [NSEntityDescription entityForName:entityName inManagedObjectContext:[[self class] managedObjectContext]];
     [request setEntity:entity];
     //set the sorting params
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K == %@", @"microblock", sortKey];
     [request setPredicate:predicate];
     
     NSError *error = nil;
-    NSUInteger count = [managedObjectContext countForFetchRequest:request error:&error];
+    NSUInteger count = [[[self class] managedObjectContext] countForFetchRequest:request error:&error];
     if (count==0) {
         //NSLog(@"%s == %s did not occur\n", sortField.UTF8String, sortKey.UTF8String);
         return false;
@@ -390,14 +359,14 @@
     NSString* sortKey = [NSString stringWithFormat:@"%lld",obj_id.longLongValue];
 
     //set which entity type you want to search
-    NSEntityDescription* entity = [NSEntityDescription entityForName:entityName inManagedObjectContext:managedObjectContext];
+    NSEntityDescription* entity = [NSEntityDescription entityForName:entityName inManagedObjectContext:[[self class] managedObjectContext]];
     [request setEntity:entity];
     //set the sorting params
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K == %@",sortField, sortKey];
     [request setPredicate:predicate];
     
     NSError *error = nil;
-    NSUInteger count = [managedObjectContext countForFetchRequest:request error:&error];
+    NSUInteger count = [[[self class] managedObjectContext] countForFetchRequest:request error:&error];
     if (count==0) {
         //NSLog(@"%s == %s did not occur\n", sortField.UTF8String, sortKey.UTF8String);
         return false;
@@ -411,11 +380,11 @@
         if([self objExistsInCoreData:overlay EntityType:entityType]){
             continue;
         }else{
-            [managedObjectContext insertObject:overlay];
+            [[[self class] managedObjectContext] insertObject:overlay];
         }
     }
     NSError *error = nil;
-    [managedObjectContext save:&error];
+    [[[self class] managedObjectContext] save:&error];
     if (error!=nil) {
         NSLog(@"error saving to core data: %s\n", error.description.UTF8String);
     }    
@@ -423,10 +392,10 @@
 }
 
 -(BOOL) userAddPoints:(NSNumber*) earnedPoints{
-    User* user = [self getUser];
+    User* user = [[self class] fetchUser];
     [user setBalance:[NSNumber numberWithInt:user.balance.integerValue + earnedPoints.integerValue]];
     NSError* error;
-    if(![managedObjectContext save:&error]){
+    if(![[[self class] managedObjectContext] save:&error]){
         //ERROR
         return NO;
     }else{
@@ -435,11 +404,11 @@
     
 }
 -(BOOL) userDecPoints:(NSNumber*) decreasePoints{
-    User* user = [self getUser];
+    User* user = [[self class] fetchUser];
 
     [user setBalance:[NSNumber numberWithInt:user.balance.integerValue - decreasePoints.integerValue]];
     NSError* error;
-    if(![managedObjectContext save:&error]){
+    if(![[[self class] managedObjectContext] save:&error]){
         //ERROR
         return NO;
     }else{
@@ -447,17 +416,8 @@
     }
 }
 
--(User*) getUser{
-    NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    NSEntityDescription *entity = [NSEntityDescription entityForName:@"User" inManagedObjectContext:managedObjectContext];
-    [request setEntity:entity];
-    NSError *error = nil;
-    NSArray* returnedObjects = [managedObjectContext executeFetchRequest:request error:&error];
-    return (User*) [returnedObjects lastObject];
-}
-
 -(User*) saveUserWithEmail:(NSString*)email Pass:(NSString*)pass License:(NSString*)license UID:(NSNumber*) uid Balance:(NSNumber*) balance{
-    User* user = (User*)[NSEntityDescription insertNewObjectForEntityForName:@"User" inManagedObjectContext:managedObjectContext];
+    User* user = (User*)[NSEntityDescription insertNewObjectForEntityForName:@"User" inManagedObjectContext:[[self class] managedObjectContext]];
     
     [user setAddress:@"Room 9-209"];
     [user setName:@"Peter Parker"];
@@ -469,14 +429,56 @@
     [user setUid:uid];
     [user setBalance:balance];
     NSError* error;
-    if(![managedObjectContext save:&error]){
+    if(![[[self class] managedObjectContext] save:&error]){
         //logged in, but something wrong wtih core data. cannot store user.
-        [managedObjectContext deleteObject:user];
+        [[[self class] managedObjectContext] deleteObject:user];
         return nil;
     }else{
         return user;
     }
+}
 
++ (User *)fetchUser {
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"User" inManagedObjectContext:[[self class] managedObjectContext]];
+    [request setEntity:entity];
+    NSError *error = nil;
+    NSArray* returnedObjects = [[[self class] managedObjectContext] executeFetchRequest:request error:&error];
+    return (User *)[returnedObjects lastObject];
+}
+
++ (NSString *)parkingReference {
+    NSString* path = [[self class] plistPath];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
+    return [data objectForKey:@"parkingReferenceNumber"];
+}
+
++ (void)setParkingReference:(NSString*) ref{
+    NSString* path = [[self class] plistPath];
+    NSMutableDictionary *plist = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
+    [plist setObject:ref forKey:@"parkingReferenceNumber"];
+    [plist writeToFile:path atomically:YES];
+}
+
++ (NSManagedObjectContext *)managedObjectContext {
+    static NSManagedObjectContext *moc;
+    if (moc == nil) {
+        moc = ((PQAppDelegate *)[UIApplication sharedApplication].delegate).managedObjectContext;
+    }
+    return moc;
+}
+
++ (NSString *)plistPath {
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSError *error;
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *path = [documentsDirectory stringByAppendingPathComponent:@"parq.plist"];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    if (![fileManager fileExistsAtPath: path]){
+        NSString *bundle = [[NSBundle mainBundle] pathForResource:@"parq" ofType:@"plist"];
+        [fileManager copyItemAtPath:bundle toPath: path error:&error];
+    }
+    return path;
 }
 
 @end

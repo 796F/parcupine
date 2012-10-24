@@ -36,7 +36,6 @@
 
     //set up data layer
     dataLayer = [[DataLayer alloc] init];
-    dataLayer.managedObjectContext = self.managedObjectContext;
 
     networkLayer = [[NetworkLayer alloc] init];
     networkLayer.dataLayer = dataLayer;
