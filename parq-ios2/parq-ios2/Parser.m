@@ -84,6 +84,15 @@
     }
 }
 
++ (NSDictionary *)parseExtendResponse:(NSString *)jsonResponse {
+    NSDictionary *result = [jsonResponse objectFromJSONString];
+    if (![[result objectForKey:@"resp"] isEqualToString:@"OK"]) {
+        return nil;
+    }
+    NSArray *keys = @[@"endTime", @"parkingReferenceNumber"];
+    return [NSDictionary dictionaryWithObjects:[result objectsForKeys:keys notFoundMarker:[NSNull null]] forKeys:keys];
+}
+
 //unpark response
 +(BOOL) parseUnparkResponse:(NSString*) jsonResponse{
     if([[[jsonResponse objectFromJSONString] objectForKey:@"resp"] isEqualToString:@"OK"]){
