@@ -438,6 +438,8 @@ typedef struct{
     [dataLayer logString:[NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__]];
     CLLocationCoordinate2D coord = CLLocationCoordinate2DMake(42.357835,-71.094333);
     [map setRegion:MKCoordinateRegionMakeWithDistance(coord, SPOT_LEVEL_REGION_METERS, SPOT_LEVEL_REGION_METERS) animated:YES];
+
+    self.justParkMePressed = YES;
     // Do not add top/bottom bar w/ views: Possible confusion if user is already zoomed in
     // starting at pilot area: Button will literally do nothing - and not immediately apparent they should click on spot next. Should Just Park Me select a spot (make a tap on the map) for user?
     // [self showSpotSelectionViews];
@@ -1377,8 +1379,12 @@ typedef struct{
             [mapView setRegion:MKCoordinateRegionMake(center, MKCoordinateSpanMake(SPOT_LEVEL_SPAN, SPOT_LEVEL_SPAN)) animated:YES];
             [self showSpotLevelWithCoordinates:&center];
         }
-
+        if(self.justParkMePressed){
+            [self showSelectionCircle:&center];
+            self.justParkMePressed = NO;
+        }
     }
+
     [dataLayer logString:[NSString stringWithFormat:@"%s %d", __PRETTY_FUNCTION__, zoomState]];
 }
 
