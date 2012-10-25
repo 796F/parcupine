@@ -6,6 +6,8 @@
 //  Copyright (c) 2012 Massachusetts Institute of Technology. All rights reserved.
 //
 
+// TODO REMOVE first unused header
+#import "SelfReportingViewController.h"
 #import "PQParkingViewController.h"
 #import "PQParkedCarMapViewController.h"
 #import "UIColor+Parq.h"
@@ -141,13 +143,7 @@ typedef enum {
     int type = [dataLayer UIType];
     [dataLayer logString:[NSString stringWithFormat:@"%s uiType:%d", __PRETTY_FUNCTION__, type]];
     if(type==0 || type == 1){
-        //force them to help.
-        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
-        SelfReportingViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"selfReporting"];
-        [vc setParent:self];
-        [vc setUIType:type];
-        [vc setModalPresentationStyle:UIModalPresentationFullScreen];
-        [self presentModalViewController:vc animated:YES];
+        [self showReportView];
     } else if(type ==2 || type == 3) {
         if([networkLayer parkUserWithSpotInfo:self.spotInfo AndDuration:datePicker.countDownDuration]){ //server accepted parking request
             [self startTimerButtonAction];
@@ -226,15 +222,24 @@ typedef enum {
     if (alertView.tag == ALERTVIEW_INFO) {
         [alertView dismissWithClickedButtonIndex:buttonIndex animated:YES];
     }else if(alertView.tag == PLEASE_HELP_ALERT && buttonIndex == 1){
-        //agreed to help.
-        [dataLayer logString:[NSString stringWithFormat:@"agreed to enforce %s", __PRETTY_FUNCTION__]];
-        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
-        SelfReportingViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"selfReporting"];
-        [vc setParent:self];
-        [vc setUIType:[dataLayer UIType]];
-        [vc setModalPresentationStyle:UIModalPresentationFullScreen];
-        [self presentModalViewController:vc animated:YES];
+        [self showReportView];
     }
+}
+
+// agreed to help report: Bring up reporting view
+- (void) showReportView {
+    // TODO(PILOT) Revert to non-static view
+    [dataLayer logString:[NSString stringWithFormat:@"agreed to enforce %s", __PRETTY_FUNCTION__]];
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
+    SelfReportingStaticViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"selfReportingStatic"];
+    
+    vc.spotNumber = [self.spotInfo.spotNumber integerValue];
+    
+    //SelfReportingViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"selfReporting"];
+    [vc setParent:self];
+    [vc setUIType:[dataLayer UIType]];
+    [vc setModalPresentationStyle:UIModalPresentationFullScreen];
+    [self presentModalViewController:vc animated:YES];
 }
 
 #pragma mark - Timer update methods

@@ -10,6 +10,8 @@
 #import "PQParkingViewController.h"
 #import "PQSettingsViewController.h"
 #import "PQSpotAnnotation.h"
+#import "SelfReportingStaticViewController.h"
+#import "SelfReportingViewController.h"
 #import "NetworkLayer.h"
 #import "MBProgressHUD.h"
 
@@ -430,9 +432,7 @@ typedef struct{
     // Allow use to "Just Park Me" in availability bar "None" mode by switching to Availability
     if (self.availabilitySelectionBar.selectedSegmentIndex == 2) {
         self.availabilitySelectionBar.selectedSegmentIndex = 0;
-        gradientIcon.image = [UIImage imageNamed:@"gradient_avail"];
-        displayedData = kAvailabilityData;
-        [self mapView:map regionDidChangeAnimated:NO];
+        [self availabilityBarTapped];
     }
 
     [dataLayer logString:[NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__]];
@@ -458,7 +458,10 @@ typedef struct{
         [waitXMinutes show];
     }else{
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
-        SelfReportingViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"selfReporting"];
+        // TODO(PILOT) revert to non-static
+        //SelfReportingViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"selfReporting"];
+        SelfReportingStaticViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"selfReportingStatic"];
+        
         [vc setParent:self];
         [vc setIsNotParking:YES]; //user isn't parking, no need to trigger timer.
         [vc setUIType:[dataLayer UIType]];
@@ -2043,9 +2046,17 @@ typedef struct{
         
         dispatch_async(dispatch_get_main_queue(), ^{
             [MBProgressHUD hideHUDForView:self.view animated:YES];
+            NSLog(@"Fixing data after laoding");
+            displayedData = kNoneData;
+            [self clearMap];
+            
+            self.availabilitySelectionBar.selectedSegmentIndex = 0;
+            [self availabilityBarTapped];
         });
     });
     ((UIButton*)sender).hidden = YES;
+    
+    // Display green dots/data
     
     
     //[self hideMoreTextBox];

@@ -59,6 +59,8 @@
 		87EAC1A1160AB85200D01A4C /* colon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 87EAC1A0160AB85200D01A4C /* colon@2x.png */; };
 		87EAC1A3160ABACB00D01A4C /* settings@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 87EAC1A2160ABACB00D01A4C /* settings@2x.png */; };
 		87EC1FDF1613ED63006D9E2F /* libRestKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 87EC1FD41613EABC006D9E2F /* libRestKit.a */; };
+		BA0E00841638B69C00737208 /* static_report.png in Resources */ = {isa = PBXBuildFile; fileRef = BA0E00831638B69C00737208 /* static_report.png */; };
+		BA2D2094162D019F0085E232 /* SelfReportingStaticViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BA2D2093162D019F0085E232 /* SelfReportingStaticViewController.m */; };
 		BABA5AEB1618FA95004BF60B /* spot_free_report.png in Resources */ = {isa = PBXBuildFile; fileRef = BABA5AE91618FA95004BF60B /* spot_free_report.png */; };
 		BABA5AEC1618FA95004BF60B /* spot_free_report@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BABA5AEA1618FA95004BF60B /* spot_free_report@2x.png */; };
 		FC08BB7B1590D1F40077659C /* PQSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC08BB7A1590D1F40077659C /* PQSettingsViewController.m */; };
@@ -229,6 +231,9 @@
 		87EAC1A2160ABACB00D01A4C /* settings@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "settings@2x.png"; sourceTree = "<group>"; };
 		87EC1FC81613EABC006D9E2F /* RestKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RestKit.xcodeproj; path = ../RestKit/RestKit.xcodeproj; sourceTree = "<group>"; };
 		87EC1FE01613F027006D9E2F /* JSONKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSONKit.h; sourceTree = "<group>"; };
+		BA0E00831638B69C00737208 /* static_report.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = static_report.png; sourceTree = "<group>"; };
+		BA2D2092162D019F0085E232 /* SelfReportingStaticViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelfReportingStaticViewController.h; sourceTree = "<group>"; };
+		BA2D2093162D019F0085E232 /* SelfReportingStaticViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SelfReportingStaticViewController.m; sourceTree = "<group>"; };
 		BABA5AE91618FA95004BF60B /* spot_free_report.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spot_free_report.png; sourceTree = "<group>"; };
 		BABA5AEA1618FA95004BF60B /* spot_free_report@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "spot_free_report@2x.png"; sourceTree = "<group>"; };
 		FC08BB791590D1F40077659C /* PQSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PQSettingsViewController.h; sourceTree = "<group>"; };
@@ -392,6 +397,8 @@
 				FCA421C315C31E5B003D5758 /* Login */,
 				FC11B28B15BDD1E2001AB653 /* SelfReportingViewController.h */,
 				FC11B28C15BDD1E2001AB653 /* SelfReportingViewController.m */,
+				BA2D2092162D019F0085E232 /* SelfReportingStaticViewController.h */,
+				BA2D2093162D019F0085E232 /* SelfReportingStaticViewController.m */,
 				87418A861577D31500CACCCA /* PQParkedCarMapViewController.h */,
 				87418A871577D31500CACCCA /* PQParkedCarMapViewController.m */,
 				87E1BE65154A08D70095E92D /* PQParkingViewController.h */,
@@ -432,6 +439,7 @@
 		8703ACE01513FC8E002FE357 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				BA0E00831638B69C00737208 /* static_report.png */,
 				87EAC1A0160AB85200D01A4C /* colon@2x.png */,
 				87EAC194160AB52800D01A4C /* meter_payg@2x.png */,
 				87EAC195160AB52800D01A4C /* meter_prepaid@2x.png */,
@@ -787,6 +795,7 @@
 				87EAC1A3160ABACB00D01A4C /* settings@2x.png in Resources */,
 				BABA5AEB1618FA95004BF60B /* spot_free_report.png in Resources */,
 				BABA5AEC1618FA95004BF60B /* spot_free_report@2x.png in Resources */,
+				BA0E00841638B69C00737208 /* static_report.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -838,6 +847,7 @@
 				FC410CB515C06848003C4523 /* EditSettingsViewController.m in Sources */,
 				FC410CB815C06B67003C4523 /* UserInfo.m in Sources */,
 				FC8367EB15DAA33000EF4FC6 /* User.m in Sources */,
+				BA2D2094162D019F0085E232 /* SelfReportingStaticViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

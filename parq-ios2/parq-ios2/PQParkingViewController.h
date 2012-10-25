@@ -8,7 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "PQMapViewController.h"
-#import "SelfReportingViewController.h"
+// TODO(PILOT) Remove static reporting view
+// #import "SelfReportingViewController.h"
+#import "SelfReportingStaticViewController.h"
 
 @interface PQParkingViewController : UITableViewController <UIAlertViewDelegate, UITableViewDelegate, UIActionSheetDelegate>{
     DataLayer* dataLayer;

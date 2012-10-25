@@ -6,13 +6,14 @@
 //  Copyright (c) 2012 PARQ LLC. All rights reserved.
 //
 
-#import "SelfReportingViewController.h"
+#import "SelfReportingStaticViewController.h"
 
 #import "PQParkingViewController.h"
 #define THANKS_FOR_PLAYING_TAG 88
+#define FIRST_SPOT_INDEX 1400
 
-@implementation SelfReportingViewController
-@synthesize mapView;
+@implementation SelfReportingStaticViewController
+@synthesize bottomImage;
 @synthesize leftButton;
 @synthesize rightButton;
 @synthesize networkLayer;
@@ -21,97 +22,38 @@
 @synthesize parent;
 @synthesize isNotParking;
 
-- (MKAnnotationView *)mapView:(MKMapView *)theMapView viewForAnnotation:(id <MKAnnotation>)annotation
-{    
-    // if it's the user location, just return nil.
-    if ([annotation isKindOfClass:[MKUserLocation class]])
-        return nil;
-    
-    if ([annotation isKindOfClass:[PQParkedCarAnnotation class]])
-    {
-        // try to dequeue an existing pin view first
-        static NSString* parkedCarAnnotationIdentifier = @"parkedCarAnnotationIdentifier";
-        // if an existing pin view was not available, create one
-        MKAnnotationView* customPinView = [[MKAnnotationView alloc]
-                                              initWithAnnotation:annotation reuseIdentifier:parkedCarAnnotationIdentifier];
-        //customPinView.pinColor = MKPinAnnotationColorPurple;
-        NSLog(@"uitpe %d\n", UIType);
-        if(UIType ==1 || UIType == 3){
-            customPinView.image = [UIImage imageNamed:@"unknown.png"];
-            customPinView.tag = 0;
-        }else{
-            //type 0, force report start on car.
-            customPinView.image = [UIImage imageNamed:@"spot_occupied.png"];
-            customPinView.tag = 1;
-        }
-        //customPinView.animatesDrop = YES;
-        customPinView.canShowCallout = YES;
-        return customPinView;
-    }
-    
-    return nil;
-}
-
--(void) handleSingleTap:(UIGestureRecognizer*) gestureRecognizer{
-    if (gestureRecognizer.state != UIGestureRecognizerStateEnded)
-        return;
-    
-    [mapView deselectAnnotation:[mapView.selectedAnnotations objectAtIndex:0] animated:YES];
-    CGPoint touchPoint = [gestureRecognizer locationInView:self.mapView];
-    CLLocationCoordinate2D coord = [self.mapView convertPoint:touchPoint toCoordinateFromView:self.mapView];
-    
-    double dist = 0.4; //only works for * 10000
-    PQParkedCarAnnotation* tappedAnno;
-    for(PQParkedCarAnnotation* anno in mapView.annotations){
-        //multiplied since it's too small.  
-        double dLat = (coord.latitude - anno.coordinate.latitude) * 10000;
-        double dLon = (coord.longitude - anno.coordinate.longitude) * 10000;
-        double thisDist = dLat*dLat + dLon*dLon;
-        if (thisDist < dist) {
-            dist = thisDist;
-            tappedAnno = anno;
-        }
-    }
-    //after loop, we would have selected closest annotation.  
-    
-    MKAnnotationView* view = [mapView viewForAnnotation:tappedAnno];
-    if(view.tag == 0){
-        view.image = [UIImage imageNamed:@"spot_occupied@2x.png"];
-        tappedAnno.title = [NSString stringWithFormat:@"%sTaken", [tappedAnno.title substringToIndex:3].UTF8String ];
-        view.tag = 1;
-    }else{
-        view.image = [UIImage imageNamed:@"spot_free@2x.png"];
-        tappedAnno.title = [NSString stringWithFormat:@"%sOpen", [tappedAnno.title substringToIndex:3].UTF8String];
-        view.tag = 0;
-    }
-    [mapView selectAnnotation:tappedAnno animated:YES];
-}
+@synthesize userLabel;
+@synthesize spot1400;
+@synthesize spot1401;
+@synthesize spot1402;
+@synthesize spot1403;
+@synthesize spot1404;
+@synthesize spot1405;
 
 -(IBAction)backButtonPressed:(id)sender{
     [self dismissModalViewControllerAnimated:YES];
 }
+
 -(IBAction)submitButtonPressed:(id)sender{
+    NSArray* switchObjects = [NSArray arrayWithObjects:spot1400, spot1401, spot1402, spot1403, spot1404, spot1405, nil];
+    
+    
     //SUBMIT THE INFORMATION TO SERVER.
-    NSArray* sortedAnno = [[NSArray arrayWithArray:mapView.annotations] sortedArrayUsingComparator:^NSComparisonResult(PQParkedCarAnnotation* obj1, PQParkedCarAnnotation* obj2) {
-        int id1 = [[[obj1.title componentsSeparatedByString:@":"] objectAtIndex:0] intValue];
-        int id2 = [[[obj2.title componentsSeparatedByString:@":"] objectAtIndex:0] intValue];
-        if(id1 < id2){
-            return -1;
-        } else {
-            return 1;
-        }
-    }];
+    
     BOOL badReport = NO;
+    
     NSMutableArray* orderedAvailability = [[NSMutableArray alloc] initWithCapacity:6];
-    for(PQParkedCarAnnotation* anno in sortedAnno){
-        if([anno.title hasSuffix:@"Open"]){
+    for(UISwitch* spot in switchObjects){
+        // 1 is open, 0 is taken
+        if (spot.on) {
             [orderedAvailability addObject:[NSNumber numberWithInt:1]];
-        }else if([anno.title hasSuffix:@"Taken"]){
+        } else {
             [orderedAvailability addObject:[NSNumber numberWithInt:0]];
-        }else{
-            //not everything was tapped.
-            badReport = YES;
         }
+        
+        //not everything was tapped. But no way of telling
+        //    badReport = YES;
+        
     }
     
     if(badReport){
@@ -125,7 +67,7 @@
             DataLayer* dataLayer = ((PQAppDelegate*)[[UIApplication sharedApplication] delegate]).dataLayer;
             [dataLayer setLastReportTime:[NSDate date]];
             if(isNotParking){
-
+                
             }else{
                 //uh, doesn't need to be casted.  just change parent field type to PQParkingViewController, and add an @Class to the .h file.
                 PQParkingViewController* castedParent = (PQParkingViewController*) parent;
@@ -143,8 +85,8 @@
         }else{
             //fail
         }
-//        [parent startTimerButtonAction];
-//        [self dismissModalViewControllerAnimated:YES];
+        //        [parent startTimerButtonAction];
+        //        [self dismissModalViewControllerAnimated:YES];
     }
 }
 
@@ -166,24 +108,53 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.userLabel.hidden = YES;
+    
+    NSArray* switchObjects = [NSArray arrayWithObjects:spot1400, spot1401, spot1402, spot1403, spot1404, spot1405, nil];
+    
+    if (self.spotNumber >= 1 && self.spotNumber <= 1405) {
+        // Set label at spot location
+        CGPoint oldOrigin = self.userLabel.frame.origin;
+        CGSize oldSize = self.userLabel.frame.size;
+        
+        // shift label "You are here -->" label down this much per spot
+        int shift = (self.spotNumber - FIRST_SPOT_INDEX) * 35;
+        
+        CGRect newRect = CGRectMake(oldOrigin.x, oldOrigin.y + shift, oldSize.width, oldSize.height);
+        self.userLabel.frame = newRect;
+        self.userLabel.hidden = NO;
+        
+        // User parked at spot: Forced to mark as taken.
+        int spotIndex = self.spotNumber - FIRST_SPOT_INDEX;
+        if (spotIndex < 6) {
+            UISwitch *userSwitch = [switchObjects objectAtIndex:spotIndex];
+            userSwitch.on = YES;
+            userSwitch.userInteractionEnabled = NO;            
+        }
+    }
+    
+    self.bottomImage.userInteractionEnabled = YES;
+    self.bottomImage.multipleTouchEnabled = YES;
+    // Ensure network connection 
     if(!networkLayer){
         networkLayer = ((PQAppDelegate*)[[UIApplication sharedApplication] delegate]).networkLayer;
     }
     
     // Set up map view: Single taps to turn on/off reporting
-    UITapGestureRecognizer* singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];    
-    [self.mapView addGestureRecognizer:singleTap];
+    UITapGestureRecognizer* singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
+    [self.bottomImage addGestureRecognizer:singleTap];
+    
+    // TAP COORDINATES GO FROM TOP LEFT. 
     
     // @TODO(PILOT) Static (no zoom/scroll) map at certain point
     CLLocationCoordinate2D point = {42.357820, -71.094310};
+    float left = -71.094310 - 0.000429 / 2;
+    float bot = 42.357820 - 0.000277 / 2;
+    float pixelToLatScale = 0.000277 / 285; // 285 height
+    float pixelToLonScale = 0.000429 / 320;
+    
     // map view region span lat: 0.000277, lon: 0.000429 (possibly maximum zoom:
     // See http://stackoverflow.com/questions/12599565/how-to-match-ios5-max-zoomlevel-mkmapview-in-ios6
-    
-    MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(point, 15, 15);
-    
-    [mapView setRegion:[mapView regionThatFits:viewRegion] animated:NO];
-    
-    NSLog(@"map view region span lat: %f, lon: %f", mapView.region.span.latitudeDelta, mapView.region.span.longitudeDelta);
     
     // Load spots
     showTapMe = YES;
@@ -192,11 +163,24 @@
         double lat = [[components objectAtIndex:0] floatValue];
         double lon = [[components objectAtIndex:1] floatValue];
         CLLocationCoordinate2D coord = CLLocationCoordinate2DMake(lat, lon);
-        PQParkedCarAnnotation *annotation = [[PQParkedCarAnnotation alloc] initWithCoordinate:coord addressDictionary:nil]; 
+        
+        double x = (lon - left) / pixelToLonScale;
+        double y = (lat - bot) / pixelToLatScale;
+        
+        
+        // Scale it to pixel numbers here:
+        //CGPoint = {
+        CGRect pinrect = CGRectMake(x, y, 37, 37); // size of largest spot
+        
+        // Add the annotation onto imageView
+        
+        
+        
+        // CGContextDrawImage(<#CGContextRef c#>, <#CGRect rect#>, <#CGImageRef image#>)
+        // self.bottomImage
+        PQParkedCarAnnotation *annotation = [[PQParkedCarAnnotation alloc] initWithCoordinate:coord addressDictionary:nil];
         annotation.title = [components objectAtIndex:2];
-        if (FALSE) {    // Don't add annotations for now TODO(PILOT)
-            [self.mapView addAnnotation:annotation];
-        }
+        //  [self.mapView addAnnotation:annotation];
     }
 }
 
