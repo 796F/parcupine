@@ -12,7 +12,7 @@
 // #import "SelfReportingViewController.h"
 #import "SelfReportingStaticViewController.h"
 
-@interface PQParkingViewController : UITableViewController <UIAlertViewDelegate, UITableViewDelegate, UIActionSheetDelegate>{
+@interface PQParkingViewController : UITableViewController <UIAlertViewDelegate, UITableViewDelegate, UIActionSheetDelegate, PQNetworkLayerDelegate>{
     DataLayer* dataLayer;
     NetworkLayer* networkLayer;
 }

@@ -34,8 +34,6 @@ typedef enum {
 @end
 
 @implementation PQParkingViewController
-@dynamic rate;
-@dynamic address;
 @synthesize rateNumeratorCents;
 @synthesize rateDenominatorMinutes;
 @synthesize limit;
@@ -198,23 +196,32 @@ typedef enum {
         [timer invalidate];
         //invalidate restore info
         [dataLayer setEndTime:[NSDate distantPast]];
-        [NetworkLayer unparkUserWithDelegate:nil];
+        [NetworkLayer unparkWithDelegate:nil];
         [self dismissModalViewControllerAnimated:YES];
     } else if (actionSheet.tag == ACTIONSHEET_EXTEND && buttonIndex == actionSheet.firstOtherButtonIndex) {
         [dataLayer logString:[NSString stringWithFormat:@"EXTEND %s", __PRETTY_FUNCTION__]];
-        prepaidEndTime = [NSDate dateWithTimeInterval:datePicker.countDownDuration sinceDate:prepaidEndTime];
+        [NetworkLayer extendWithDuration:datePicker.countDownDuration/60 andDelegate:self];
+        // TODO: Show progress indicator
+    }
+    [networkLayer sendLogs];
+}
+
+- (void)afterExtending:(BOOL)success toTime:(NSDate *)endTime withParkingRef:(NSString *)parkingReference {
+    // TODO: Dismiss progress indicator
+    if (success) {
+        prepaidEndTime = endTime;
+        [DataLayer setParkingReference:parkingReference];
         //update the end time for resume use.
-        [dataLayer setEndTime:prepaidEndTime];
+        [dataLayer setEndTime:endTime];
         [dataLayer setSpotInfo:self.spotInfo];
 
-        int totalMinutes = ([prepaidEndTime timeIntervalSinceNow]+59)/60;
+        int totalMinutes = ([endTime timeIntervalSinceNow]+59)/60;
         hours.text = [NSString stringWithFormat:@"%02d", totalMinutes/60];
         minutes.text = [NSString stringWithFormat:@"%02d", totalMinutes%60];
-        expiresAtTime.text = [dateFormatter stringFromDate:prepaidEndTime];
+        expiresAtTime.text = [dateFormatter stringFromDate:endTime];
         [self scheduleLocalNotification:prepaidEndTime]; //reset the notifications.
         [self parkedAfterExtending];
     }
-    [networkLayer sendLogs];
 }
 
 #pragma mark - UIAlertViewDelegate
@@ -355,7 +362,6 @@ typedef enum {
     }];
 
     datePicker.minuteInterval = spotInfo.minuteInterval.intValue;
-    datePicker.countDownDuration = spotInfo.minuteInterval.intValue;
 
     self.navigationItem.title = @"Enter Amount";
     self.navigationItem.leftBarButtonItem = cancelButton;
