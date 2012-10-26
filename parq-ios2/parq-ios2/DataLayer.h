@@ -60,6 +60,7 @@ typedef enum {
 //debug
 -(void) testFetch:(EntityType)entityType Microblocks:(NSArray*) microBlockIDs;
 -(void) loadMockData;
+-(BOOL) hasMockData;
 
 + (User *)fetchUser;
 + (NSManagedObjectContext *)managedObjectContext;

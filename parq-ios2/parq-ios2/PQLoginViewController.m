@@ -8,6 +8,7 @@
 
 #import "PQLoginViewController.h"
 #import "PQAppDelegate.h"
+#import "MBProgressHUD.h"
 
 #define TOS_ALERT_VIEW 0
 #define REGISTER_SURE_ALERT 1
@@ -220,6 +221,21 @@
         //adjust the screen to make up for the nav bar disappearing.  
         self.entireScreen.frame = CGRectMake(0, 0, 320, 460);
     }];    
+}
+-(void) viewDidAppear:(BOOL)animated{
+    
+    if(![dataLayer hasMockData]){
+        //if mock data hasn't been loaded yet.
+        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+        hud.labelText = @"Loading Data...";
+        dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+            [dataLayer loadMockData];
+            [networkLayer loadSpotData];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [MBProgressHUD hideHUDForView:self.view animated:YES];
+            });
+        });
+    }
 }
 
 - (void)viewDidLoad

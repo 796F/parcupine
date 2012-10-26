@@ -112,6 +112,8 @@
     
 }
 
+
+
 -(void) loadMockData{
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSError *error;
@@ -156,6 +158,20 @@
     if(![[[self class] managedObjectContext] save:&error]){
         //oh noes, cant' store this grid.  wtf to do.
         NSLog(@"error saving!!!\n");
+    }
+}
+
+-(BOOL) hasMockData{
+    NSString* path = [[self class] plistPath];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
+    if(![data objectForKey:@"hasMockData"]){
+        //doesn't have mock data. tell app to load.
+        [data setObject:[NSNumber numberWithBool:YES] forKey:@"hasMockData"];
+        [data writeToFile: path atomically:YES];
+        return NO;
+    }else{
+        //flag was raised, already has mock data.
+        return YES;
     }
 }
 
