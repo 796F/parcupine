@@ -10,7 +10,7 @@
 
 #import "PQParkingViewController.h"
 #define THANKS_FOR_PLAYING_TAG 88
-#define FIRST_SPOT_INDEX 1400
+#define FIRST_SPOT_INDEX 101
 
 @implementation SelfReportingStaticViewController
 @synthesize bottomImage;
@@ -23,19 +23,19 @@
 @synthesize isNotParking;
 
 @synthesize userLabel;
-@synthesize spot1400;
-@synthesize spot1401;
-@synthesize spot1402;
-@synthesize spot1403;
-@synthesize spot1404;
-@synthesize spot1405;
+@synthesize spot101;
+@synthesize spot102;
+@synthesize spot103;
+@synthesize spot104;
+@synthesize spot105;
+@synthesize spot106;
 
 -(IBAction)backButtonPressed:(id)sender{
     [self dismissModalViewControllerAnimated:YES];
 }
 
 -(IBAction)submitButtonPressed:(id)sender{
-    NSArray* switchObjects = [NSArray arrayWithObjects:spot1400, spot1401, spot1402, spot1403, spot1404, spot1405, nil];
+    NSArray* switchObjects = [NSArray arrayWithObjects:spot101, spot102, spot103, spot104, spot105, spot106, nil];
     
     
     //SUBMIT THE INFORMATION TO SERVER.
@@ -110,9 +110,9 @@
     [super viewDidLoad];
     self.userLabel.hidden = YES;
     
-    NSArray* switchObjects = [NSArray arrayWithObjects:spot1400, spot1401, spot1402, spot1403, spot1404, spot1405, nil];
+    NSArray* switchObjects = [NSArray arrayWithObjects:spot101, spot102, spot103, spot104, spot105, spot106, nil];
     
-    if (self.spotNumber >= 1 && self.spotNumber <= 1405) {
+    if (self.spotNumber >= 1 && self.spotNumber <= 106) {
         // Set label at spot location
         CGPoint oldOrigin = self.userLabel.frame.origin;
         CGSize oldSize = self.userLabel.frame.size;

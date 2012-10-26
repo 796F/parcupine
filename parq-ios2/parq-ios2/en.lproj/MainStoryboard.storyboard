@@ -1729,42 +1729,42 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                                 <rect key="frame" x="146" y="413" width="79" height="27"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </switch>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="1400" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="YVY-vH-ZkT">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="101" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="YVY-vH-ZkT">
                                 <rect key="frame" x="98" y="241" width="42" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="1401" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="7Q1-2w-I6W">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="102" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="7Q1-2w-I6W">
                                 <rect key="frame" x="98" y="276" width="38" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="1402" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="iQK-lR-xty">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="103" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="iQK-lR-xty">
                                 <rect key="frame" x="98" y="311" width="38" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="1403" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="SmY-fC-ymb">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="104" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="SmY-fC-ymb">
                                 <rect key="frame" x="98" y="346" width="38" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="1404" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="0GE-69-GyR">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="105" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="0GE-69-GyR">
                                 <rect key="frame" x="98" y="381" width="38" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="1405" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="CWB-53-1KM">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="106" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="CWB-53-1KM">
                                 <rect key="frame" x="100" y="416" width="38" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -1793,12 +1793,12 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                     <connections>
                         <outlet property="leftButton" destination="Mns-dM-1wN" id="vc3-an-iLm"/>
                         <outlet property="rightButton" destination="UOV-6Z-dBR" id="3IB-XO-wvs"/>
-                        <outlet property="spot1400" destination="yji-2F-NQc" id="15R-dC-KvY"/>
-                        <outlet property="spot1401" destination="NOJ-tm-tsV" id="Ezd-cq-9RE"/>
-                        <outlet property="spot1402" destination="6Kg-OW-iAi" id="dos-Ke-xdk"/>
-                        <outlet property="spot1403" destination="TuZ-L8-T1G" id="mUo-Wm-UMQ"/>
-                        <outlet property="spot1404" destination="Dp1-Cr-5iT" id="b18-kR-N2e"/>
-                        <outlet property="spot1405" destination="xvz-lE-lN3" id="jiI-Wu-QaM"/>
+                        <outlet property="spot101" destination="yji-2F-NQc" id="15R-dC-KvY"/>
+                        <outlet property="spot102" destination="NOJ-tm-tsV" id="Ezd-cq-9RE"/>
+                        <outlet property="spot103" destination="6Kg-OW-iAi" id="dos-Ke-xdk"/>
+                        <outlet property="spot104" destination="TuZ-L8-T1G" id="mUo-Wm-UMQ"/>
+                        <outlet property="spot105" destination="Dp1-Cr-5iT" id="b18-kR-N2e"/>
+                        <outlet property="spot106" destination="xvz-lE-lN3" id="jiI-Wu-QaM"/>
                         <outlet property="userLabel" destination="SbO-th-qZe" id="U6O-Rk-5F4"/>
                     </connections>
                 </viewController>
@@ -1872,8 +1872,6 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         <class className="PQLoginViewController" superclassName="UITableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/PQLoginViewController.h"/>
             <relationships>
-                <relationship kind="action" name="registerButtonPressed:"/>
-                <relationship kind="action" name="submitButtonPressed:"/>
                 <relationship kind="outlet" name="backLabel" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="confirmEmailField" candidateClass="UITextField"/>
                 <relationship kind="outlet" name="emailField" candidateClass="UITextField"/>
@@ -1887,17 +1885,6 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         <class className="PQMapViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/PQMapViewController.h"/>
             <relationships>
-                <relationship kind="action" name="cancelDropPinButtonPressed:"/>
-                <relationship kind="action" name="dropPinButtonPressed:"/>
-                <relationship kind="action" name="findMeButtonPressed:"/>
-                <relationship kind="action" name="gridButtonPressed:"/>
-                <relationship kind="action" name="justParkMeButtonPressed:"/>
-                <relationship kind="action" name="loadMockData:"/>
-                <relationship kind="action" name="numPadSubmit:"/>
-                <relationship kind="action" name="selfEnforcePressed:"/>
-                <relationship kind="action" name="settingsButtonPressed:"/>
-                <relationship kind="action" name="spotButtonPressed:"/>
-                <relationship kind="action" name="streetButtonPressed:"/>
                 <relationship kind="outlet" name="availabilitySelectionBar" candidateClass="UISegmentedControl"/>
                 <relationship kind="outlet" name="availabilitySelectionView" candidateClass="UIView"/>
                 <relationship kind="outlet" name="bottomSpotSelectionBar" candidateClass="UISegmentedControl"/>
@@ -1965,8 +1952,6 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         <class className="PQSettingsViewController" superclassName="UITableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/PQSettingsViewController.h"/>
             <relationships>
-                <relationship kind="action" name="doneButtonPressed:"/>
-                <relationship kind="action" name="signOutButtonPressed:"/>
                 <relationship kind="outlet" name="addrCellView" candidateClass="UIView"/>
                 <relationship kind="outlet" name="addrLabel" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="balanceCellView" candidateClass="UIView"/>
@@ -1996,17 +1981,15 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         <class className="SelfReportingStaticViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/SelfReportingStaticViewController.h"/>
             <relationships>
-                <relationship kind="action" name="backButtonPressed:"/>
-                <relationship kind="action" name="submitButtonPressed:"/>
                 <relationship kind="outlet" name="bottomImage" candidateClass="UIImageView"/>
                 <relationship kind="outlet" name="leftButton" candidateClass="UIBarButtonItem"/>
                 <relationship kind="outlet" name="rightButton" candidateClass="UIBarButtonItem"/>
-                <relationship kind="outlet" name="spot1400" candidateClass="UISwitch"/>
-                <relationship kind="outlet" name="spot1401" candidateClass="UISwitch"/>
-                <relationship kind="outlet" name="spot1402" candidateClass="UISwitch"/>
-                <relationship kind="outlet" name="spot1403" candidateClass="UISwitch"/>
-                <relationship kind="outlet" name="spot1404" candidateClass="UISwitch"/>
-                <relationship kind="outlet" name="spot1405" candidateClass="UISwitch"/>
+                <relationship kind="outlet" name="spot101" candidateClass="UISwitch"/>
+                <relationship kind="outlet" name="spot102" candidateClass="UISwitch"/>
+                <relationship kind="outlet" name="spot103" candidateClass="UISwitch"/>
+                <relationship kind="outlet" name="spot104" candidateClass="UISwitch"/>
+                <relationship kind="outlet" name="spot105" candidateClass="UISwitch"/>
+                <relationship kind="outlet" name="spot106" candidateClass="UISwitch"/>
                 <relationship kind="outlet" name="userLabel" candidateClass="UILabel"/>
             </relationships>
         </class>
