@@ -32,7 +32,7 @@
 
 - (void)launchMaps
 {
-    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://maps.apple.com/maps?daddr=Spot+%@@%@,%@&saddr=Current+Location@%f,%f", spotInfo.spotNumber, spotInfo.latitude, spotInfo.longitude, parent.user_loc.latitude, parent.user_loc.longitude]]];
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://maps.apple.com/maps?daddr=%@,%@&saddr=%f,%f", spotInfo.latitude, spotInfo.longitude, parent.user_loc.latitude, parent.user_loc.longitude]]];
 
     [self.navigationController popToRootViewControllerAnimated:NO];
 }
