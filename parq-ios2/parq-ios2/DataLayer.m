@@ -188,11 +188,6 @@
         return NO;
     }
 }
--(int) UIType{
-    NSString* path = [[self class] plistPath];
-    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
-    return [[data objectForKey:@"uiType"] intValue];
-}
 
 -(BOOL) isLoggedIn{
     NSString* path = [[self class] plistPath];
@@ -210,12 +205,6 @@
     NSString* path = [[self class] plistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
     [data setObject:[NSNumber numberWithBool:yesORno] forKey:@"isLoggedIn"];        
-    [data writeToFile: path atomically:YES];
-}
--(void) setUIType:(int) type{
-    NSString* path = [[self class] plistPath];
-    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
-    [data setObject:[NSNumber numberWithInt:type] forKey:@"uiType"];        
     [data writeToFile: path atomically:YES];
 }
 

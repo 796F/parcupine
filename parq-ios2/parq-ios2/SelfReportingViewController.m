@@ -9,17 +9,14 @@
 #import "SelfReportingViewController.h"
 
 #import "PQParkingViewController.h"
-#define THANKS_FOR_PLAYING_TAG 88
+#define ALERTVIEW_THANKS 1
 
 @implementation SelfReportingViewController
 @synthesize mapView;
 @synthesize leftButton;
 @synthesize rightButton;
 @synthesize networkLayer;
-@synthesize showTapMe;
-@synthesize UIType;
 @synthesize parent;
-@synthesize isNotParking;
 
 - (MKAnnotationView *)mapView:(MKMapView *)theMapView viewForAnnotation:(id <MKAnnotation>)annotation
 {    
@@ -34,17 +31,8 @@
         // if an existing pin view was not available, create one
         MKAnnotationView* customPinView = [[MKAnnotationView alloc]
                                               initWithAnnotation:annotation reuseIdentifier:parkedCarAnnotationIdentifier];
-        //customPinView.pinColor = MKPinAnnotationColorPurple;
-        NSLog(@"uitpe %d\n", UIType);
-        if(UIType ==1 || UIType == 3){
-            customPinView.image = [UIImage imageNamed:@"unknown.png"];
-            customPinView.tag = 0;
-        }else{
-            //type 0, force report start on car.
-            customPinView.image = [UIImage imageNamed:@"spot_occupied.png"];
-            customPinView.tag = 1;
-        }
-        //customPinView.animatesDrop = YES;
+        customPinView.image = [UIImage imageNamed:@"spot_occupied.png"];
+        customPinView.tag = 1;
         customPinView.canShowCallout = YES;
         return customPinView;
     }
@@ -91,7 +79,6 @@
     [self dismissModalViewControllerAnimated:YES];
 }
 -(IBAction)submitButtonPressed:(id)sender{
-    //SUBMIT THE INFORMATION TO SERVER.
     NSArray* sortedAnno = [[NSArray arrayWithArray:mapView.annotations] sortedArrayUsingComparator:^NSComparisonResult(PQParkedCarAnnotation* obj1, PQParkedCarAnnotation* obj2) {
         int id1 = [[[obj1.title componentsSeparatedByString:@":"] objectAtIndex:0] intValue];
         int id2 = [[[obj2.title componentsSeparatedByString:@":"] objectAtIndex:0] intValue];
@@ -101,55 +88,27 @@
             return 1;
         }
     }];
-    BOOL badReport = NO;
     NSMutableArray* orderedAvailability = [[NSMutableArray alloc] initWithCapacity:6];
     for(PQParkedCarAnnotation* anno in sortedAnno){
         if([anno.title hasSuffix:@"Open"]){
             [orderedAvailability addObject:[NSNumber numberWithInt:1]];
         }else if([anno.title hasSuffix:@"Taken"]){
             [orderedAvailability addObject:[NSNumber numberWithInt:0]];
-        }else{
-            //not everything was tapped.
-            badReport = YES;
         }
     }
-    
-    if(badReport){
-        //alert that they need to fill everything in.
-        UIAlertView* fillAllAlert = [[UIAlertView alloc] initWithTitle:@"Uh Oh!" message:@"You missed a spot" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-        [fillAllAlert show];
-    }else{
-        BOOL reportOutcome = [networkLayer submitAvailablilityInformation:orderedAvailability];
-        if(reportOutcome){
-            //server got report
-            DataLayer* dataLayer = ((PQAppDelegate*)[[UIApplication sharedApplication] delegate]).dataLayer;
-            [dataLayer setLastReportTime:[NSDate date]];
-            if(isNotParking){
-
-            }else{
-                //uh, doesn't need to be casted.  just change parent field type to PQParkingViewController, and add an @Class to the .h file.
-                PQParkingViewController* castedParent = (PQParkingViewController*) parent;
-                if([networkLayer parkUserWithSpotInfo:castedParent.spotInfo AndDuration:castedParent.datePicker.countDownDuration]){ //server accepted parking request
-                    [castedParent startTimerButtonAction];
-                }else{ //failed to park on server
-                    UIAlertView* failedToPark = [[UIAlertView alloc] initWithTitle:@"Error Parking" message:@"Please try again" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-                    [failedToPark show];
-                }
-            }
-            UIAlertView* thanksAlert = [[UIAlertView alloc] initWithTitle:@"Thanks for Helping" message:@"You earned 60 parking points" delegate:self cancelButtonTitle:nil otherButtonTitles:@"OK", nil ];
-            thanksAlert.tag = THANKS_FOR_PLAYING_TAG;
-            [thanksAlert show];
-            
-        }else{
-            //fail
-        }
-//        [parent startTimerButtonAction];
-//        [self dismissModalViewControllerAnimated:YES];
+    BOOL reportOutcome = [networkLayer submitAvailablilityInformation:orderedAvailability];
+    if(reportOutcome){
+        //server got report
+        DataLayer* dataLayer = ((PQAppDelegate*)[[UIApplication sharedApplication] delegate]).dataLayer;
+        [dataLayer setLastReportTime:[NSDate date]];
+        UIAlertView* thanksAlert = [[UIAlertView alloc] initWithTitle:@"Thanks for your help" message:@"Users like you help keep our data up-to-date. For that, you've earned 60 Parcupine Points!" delegate:self cancelButtonTitle:nil otherButtonTitles:@"OK", nil ];
+        thanksAlert.tag = ALERTVIEW_THANKS;
+        [thanksAlert show];
     }
 }
 
 -(void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
-    if(alertView.tag == THANKS_FOR_PLAYING_TAG && buttonIndex == 0){
+    if (alertView.tag == ALERTVIEW_THANKS) {
         [self dismissModalViewControllerAnimated:YES];
     }
 }
@@ -182,7 +141,6 @@
     [mapView setRegion:[mapView regionThatFits:viewRegion] animated:NO];
     
     // Load spots
-    showTapMe = YES;
     for(NSString* string in [self loadSpots]){
         NSArray* components = [string componentsSeparatedByString:@","];
         double lat = [[components objectAtIndex:0] floatValue];
@@ -206,26 +164,14 @@
 }
 
 -(NSArray*) loadSpots{
-    if(UIType == 3 || UIType == 1){
-        return [NSArray arrayWithObjects:
-                @"42.357767, -71.094471, 1:",
-                @"42.357789, -71.094409, 2:",
-                @"42.357812, -71.094344, 3:",
-                @"42.357838, -71.094275, 4:",
-                @"42.357855, -71.094215, 5:",
-                @"42.357881, -71.094151, 6:",
-                nil];
-    }else{
-        return [NSArray arrayWithObjects:
-                @"42.357767, -71.094471, 1:Taken",
-                @"42.357789, -71.094409, 2:Taken",
-                @"42.357812, -71.094344, 3:Taken",
-                @"42.357838, -71.094275, 4:Taken",
-                @"42.357855, -71.094215, 5:Taken",
-                @"42.357881, -71.094151, 6:Taken",
-                nil];
-    }
-    
+    return [NSArray arrayWithObjects:
+            @"42.357767, -71.094471, 1:Taken",
+            @"42.357789, -71.094409, 2:Taken",
+            @"42.357812, -71.094344, 3:Taken",
+            @"42.357838, -71.094275, 4:Taken",
+            @"42.357855, -71.094215, 5:Taken",
+            @"42.357881, -71.094151, 6:Taken",
+            nil];
 }
 
 @end

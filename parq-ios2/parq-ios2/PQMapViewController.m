@@ -463,8 +463,6 @@ typedef struct{
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
         SelfReportingViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"selfReporting"];
         [vc setParent:self];
-        [vc setIsNotParking:YES]; //user isn't parking, no need to trigger timer.
-        [vc setUIType:[dataLayer UIType]];
         [vc setModalPresentationStyle:UIModalPresentationFullScreen];
         [self presentModalViewController:vc animated:YES];
     }
@@ -2066,31 +2064,6 @@ typedef struct{
 - (IBAction)loadMockData:(id)sender {
     
     ((UIButton*)sender).hidden = YES;
-    
-    
-    //[self hideMoreTextBox];
-    //    [dataLayer logString:[NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__]];
-    //    int olduitype = [dataLayer UIType];
-    //    if(olduitype==3) olduitype = -1;
-    //    [dataLayer setUIType:olduitype+1];
-    //    NSString* string = [NSString stringWithFormat:@"uitype = %d", olduitype+1];
-    //    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:nil message:string delegate:self cancelButtonTitle:@"ok" otherButtonTitles:nil];
-    //    [alert show];
-    
-    
-    //    self.map = [[MKMapView alloc] initWithFrame:CGRectMake(0, 44, 320, 416)];
-    
-    //    [self clearMap];
-    //    [networkLayer testAsync];
-    
-    //    int loop = 0;
-    //    NSLog(@"map annotation count%d\n", map.annotations.count);
-    //    for(PQSpotAnnotation* anno in map.annotations){
-    //        loop++;
-    //        NSLog(@"looped %d\n", loop);
-    //        MKAnnotationView* view = [map viewForAnnotation:anno];
-    //        view.image = [UIImage imageNamed:@"spot_occupied.png"];
-    //    }
 }
 
 

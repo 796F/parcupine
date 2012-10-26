@@ -46,7 +46,6 @@
     if([dataLayer isFirstLaunch]){
                 
         //first launch!  do something special.
-        [networkLayer decideUIType];
         char *saves = "LOG:\n";
         NSData *data = [[NSData alloc] initWithBytes:saves length:3];
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
