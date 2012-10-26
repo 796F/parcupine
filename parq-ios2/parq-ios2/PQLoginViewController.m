@@ -10,34 +10,23 @@
 #import "PQAppDelegate.h"
 
 #define TOS_ALERT_VIEW 0
-#define REGISTER_SURE_ALERT 1
 
 @implementation PQLoginViewController
 @synthesize parent;
-@synthesize passwordField;
+@synthesize confirmEmailField;
 @synthesize emailField;
-@synthesize entireScreen;
-@synthesize navBar;
 @synthesize whiteButton;
 @synthesize registerButton;
+@synthesize goButton;
 @synthesize submitButton;
-@synthesize confirmPasswordField;
+@synthesize backLabel;
 @synthesize licensePlateField;
 
 
 
 -(IBAction)submitButtonPressed:(id)sender{
     [dataLayer logString:[NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__]];
-    BOOL loginResp = [self tryLoggingIn];
-    if(loginResp){
-        [dataLayer setLoggedIn:YES];
-        parent.view.hidden = NO;
-        [self dismissModalViewControllerAnimated:YES];
-    }else{
-        //unhide email/password box.
-        emailField.hidden = NO;
-        [dataLayer setLoggedIn:NO];
-    }
+    [self tryLoggingIn];
 }
 
 -(IBAction)registerButtonPressed:(id)sender{
@@ -58,100 +47,69 @@
     }
 }
 
--(BOOL) tryLoggingIn{
+-(void) tryLoggingIn{
     [dataLayer logString:[NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__]];
     NSDate* studyEnd = [NSDate dateWithTimeIntervalSince1970:1353490425];
     if([[NSDate date] earlierDate:studyEnd] == studyEnd){
         UIAlertView* studyOver = [[UIAlertView alloc] initWithTitle:@"Thank You" message:@"The study has concluded and systems shut down" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
         [studyOver show];
-        return NO;
+        //unhide email/password box.
+        emailField.hidden = NO;
+        [dataLayer setLoggedIn:NO];
     }
     User* user;
     //call network layer to login.
-    if(confirmPasswordField.hidden == NO){
+    if(confirmEmailField.hidden == NO){
         //registering
-        user = [networkLayer registerEmail:emailField.text AndPassword:@"a" AndPlate:confirmPasswordField.text];
+        user = [networkLayer registerEmail:emailField.text AndPassword:@"a" AndPlate:licensePlateField.text];
     }else{
         user = [networkLayer loginEmail:emailField.text AndPassword:@"a"];
     }
     if(user!=nil){
         //correct!
-        return YES;
+        [dataLayer setLoggedIn:YES];
+        parent.view.hidden = NO;
+        [self dismissModalViewControllerAnimated:YES];
     }else{
         //launch alert.  
         UIAlertView* spotTakenAlert = [[UIAlertView alloc] initWithTitle:@"Could not log in!" message:@"Please check input" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
         [spotTakenAlert show];
-        return NO;
+        //unhide email/password box.
+        emailField.hidden = NO;
+        [dataLayer setLoggedIn:NO];
     }
 }
 
 -(BOOL) textFieldShouldReturn:(UITextField *)textField{
     if (textField.tag==0) {
         //this is email field.  simply go next
-        if(passwordField.hidden == YES){
-            //logging in
-            passwordField.hidden = YES;
+        if(confirmEmailField.hidden == YES){
             emailField.hidden = YES;
             //display a LOADING CIRCLE thing.
-            
-            
-            BOOL loginResp = [self tryLoggingIn];
-            if(loginResp){
-                [dataLayer setLoggedIn:YES];
-                parent.view.hidden = NO;
-                [self dismissModalViewControllerAnimated:YES];
-            }else{
-                //unhide email/password box.
-                emailField.hidden = NO;
-                [dataLayer setLoggedIn:NO];
-            }
+
+            [self tryLoggingIn];
 
         }else{
             //in register mode.
-            
-//            [confirmPasswordField becomeFirstResponder];
-            [passwordField becomeFirstResponder];
+            [confirmEmailField becomeFirstResponder];
         }
         
     }else if (textField.tag==1){
         //hide the email/password box.
-        [confirmPasswordField becomeFirstResponder];
+        [licensePlateField becomeFirstResponder];
     }
-//    else if (textField.tag ==2) {
-//        //go next
-//        [licensePlateField becomeFirstResponder];
-//    }
     else {
-        //register the user.  
-//        NSString* password = [passwordField text];
-//        NSString* email = [emailField text];
-//        NSString* license = licensePlateField.text;
+        //register the user.
         [self submitButtonPressed:self];
-        [licensePlateField resignFirstResponder];
-        [self removeKeyboard:nil];
     }
     return YES;
 }
 
 -(void) textFieldDidBeginEditing:(UITextField *)textField{
-    //started editing, shift the view upwards
-    if(passwordField.returnKeyType == UIReturnKeyGo){
-        //in submit mode, simply shift up  a bit.  
-        [UIView animateWithDuration:.25 animations:^{
-            //x y width height
-            self.entireScreen.frame = CGRectMake(0, -95, 320, 460);
-            
-        }];
-    }else{
-        //in register mode, shift to keep fields visible  
-        [UIView animateWithDuration:.25 animations:^{
-            //x y width height
-            double originy = textField.frame.origin.y;
-            //255, 283, 313, 344  make these -95
-            self.entireScreen.frame = CGRectMake(0, 178 - originy , 320, 460);
-            
-        }];
-    }
+    [UIView animateWithDuration:.25 animations:^{
+        //255, 283, 313, 344  make these -95
+        self.tableView.frame = CGRectMake(0, 178 - textField.frame.origin.y , 320, 460);
+    }];
 }
 
 -(void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
@@ -161,42 +119,36 @@
         //expand the button to cover more space. 140 height
         [UIView animateWithDuration:0.25 animations:^{
             whiteButton.frame = CGRectMake(whiteButton.frame.origin.x ,whiteButton.frame.origin.y , 227, 97);
-//            self.entireScreen.center = CGPointMake(entireScreen.center.x, entireScreen.center.y-80);
             [self textFieldDidBeginEditing:self.emailField];
             registerButton.hidden = YES;
+            goButton.hidden = YES;
             self.emailField.returnKeyType = UIReturnKeyNext;
-            self.passwordField.returnKeyType = UIReturnKeyNext;
+            self.confirmEmailField.returnKeyType = UIReturnKeyNext;
             submitButton.hidden = NO;
-            passwordField.hidden = NO;
-            confirmPasswordField.hidden = NO;
-            emailField.text = @"";
-            passwordField.text = @"";
+            backLabel.hidden = NO;
+            confirmEmailField.hidden = NO;
+            licensePlateField.hidden = NO;
+            confirmEmailField.text = @"";
+            licensePlateField.text = @"";
         }];
-//        [emailField becomeFirstResponder];
-
-//        [UIView animateWithDuration:0.5 animations:^{
-//            self.navBar.center = CGPointMake(navBar.center.x, navBar.center.y + 44);
-//        }];
-//        [self performSegueWithIdentifier:@"showRegisterView" sender:self];
-    }else if (alertView.tag == REGISTER_SURE_ALERT && buttonIndex == 1){
-        //user is sure they want to oparticipate in study.  
-        
+        [emailField becomeFirstResponder];
     }
 }
 
 - (void)removeKeyboard:(UIGestureRecognizer *)sender {
-    [self.passwordField resignFirstResponder];
+    [self.confirmEmailField resignFirstResponder];
     [self.emailField resignFirstResponder];
-    [self.confirmPasswordField resignFirstResponder];
+    [self.confirmEmailField resignFirstResponder];
     [self.licensePlateField resignFirstResponder];
     [UIView animateWithDuration:.25 animations:^{
         //x y width height
-        self.entireScreen.frame = CGRectMake(0, 0, 320, 460);
+        self.tableView.frame = CGRectMake(0, 0, 320, 460);
         whiteButton.frame = CGRectMake(whiteButton.frame.origin.x ,whiteButton.frame.origin.y , 227, 39);
         registerButton.hidden = NO;
+        goButton.hidden = NO;
         submitButton.hidden = YES;
-        passwordField.hidden = YES;
-        confirmPasswordField.hidden = YES;
+        backLabel.hidden = YES;
+        confirmEmailField.hidden = YES;
         licensePlateField.hidden = YES;
         emailField.returnKeyType = UIReturnKeyGo;
     }];
@@ -214,13 +166,6 @@
     return self;
 }
 -(void) viewWillAppear:(BOOL)animated{
-    //upon login screen appearing, hide the nav bar.  
-    navBar.hidden = YES;
-    [UIView animateWithDuration:0.5 animations:^{
-        navBar.center = CGPointMake(navBar.center.x, navBar.center.y - 44);
-        //adjust the screen to make up for the nav bar disappearing.  
-        self.entireScreen.frame = CGRectMake(0, 0, 320, 460);
-    }];    
 }
 
 - (void)viewDidLoad
@@ -233,14 +178,14 @@
         dataLayer = ((PQAppDelegate*)[[UIApplication sharedApplication] delegate]).dataLayer;
     }
     UITapGestureRecognizer* singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(removeKeyboard:)];
-    [self.entireScreen addGestureRecognizer:singleTap];
-    navBar = self.navigationController.navigationBar;
+    [self.tableView addGestureRecognizer:singleTap];
     parent = ((LoginNavigationController*) self.navigationController).parent; //share parent.
     
 }
 
 - (void)viewDidUnload
 {
+    [self setBackLabel:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
