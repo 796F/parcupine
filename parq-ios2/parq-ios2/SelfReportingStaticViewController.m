@@ -37,8 +37,6 @@
     
     
     //SUBMIT THE INFORMATION TO SERVER.
-    
-    BOOL badReport = NO;
 
     NSMutableArray* orderedAvailability = [[NSMutableArray alloc] initWithCapacity:6];
     for(UISegmentedControl* spot in switchObjects){
@@ -98,9 +96,9 @@
         // User parked at spot: Forced to mark as taken.
         int spotIndex = self.spotNumber - FIRST_SPOT_INDEX;
         if (spotIndex < 6) {
-            UISwitch *userSwitch = [switchObjects objectAtIndex:spotIndex];
-            userSwitch.on = YES;
-            userSwitch.userInteractionEnabled = NO;            
+            UISegmentedControl *userControl = [switchObjects objectAtIndex:spotIndex];
+            userControl.selectedSegmentIndex = 1;
+            userControl.userInteractionEnabled = NO;
         }
     }
     
