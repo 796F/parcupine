@@ -61,7 +61,7 @@
                                     <action selector="spotButtonPressed:" destination="2" eventType="touchUpInside" id="3xE-kh-KcW"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="cGx-cc-8cz">
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="cGx-cc-8cz">
                                 <rect key="frame" x="229" y="371" width="91" height="37"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
@@ -807,12 +807,14 @@
                                         <outlet property="delegate" destination="V9C-KW-Llm" id="GMj-FV-Lhf"/>
                                     </connections>
                                 </textField>
+
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" id="KCI-uu-H5o">
                                     <rect key="frame" x="57" y="292" width="80" height="29"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="12"/>
                                     <state key="normal" title="Register">
                                         <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+
                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                     </state>
                                     <state key="highlighted">

@@ -101,21 +101,6 @@
     
 }
 
--(void) decideUIType{
-    //send request to server, store the int value.
-    NSDictionary* info = [NSDictionary dictionaryWithObject:@"0" forKey:@"userId"];
-    NSError *error;
-    NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
-    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.park/GetCountRequest"];
-//    RKRequest* request = [[RKRequest alloc] initWithURL:[NSURL URLWithString:@"http://75.101.132.219/parkservice.park/GetCountRequest"]];
-    [request setMethod:RKRequestMethodPOST];
-    [request setHTTPBody:jsonData];
-    [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
-    NSDictionary* result = [[[request sendSynchronously] bodyAsString] objectFromJSONString];
-    int type = [[result objectForKey:@"count"] intValue];
-    [dataLayer setUIType:type];
-}
-
 -(void) request:(EntityType) entityType WithIDs:(NSArray*)IDsToRequest{
     if(IDsToRequest.count>0){
         

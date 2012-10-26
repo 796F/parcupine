@@ -9,7 +9,7 @@
 #import "SelfReportingStaticViewController.h"
 
 #import "PQParkingViewController.h"
-#define THANKS_FOR_PLAYING_TAG 88
+#define ALERTVIEW_THANKS 1
 #define FIRST_SPOT_INDEX 101
 
 @implementation SelfReportingStaticViewController
@@ -17,10 +17,7 @@
 @synthesize leftButton;
 @synthesize rightButton;
 @synthesize networkLayer;
-@synthesize showTapMe;
-@synthesize UIType;
 @synthesize parent;
-@synthesize isNotParking;
 
 @synthesize userLabel;
 @synthesize spot101;
@@ -36,12 +33,7 @@
 
 -(IBAction)submitButtonPressed:(id)sender{
     NSArray* switchObjects = [NSArray arrayWithObjects:spot101, spot102, spot103, spot104, spot105, spot106, nil];
-    
-    
-    //SUBMIT THE INFORMATION TO SERVER.
-    
-    BOOL badReport = NO;
-    
+
     NSMutableArray* orderedAvailability = [[NSMutableArray alloc] initWithCapacity:6];
     for(UISwitch* spot in switchObjects){
         // 1 is open, 0 is taken
@@ -50,48 +42,21 @@
         } else {
             [orderedAvailability addObject:[NSNumber numberWithInt:0]];
         }
-        
-        //not everything was tapped. But no way of telling
-        //    badReport = YES;
-        
     }
-    
-    if(badReport){
-        //alert that they need to fill everything in.
-        UIAlertView* fillAllAlert = [[UIAlertView alloc] initWithTitle:@"Uh Oh!" message:@"You missed a spot" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-        [fillAllAlert show];
-    }else{
-        BOOL reportOutcome = [networkLayer submitAvailablilityInformation:orderedAvailability];
-        if(reportOutcome){
-            //server got report
-            DataLayer* dataLayer = ((PQAppDelegate*)[[UIApplication sharedApplication] delegate]).dataLayer;
-            [dataLayer setLastReportTime:[NSDate date]];
-            if(isNotParking){
-                
-            }else{
-                //uh, doesn't need to be casted.  just change parent field type to PQParkingViewController, and add an @Class to the .h file.
-                PQParkingViewController* castedParent = (PQParkingViewController*) parent;
-                if([networkLayer parkUserWithSpotInfo:castedParent.spotInfo AndDuration:castedParent.datePicker.countDownDuration]){ //server accepted parking request
-                    [castedParent startTimerButtonAction];
-                }else{ //failed to park on server
-                    UIAlertView* failedToPark = [[UIAlertView alloc] initWithTitle:@"Error Parking" message:@"Please try again" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-                    [failedToPark show];
-                }
-            }
-            UIAlertView* thanksAlert = [[UIAlertView alloc] initWithTitle:@"Thanks for Helping" message:@"You earned 60 parking points" delegate:self cancelButtonTitle:nil otherButtonTitles:@"OK", nil ];
-            thanksAlert.tag = THANKS_FOR_PLAYING_TAG;
-            [thanksAlert show];
-            
-        }else{
-            //fail
-        }
-        //        [parent startTimerButtonAction];
-        //        [self dismissModalViewControllerAnimated:YES];
+
+    BOOL reportOutcome = [networkLayer submitAvailablilityInformation:orderedAvailability];
+    if(reportOutcome){
+        //server got report
+        DataLayer* dataLayer = ((PQAppDelegate*)[[UIApplication sharedApplication] delegate]).dataLayer;
+        [dataLayer setLastReportTime:[NSDate date]];
+        UIAlertView* thanksAlert = [[UIAlertView alloc] initWithTitle:@"Thanks for your help" message:@"Users like you help keep our data up-to-date. For that, you've earned 60 Parcupine Points!" delegate:self cancelButtonTitle:nil otherButtonTitles:@"OK", nil ];
+        thanksAlert.tag = ALERTVIEW_THANKS;
+        [thanksAlert show];
     }
 }
 
 -(void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
-    if(alertView.tag == THANKS_FOR_PLAYING_TAG && buttonIndex == 0){
+    if (alertView.tag == ALERTVIEW_THANKS) {
         [self dismissModalViewControllerAnimated:YES];
     }
 }
@@ -157,7 +122,6 @@
     // See http://stackoverflow.com/questions/12599565/how-to-match-ios5-max-zoomlevel-mkmapview-in-ios6
     
     // Load spots
-    showTapMe = YES;
     for(NSString* string in [self loadSpots]){
         NSArray* components = [string componentsSeparatedByString:@","];
         double lat = [[components objectAtIndex:0] floatValue];
@@ -196,26 +160,14 @@
 }
 
 -(NSArray*) loadSpots{
-    if(UIType == 3 || UIType == 1){
-        return [NSArray arrayWithObjects:
-                @"42.357767, -71.094471, 1:",
-                @"42.357789, -71.094409, 2:",
-                @"42.357812, -71.094344, 3:",
-                @"42.357838, -71.094275, 4:",
-                @"42.357855, -71.094215, 5:",
-                @"42.357881, -71.094151, 6:",
-                nil];
-    }else{
-        return [NSArray arrayWithObjects:
-                @"42.357767, -71.094471, 1:Taken",
-                @"42.357789, -71.094409, 2:Taken",
-                @"42.357812, -71.094344, 3:Taken",
-                @"42.357838, -71.094275, 4:Taken",
-                @"42.357855, -71.094215, 5:Taken",
-                @"42.357881, -71.094151, 6:Taken",
-                nil];
-    }
-    
+    return [NSArray arrayWithObjects:
+            @"42.357767, -71.094471, 1:Taken",
+            @"42.357789, -71.094409, 2:Taken",
+            @"42.357812, -71.094344, 3:Taken",
+            @"42.357838, -71.094275, 4:Taken",
+            @"42.357855, -71.094215, 5:Taken",
+            @"42.357881, -71.094151, 6:Taken",
+            nil];
 }
 
 @end

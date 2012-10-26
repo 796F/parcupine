@@ -17,9 +17,6 @@
 @property (weak, nonatomic) IBOutlet UIBarButtonItem* leftButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem* rightButton;
 @property (weak, nonatomic) NetworkLayer* networkLayer;
-@property BOOL showTapMe;
-@property int UIType;
-@property BOOL isNotParking;
 @property (weak, nonatomic) UIViewController* parent;
 
 @end
