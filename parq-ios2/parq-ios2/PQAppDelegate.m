@@ -44,14 +44,15 @@
     [locationManager startUpdatingLocation];
 
     if([dataLayer isFirstLaunch]){
+                
         //first launch!  do something special.
-        [networkLayer decideUIType];
         char *saves = "LOG:\n";
         NSData *data = [[NSData alloc] initWithBytes:saves length:3];
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
         NSString *documentsDirectory = [paths objectAtIndex:0];
         NSString *appFile = [documentsDirectory stringByAppendingPathComponent:@"log.txt"];
         [data writeToFile:appFile atomically:YES];
+        
     }    
     [dataLayer logString:[NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__]];
     return YES;

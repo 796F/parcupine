@@ -13,7 +13,7 @@
 #import "SelfReportingStaticViewController.h"
 #import "SelfReportingViewController.h"
 #import "NetworkLayer.h"
-#import "MBProgressHUD.h"
+
 
 //calculation constants
 #define METERS_PER_MILE 1609.344
@@ -28,6 +28,7 @@
 #define CALLOUT_WIDTH 0.00016
 #define CALLOUT_HEIGHT 0.0003
 
+#define STREET_SNAP_THRESHOLD 0.89
 /* 
  grid to street  dlon 0.009102
  street to spot  dlon 0.003932
@@ -438,6 +439,8 @@ typedef struct{
     [dataLayer logString:[NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__]];
     CLLocationCoordinate2D coord = CLLocationCoordinate2DMake(42.357835,-71.094333);
     [map setRegion:MKCoordinateRegionMakeWithDistance(coord, SPOT_LEVEL_REGION_METERS, SPOT_LEVEL_REGION_METERS) animated:YES];
+
+    self.justParkMePressed = YES;
     // Do not add top/bottom bar w/ views: Possible confusion if user is already zoomed in
     // starting at pilot area: Button will literally do nothing - and not immediately apparent they should click on spot next. Should Just Park Me select a spot (make a tap on the map) for user?
     // [self showSpotSelectionViews];
@@ -463,8 +466,6 @@ typedef struct{
         SelfReportingStaticViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"selfReportingStatic"];
         
         [vc setParent:self];
-        [vc setIsNotParking:YES]; //user isn't parking, no need to trigger timer.
-        [vc setUIType:[dataLayer UIType]];
         [vc setModalPresentationStyle:UIModalPresentationFullScreen];
         [self presentModalViewController:vc animated:YES];
     }
@@ -1380,8 +1381,12 @@ typedef struct{
             [mapView setRegion:MKCoordinateRegionMake(center, MKCoordinateSpanMake(SPOT_LEVEL_SPAN, SPOT_LEVEL_SPAN)) animated:YES];
             [self showSpotLevelWithCoordinates:&center];
         }
-
+        if(self.justParkMePressed){
+            [self showSelectionCircle:&center];
+            self.justParkMePressed = NO;
+        }
     }
+
     [dataLayer logString:[NSString stringWithFormat:@"%s %d", __PRETTY_FUNCTION__, zoomState]];
 }
 
@@ -1750,9 +1755,30 @@ typedef struct{
         NSArray* segList = [self loadBlockData];
         CLLocationCoordinate2D snaploc = [self snapFromCoord:&coord toSegments:segList];
         /* end snap stuff */
+        double dLat = snaploc.latitude*10000-coord.latitude*10000;
+        double dLon = snaploc.longitude*10000-coord.longitude*10000;
+        double distSQ = dLat*dLat + dLon*dLon;
+
+        NSLog(@"DISTOUT %f %f %f\n",dLat, dLon, distSQ);
+        
         if(![self tappedCalloutAtCoords:&coord]){
             //if the result returned is valid
-            [self showSelectionCircle:&snaploc];
+            
+            //if distance to snaploc isn't too long,
+            if(distSQ > STREET_SNAP_THRESHOLD){
+                //remove the grey circle.  
+                [allInsideCircle removeAllObjects]; //update what's inside the circle.
+                [self updateSpotSegmentBar];
+                if(callouts.count >0){
+                    //remove overlays on pan
+                    [self clearCallouts];
+                }
+                [self.map removeOverlay:gCircle];
+
+            }else{
+                [self showSelectionCircle:&snaploc];
+            }
+
             //since you just summoned them, tell region change handler they shouldn't be cleared.  
             shouldNotClearOverlays = true;
             
@@ -1816,16 +1842,18 @@ typedef struct{
 }
 
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
-    [self clearMap];
-    
-    [geocoder geocodeAddressString:searchBar.text inRegion:nil completionHandler:^(NSArray *placemarks, NSError * error){
-        CLLocation* locationObject = [[placemarks objectAtIndex:0] location];
-        MKCoordinateRegion viewRegion = [self.map regionThatFits:MKCoordinateRegionMakeWithDistance(locationObject.coordinate,SPOT_LEVEL_REGION_METERS, SPOT_LEVEL_REGION_METERS)];
-        
-        [self.map setRegion:viewRegion animated:YES];
-        //[self.map setCenterCoordinate:locationObject.coordinate animated:YES];
-    }];
-    
+    UIAlertView* noSearchAlert = [[UIAlertView alloc] initWithTitle:@"Search has been disabled for the pilot!" message:nil delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
+    [noSearchAlert show];
+//    [self clearMap];
+//    
+//    [geocoder geocodeAddressString:searchBar.text inRegion:nil completionHandler:^(NSArray *placemarks, NSError * error){
+//        CLLocation* locationObject = [[placemarks objectAtIndex:0] location];
+//        MKCoordinateRegion viewRegion = [self.map regionThatFits:MKCoordinateRegionMakeWithDistance(locationObject.coordinate,SPOT_LEVEL_REGION_METERS, SPOT_LEVEL_REGION_METERS)];
+//        
+//        [self.map setRegion:viewRegion animated:YES];
+//        //[self.map setCenterCoordinate:locationObject.coordinate animated:YES];
+//    }];
+//    
     [self setSearchBar:searchBar active:NO];
 }
 
@@ -2037,51 +2065,7 @@ typedef struct{
 }
 
 - (IBAction)loadMockData:(id)sender {
-    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    hud.labelText = @"Loading Data...";
-    dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
-        
-        [dataLayer loadMockData];
-        [networkLayer loadSpotData];
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [MBProgressHUD hideHUDForView:self.view animated:YES];
-            NSLog(@"Fixing data after laoding");
-            displayedData = kNoneData;
-            [self clearMap];
-            
-            self.availabilitySelectionBar.selectedSegmentIndex = 0;
-            [self availabilityBarTapped];
-        });
-    });
     ((UIButton*)sender).hidden = YES;
-    
-    // Display green dots/data
-    
-    
-    //[self hideMoreTextBox];
-    //    [dataLayer logString:[NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__]];
-    //    int olduitype = [dataLayer UIType];
-    //    if(olduitype==3) olduitype = -1;
-    //    [dataLayer setUIType:olduitype+1];
-    //    NSString* string = [NSString stringWithFormat:@"uitype = %d", olduitype+1];
-    //    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:nil message:string delegate:self cancelButtonTitle:@"ok" otherButtonTitles:nil];
-    //    [alert show];
-    
-    
-    //    self.map = [[MKMapView alloc] initWithFrame:CGRectMake(0, 44, 320, 416)];
-    
-    //    [self clearMap];
-    //    [networkLayer testAsync];
-    
-    //    int loop = 0;
-    //    NSLog(@"map annotation count%d\n", map.annotations.count);
-    //    for(PQSpotAnnotation* anno in map.annotations){
-    //        loop++;
-    //        NSLog(@"looped %d\n", loop);
-    //        MKAnnotationView* view = [map viewForAnnotation:anno];
-    //        view.image = [UIImage imageNamed:@"spot_occupied.png"];
-    //    }
 }
 
 
@@ -2112,13 +2096,16 @@ typedef struct{
 }
 
 - (IBAction)numPadSubmit:(id)sender {
-    if(topSearchBar.text.length==4){
+    UIAlertView* noSearchAlert = [[UIAlertView alloc] initWithTitle:@"Search has been disabled for the pilot!" message:nil delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
+    [noSearchAlert show];
+    
+//    if(topSearchBar.text.length==4){
         [self setSearchBar:topSearchBar active:NO];
-        //set it as "SpotNumber:1234" so the user knows?  
-        //[topSearchBar setText:[NSString stringWithFormat:@"Spot: %s", topSearchBar.text.UTF8String]];
-    }else{
-        NSLog(@"check your number, len not 4\n");
-    }
+//        //set it as "SpotNumber:1234" so the user knows?  
+//        //[topSearchBar setText:[NSString stringWithFormat:@"Spot: %s", topSearchBar.text.UTF8String]];
+//    }else{
+//        NSLog(@"check your number, len not 4\n");
+//    }
 }
 
 -(void) checkLoggedIn{
@@ -2151,7 +2138,6 @@ typedef struct{
 #pragma mark - LOCATION
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation{
     user_loc = newLocation.coordinate;
-    
     if (MAX(newLocation.horizontalAccuracy, newLocation.verticalAccuracy) < ACCURACY_LIMIT) {
         if (!user_loc_isGood) {
             manager.distanceFilter = 30.0;
@@ -2230,7 +2216,6 @@ typedef struct{
     ((UISearchBar *)self.topSearchBar).scopeButtonTitles = [[NSArray alloc] initWithObjects:@"Place name", @"Spot number", nil];
     
     self.leftBarButton = self.navigationBar.leftBarButtonItem;
-    
     [self.topSpotSelectionBar setWidth:36 forSegmentAtIndex:0];
     [self.topSpotSelectionBar setWidth:36 forSegmentAtIndex:5];
     [self.bottomSpotSelectionBar setWidth:36 forSegmentAtIndex:0];
@@ -2285,6 +2270,7 @@ typedef struct{
     [self showAvailabilitySelectionView];
     
     isDroppingPin = false;
+    
 }
 
 - (void)viewDidUnload

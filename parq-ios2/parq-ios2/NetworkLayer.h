@@ -22,7 +22,8 @@
 
 @optional
 - (void)afterFetchUserPointsBalance:(NSInteger)balance;
-- (void)afterUnpark:(BOOL)success;
+- (void)afterUnparking:(BOOL)success;
+- (void)afterExtending:(BOOL)success toTime:(NSDate *)endTime withParkingRef:(NSString *)parkingReference;
 
 @end
 
@@ -53,13 +54,12 @@
 + (void)fetchUserPointsBalanceWithUid:(unsigned long long)uid andDelegate:(id<PQNetworkLayerDelegate>)delegate;
 -(BOOL) userEarnedPoints:(NSNumber*) earnedPoints;
 -(BOOL) userLostPoints:(NSNumber*) lostPoints;
-
-+ (void)unparkUserWithDelegate:(id<PQNetworkLayerDelegate>)delegate;
++ (void)unparkWithDelegate:(id<PQNetworkLayerDelegate>)delegate;
++ (void)extendWithDuration:(NSInteger)durationMinutes andDelegate:(id<PQNetworkLayerDelegate>)delegate;
 
 //network status
 -(BOOL) isRecheableViaWifi;
 -(BOOL) isRecheableVia3G;
--(void) decideUIType;
 
 //DEBUG
 -(void) testAsync;

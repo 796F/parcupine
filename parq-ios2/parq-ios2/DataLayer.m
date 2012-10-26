@@ -112,6 +112,8 @@
     
 }
 
+
+
 -(void) loadMockData{
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSError *error;
@@ -159,6 +161,20 @@
     }
 }
 
+-(BOOL) hasMockData{
+    NSString* path = [[self class] plistPath];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
+    if(![data objectForKey:@"hasMockData"]){
+        //doesn't have mock data. tell app to load.
+        [data setObject:[NSNumber numberWithBool:YES] forKey:@"hasMockData"];
+        [data writeToFile: path atomically:YES];
+        return NO;
+    }else{
+        //flag was raised, already has mock data.
+        return YES;
+    }
+}
+
 -(BOOL) isFirstLaunch{
     NSString* path = [[self class] plistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
@@ -171,11 +187,6 @@
         //flag was raised, this isn't first launch.  
         return NO;
     }
-}
--(int) UIType{
-    NSString* path = [[self class] plistPath];
-    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
-    return [[data objectForKey:@"uiType"] intValue];
 }
 
 -(BOOL) isLoggedIn{
@@ -194,12 +205,6 @@
     NSString* path = [[self class] plistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
     [data setObject:[NSNumber numberWithBool:yesORno] forKey:@"isLoggedIn"];        
-    [data writeToFile: path atomically:YES];
-}
--(void) setUIType:(int) type{
-    NSString* path = [[self class] plistPath];
-    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
-    [data setObject:[NSNumber numberWithInt:type] forKey:@"uiType"];        
     [data writeToFile: path atomically:YES];
 }
 

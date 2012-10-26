@@ -15,8 +15,8 @@
 
 #define ACTIONSHEET_EXTEND 1
 #define ACTIONSHEET_UNPARK 2
-#define ALERTVIEW_INFO 1
-#define PLEASE_HELP_ALERT 3
+#define ALERTVIEW_INFO 10
+#define ALERTVIEW_REPORT 11
 
 typedef enum {
     kParkingParkState=0,
@@ -34,8 +34,6 @@ typedef enum {
 @end
 
 @implementation PQParkingViewController
-@dynamic rate;
-@dynamic address;
 @synthesize rateNumeratorCents;
 @synthesize rateDenominatorMinutes;
 @synthesize limit;
@@ -140,37 +138,23 @@ typedef enum {
 
 #pragma mark - Main button actions
 - (IBAction)startTimer:(id)sender {
-    int type = [dataLayer UIType];
-    [dataLayer logString:[NSString stringWithFormat:@"%s uiType:%d", __PRETTY_FUNCTION__, type]];
-    if(type==0 || type == 1){
-        [self showReportView];
-    } else if(type ==2 || type == 3) {
-        if([networkLayer parkUserWithSpotInfo:self.spotInfo AndDuration:datePicker.countDownDuration]){ //server accepted parking request
-            [self startTimerButtonAction];
-            UIAlertView* askToHelpAlert = [[UIAlertView alloc] initWithTitle:@"Earn Rewards!" message:@"By reporting open spots." delegate:self cancelButtonTitle:@"No Thanks" otherButtonTitles:@"Sure", nil];
-            askToHelpAlert.tag = PLEASE_HELP_ALERT;
-            [askToHelpAlert show];
-
-        }else{ //failed to park on server
-            UIAlertView* failedToPark = [[UIAlertView alloc] initWithTitle:@"Error Parking" message:@"Please try again" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-            [failedToPark show];
+    if ([networkLayer parkUserWithSpotInfo:self.spotInfo AndDuration:datePicker.countDownDuration]) {
+        if (!prepaidFlag.hidden) { // Prepaid
+            startTime = [NSDate date];
+            prepaidEndTime = [startTime dateByAddingTimeInterval:datePicker.countDownDuration];
+            [self parkingAsPrepaid];
+        } else { // Pay as you go
+            startTime = [NSDate date];
+            [self parkingAsPayg];
         }
-    }else{
-        [self startTimerButtonAction];
+        [self parkedAfterParking];
+        UIAlertView* askToHelpAlert = [[UIAlertView alloc] initWithTitle:@"Earn Parcupine Points" message:@"By telling us which spots around you are taken" delegate:self cancelButtonTitle:@"No thanks" otherButtonTitles:@"Sure", nil];
+        askToHelpAlert.tag = ALERTVIEW_REPORT;
+        [askToHelpAlert show];
+    } else { //failed to park on server
+        UIAlertView* failedToPark = [[UIAlertView alloc] initWithTitle:@"Error Parking" message:@"Please try again" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+        [failedToPark show];
     }
-
-}
-
--(void) startTimerButtonAction{
-    if (!prepaidFlag.hidden) { // Prepaid
-        startTime = [NSDate date];
-        prepaidEndTime = [startTime dateByAddingTimeInterval:datePicker.countDownDuration];
-        [self parkingAsPrepaid];
-    } else { // Pay as you go
-        startTime = [NSDate date];
-        [self parkingAsPayg];
-    }
-    [self parkedAfterParking];
 }
 
 - (IBAction)unparkNow:(id)sender {
@@ -198,30 +182,39 @@ typedef enum {
         [timer invalidate];
         //invalidate restore info
         [dataLayer setEndTime:[NSDate distantPast]];
-        [NetworkLayer unparkUserWithDelegate:nil];
+        [NetworkLayer unparkWithDelegate:nil];
         [self dismissModalViewControllerAnimated:YES];
     } else if (actionSheet.tag == ACTIONSHEET_EXTEND && buttonIndex == actionSheet.firstOtherButtonIndex) {
         [dataLayer logString:[NSString stringWithFormat:@"EXTEND %s", __PRETTY_FUNCTION__]];
-        prepaidEndTime = [NSDate dateWithTimeInterval:datePicker.countDownDuration sinceDate:prepaidEndTime];
+        [NetworkLayer extendWithDuration:datePicker.countDownDuration/60 andDelegate:self];
+        // TODO: Show progress indicator
+    }
+    [networkLayer sendLogs];
+}
+
+- (void)afterExtending:(BOOL)success toTime:(NSDate *)endTime withParkingRef:(NSString *)parkingReference {
+    // TODO: Dismiss progress indicator
+    if (success) {
+        prepaidEndTime = endTime;
+        [DataLayer setParkingReference:parkingReference];
         //update the end time for resume use.
-        [dataLayer setEndTime:prepaidEndTime];
+        [dataLayer setEndTime:endTime];
         [dataLayer setSpotInfo:self.spotInfo];
 
-        int totalMinutes = ([prepaidEndTime timeIntervalSinceNow]+59)/60;
+        int totalMinutes = ([endTime timeIntervalSinceNow]+59)/60;
         hours.text = [NSString stringWithFormat:@"%02d", totalMinutes/60];
         minutes.text = [NSString stringWithFormat:@"%02d", totalMinutes%60];
-        expiresAtTime.text = [dateFormatter stringFromDate:prepaidEndTime];
+        expiresAtTime.text = [dateFormatter stringFromDate:endTime];
         [self scheduleLocalNotification:prepaidEndTime]; //reset the notifications.
         [self parkedAfterExtending];
     }
-    [networkLayer sendLogs];
 }
 
 #pragma mark - UIAlertViewDelegate
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (alertView.tag == ALERTVIEW_INFO) {
         [alertView dismissWithClickedButtonIndex:buttonIndex animated:YES];
-    }else if(alertView.tag == PLEASE_HELP_ALERT && buttonIndex == 1){
+    } else if (alertView.tag == ALERTVIEW_REPORT && buttonIndex == alertView.firstOtherButtonIndex) {
         [self showReportView];
     }
 }
@@ -237,7 +230,6 @@ typedef enum {
     
     //SelfReportingViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"selfReporting"];
     [vc setParent:self];
-    [vc setUIType:[dataLayer UIType]];
     [vc setModalPresentationStyle:UIModalPresentationFullScreen];
     [self presentModalViewController:vc animated:YES];
 }
@@ -355,7 +347,6 @@ typedef enum {
     }];
 
     datePicker.minuteInterval = spotInfo.minuteInterval.intValue;
-    datePicker.countDownDuration = spotInfo.minuteInterval.intValue;
 
     self.navigationItem.title = @"Enter Amount";
     self.navigationItem.leftBarButtonItem = cancelButton;

@@ -75,6 +75,7 @@ UIAlertViewDelegate> {
 @property (nonatomic) CLLocationCoordinate2D user_loc;
 @property (nonatomic) bool user_loc_isGood;
 @property (atomic) bool isDroppingPin;
+@property (atomic) bool justParkMePressed;
 
 @property (nonatomic, retain) PQSpotAnnotation* desired_spot;
 @property (nonatomic, retain) SpotInfo* spotInfo;
@@ -116,5 +117,6 @@ UIAlertViewDelegate> {
 
 -(void) showBookmarkWithLocation:(CLLocationCoordinate2D*) coord AndAnnotation:(id <MKAnnotation>)annotation;
 
+-(void) showSelectionCircle:(CLLocationCoordinate2D *)coord;
 
 @end

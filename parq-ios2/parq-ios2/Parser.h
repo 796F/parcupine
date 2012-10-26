@@ -17,6 +17,7 @@
 +(BOOL) parseUpdateUserResponse:(NSString*) jsonResponse;
 +(BOOL) parseUnparkResponse:(NSString*) jsonResponse;
 +(NSDictionary*) parseParkResponse:(NSString*) jsonResponse;
++ (NSDictionary *)parseExtendResponse:(NSString *)jsonResponse;
 +(SpotInfo*) parseSpotInfo:(NSString*) jsonResponse;
 +(NSDictionary*) parseUpdateSpotsResponse:(NSString*) jsonResponse;
 + (NSInteger)parseFetchUserPointsResponse:(NSString *)jsonResponse;

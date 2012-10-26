@@ -61,7 +61,7 @@
                                     <action selector="spotButtonPressed:" destination="2" eventType="touchUpInside" id="3xE-kh-KcW"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="cGx-cc-8cz">
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="cGx-cc-8cz">
                                 <rect key="frame" x="229" y="371" width="91" height="37"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
@@ -281,49 +281,46 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <sections>
-                            <tableViewSection headerTitle="User Settings" id="9Js-U3-tbS">
+                            <tableViewSection headerTitle="Payment Settings" id="wEv-MC-yLD">
                                 <cells>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="nameCell" id="Qeg-NU-sG6">
+                                    <tableViewCell userInteractionEnabled="NO" tag="1" contentMode="scaleToFill" selectionStyle="none" accessoryType="detailDisclosureButton" indentationWidth="10" reuseIdentifier="vibrateCell" id="9GG-TX-yFS">
                                         <rect key="frame" x="0.0" y="46" width="320" height="45"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="10" y="1" width="280" height="43"/>
+                                            <rect key="frame" x="10" y="1" width="267" height="43"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="h5Z-Sd-ex9">
-                                                    <rect key="frame" x="20" y="6" width="141" height="32"/>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Payment Options" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="Eal-VX-QU6">
+                                                    <rect key="frame" x="20" y="0.0" width="152" height="43"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 </label>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Eric Baczuk" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="YU5-e7-wqK">
-                                                    <rect key="frame" x="150" y="6" width="110" height="32"/>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" id="TCl-Zt-e8y">
+                                                    <rect key="frame" x="207" y="4" width="55" height="35"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" red="0.2394486371" green="0.54912409049999999" blue="0.78830516579999999" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                </label>
+                                                </imageView>
                                             </subviews>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="addrCell" id="Ta7-Ia-eK2">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" accessoryType="detailDisclosureButton" indentationWidth="10" reuseIdentifier="balanceCell" id="02e-rI-PfW">
                                         <rect key="frame" x="0.0" y="91" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="10" y="0.0" width="280" height="43"/>
+                                            <rect key="frame" x="10" y="0.0" width="267" height="43"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Address" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="VEN-9Y-wew">
-                                                    <rect key="frame" x="20" y="6" width="141" height="32"/>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Account Balance" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="12" id="XAz-Lr-fKx">
+                                                    <rect key="frame" x="20" y="5" width="139" height="33"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 </label>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="77 Massachusetts Avenue, Cambridge MA. 02139" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" adjustsFontSizeToFit="NO" id="OGQ-w0-tb5">
-                                                    <rect key="frame" x="98" y="6" width="162" height="32"/>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="100" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="DSG-Eh-m8c">
+                                                    <rect key="frame" x="164" y="0.0" width="93" height="43"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" red="0.2394486371" green="0.54912409049999999" blue="0.78830516579999999" alpha="1" colorSpace="calibratedRGB"/>
@@ -333,47 +330,22 @@
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="plateCell" id="QxK-EA-6H7">
-                                        <rect key="frame" x="0.0" y="135" width="320" height="44"/>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="30" id="vTv-dH-es3">
+                                        <rect key="frame" x="0.0" y="135" width="320" height="31"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="10" y="0.0" width="280" height="43"/>
+                                            <rect key="frame" x="10" y="0.0" width="300" height="29"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Email" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="F3U-YO-9yI">
-                                                    <rect key="frame" x="20" y="6" width="141" height="32"/>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Reset App" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="12" adjustsFontSizeToFit="NO" id="4at-FP-dtg">
+                                                    <rect key="frame" x="20" y="0.0" width="260" height="33"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="10"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 </label>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="eric.baczuk@gmail.com" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" adjustsFontSizeToFit="NO" id="1D7-co-Mw5">
-                                                    <rect key="frame" x="103" y="6" width="157" height="32"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" red="0.2394486371" green="0.54912409049999999" blue="0.78830516579999999" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                </label>
-                                            </subviews>
-                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                        </view>
-                                    </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="plateCell" id="ciM-bw-zfP">
-                                        <rect key="frame" x="0.0" y="179" width="320" height="45"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="10" y="0.0" width="280" height="43"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="License Plate" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="8sq-Dc-Vp0">
-                                                    <rect key="frame" x="20" y="6" width="141" height="32"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                                    <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                </label>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="EBY776J" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="5Km-Vx-A38">
-                                                    <rect key="frame" x="139" y="6" width="121" height="32"/>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="x3K-nQ-U9j">
+                                                    <rect key="frame" x="164" y="-3" width="93" height="43"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" red="0.2394486371" green="0.54912409049999999" blue="0.78830516579999999" alpha="1" colorSpace="calibratedRGB"/>
@@ -388,7 +360,7 @@
                             <tableViewSection headerTitle="Application Settings" id="eKf-Wu-PSw">
                                 <cells>
                                     <tableViewCell userInteractionEnabled="NO" tag="1" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="soundCell" id="efg-4e-qbP">
-                                        <rect key="frame" x="0.0" y="270" width="320" height="45"/>
+                                        <rect key="frame" x="0.0" y="212" width="320" height="45"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="10" y="1" width="300" height="43"/>
@@ -410,7 +382,7 @@
                                         </view>
                                     </tableViewCell>
                                     <tableViewCell userInteractionEnabled="NO" tag="1" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="vibrateCell" id="Afn-m8-pO2">
-                                        <rect key="frame" x="0.0" y="315" width="320" height="44"/>
+                                        <rect key="frame" x="0.0" y="257" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="10" y="0.0" width="300" height="43"/>
@@ -432,7 +404,7 @@
                                         </view>
                                     </tableViewCell>
                                     <tableViewCell userInteractionEnabled="NO" contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" indentationWidth="10" id="QnG-XC-52i">
-                                        <rect key="frame" x="0.0" y="359" width="320" height="45"/>
+                                        <rect key="frame" x="0.0" y="301" width="320" height="45"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="10" y="0.0" width="280" height="43"/>
@@ -458,46 +430,24 @@
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
-                            <tableViewSection headerTitle="Payment Settings" id="wEv-MC-yLD">
+                            <tableViewSection headerTitle="User Settings" id="9Js-U3-tbS">
                                 <cells>
-                                    <tableViewCell userInteractionEnabled="NO" tag="1" contentMode="scaleToFill" selectionStyle="none" accessoryType="detailDisclosureButton" indentationWidth="10" reuseIdentifier="vibrateCell" id="9GG-TX-yFS">
-                                        <rect key="frame" x="0.0" y="450" width="320" height="45"/>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="nameCell" id="Qeg-NU-sG6">
+                                        <rect key="frame" x="0.0" y="392" width="320" height="45"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="10" y="1" width="267" height="43"/>
+                                            <rect key="frame" x="10" y="1" width="280" height="43"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Payment Options" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="Eal-VX-QU6">
-                                                    <rect key="frame" x="20" y="0.0" width="152" height="43"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
-                                                    <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                </label>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" id="TCl-Zt-e8y">
-                                                    <rect key="frame" x="207" y="4" width="55" height="35"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                </imageView>
-                                            </subviews>
-                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                        </view>
-                                    </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" accessoryType="detailDisclosureButton" indentationWidth="10" reuseIdentifier="balanceCell" id="02e-rI-PfW">
-                                        <rect key="frame" x="0.0" y="495" width="320" height="44"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="10" y="0.0" width="267" height="43"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Account Balance" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="12" id="XAz-Lr-fKx">
-                                                    <rect key="frame" x="20" y="5" width="139" height="33"/>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="h5Z-Sd-ex9">
+                                                    <rect key="frame" x="20" y="6" width="141" height="32"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 </label>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="100" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="DSG-Eh-m8c">
-                                                    <rect key="frame" x="164" y="0.0" width="93" height="43"/>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Eric Baczuk" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="YU5-e7-wqK">
+                                                    <rect key="frame" x="150" y="6" width="110" height="32"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" red="0.2394486371" green="0.54912409049999999" blue="0.78830516579999999" alpha="1" colorSpace="calibratedRGB"/>
@@ -507,22 +457,72 @@
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="30" id="vTv-dH-es3">
-                                        <rect key="frame" x="0.0" y="539" width="320" height="31"/>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="addrCell" id="Ta7-Ia-eK2">
+                                        <rect key="frame" x="0.0" y="437" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="10" y="0.0" width="300" height="29"/>
+                                            <rect key="frame" x="10" y="0.0" width="280" height="43"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Reset App" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="12" adjustsFontSizeToFit="NO" id="4at-FP-dtg">
-                                                    <rect key="frame" x="20" y="0.0" width="260" height="33"/>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Address" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="VEN-9Y-wew">
+                                                    <rect key="frame" x="20" y="6" width="141" height="32"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 </label>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="x3K-nQ-U9j">
-                                                    <rect key="frame" x="164" y="-3" width="93" height="43"/>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="77 Massachusetts Avenue, Cambridge MA. 02139" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" adjustsFontSizeToFit="NO" id="OGQ-w0-tb5">
+                                                    <rect key="frame" x="98" y="6" width="162" height="32"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" red="0.2394486371" green="0.54912409049999999" blue="0.78830516579999999" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                </label>
+                                            </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="plateCell" id="QxK-EA-6H7">
+                                        <rect key="frame" x="0.0" y="481" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="10" y="0.0" width="280" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Email" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="F3U-YO-9yI">
+                                                    <rect key="frame" x="20" y="6" width="141" height="32"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                </label>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="eric.baczuk@gmail.com" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" adjustsFontSizeToFit="NO" id="1D7-co-Mw5">
+                                                    <rect key="frame" x="103" y="6" width="157" height="32"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" red="0.2394486371" green="0.54912409049999999" blue="0.78830516579999999" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                </label>
+                                            </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="plateCell" id="ciM-bw-zfP">
+                                        <rect key="frame" x="0.0" y="525" width="320" height="45"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="10" y="0.0" width="280" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="License Plate" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="8sq-Dc-Vp0">
+                                                    <rect key="frame" x="20" y="6" width="141" height="32"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                </label>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="EBY776J" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="5Km-Vx-A38">
+                                                    <rect key="frame" x="139" y="6" width="121" height="32"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" red="0.2394486371" green="0.54912409049999999" blue="0.78830516579999999" alpha="1" colorSpace="calibratedRGB"/>
@@ -773,8 +773,8 @@
                             <rect key="frame" x="0.0" y="0.0" width="320" height="460"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
-                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="pqplogin.png" id="Y1j-gP-ju4">
-                                    <rect key="frame" x="0.0" y="14" width="320" height="460"/>
+                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="login_background.png" id="Y1j-gP-ju4">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="460"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 </imageView>
                                 <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="t9f-6h-cL8">
@@ -789,7 +789,7 @@
                                         <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     </state>
                                 </button>
-                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder=".email." minimumFontSize="17" id="JQw-H2-S75">
+                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Email" minimumFontSize="17" id="JQw-H2-S75">
                                     <rect key="frame" x="63" y="255" width="198" height="29"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -798,7 +798,7 @@
                                         <outlet property="delegate" destination="V9C-KW-Llm" id="WKy-oR-zGS"/>
                                     </connections>
                                 </textField>
-                                <textField hidden="YES" opaque="NO" clipsSubviews="YES" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder=".confirm email." minimumFontSize="17" id="SqQ-D1-zoQ">
+                                <textField hidden="YES" opaque="NO" clipsSubviews="YES" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Confirm email" minimumFontSize="17" id="SqQ-D1-zoQ">
                                     <rect key="frame" x="63" y="283" width="198" height="29"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -807,22 +807,37 @@
                                         <outlet property="delegate" destination="V9C-KW-Llm" id="GMj-FV-Lhf"/>
                                     </connections>
                                 </textField>
-                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" id="KCI-uu-H5o">
-                                    <rect key="frame" x="199" y="292" width="80" height="29"/>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" id="KCI-uu-H5o">
+                                    <rect key="frame" x="57" y="292" width="80" height="29"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="12"/>
-                                    <state key="normal" title="Register >">
-                                        <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
+                                    <state key="normal" title="Register">
+                                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                     </state>
                                     <state key="highlighted">
                                         <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     </state>
                                     <connections>
-                                        <action selector="registerButtonPressed:" destination="V9C-KW-Llm" eventType="touchDown" id="TuY-1s-oYJ"/>
+                                        <action selector="registerButtonPressed:" destination="V9C-KW-Llm" eventType="touchUpInside" id="YCI-o1-R4y"/>
                                     </connections>
                                 </button>
-                                <textField hidden="YES" opaque="NO" clipsSubviews="YES" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder=".license plate." minimumFontSize="17" id="oiS-S3-JRL">
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" id="zS7-cn-FWb">
+                                    <rect key="frame" x="189" y="292" width="80" height="29"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="12"/>
+                                    <state key="normal" title="Go >">
+                                        <color key="titleColor" red="1" green="0.84705882349999995" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                    </state>
+                                    <state key="highlighted">
+                                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    </state>
+                                    <connections>
+                                        <action selector="submitButtonPressed:" destination="V9C-KW-Llm" eventType="touchUpInside" id="dVc-af-MYy"/>
+                                    </connections>
+                                </button>
+                                <textField hidden="YES" opaque="NO" clipsSubviews="YES" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="License plate" minimumFontSize="17" id="oiS-S3-JRL">
                                     <rect key="frame" x="63" y="313" width="198" height="31"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -831,34 +846,28 @@
                                         <outlet property="delegate" destination="V9C-KW-Llm" id="AEm-bO-Akb"/>
                                     </connections>
                                 </textField>
-                                <textField hidden="YES" opaque="NO" clipsSubviews="YES" tag="3" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder=".license plate." minimumFontSize="17" id="xDq-oY-GrF">
-                                    <rect key="frame" x="63" y="344" width="198" height="31"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                    <textInputTraits key="textInputTraits" keyboardAppearance="alert" returnKeyType="join"/>
-                                    <connections>
-                                        <outlet property="delegate" destination="V9C-KW-Llm" id="pba-f4-sXC"/>
-                                    </connections>
-                                </textField>
-                                <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" id="2fa-IN-bDl">
-                                    <rect key="frame" x="207" y="352" width="64" height="19"/>
+                                <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" id="2fa-IN-bDl">
+                                    <rect key="frame" x="205" y="352" width="64" height="19"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="12"/>
                                     <state key="normal" title="Submit >">
-                                        <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
+                                        <color key="titleColor" red="1" green="0.84705882349999995" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                     </state>
                                     <state key="highlighted">
                                         <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     </state>
                                     <connections>
-                                        <action selector="submitButtonPressed:" destination="V9C-KW-Llm" eventType="touchDown" id="sTe-12-RJH"/>
+                                        <action selector="submitButtonPressed:" destination="V9C-KW-Llm" eventType="touchUpInside" id="w2e-nN-qgS"/>
                                     </connections>
                                 </button>
-                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" id="Vkd-Gh-K1j">
-                                    <rect key="frame" x="0.0" y="443" width="320" height="133"/>
+                                <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="&lt; Back" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Vof-nq-Ijr">
+                                    <rect key="frame" x="57" y="351" width="42" height="21"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                </imageView>
+                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="12"/>
+                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
                             </subviews>
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         </view>
@@ -868,11 +877,11 @@
                     </tableView>
                     <navigationItem key="navigationItem" id="1ma-Gr-jQD"/>
                     <connections>
-                        <outlet property="confirmPasswordField" destination="oiS-S3-JRL" id="rhK-63-zgP"/>
+                        <outlet property="backLabel" destination="Vof-nq-Ijr" id="UYG-BG-GMv"/>
+                        <outlet property="confirmEmailField" destination="SqQ-D1-zoQ" id="2Y4-5i-Il0"/>
                         <outlet property="emailField" destination="JQw-H2-S75" id="9Vs-h2-x2f"/>
-                        <outlet property="entireScreen" destination="drC-ui-POd" id="XJ5-oB-dzU"/>
-                        <outlet property="licensePlateField" destination="xDq-oY-GrF" id="wH5-DT-7De"/>
-                        <outlet property="passwordField" destination="SqQ-D1-zoQ" id="wdb-zk-wdE"/>
+                        <outlet property="goButton" destination="zS7-cn-FWb" id="rvu-Lc-pgK"/>
+                        <outlet property="licensePlateField" destination="oiS-S3-JRL" id="XwE-OB-3Nc"/>
                         <outlet property="registerButton" destination="KCI-uu-H5o" id="m4y-G2-Ke5"/>
                         <outlet property="submitButton" destination="2fa-IN-bDl" id="Ag5-rg-fdT"/>
                         <outlet property="whiteButton" destination="t9f-6h-cL8" id="sgZ-Mo-UZK"/>
@@ -891,10 +900,6 @@
                         <rect key="frame" x="0.0" y="64" width="320" height="416"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="register2.png" id="GmA-IQ-3kO">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="416"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                            </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="3kt-H0-cgb">
                                 <rect key="frame" x="50" y="151" width="221" height="160"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -1943,192 +1948,16 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         <image name="help3.png" width="320" height="480"/>
         <image name="left_arrow.png" width="20" height="20"/>
         <image name="location_icon.png" width="19" height="19"/>
+        <image name="login_background.png" width="320" height="480"/>
         <image name="meter_payg.png" width="320" height="131"/>
         <image name="payg.png" width="139" height="99"/>
-        <image name="pqplogin.png" width="640" height="961"/>
         <image name="prepaid.png" width="141" height="102"/>
         <image name="redminus.png" width="28" height="28"/>
-        <image name="register2.png" width="640" height="961"/>
         <image name="report_icon.png" width="19" height="19"/>
         <image name="reporting_background.png" width="320" height="480"/>
         <image name="right_arrow.png" width="20" height="20"/>
         <image name="settings.png" width="20" height="21"/>
     </resources>
-    <classes>
-        <class className="BookmarkCell" superclassName="UITableViewCell">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/BookmarkCell.h"/>
-            <relationships>
-                <relationship kind="outlet" name="bookmarkName" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="editBookmarkNameField" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="editMe" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="goMap" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="minus" candidateClass="UIButton"/>
-            </relationships>
-        </class>
-        <class className="EditSettingsViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/EditSettingsViewController.h"/>
-            <relationships>
-                <relationship kind="outlet" name="confirmNewValue" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="currentValue" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="editNewValue" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="saveButton" candidateClass="UIBarButtonItem"/>
-            </relationships>
-        </class>
-        <class className="LoginNavigationController" superclassName="UINavigationController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/LoginNavigationController.h"/>
-        </class>
-        <class className="PQBookmarksViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/PQBookmarksViewController.h"/>
-            <relationships>
-                <relationship kind="outlet" name="bookmarkSelectionBar" candidateClass="UISegmentedControl"/>
-                <relationship kind="outlet" name="leftButton" candidateClass="UIBarButtonItem"/>
-                <relationship kind="outlet" name="midButton" candidateClass="UIBarButtonItem"/>
-                <relationship kind="outlet" name="rightButton" candidateClass="UIBarButtonItem"/>
-                <relationship kind="outlet" name="table" candidateClass="UITableView"/>
-            </relationships>
-        </class>
-        <class className="PQEditBookmarkViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/PQEditBookmarkViewController.h"/>
-            <relationships>
-                <relationship kind="outlet" name="cancelButton" candidateClass="UIBarButtonItem"/>
-                <relationship kind="outlet" name="map" candidateClass="MKMapView"/>
-                <relationship kind="outlet" name="saveButton" candidateClass="UIBarButtonItem"/>
-            </relationships>
-        </class>
-        <class className="PQLoginViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/PQLoginViewController.h"/>
-            <relationships>
-                <relationship kind="outlet" name="confirmPasswordField" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="emailField" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="entireScreen" candidateClass="UIView"/>
-                <relationship kind="outlet" name="licensePlateField" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="navBar" candidateClass="UINavigationBar"/>
-                <relationship kind="outlet" name="passwordField" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="registerButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="submitButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="whiteButton" candidateClass="UIButton"/>
-            </relationships>
-        </class>
-        <class className="PQMapViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/PQMapViewController.h"/>
-            <relationships>
-                <relationship kind="outlet" name="availabilitySelectionBar" candidateClass="UISegmentedControl"/>
-                <relationship kind="outlet" name="availabilitySelectionView" candidateClass="UIView"/>
-                <relationship kind="outlet" name="bottomSpotSelectionBar" candidateClass="UISegmentedControl"/>
-                <relationship kind="outlet" name="bottomSpotSelectionView" candidateClass="UIView"/>
-                <relationship kind="outlet" name="cancelDropPinButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="dropPinButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="dropPinSelectionView" candidateClass="UIView"/>
-                <relationship kind="outlet" name="findMeButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="gradientIcon" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="justParkSelectionView" candidateClass="UIView"/>
-                <relationship kind="outlet" name="map" candidateClass="MKMapView"/>
-                <relationship kind="outlet" name="mockDataButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="navigationBar" candidateClass="UINavigationItem"/>
-                <relationship kind="outlet" name="parkMeButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="popOutSpotNumberField" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="popOutSpotNumberView" candidateClass="UIView"/>
-                <relationship kind="outlet" name="topSearchBar" candidateClass="UISearchBar"/>
-                <relationship kind="outlet" name="topSpotSelectionBar" candidateClass="UISegmentedControl"/>
-                <relationship kind="outlet" name="topSpotSelectionView" candidateClass="UIView"/>
-            </relationships>
-        </class>
-        <class className="PQParkedCarMapViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/PQParkedCarMapViewController.h"/>
-            <relationships>
-                <relationship kind="outlet" name="map" candidateClass="MKMapView"/>
-            </relationships>
-        </class>
-        <class className="PQParkingViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/PQParkingViewController.h"/>
-            <relationships>
-                <relationship kind="outlet" name="addressCellView" candidateClass="UIView"/>
-                <relationship kind="outlet" name="addressLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="cancelButton" candidateClass="UIBarButtonItem"/>
-                <relationship kind="outlet" name="colon" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="datePicker" candidateClass="UIDatePicker"/>
-                <relationship kind="outlet" name="doneButton" candidateClass="UIBarButtonItem"/>
-                <relationship kind="outlet" name="expiresAtTime" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="extendAmount" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="extendButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="hours" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="limitUnit" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="limitValue" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="meter" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="minutes" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="paygCellView" candidateClass="UIView"/>
-                <relationship kind="outlet" name="paygCheck" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="paygFlag" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="prepaidAmount" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="prepaidCellView" candidateClass="UIView"/>
-                <relationship kind="outlet" name="prepaidCheck" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="prepaidFlag" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="rateDenominator" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="rateNumerator" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="remainingAmount" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="seeMapCellView" candidateClass="UIView"/>
-                <relationship kind="outlet" name="startButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="timeRemainingCellView" candidateClass="UIView"/>
-                <relationship kind="outlet" name="timeToAddCellView" candidateClass="UIView"/>
-                <relationship kind="outlet" name="unparkButton" candidateClass="UIButton"/>
-            </relationships>
-        </class>
-        <class className="PQPaymentMethodsViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/PQPaymentMethodsViewController.h"/>
-        </class>
-        <class className="PQSettingsViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/PQSettingsViewController.h"/>
-            <relationships>
-                <relationship kind="outlet" name="addrCellView" candidateClass="UIView"/>
-                <relationship kind="outlet" name="addrLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="balanceCellView" candidateClass="UIView"/>
-                <relationship kind="outlet" name="balanceLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="emailCellView" candidateClass="UIView"/>
-                <relationship kind="outlet" name="emailLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="nameCellView" candidateClass="UIView"/>
-                <relationship kind="outlet" name="nameLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="plateCellView" candidateClass="UIView"/>
-                <relationship kind="outlet" name="plateLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="soundCellView" candidateClass="UIView"/>
-                <relationship kind="outlet" name="ssnCellView" candidateClass="UIView"/>
-                <relationship kind="outlet" name="ssnLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="table" candidateClass="UITableView"/>
-                <relationship kind="outlet" name="vibrateCellView" candidateClass="UIView"/>
-            </relationships>
-        </class>
-        <class className="RegisterViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/RegisterViewController.h"/>
-            <relationships>
-                <relationship kind="outlet" name="emailField" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="entireScreen" candidateClass="UIView"/>
-                <relationship kind="outlet" name="license" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="passwordField" candidateClass="UITextField"/>
-            </relationships>
-        </class>
-        <class className="SelfReportingStaticViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/SelfReportingStaticViewController.h"/>
-            <relationships>
-                <relationship kind="outlet" name="bottomImage" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="leftButton" candidateClass="UIBarButtonItem"/>
-                <relationship kind="outlet" name="rightButton" candidateClass="UIBarButtonItem"/>
-                <relationship kind="outlet" name="spot0" candidateClass="UISegmentedControl"/>
-                <relationship kind="outlet" name="spot1" candidateClass="UISegmentedControl"/>
-                <relationship kind="outlet" name="spot2" candidateClass="UISegmentedControl"/>
-                <relationship kind="outlet" name="spot3" candidateClass="UISegmentedControl"/>
-                <relationship kind="outlet" name="spot4" candidateClass="UISegmentedControl"/>
-                <relationship kind="outlet" name="spot5" candidateClass="UISegmentedControl"/>
-                <relationship kind="outlet" name="userLabel" candidateClass="UILabel"/>
-            </relationships>
-        </class>
-        <class className="SelfReportingViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/SelfReportingViewController.h"/>
-            <relationships>
-                <relationship kind="outlet" name="leftButton" candidateClass="UIBarButtonItem"/>
-                <relationship kind="outlet" name="mapView" candidateClass="MKMapView"/>
-                <relationship kind="outlet" name="rightButton" candidateClass="UIBarButtonItem"/>
-            </relationships>
-        </class>
-    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>

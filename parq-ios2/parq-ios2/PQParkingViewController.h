@@ -12,7 +12,7 @@
 // #import "SelfReportingViewController.h"
 #import "SelfReportingStaticViewController.h"
 
-@interface PQParkingViewController : UITableViewController <UIAlertViewDelegate, UITableViewDelegate, UIActionSheetDelegate>{
+@interface PQParkingViewController : UITableViewController <UIAlertViewDelegate, UITableViewDelegate, UIActionSheetDelegate, PQNetworkLayerDelegate>{
     DataLayer* dataLayer;
     NetworkLayer* networkLayer;
 }
@@ -52,5 +52,4 @@
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *doneButton;
 @property (weak, nonatomic) PQMapViewController *parent;
 @property (nonatomic, retain) SpotInfo* spotInfo;
--(void) startTimerButtonAction;
 @end
