@@ -593,8 +593,8 @@
             
             User* user = (User*)[NSEntityDescription insertNewObjectForEntityForName:@"User" inManagedObjectContext:[DataLayer managedObjectContext]];
             
-            [user setAddress:@"michaelxia.com"];
-            [user setName:@"@mikeyxia"];
+            [user setAddress:@"Room 9-206"];
+            [user setName:@"Peter Parker"];
             [user setEmail:email];  //this should be returned by server.
             [user setPassword:pass];
             [user setLicense:[results objectForKey:@"license"]];

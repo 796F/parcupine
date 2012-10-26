@@ -96,14 +96,29 @@
     [dataLayer logString:[NSString stringWithFormat:@"%s sec %d row %d", __PRETTY_FUNCTION__, section, row]];
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     if(section == 0){
-        //selected one of the account settings.  
+        if(row==0){
+            //payment options
+            [self performSegueWithIdentifier:@"showPaymentOptions" sender:self];
+        }else if(row==1){
+            //account balance
+        }else{
+            UIAlertView* crashAlert = [[UIAlertView alloc] initWithTitle:@"Are you sure?" message:@"This application is in beta testing, and software bugs exist.  Only reset if you experience issues using the application." delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Reset", nil];
+            crashAlert.tag = SURE_TO_RESET;
+            [crashAlert show];
+        }
+    }else if (section==1){
+        if(row==2){
+            //change city
+        }
+    }else{
+        //selected one of the account settings.
         switch (row) {
             case 0:{
                 //name
                 [userInfo setFieldName:@"Name:"];
                 [userInfo setOldValue:nameLabel.text];
                 [self performSegueWithIdentifier:@"editUser" sender:self];
-                }
+            }
                 break;
             case 1:
                 //addr
@@ -126,21 +141,6 @@
             default:
                 //error
                 break;
-        }
-    }else if (section==1){
-        if(row==2){
-            //change city
-        }
-    }else{
-        if(row==0){
-            //payment options
-            [self performSegueWithIdentifier:@"showPaymentOptions" sender:self];
-        }else if(row==1){
-            //account balance
-        }else{
-            UIAlertView* crashAlert = [[UIAlertView alloc] initWithTitle:@"Are you sure?" message:@"This application is in beta testing, and software bugs exist.  Only reset if you experience issues using the application." delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Reset", nil];
-            crashAlert.tag = SURE_TO_RESET;
-            [crashAlert show];
         }
     }
     
