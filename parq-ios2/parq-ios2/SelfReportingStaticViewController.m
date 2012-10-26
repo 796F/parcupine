@@ -23,19 +23,19 @@
 @synthesize isNotParking;
 
 @synthesize userLabel;
-@synthesize spot1400;
-@synthesize spot1401;
-@synthesize spot1402;
-@synthesize spot1403;
-@synthesize spot1404;
-@synthesize spot1405;
+@synthesize spot0;
+@synthesize spot1;
+@synthesize spot2;
+@synthesize spot3;
+@synthesize spot4;
+@synthesize spot5;
 
 -(IBAction)backButtonPressed:(id)sender{
     [self dismissModalViewControllerAnimated:YES];
 }
 
 -(IBAction)submitButtonPressed:(id)sender{
-    NSArray* switchObjects = [NSArray arrayWithObjects:spot1400, spot1401, spot1402, spot1403, spot1404, spot1405, nil];
+    NSArray* switchObjects = [NSArray arrayWithObjects:spot0, spot1, spot2, spot3, spot4, spot5, nil];
     
     
     //SUBMIT THE INFORMATION TO SERVER.
@@ -43,9 +43,9 @@
     BOOL badReport = NO;
     
     NSMutableArray* orderedAvailability = [[NSMutableArray alloc] initWithCapacity:6];
-    for(UISwitch* spot in switchObjects){
+    for(UISegmentedControl* spot in switchObjects){
         // 1 is open, 0 is taken
-        if (spot.on) {
+        if (spot.selectedSegmentIndex == 0) {
             [orderedAvailability addObject:[NSNumber numberWithInt:1]];
         } else {
             [orderedAvailability addObject:[NSNumber numberWithInt:0]];
@@ -110,7 +110,13 @@
     [super viewDidLoad];
     self.userLabel.hidden = YES;
     
-    NSArray* switchObjects = [NSArray arrayWithObjects:spot1400, spot1401, spot1402, spot1403, spot1404, spot1405, nil];
+    NSArray* switchObjects = [NSArray arrayWithObjects:spot0, spot1, spot2, spot3, spot4, spot5, nil];
+    
+    // Go through eacch switch and change its name
+    
+    for (UISwitch* sw in switchObjects) {
+        
+    }
     
     if (self.spotNumber >= 1 && self.spotNumber <= 1405) {
         // Set label at spot location
@@ -118,7 +124,7 @@
         CGSize oldSize = self.userLabel.frame.size;
         
         // shift label "You are here -->" label down this much per spot
-        int shift = (self.spotNumber - FIRST_SPOT_INDEX) * 35;
+        int shift = (self.spotNumber - FIRST_SPOT_INDEX) * 51;
         
         CGRect newRect = CGRectMake(oldOrigin.x, oldOrigin.y + shift, oldSize.width, oldSize.height);
         self.userLabel.frame = newRect;
@@ -132,6 +138,8 @@
             userSwitch.userInteractionEnabled = NO;            
         }
     }
+    
+    
     
     self.bottomImage.userInteractionEnabled = YES;
     self.bottomImage.multipleTouchEnabled = YES;

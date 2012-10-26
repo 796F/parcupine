@@ -15,12 +15,12 @@
 
 @property (weak, nonatomic) IBOutlet UILabel* userLabel;
 
-@property (weak, nonatomic) IBOutlet UISwitch* spot1400;
-@property (weak, nonatomic) IBOutlet UISwitch* spot1401;
-@property (weak, nonatomic) IBOutlet UISwitch* spot1402;
-@property (weak, nonatomic) IBOutlet UISwitch* spot1403;
-@property (weak, nonatomic) IBOutlet UISwitch* spot1404;
-@property (weak, nonatomic) IBOutlet UISwitch* spot1405;
+@property (weak, nonatomic) IBOutlet UISegmentedControl* spot0;
+@property (weak, nonatomic) IBOutlet UISegmentedControl* spot1;
+@property (weak, nonatomic) IBOutlet UISegmentedControl* spot2;
+@property (weak, nonatomic) IBOutlet UISegmentedControl* spot3;
+@property (weak, nonatomic) IBOutlet UISegmentedControl* spot4;
+@property (weak, nonatomic) IBOutlet UISegmentedControl* spot5;
 
 @property (nonatomic, assign) NSInteger spotNumber;
 
