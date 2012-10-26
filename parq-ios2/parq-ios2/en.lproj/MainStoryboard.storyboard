@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="2843" systemVersion="12B19" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="2">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="2843" systemVersion="12C60" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="2">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="1929"/>
     </dependencies>
@@ -773,8 +773,8 @@
                             <rect key="frame" x="0.0" y="0.0" width="320" height="460"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
-                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="pqplogin.png" id="Y1j-gP-ju4">
-                                    <rect key="frame" x="0.0" y="14" width="320" height="460"/>
+                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="login_background.png" id="Y1j-gP-ju4">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="460"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 </imageView>
                                 <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="t9f-6h-cL8">
@@ -789,7 +789,7 @@
                                         <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     </state>
                                 </button>
-                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder=".email." minimumFontSize="17" id="JQw-H2-S75">
+                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Email" minimumFontSize="17" id="JQw-H2-S75">
                                     <rect key="frame" x="63" y="255" width="198" height="29"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -798,7 +798,7 @@
                                         <outlet property="delegate" destination="V9C-KW-Llm" id="WKy-oR-zGS"/>
                                     </connections>
                                 </textField>
-                                <textField hidden="YES" opaque="NO" clipsSubviews="YES" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder=".confirm email." minimumFontSize="17" id="SqQ-D1-zoQ">
+                                <textField hidden="YES" opaque="NO" clipsSubviews="YES" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Confirm email" minimumFontSize="17" id="SqQ-D1-zoQ">
                                     <rect key="frame" x="63" y="283" width="198" height="29"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -807,22 +807,37 @@
                                         <outlet property="delegate" destination="V9C-KW-Llm" id="GMj-FV-Lhf"/>
                                     </connections>
                                 </textField>
-                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" id="KCI-uu-H5o">
-                                    <rect key="frame" x="199" y="292" width="80" height="29"/>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" id="KCI-uu-H5o">
+                                    <rect key="frame" x="57" y="292" width="80" height="29"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="12"/>
-                                    <state key="normal" title="Register >">
-                                        <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
+                                    <state key="normal" title="Register">
+                                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                     </state>
                                     <state key="highlighted">
                                         <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     </state>
                                     <connections>
-                                        <action selector="registerButtonPressed:" destination="V9C-KW-Llm" eventType="touchDown" id="TuY-1s-oYJ"/>
+                                        <action selector="registerButtonPressed:" destination="V9C-KW-Llm" eventType="touchUpInside" id="YCI-o1-R4y"/>
                                     </connections>
                                 </button>
-                                <textField hidden="YES" opaque="NO" clipsSubviews="YES" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder=".license plate." minimumFontSize="17" id="oiS-S3-JRL">
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" id="zS7-cn-FWb">
+                                    <rect key="frame" x="189" y="292" width="80" height="29"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="12"/>
+                                    <state key="normal" title="Go >">
+                                        <color key="titleColor" red="1" green="0.84705882349999995" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                    </state>
+                                    <state key="highlighted">
+                                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    </state>
+                                    <connections>
+                                        <action selector="submitButtonPressed:" destination="V9C-KW-Llm" eventType="touchUpInside" id="dVc-af-MYy"/>
+                                    </connections>
+                                </button>
+                                <textField hidden="YES" opaque="NO" clipsSubviews="YES" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="License plate" minimumFontSize="17" id="oiS-S3-JRL">
                                     <rect key="frame" x="63" y="313" width="198" height="31"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -831,34 +846,28 @@
                                         <outlet property="delegate" destination="V9C-KW-Llm" id="AEm-bO-Akb"/>
                                     </connections>
                                 </textField>
-                                <textField hidden="YES" opaque="NO" clipsSubviews="YES" tag="3" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder=".license plate." minimumFontSize="17" id="xDq-oY-GrF">
-                                    <rect key="frame" x="63" y="344" width="198" height="31"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                    <textInputTraits key="textInputTraits" keyboardAppearance="alert" returnKeyType="join"/>
-                                    <connections>
-                                        <outlet property="delegate" destination="V9C-KW-Llm" id="pba-f4-sXC"/>
-                                    </connections>
-                                </textField>
-                                <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" id="2fa-IN-bDl">
-                                    <rect key="frame" x="207" y="352" width="64" height="19"/>
+                                <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" id="2fa-IN-bDl">
+                                    <rect key="frame" x="205" y="352" width="64" height="19"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="12"/>
                                     <state key="normal" title="Submit >">
-                                        <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
+                                        <color key="titleColor" red="1" green="0.84705882349999995" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                     </state>
                                     <state key="highlighted">
                                         <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     </state>
                                     <connections>
-                                        <action selector="submitButtonPressed:" destination="V9C-KW-Llm" eventType="touchDown" id="sTe-12-RJH"/>
+                                        <action selector="submitButtonPressed:" destination="V9C-KW-Llm" eventType="touchUpInside" id="w2e-nN-qgS"/>
                                     </connections>
                                 </button>
-                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" id="Vkd-Gh-K1j">
-                                    <rect key="frame" x="0.0" y="443" width="320" height="133"/>
+                                <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="&lt; Back" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Vof-nq-Ijr">
+                                    <rect key="frame" x="57" y="351" width="42" height="21"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                </imageView>
+                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="12"/>
+                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
                             </subviews>
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         </view>
@@ -868,11 +877,11 @@
                     </tableView>
                     <navigationItem key="navigationItem" id="1ma-Gr-jQD"/>
                     <connections>
-                        <outlet property="confirmPasswordField" destination="oiS-S3-JRL" id="rhK-63-zgP"/>
+                        <outlet property="backLabel" destination="Vof-nq-Ijr" id="UYG-BG-GMv"/>
+                        <outlet property="confirmEmailField" destination="SqQ-D1-zoQ" id="2Y4-5i-Il0"/>
                         <outlet property="emailField" destination="JQw-H2-S75" id="9Vs-h2-x2f"/>
-                        <outlet property="entireScreen" destination="drC-ui-POd" id="XJ5-oB-dzU"/>
-                        <outlet property="licensePlateField" destination="xDq-oY-GrF" id="wH5-DT-7De"/>
-                        <outlet property="passwordField" destination="SqQ-D1-zoQ" id="wdb-zk-wdE"/>
+                        <outlet property="goButton" destination="zS7-cn-FWb" id="rvu-Lc-pgK"/>
+                        <outlet property="licensePlateField" destination="oiS-S3-JRL" id="XwE-OB-3Nc"/>
                         <outlet property="registerButton" destination="KCI-uu-H5o" id="m4y-G2-Ke5"/>
                         <outlet property="submitButton" destination="2fa-IN-bDl" id="Ag5-rg-fdT"/>
                         <outlet property="whiteButton" destination="t9f-6h-cL8" id="sgZ-Mo-UZK"/>
@@ -891,10 +900,6 @@
                         <rect key="frame" x="0.0" y="64" width="320" height="416"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="register2.png" id="GmA-IQ-3kO">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="416"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                            </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="3kt-H0-cgb">
                                 <rect key="frame" x="50" y="151" width="221" height="160"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -1671,12 +1676,11 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         <image name="greyback.png" width="320" height="113"/>
         <image name="icon_court.png" width="21" height="21"/>
         <image name="left_arrow.png" width="20" height="20"/>
+        <image name="login_background.png" width="320" height="480"/>
         <image name="meter_payg.png" width="320" height="131"/>
         <image name="payg.png" width="139" height="99"/>
-        <image name="pqplogin.png" width="640" height="961"/>
         <image name="prepaid.png" width="141" height="102"/>
         <image name="redminus.png" width="28" height="28"/>
-        <image name="register2.png" width="640" height="961"/>
         <image name="right_arrow.png" width="20" height="20"/>
         <image name="settings.png" width="20" height="21"/>
     </resources>
@@ -1724,12 +1728,14 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         <class className="PQLoginViewController" superclassName="UITableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/PQLoginViewController.h"/>
             <relationships>
-                <relationship kind="outlet" name="confirmPasswordField" candidateClass="UITextField"/>
+                <relationship kind="action" name="registerButtonPressed:"/>
+                <relationship kind="action" name="submitButtonPressed:"/>
+                <relationship kind="outlet" name="backLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="confirmEmailField" candidateClass="UITextField"/>
                 <relationship kind="outlet" name="emailField" candidateClass="UITextField"/>
                 <relationship kind="outlet" name="entireScreen" candidateClass="UIView"/>
+                <relationship kind="outlet" name="goButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="licensePlateField" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="navBar" candidateClass="UINavigationBar"/>
-                <relationship kind="outlet" name="passwordField" candidateClass="UITextField"/>
                 <relationship kind="outlet" name="registerButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="submitButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="whiteButton" candidateClass="UIButton"/>
