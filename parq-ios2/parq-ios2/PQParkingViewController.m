@@ -32,8 +32,6 @@ typedef enum {
 @end
 
 @implementation PQParkingViewController
-@dynamic rate;
-@dynamic address;
 @synthesize rateNumeratorCents;
 @synthesize rateDenominatorMinutes;
 @synthesize limit;
@@ -361,7 +359,6 @@ typedef enum {
     }];
 
     datePicker.minuteInterval = spotInfo.minuteInterval.intValue;
-    datePicker.countDownDuration = spotInfo.minuteInterval.intValue;
 
     self.navigationItem.title = @"Enter Amount";
     self.navigationItem.leftBarButtonItem = cancelButton;
