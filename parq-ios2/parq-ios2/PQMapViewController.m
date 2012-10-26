@@ -570,13 +570,8 @@ typedef struct{
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (actionSheet.tag == GPS_LAUNCH_ALERT) {
         switch (buttonIndex) {
-//this one's kind of pointless when we have directions.  
-
-//            case 0:
-//                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://maps.google.com/maps?q=Spot+%d@%f,%f", desired_spot.name, desired_spot.coordinate.latitude, desired_spot.coordinate.longitude]]];
-//                break;
             case 0:
-                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://maps.google.com/maps?daddr=Spot+%d@%f,%f&saddr=Current+Location@%f,%f", desired_spot.name, desired_spot.coordinate.latitude, desired_spot.coordinate.longitude,user_loc.latitude, user_loc.longitude]]];
+                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://maps.apple.com/maps?daddr=%f,%f&saddr=%f,%f", desired_spot.coordinate.latitude, desired_spot.coordinate.longitude,user_loc.latitude, user_loc.longitude]]];
                 break;
             case 1:
                 [self parkNow];
@@ -1774,7 +1769,7 @@ typedef struct{
                     [self clearCallouts];
                 }
                 [self.map removeOverlay:gCircle];
-
+                [self showAvailabilitySelectionView];
             }else{
                 [self showSelectionCircle:&snaploc];
             }
