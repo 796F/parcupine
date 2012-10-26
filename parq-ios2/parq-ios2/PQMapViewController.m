@@ -1766,7 +1766,7 @@ typedef struct{
                     [self clearCallouts];
                 }
                 [self.map removeOverlay:gCircle];
-
+                [self showAvailabilitySelectionView];
             }else{
                 [self showSelectionCircle:&snaploc];
             }
