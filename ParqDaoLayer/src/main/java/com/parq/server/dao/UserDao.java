@@ -58,7 +58,7 @@ public class UserDao extends AbstractParqDaoParent {
 	private static final String idCache = "getUserById:";
 
 	// TODO delete after MIT pilot
-	private static final int MIT_PILOT_USER_INITIAL_SCORE = 300;
+	private static final int MIT_PILOT_USER_INITIAL_SCORE = 600;
 	
 	
 	public UserDao() {

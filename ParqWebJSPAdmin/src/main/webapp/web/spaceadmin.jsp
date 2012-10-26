@@ -45,7 +45,7 @@
 				<table>
 					<tbody>
 						<tr>
-							<th><label for="space_0">1400:</label></th>
+							<th><label for="space_0">101:</label></th>
 							<th><label><%= (space0 == null || space0.isAvailable()) ? "Free" : "Parked" %></label></th>
 							<td>
 								<select id="space_0" name="space_0">
@@ -56,7 +56,7 @@
 							</td>
 						</tr>
 						<tr>
-							<th><label for="space_1">1401:</label></th>
+							<th><label for="space_1">102:</label></th>
 							<th><label><%= (space1 == null || space1.isAvailable()) ? "Free" : "Parked" %></label></th>
 							<td>
 								<select id="space_1" name="space_1">
@@ -67,7 +67,7 @@
 							</td>
 						</tr>
 						<tr>
-							<th><label for="space_2">1402:</label></th>
+							<th><label for="space_2">103:</label></th>
 							<th><label><%= (space2 == null || space2.isAvailable()) ? "Free" : "Parked" %></label></th>
 							<td>
 								<select id="space_2" name="space_2">
@@ -78,7 +78,7 @@
 							</td>
 						</tr>
 						<tr>
-							<th><label for="space_3">1403:</label></th>
+							<th><label for="space_3">104:</label></th>
 							<th><label><%= (space3 == null || space3.isAvailable()) ? "Free" : "Parked" %></label></th>
 							<td>
 								<select id="space_3" name="space_3">
@@ -89,7 +89,7 @@
 							</td>
 						</tr>
 						<tr>
-							<th><label for="space_4">1404:</label></th>
+							<th><label for="space_4">105:</label></th>
 							<th><label><%= (space4 == null || space4.isAvailable()) ? "Free" : "Parked" %></label></th>
 							<td>
 								<select id="space_4" name="space_4">
@@ -100,7 +100,7 @@
 							</td>
 						</tr>
 						<tr>
-							<th><label for="space_5">1405:</label></th>
+							<th><label for="space_5">106:</label></th>
 							<th><label><%= (space5 == null || space5.isAvailable()) ? "Free" : "Parked" %></label></th>
 							<td>
 								<select id="space_5" name="space_5">
@@ -114,7 +114,7 @@
 						<tr>
 							<td>
 								<center>
-									<input type="reset" class="btn large" value="Refresh" />
+									<input type="button" class="btn large" value="Refresh" onclick="history.go(0)"/>
 								</center>
 							</td>
 							<td/>

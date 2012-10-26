@@ -254,7 +254,23 @@ public class ParkResource {
 			System.out.println("ParkResources pilotunpark: unpark user: " + in.getUid() + " parkingRefNum: " + in.getParkingReferenceNumber());
 			try{
 				long spotId = psd.getSpaceIdByParkingRefNum(in.getParkingReferenceNumber());
-				result = psd.unparkBySpaceIdAndParkingRefNum(spotId,in.getParkingReferenceNumber(), new Date());
+				List<ParkingInstance> pi = psd.getParkingStatusBySpaceIds(new long[]{spotId});
+				Date curTime = new Date();
+				if (pi != null && !pi.isEmpty()) {
+					long secLeftOver = pi.get(0).getParkingEndTime().getTime() - curTime.getTime();
+					// if the user have more then 1 minute left on their parking, refund their difference
+					if (secLeftOver > 60000) {
+						//refund user's unused points
+						int leftOverPoints = (int) (secLeftOver / 60000);
+						UserDao userDao = new UserDao();
+						UserScore currScore = userDao.getScoreForUser(user.getUserID());
+						currScore.setScore1(currScore.getScore1() + leftOverPoints);
+						userDao.updateUserScore(currScore);
+					}
+				}
+				// unpark the user
+				result = psd.unparkBySpaceIdAndParkingRefNum(spotId,in.getParkingReferenceNumber(), curTime);
+				
 			}catch(Exception e){
 				System.out.println("ParkResources pilotunpark: unpark failed");
 				output.setResp("EXCEPTION CAUGHT.  spotid:" + in.getSpotId() + " refNum" + in.getParkingReferenceNumber());
@@ -266,7 +282,6 @@ public class ParkResource {
 				output.setStatusCode(-1000);
 				output.setResp("FAILED_TO_UNPARK_USER");
 			}
-
 		}else{
 			output.setStatusCode(-1000);
 			output.setResp("USER_AUTHENTICATION_FAILED");
@@ -988,27 +1003,52 @@ public class ParkResource {
 		
 		boolean isSucccessful = mDao.insertUserSelfReporting(report);
 		AddUserReportingResponse response = new AddUserReportingResponse();
-		response.setUpdateSuccessful(isSucccessful);
 		
-		// update the user scores
 		if (isSucccessful) {
-			GetUserScoreRequest getRequest = new GetUserScoreRequest();
-			getRequest.setUserId(request.getUserId());
-			GetUserScoreResponse getResponse = getUserScore(getRequest);
+			boolean hasUserReportTwiceAlready = false;
+			List<UserSelfReporting> userReports = mDao.getUserSelfReportingHistoryForUser(request.getUserId());
+			int todayReport = 0;
+			Date halfDayAgo = new Date(System.currentTimeMillis() - (1000 * 60 * 18));
 			
-			UpdateUserScoreRequest updateRequest = new UpdateUserScoreRequest();
-			updateRequest.setUserId(request.getUserId());
-			// user get 10 points for each space status they report
-			updateRequest.setScore1(getResponse.getScore1() + (spaceIds.length * 10));
-			updateRequest.setScore2(getResponse.getScore2());
-			updateRequest.setScore3(getResponse.getScore3());
-			UpdateUserScoreResponse updateResponse = updateUserScore(updateRequest);
-			
-			response.setUpdateSuccessful(updateResponse.isUpdateSuccessful());
-			if (!updateResponse.isUpdateSuccessful()){
-				System.out.println("failed to give user points for reporting");
+			for (UserSelfReporting uReport : userReports) {
+				if (uReport.getReportDateTime().after(halfDayAgo)) {
+					todayReport++;
+				}
 			}
+			hasUserReportTwiceAlready = todayReport >= 3;
+			
+			if (!hasUserReportTwiceAlready) {
+				// update the user scores
+				GetUserScoreRequest getRequest = new GetUserScoreRequest();
+				getRequest.setUserId(request.getUserId());
+				GetUserScoreResponse getResponse = getUserScore(getRequest);
+				
+				UpdateUserScoreRequest updateRequest = new UpdateUserScoreRequest();
+				updateRequest.setUserId(request.getUserId());
+				// user get 10 points for each space status they report
+				updateRequest.setScore1(getResponse.getScore1() + (spaceIds.length * 10));
+				updateRequest.setScore2(getResponse.getScore2());
+				updateRequest.setScore3(getResponse.getScore3());
+				UpdateUserScoreResponse updateResponse = updateUserScore(updateRequest);
+				
+				response.setUpdateSuccessful(updateResponse.isUpdateSuccessful());
+				response.setResp("OK");
+				response.setStatusCode(0);
+				if (!updateResponse.isUpdateSuccessful()){
+					System.out.println("failed to give user points for reporting");
+				}
+			}
+			else {
+				response.setUpdateSuccessful(false);
+				response.setResp("USER_REPORTED_TWICE_ALREDY");
+				response.setStatusCode(-5);
+			}
+		} else {
+			response.setUpdateSuccessful(false);
+			response.setResp("USER_REPORTED_INVALID");
+			response.setStatusCode(-1000);
 		}
+		
 		
 		return response;
 	}
