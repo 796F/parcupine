@@ -65,6 +65,7 @@
 		87EC1FDF1613ED63006D9E2F /* libRestKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 87EC1FD41613EABC006D9E2F /* libRestKit.a */; };
 		BA0E00841638B69C00737208 /* static_report.png in Resources */ = {isa = PBXBuildFile; fileRef = BA0E00831638B69C00737208 /* static_report.png */; };
 		BA2D2094162D019F0085E232 /* SelfReportingStaticViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BA2D2093162D019F0085E232 /* SelfReportingStaticViewController.m */; };
+		BA5A0227163A942600841EDF /* HelpThreeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BA5A0226163A942600841EDF /* HelpThreeViewController.m */; };
 		BA855A8B163A60F10015DD51 /* help1.png in Resources */ = {isa = PBXBuildFile; fileRef = BA855A83163A60F10015DD51 /* help1.png */; };
 		BA855A8C163A60F10015DD51 /* help2.png in Resources */ = {isa = PBXBuildFile; fileRef = BA855A84163A60F10015DD51 /* help2.png */; };
 		BA855A8D163A60F10015DD51 /* help2@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BA855A85163A60F10015DD51 /* help2@2x.png */; };
@@ -79,6 +80,7 @@
 		BA855A9A163A63F10015DD51 /* help3@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BA855A96163A63F10015DD51 /* help3@2x.png */; };
 		BAB520AC163A8A3700A11517 /* login_background.png in Resources */ = {isa = PBXBuildFile; fileRef = BAB520AA163A8A3700A11517 /* login_background.png */; };
 		BAB520AD163A8A3700A11517 /* login_background@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BAB520AB163A8A3700A11517 /* login_background@2x.png */; };
+		BAB520D8163A8EAF00A11517 /* HelpViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BAB520D7163A8EAF00A11517 /* HelpViewController.m */; };
 		BABA5AEB1618FA95004BF60B /* spot_free_report.png in Resources */ = {isa = PBXBuildFile; fileRef = BABA5AE91618FA95004BF60B /* spot_free_report.png */; };
 		BABA5AEC1618FA95004BF60B /* spot_free_report@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BABA5AEA1618FA95004BF60B /* spot_free_report@2x.png */; };
 		FC08BB7B1590D1F40077659C /* PQSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC08BB7A1590D1F40077659C /* PQSettingsViewController.m */; };
@@ -244,6 +246,8 @@
 		BA0E00831638B69C00737208 /* static_report.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = static_report.png; sourceTree = "<group>"; };
 		BA2D2092162D019F0085E232 /* SelfReportingStaticViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelfReportingStaticViewController.h; sourceTree = "<group>"; };
 		BA2D2093162D019F0085E232 /* SelfReportingStaticViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SelfReportingStaticViewController.m; sourceTree = "<group>"; };
+		BA5A0225163A942600841EDF /* HelpThreeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HelpThreeViewController.h; sourceTree = "<group>"; };
+		BA5A0226163A942600841EDF /* HelpThreeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HelpThreeViewController.m; sourceTree = "<group>"; };
 		BA855A83163A60F10015DD51 /* help1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = help1.png; sourceTree = "<group>"; };
 		BA855A84163A60F10015DD51 /* help2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = help2.png; sourceTree = "<group>"; };
 		BA855A85163A60F10015DD51 /* help2@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "help2@2x.png"; sourceTree = "<group>"; };
@@ -258,6 +262,8 @@
 		BA855A96163A63F10015DD51 /* help3@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "help3@2x.png"; sourceTree = "<group>"; };
 		BAB520AA163A8A3700A11517 /* login_background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = login_background.png; sourceTree = "<group>"; };
 		BAB520AB163A8A3700A11517 /* login_background@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "login_background@2x.png"; sourceTree = "<group>"; };
+		BAB520D6163A8EAF00A11517 /* HelpViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HelpViewController.h; sourceTree = "<group>"; };
+		BAB520D7163A8EAF00A11517 /* HelpViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HelpViewController.m; sourceTree = "<group>"; };
 		BABA5AE91618FA95004BF60B /* spot_free_report.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spot_free_report.png; sourceTree = "<group>"; };
 		BABA5AEA1618FA95004BF60B /* spot_free_report@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "spot_free_report@2x.png"; sourceTree = "<group>"; };
 		FC08BB791590D1F40077659C /* PQSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PQSettingsViewController.h; sourceTree = "<group>"; };
@@ -405,6 +411,7 @@
 				8703ACBA1513F841002FE357 /* PQAppDelegate.m */,
 				FC8E6CFF15C1E67600F443C5 /* Settings */,
 				FC8E6D0015C1E6AC00F443C5 /* Bookmarks */,
+				BAB520D5163A8E6C00A11517 /* Help */,
 				FCA421C315C31E5B003D5758 /* Login */,
 				FC11B28B15BDD1E2001AB653 /* SelfReportingViewController.h */,
 				FC11B28C15BDD1E2001AB653 /* SelfReportingViewController.m */,
@@ -554,6 +561,17 @@
 				87EC1FDC1613EABC006D9E2F /* RestKitResources.bundle */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		BAB520D5163A8E6C00A11517 /* Help */ = {
+			isa = PBXGroup;
+			children = (
+				BAB520D6163A8EAF00A11517 /* HelpViewController.h */,
+				BAB520D7163A8EAF00A11517 /* HelpViewController.m */,
+				BA5A0225163A942600841EDF /* HelpThreeViewController.h */,
+				BA5A0226163A942600841EDF /* HelpThreeViewController.m */,
+			);
+			name = Help;
 			sourceTree = "<group>";
 		};
 		FC72148B1592286400D228C6 /* Objects */ = {
@@ -866,6 +884,8 @@
 				FC410CB815C06B67003C4523 /* UserInfo.m in Sources */,
 				FC8367EB15DAA33000EF4FC6 /* User.m in Sources */,
 				BA2D2094162D019F0085E232 /* SelfReportingStaticViewController.m in Sources */,
+				BAB520D8163A8EAF00A11517 /* HelpViewController.m in Sources */,
+				BA5A0227163A942600841EDF /* HelpThreeViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

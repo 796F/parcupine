@@ -9,6 +9,7 @@
 #import "PQLoginViewController.h"
 #import "PQAppDelegate.h"
 #import "MBProgressHUD.h"
+#import "HelpViewController.h"
 
 #define TOS_ALERT_VIEW 0
 
@@ -67,10 +68,24 @@
         user = [networkLayer loginEmail:emailField.text AndPassword:@"a"];
     }
     if(user!=nil){
-        //correct!
+        // Register / login success
         [dataLayer setLoggedIn:YES];
         parent.view.hidden = NO;
-        [self dismissModalViewControllerAnimated:YES];
+        
+        // TODO(PILOT) turn off the help screen if wanted here.
+        
+        // If registering, show them help screen.
+        // Can also show them help screen on login too.
+        if(confirmEmailField.hidden == NO){
+            UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
+            HelpViewController *help = [storyboard instantiateViewControllerWithIdentifier:@"help"];
+
+            [self.navigationController pushViewController:help animated:YES];
+        
+        } else {
+            [self dismissModalViewControllerAnimated:YES];
+        }
+    
     }else{
         //launch alert.  
         UIAlertView* spotTakenAlert = [[UIAlertView alloc] initWithTitle:@"Could not log in!" message:@"Please check input" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
