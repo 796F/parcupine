@@ -40,6 +40,7 @@ import parkservice.gridservice.model.UserLoginResponse;
 import parkservice.model.AuthRequest;
 import parkservice.model.ParkRequest;
 import parkservice.model.ParkResponse;
+import parkservice.model.ParkSync;
 import parkservice.model.RefillRequest;
 import parkservice.model.RefillResponse;
 import parkservice.model.UnparkRequest;
@@ -66,6 +67,7 @@ import AuthNet.Rebill.ServiceSoap;
 import com.parq.server.dao.LicensePlateDao;
 import com.parq.server.dao.MiscellaneousDao;
 import com.parq.server.dao.ParkingRateDao;
+import com.parq.server.dao.ParkingSpaceDao;
 import com.parq.server.dao.ParkingStatusDao;
 import com.parq.server.dao.PaymentAccountDao;
 import com.parq.server.dao.UserDao;
@@ -1052,7 +1054,7 @@ public class ParkResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public UserLoginResponse login(JAXBElement<AuthRequest> jaxbRequest) {
 		AuthRequest authRequest = jaxbRequest.getValue();
-		
+		Date nowTime = new Date();
 		UserLoginResponse response = new UserLoginResponse();
 		User user = innerAuthenticate(authRequest);
 		if(user != null){
@@ -1072,6 +1074,36 @@ public class ParkResource {
 			if (balance != null) {
 				response.setBalance(balance.getAccountBalance());
 			}
+			//now check to see if user is parked.  
+			ParkingStatusDao psd = new ParkingStatusDao();
+			Date endTime = null;
+			ParkingInstance pi = null;
+			try{
+				pi = psd.getUserParkingStatus(user.getUserID());
+				endTime = pi.getParkingEndTime();
+				if(endTime.compareTo(nowTime)>0){
+					// user is currently parked.
+					ParkingRateDao prd = new ParkingRateDao();
+					ParkSync sync = new ParkSync();
+					ParkingRate pr = prd.getParkingRateBySpaceId(pi.getSpaceId());
+					ParkingSpaceDao psdao = new ParkingSpaceDao();
+					ParkingSpace pspace = psdao.getParkingSpaceBySpaceId(pi.getSpaceId());
+					sync.setLocation(pspace.getSpaceName());
+					sync.setSpotNumber(pspace.getSpaceIdentifier());
+					sync.setEndTime(endTime.getTime());
+					sync.setParkingReferenceNumber(pi.getParkingRefNumber());
+					sync.setDefaultRate(pr.getParkingRateCents());
+					sync.setMaxTime(pr.getMaxParkMins());
+					sync.setMinIncrement(pr.getTimeIncrementsMins());
+					sync.setMinTime(pr.getMinParkMins());
+					sync.setSpotId(pi.getSpaceId());
+					response.setSync(sync);
+					//else, user was parked and endTime has passed.
+				}
+			}catch(Exception e){
+				//DAO ERROR.  
+			}
+			
 		} else {
 			response.setAutherized(false);
 		}
