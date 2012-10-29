@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="2843" systemVersion="12C60" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="2">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="2843" systemVersion="11G63" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="2">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="1929"/>
     </dependencies>
@@ -807,14 +807,12 @@
                                         <outlet property="delegate" destination="V9C-KW-Llm" id="GMj-FV-Lhf"/>
                                     </connections>
                                 </textField>
-
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" id="KCI-uu-H5o">
                                     <rect key="frame" x="57" y="292" width="80" height="29"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="12"/>
                                     <state key="normal" title="Register">
                                         <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-
                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                     </state>
                                     <state key="highlighted">
@@ -1730,8 +1728,6 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         <class className="PQLoginViewController" superclassName="UITableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/PQLoginViewController.h"/>
             <relationships>
-                <relationship kind="action" name="registerButtonPressed:"/>
-                <relationship kind="action" name="submitButtonPressed:"/>
                 <relationship kind="outlet" name="backLabel" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="confirmEmailField" candidateClass="UITextField"/>
                 <relationship kind="outlet" name="emailField" candidateClass="UITextField"/>
@@ -1745,17 +1741,6 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         <class className="PQMapViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/PQMapViewController.h"/>
             <relationships>
-                <relationship kind="action" name="cancelDropPinButtonPressed:"/>
-                <relationship kind="action" name="dropPinButtonPressed:"/>
-                <relationship kind="action" name="findMeButtonPressed:"/>
-                <relationship kind="action" name="gridButtonPressed:"/>
-                <relationship kind="action" name="justParkMeButtonPressed:"/>
-                <relationship kind="action" name="loadMockData:"/>
-                <relationship kind="action" name="numPadSubmit:"/>
-                <relationship kind="action" name="selfEnforcePressed:"/>
-                <relationship kind="action" name="settingsButtonPressed:"/>
-                <relationship kind="action" name="spotButtonPressed:"/>
-                <relationship kind="action" name="streetButtonPressed:"/>
                 <relationship kind="outlet" name="availabilitySelectionBar" candidateClass="UISegmentedControl"/>
                 <relationship kind="outlet" name="availabilitySelectionView" candidateClass="UIView"/>
                 <relationship kind="outlet" name="bottomSpotSelectionBar" candidateClass="UISegmentedControl"/>
@@ -1823,8 +1808,6 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         <class className="PQSettingsViewController" superclassName="UITableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/PQSettingsViewController.h"/>
             <relationships>
-                <relationship kind="action" name="doneButtonPressed:"/>
-                <relationship kind="action" name="signOutButtonPressed:"/>
                 <relationship kind="outlet" name="addrCellView" candidateClass="UIView"/>
                 <relationship kind="outlet" name="addrLabel" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="balanceCellView" candidateClass="UIView"/>
