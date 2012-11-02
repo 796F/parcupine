@@ -13,7 +13,6 @@
 #define FIRST_SPOT_INDEX 101
 
 @implementation SelfReportingStaticViewController
-@synthesize bottomImage;
 @synthesize leftButton;
 @synthesize rightButton;
 @synthesize networkLayer;
@@ -39,9 +38,9 @@
     //SUBMIT THE INFORMATION TO SERVER.
 
     NSMutableArray* orderedAvailability = [[NSMutableArray alloc] initWithCapacity:6];
-    for(UISegmentedControl* spot in switchObjects){
+    for(UIButton* spot in switchObjects){
         // 1 is open, 0 is taken
-        if (spot.selectedSegmentIndex == 0) {
+        if (spot.selected) {
             [orderedAvailability addObject:[NSNumber numberWithInt:1]];
         } else {
             [orderedAvailability addObject:[NSNumber numberWithInt:0]];
@@ -74,20 +73,30 @@
     return self;
 }
 
+- (IBAction) toggleButton:(id)sender {
+    if ([sender isSelected]) {
+        [sender setSelected:NO];
+    } else {
+        [sender setSelected:YES];
+    }
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     self.userLabel.hidden = YES;
     
-    NSArray* switchObjects = [NSArray arrayWithObjects:spot0, spot1, spot2, spot3, spot4, spot5, nil];
+    NSArray* spotButtons = [NSArray arrayWithObjects:spot0, spot1, spot2, spot3, spot4, spot5, nil];
     
+    // If user has parked, set their spot number as taken and do not allow to change
+    // Also label that spot for ease of use.
     if (self.spotNumber >= 1 && self.spotNumber <= 106) {
         // Set label at spot location
         CGPoint oldOrigin = self.userLabel.frame.origin;
         CGSize oldSize = self.userLabel.frame.size;
         
         // shift label "You are here -->" label down this much per spot
-        int shift = (self.spotNumber - FIRST_SPOT_INDEX) * 51;
+        int shift = (self.spotNumber - FIRST_SPOT_INDEX) * 44;
         
         CGRect newRect = CGRectMake(oldOrigin.x, oldOrigin.y + shift, oldSize.width, oldSize.height);
         self.userLabel.frame = newRect;
@@ -96,61 +105,15 @@
         // User parked at spot: Forced to mark as taken.
         int spotIndex = self.spotNumber - FIRST_SPOT_INDEX;
         if (spotIndex < 6) {
-            UISegmentedControl *userControl = [switchObjects objectAtIndex:spotIndex];
-            userControl.selectedSegmentIndex = 1;
+            UIButton *userControl = [spotButtons objectAtIndex:spotIndex];
+            userControl.selected = YES;
             userControl.userInteractionEnabled = NO;
         }
     }
     
-    
-    
-    self.bottomImage.userInteractionEnabled = YES;
-    self.bottomImage.multipleTouchEnabled = YES;
     // Ensure network connection 
     if(!networkLayer){
         networkLayer = ((PQAppDelegate*)[[UIApplication sharedApplication] delegate]).networkLayer;
-    }
-    
-    // Set up map view: Single taps to turn on/off reporting
-    UITapGestureRecognizer* singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
-    [self.bottomImage addGestureRecognizer:singleTap];
-    
-    // TAP COORDINATES GO FROM TOP LEFT. 
-    
-    // @TODO(PILOT) Static (no zoom/scroll) map at certain point
-    CLLocationCoordinate2D point = {42.357820, -71.094310};
-    float left = -71.094310 - 0.000429 / 2;
-    float bot = 42.357820 - 0.000277 / 2;
-    float pixelToLatScale = 0.000277 / 285; // 285 height
-    float pixelToLonScale = 0.000429 / 320;
-    
-    // map view region span lat: 0.000277, lon: 0.000429 (possibly maximum zoom:
-    // See http://stackoverflow.com/questions/12599565/how-to-match-ios5-max-zoomlevel-mkmapview-in-ios6
-    
-    // Load spots
-    for(NSString* string in [self loadSpots]){
-        NSArray* components = [string componentsSeparatedByString:@","];
-        double lat = [[components objectAtIndex:0] floatValue];
-        double lon = [[components objectAtIndex:1] floatValue];
-        CLLocationCoordinate2D coord = CLLocationCoordinate2DMake(lat, lon);
-        
-        double x = (lon - left) / pixelToLonScale;
-        double y = (lat - bot) / pixelToLatScale;
-        
-        
-        // Scale it to pixel numbers here:
-        //CGPoint = {
-        CGRect pinrect = CGRectMake(x, y, 37, 37); // size of largest spot
-        
-        // Add the annotation onto imageView
-        
-        
-        
-        // CGContextDrawImage(<#CGContextRef c#>, <#CGRect rect#>, <#CGImageRef image#>)
-        // self.bottomImage
-        PQParkedCarAnnotation *annotation = [[PQParkedCarAnnotation alloc] initWithCoordinate:coord addressDictionary:nil];
-        annotation.title = [components objectAtIndex:2];
-        //  [self.mapView addAnnotation:annotation];
     }
 }
 
