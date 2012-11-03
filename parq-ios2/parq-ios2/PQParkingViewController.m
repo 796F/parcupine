@@ -29,7 +29,6 @@ typedef enum {
 @property (strong, nonatomic) NSTimer *timer;
 @property (strong, nonatomic) NSTimer *expiresAtTimer;
 @property (strong, nonatomic) NSDate *prepaidEndTime;
-@property (strong, nonatomic) NSDate *startTime;
 @property (strong, nonatomic) NSDateFormatter *dateFormatter;
 @end
 
@@ -70,7 +69,6 @@ typedef enum {
 @synthesize timer;
 @synthesize expiresAtTimer;
 @synthesize prepaidEndTime;
-@synthesize startTime;
 @synthesize dateFormatter;
 @synthesize parent;
 @synthesize spotInfo;
@@ -85,7 +83,8 @@ typedef enum {
     unparkButton.hidden = NO;
     extendButton.hidden = prepaidFlag.hidden;
     self.navigationItem.leftBarButtonItem = nil;
-    [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]].userInteractionEnabled = NO;
+    UITableViewCell *cell =[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+    cell.userInteractionEnabled = NO;
     [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0]].accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     [self.tableView reloadData];
     datePicker.countDownDuration = 0;
@@ -120,32 +119,43 @@ typedef enum {
 }
 
 #pragma mark - Parked state transitions
--(void)parkingAsPrepaid {
+- (void)parkingAsPrepaidWithEndTime:(NSDate *)endTime {
+    prepaidEndTime = endTime;
     [expiresAtTimer invalidate];
-    [self scheduleLocalNotification:prepaidEndTime];
-
-    [dataLayer setEndTime:prepaidEndTime];
-    [dataLayer setStartTime:startTime];
-    [dataLayer setSpotInfo:self.spotInfo];
+    [self scheduleLocalNotification:endTime];
 
     timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updatePrepaidTimer) userInfo:nil repeats:YES];
+    [self updatePrepaidTimer];
 }
 
--(void)parkingAsPayg {
-    [dataLayer setStartTime:startTime];
-    timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updatePaygTimer) userInfo:nil repeats:YES];
+- (void)parkingAsPaygWithStartTime:(NSDate *)startTime {
+    timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updatePaygTimer:) userInfo:startTime repeats:YES];
+    [self updatePaygTimer:timer];
 }
 
 #pragma mark - Main button actions
 - (IBAction)startTimer:(id)sender {
-    if ([networkLayer parkUserWithSpotInfo:self.spotInfo AndDuration:datePicker.countDownDuration]) {
+    if (!prepaidFlag.hidden) { // Prepaid
+        [NetworkLayer parkPrepaidWithDuration:datePicker.countDownDuration spotId:[spotInfo.spotId unsignedLongLongValue] delegate:self];
+    } else { // Pay as you go
+        [NetworkLayer parkPaygWithSpotId:[spotInfo.spotId unsignedLongLongValue] delegate:self];
+    }
+}
+
+- (void)afterParking:(BOOL)success endTime:(NSDate *)endTime parkingReference:(NSString *)parkingRef {
+    if (success) {
+        [DataLayer setParkingReference:parkingRef];
         if (!prepaidFlag.hidden) { // Prepaid
-            startTime = [NSDate date];
-            prepaidEndTime = [startTime dateByAddingTimeInterval:datePicker.countDownDuration];
-            [self parkingAsPrepaid];
+            [DataLayer setEndTime:endTime];
+            [DataLayer setSpotInfo:self.spotInfo];
+            [DataLayer setParkingMode:kPrepaidParkMode];
+            [self parkingAsPrepaidWithEndTime:endTime];
         } else { // Pay as you go
-            startTime = [NSDate date];
-            [self parkingAsPayg];
+            NSDate *startTime = [NSDate date];
+            [DataLayer setStartTime:startTime];
+            [DataLayer setSpotInfo:self.spotInfo];
+            [DataLayer setParkingMode:kPaygParkMode];
+            [self parkingAsPaygWithStartTime:startTime];
         }
         [self parkedAfterParking];
         UIAlertView* askToHelpAlert = [[UIAlertView alloc] initWithTitle:@"Earn Parcupine Points" message:@"By telling us which spots around you are taken" delegate:self cancelButtonTitle:@"No thanks" otherButtonTitles:@"Sure", nil];
@@ -178,12 +188,8 @@ typedef enum {
 #pragma mark - UIActionSheetDelegate
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (actionSheet.tag == ACTIONSHEET_UNPARK && buttonIndex == actionSheet.destructiveButtonIndex) {
-        [dataLayer logString:[NSString stringWithFormat:@"%@ %s",@"unpark", __PRETTY_FUNCTION__]];
-        [timer invalidate];
-        //invalidate restore info
-        [dataLayer setEndTime:[NSDate distantPast]];
         [NetworkLayer unparkWithDelegate:nil];
-        [self dismissModalViewControllerAnimated:YES];
+        [self afterUnparking:YES];
     } else if (actionSheet.tag == ACTIONSHEET_EXTEND && buttonIndex == actionSheet.firstOtherButtonIndex) {
         [dataLayer logString:[NSString stringWithFormat:@"EXTEND %s", __PRETTY_FUNCTION__]];
         [NetworkLayer extendWithDuration:datePicker.countDownDuration/60 andDelegate:self];
@@ -192,21 +198,31 @@ typedef enum {
     [networkLayer sendLogs];
 }
 
-- (void)afterExtending:(BOOL)success toTime:(NSDate *)endTime withParkingRef:(NSString *)parkingReference {
+- (void)afterExtending:(BOOL)success endTime:(NSDate *)endTime parkingReference:(NSString *)parkingReference {
     // TODO: Dismiss progress indicator
     if (success) {
         prepaidEndTime = endTime;
         [DataLayer setParkingReference:parkingReference];
         //update the end time for resume use.
-        [dataLayer setEndTime:endTime];
-        [dataLayer setSpotInfo:self.spotInfo];
+        [DataLayer setEndTime:endTime];
 
         int totalMinutes = ([endTime timeIntervalSinceNow]+59)/60;
         hours.text = [NSString stringWithFormat:@"%02d", totalMinutes/60];
         minutes.text = [NSString stringWithFormat:@"%02d", totalMinutes%60];
         expiresAtTime.text = [dateFormatter stringFromDate:endTime];
-        [self scheduleLocalNotification:prepaidEndTime]; //reset the notifications.
+        [self scheduleLocalNotification:endTime]; //reset the notifications.
         [self parkedAfterExtending];
+    }
+}
+
+- (void)afterUnparking:(BOOL)success {
+    if (success) {
+        [dataLayer logString:[NSString stringWithFormat:@"%@ %s",@"unpark", __PRETTY_FUNCTION__]];
+        [timer invalidate];
+        //invalidate restore info
+        [DataLayer setParkingMode:kUnparkedParkMode];
+        [DataLayer setEndTime:[NSDate distantPast]];
+        [self dismissModalViewControllerAnimated:YES];
     }
 }
 
@@ -271,8 +287,7 @@ typedef enum {
 
     if (remainingSeconds < 1) {
         //out of time.
-        [timer invalidate];
-        [self dismissModalViewControllerAnimated:YES];
+        [self afterUnparking:YES];
     }
 
     if (parkState == kParkedParkState) {
@@ -294,8 +309,8 @@ typedef enum {
     }
 }
 
-- (void)updatePaygTimer {
-    int totalMinutes = (-[startTime timeIntervalSinceNow]+59)/60;
+- (void)updatePaygTimer:(id)sender {
+    int totalMinutes = (-[((NSTimer *)sender).userInfo timeIntervalSinceNow]+59)/60;
     hours.text = [NSString stringWithFormat:@"%02d", totalMinutes/60];
     minutes.text = [NSString stringWithFormat:@"%02d", totalMinutes%60];
     colon.hidden = !colon.hidden;
@@ -449,7 +464,6 @@ typedef enum {
         extendActionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
         extendActionSheet.tag = ACTIONSHEET_EXTEND;
         [extendActionSheet showInView:self.tableView];
-
     }
 }
 
@@ -564,13 +578,6 @@ typedef enum {
         networkLayer = ((PQAppDelegate*)[[UIApplication sharedApplication] delegate]).networkLayer;
     }
 
-    self.navigationItem.title =[NSString stringWithFormat:@"%@, #%d", spotInfo.streetName, spotInfo.spotNumber.intValue];
-    self.address = spotInfo.fullAddress;
-
-    rateNumeratorCents = [spotInfo.rateCents intValue];
-    rateDenominatorMinutes = [spotInfo.minuteInterval intValue];
-    limit = [spotInfo.maxTime intValue];
-
     // Initialize variables
     parkState = kParkingParkState;
     dateFormatter = [[NSDateFormatter alloc] init];
@@ -584,6 +591,28 @@ typedef enum {
     hours.font = [UIFont fontWithName:@"OCR B Std" size:60];
     minutes.font = [UIFont fontWithName:@"OCR B Std" size:60];
 
+    // Restore previous session if it is found
+    ParkMode parkingMode = [DataLayer parkingMode];
+    if (parkingMode == kPrepaidParkMode) {
+        NSDate* endTime = [DataLayer endTime];
+        if ([endTime compare:[NSDate date]] == NSOrderedDescending) {
+            spotInfo = [DataLayer spotInfo];
+            [self parkedAfterParking];
+            [self parkingAsPrepaidWithEndTime:endTime];
+            expiresAtTime.text = [dateFormatter stringFromDate:endTime];
+        }
+    } else if (parkingMode == kPaygParkMode) {
+        spotInfo = [DataLayer spotInfo];
+        [self parkedAfterParking];
+        [self parkingAsPaygWithStartTime:[DataLayer startTime]];
+    }
+
+    self.navigationItem.title =[NSString stringWithFormat:@"%@, #%d", spotInfo.streetName, spotInfo.spotNumber.intValue];
+    self.address = spotInfo.fullAddress;
+
+    rateNumeratorCents = [spotInfo.rateCents intValue];
+    rateDenominatorMinutes = [spotInfo.minuteInterval intValue];
+    limit = [spotInfo.maxTime intValue];
 
 /*
     // rateNumerator
@@ -640,22 +669,14 @@ typedef enum {
     paygFlag.center = CGPointMake(0, 99);
     prepaidFlag.layer.anchorPoint = CGPointMake(0.0,1.0);
     prepaidFlag.center = CGPointMake(0, 102);
-    paygFlag.transform = CGAffineTransformRotate(CGAffineTransformIdentity, M_PI/4);
-
-    // Restore previous session if it is found
-    NSDate* endTime = [dataLayer getEndTime];
-    if ([endTime compare:[NSDate date]] == NSOrderedDescending) {
+    if (parkingMode == kPrepaidParkMode) {
+        paygFlag.hidden = YES;
         [self prepaidSelected];
         [self resignPicker];
-        prepaidEndTime = endTime;
-        startTime = [dataLayer getStartTime];
-        [self parkingAsPrepaid];
-        expiresAtTime.text = [dateFormatter stringFromDate:prepaidEndTime];
-        [self parkedAfterParking];
-        [self updatePrepaidTimer];
+    } else {
+        paygFlag.transform = CGAffineTransformRotate(CGAffineTransformIdentity, M_PI/4);
+        [self animateFlagIn:paygFlag];
     }
-
-    [self animateFlagIn:paygFlag];
 }
 
 - (void)viewDidUnload
@@ -697,6 +718,12 @@ typedef enum {
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    if ([DataLayer parkingMode] != kUnparkedParkMode) {
+        self.navigationItem.leftBarButtonItem = nil;
+        UITableViewCell *cell =[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+        cell.userInteractionEnabled = NO;
+        [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0]].accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    }
 }
 
 - (void)viewDidAppear:(BOOL)animated

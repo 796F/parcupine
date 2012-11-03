@@ -9,6 +9,24 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class AddUserReportingResponse {
 
 	private boolean updateSuccessful;
+	private String resp;
+	private int statusCode;
+
+	public String getResp() {
+		return resp;
+	}
+
+	public void setResp(String resp) {
+		this.resp = resp;
+	}
+
+	public int getStatusCode() {
+		return statusCode;
+	}
+
+	public void setStatusCode(int statusCode) {
+		this.statusCode = statusCode;
+	}
 
 	public boolean isUpdateSuccessful() {
 		return updateSuccessful;

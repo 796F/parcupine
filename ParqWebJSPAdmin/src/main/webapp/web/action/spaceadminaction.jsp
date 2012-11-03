@@ -44,5 +44,10 @@
 		System.out.println("Spot updated: " + updatedSpot.size());
 		service.updateParkingStatus(1L, updatedSpot);
 	%>
-	<jsp:forward page="/web/spaceadmin.jsp"/>
+	
+	<head>
+		<title>Parqupine</title>
+		<meta http-equiv="REFRESH" content="1;url=http://parqme.com/ParqAdmin/">
+	</head>
+	<BODY></BODY>
 </html>
