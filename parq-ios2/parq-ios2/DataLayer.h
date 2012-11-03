@@ -21,6 +21,12 @@ typedef enum {
     kStreetEntity
 } EntityType;
 
+typedef enum {
+    kUnparkedParkMode,
+    kPrepaidParkMode,
+    kPaygParkMode
+} ParkMode;
+
 @property (nonatomic,retain) PQMapViewController* mapController;
 
 - (NSSet *)fetchObjectsForEntityName:(NSString *)newEntityName
@@ -44,17 +50,20 @@ typedef enum {
 -(void) setLoggedIn:(BOOL) yesORno;
 -(void) setLastReportTime:(NSDate*) lastReportTime;
 -(NSDate*) getLastReportTime;
--(void) setEndTime:(NSDate*) endTime;
--(NSDate*) getEndTime;
--(NSNumber*) getSpotId;
--(void) setStartTime:(NSDate*) startTime;
--(NSDate*) getStartTime;
--(void) setSpotId:(NSNumber*) spotId;
--(void) setSpotInfo:(SpotInfo*) spotInfo;
--(SpotInfo*) getSpotInfo;
--(void) logString:(NSString*) string;
++ (void)setEndTime:(NSDate*)endTime;
++ (NSDate *)endTime;
++ (void)setStartTime:(NSDate*)startTime;
++ (NSDate *)startTime;
++ (void)setParkingMode:(ParkMode)parkingMode;
++ (ParkMode)parkingMode;
++ (void)setSpotInfo:(SpotInfo*) spotInfo;
++ (SpotInfo *)spotInfo;
 + (void)setParkingReference:(NSString*) ref;
 + (NSString*)parkingReference;
++ (void)clearSavedParkingSession;
+-(NSNumber*) getSpotId;
+-(void) setSpotId:(NSNumber*) spotId;
+-(void) logString:(NSString*) string;
 //debug
 -(void) testFetch:(EntityType)entityType Microblocks:(NSArray*) microBlockIDs;
 -(void) loadMockData;

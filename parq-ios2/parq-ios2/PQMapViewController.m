@@ -2104,13 +2104,15 @@ typedef struct{
 -(void) checkLoggedIn{
     if([dataLayer isLoggedIn]){
         //already logged in.  dont' hsow login screen.
-        NSDate* endTime = [dataLayer getEndTime];
-        if([endTime laterDate:[NSDate date]] == endTime){
+        NSDate* endTime = [DataLayer endTime];
+        ParkMode parkingMode = [DataLayer parkingMode];
+        if (parkingMode == kPaygParkMode || (parkingMode == kPrepaidParkMode && [endTime compare:[NSDate date]] == NSOrderedDescending)) {
             //parked, keep map hidden, show timer.
-            self.spotInfo = [dataLayer getSpotInfo];
+            self.spotInfo = [DataLayer spotInfo];
             [self parkNow];
         }else{
             //not parked, show map.
+            [DataLayer clearSavedParkingSession];
             self.view.hidden = NO;
             NSLog(@"reveal the map\n");
         }

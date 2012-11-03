@@ -24,19 +24,6 @@
 @synthesize mapController;
 
 #pragma mark - plist calls
--(void) setSpotInfo:(SpotInfo*) spotInfo{
-    NSData* objData = [NSKeyedArchiver archivedDataWithRootObject:spotInfo];
-    NSString* path = [[self class] plistPath];
-    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
-    [data setObject:objData forKey:@"spotInfo"];
-    [data writeToFile:path atomically:YES];
-}
-
--(SpotInfo*) getSpotInfo{
-    NSString* path = [[self class] plistPath];
-    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
-    return [NSKeyedUnarchiver unarchiveObjectWithData:[data objectForKey:@"spotInfo"]];
-}
 
 -(void) setSpotId:(NSNumber*) spotId{
     //set the currelyt parked spot's id for restore use.
@@ -65,35 +52,81 @@
     return [data objectForKey:@"lastReportTime"];
 }
 
--(void) setStartTime:(NSDate*) startTime{
-    NSLog(@"setting lastrepTime = %f\n", [startTime timeIntervalSince1970]);
-    NSString* path = [[self class] plistPath];
-    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
-    [data setObject:startTime forKey:@"startTime"];
-    [data writeToFile:path atomically:YES];
-}
--(NSDate*) getStartTime{
-    NSString* path = [[self class] plistPath];
-    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
-    return [data objectForKey:@"startTime"];
-}
-
--(void) setEndTime:(NSDate*) endTime{
++ (void)setEndTime:(NSDate *)endTime {
     NSLog(@"setting endTime = %f\n", [endTime timeIntervalSince1970]);
-    NSString* path = [[self class] plistPath];
+    NSString *path = [[self class] plistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
     [data setObject:endTime forKey:@"endTime"];
     [data writeToFile:path atomically:YES];
 }
--(NSDate*) getEndTime{
-    NSString* path = [[self class] plistPath];
++ (NSDate *)endTime {
+    NSString *path = [[self class] plistPath];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
     NSDate* endDate = [data objectForKey:@"endTime"];
     if (endDate == nil) {
-        return [NSDate dateWithTimeIntervalSinceNow:-9000];
-    }else{
+        return [NSDate distantPast];
+    } else {
         return endDate;
     }
+}
+
++ (void)setStartTime:(NSDate *)startTime {
+    NSString *path = [[self class] plistPath];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
+    [data setObject:startTime forKey:@"startTime"];
+    [data writeToFile:path atomically:YES];
+}
++ (NSDate *)startTime {
+    NSString *path = [[self class] plistPath];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
+    return [data objectForKey:@"startTime"];
+}
+
++ (void)setParkingMode:(ParkMode)parkingMode {
+    NSString *path = [[self class] plistPath];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
+    data[@"parkingMode"] = @(parkingMode);
+    [data writeToFile:path atomically:YES];
+}
+
++ (ParkMode)parkingMode {
+    NSString *path = [[self class] plistPath];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
+    return [data[@"parkingMode"] intValue];
+}
+
++ (void)setSpotInfo:(SpotInfo *)spotInfo {
+    NSData *objData = [NSKeyedArchiver archivedDataWithRootObject:spotInfo];
+    NSString *path = [[self class] plistPath];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
+    [data setObject:objData forKey:@"spotInfo"];
+    [data writeToFile:path atomically:YES];
+}
+
++ (SpotInfo *)spotInfo {
+    NSString *path = [[self class] plistPath];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
+    return [NSKeyedUnarchiver unarchiveObjectWithData:[data objectForKey:@"spotInfo"]];
+}
+
++ (NSString *)parkingReference {
+    NSString* path = [[self class] plistPath];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
+    return [data objectForKey:@"parkingReferenceNumber"];
+}
+
++ (void)setParkingReference:(NSString*) ref{
+    NSString* path = [[self class] plistPath];
+    NSMutableDictionary *plist = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
+    [plist setObject:ref forKey:@"parkingReferenceNumber"];
+    [plist writeToFile:path atomically:YES];
+}
+
++ (void)clearSavedParkingSession {
+    NSString *path = [[self class] plistPath];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
+    [data removeObjectsForKeys:@[@"endTime", @"startTime", @"parkingMode", @"spotInfo", @"parkingReferenceNumber"]];
+    [data writeToFile:path atomically:YES];
 }
 
 -(void) logString:(NSString*) string{
@@ -450,19 +483,6 @@
     NSError *error = nil;
     NSArray* returnedObjects = [[[self class] managedObjectContext] executeFetchRequest:request error:&error];
     return (User *)[returnedObjects lastObject];
-}
-
-+ (NSString *)parkingReference {
-    NSString* path = [[self class] plistPath];
-    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
-    return [data objectForKey:@"parkingReferenceNumber"];
-}
-
-+ (void)setParkingReference:(NSString*) ref{
-    NSString* path = [[self class] plistPath];
-    NSMutableDictionary *plist = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
-    [plist setObject:ref forKey:@"parkingReferenceNumber"];
-    [plist writeToFile:path atomically:YES];
 }
 
 + (NSManagedObjectContext *)managedObjectContext {
