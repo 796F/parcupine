@@ -14,6 +14,7 @@ import parkservice.model.RefillRequest;
 import parkservice.model.RefillResponse;
 import parkservice.resources.ParkResource;
 import parkservice.userscore.model.AddUserReportingRequest;
+import parkservice.userscore.model.AddUserReportingResponse;
 import parkservice.userscore.model.GetUserScoreRequest;
 import parkservice.userscore.model.GetUserScoreResponse;
 import parkservice.userscore.model.UpdateUserScoreRequest;
@@ -21,7 +22,7 @@ import parkservice.userscore.model.UpdateUserScoreRequest;
 public class TestParkResource extends TestCase {
 	
 	private static final long UNIT_TEST_USER_ID = 14L;
-	private static final String PARKING_INST_REF_NUM = "14:111:1350181073";
+	private static String PARKING_INST_REF_NUM = "14:111:1350181073";
 	private ParkResource parkResource = null;
 	
 	@Override
@@ -30,7 +31,7 @@ public class TestParkResource extends TestCase {
 		parkResource = new ParkResource();
 	}
 
-	public void _testPilotParkUser() {
+	public void testPilotParkUser() {
 		GetUserScoreRequest getUserScoreRequest = new GetUserScoreRequest();
 		getUserScoreRequest.setUserId(UNIT_TEST_USER_ID);
 		JAXBElement<GetUserScoreRequest> testRequest = new JAXBElement<GetUserScoreRequest>(
@@ -50,6 +51,8 @@ public class TestParkResource extends TestCase {
 				new QName("Test"), ParkRequest.class, parkRequest);
 		ParkResponse response = parkResource.pilotParkUser(testParkRequest);
 		System.out.println(response.getResp());
+		System.out.println(response.getParkingReferenceNumber());
+		PARKING_INST_REF_NUM = response.getParkingReferenceNumber();
 		
 		// get the new score
 		GetUserScoreRequest getUserScoreRequestNew = new GetUserScoreRequest();
@@ -103,7 +106,7 @@ public class TestParkResource extends TestCase {
 		System.out.println(newScoreResponse.getScore1());
 	}
 	
-	public void _testGetUserScore() {
+	public void testGetUserScore() {
 		GetUserScoreRequest getUserScoreRequest = new GetUserScoreRequest();
 		getUserScoreRequest.setUserId(UNIT_TEST_USER_ID);
 		
@@ -115,7 +118,7 @@ public class TestParkResource extends TestCase {
 		System.out.println("UserId: " + response.getUserId());
 	}
 	
-	public void _testUpdateUserScore() {
+	public void testUpdateUserScore() {
 		int newScore1 = (int)(Math.random() * 1000);
 		int newScore2 = (int)(Math.random() * 1000);
 		int newScore3 = (int)(Math.random() * 1000);
@@ -140,7 +143,7 @@ public class TestParkResource extends TestCase {
 		assertEquals(UNIT_TEST_USER_ID, response.getUserId());
 	}
 	
-	public void _testAddUserReport(){
+	public void testAddUserReport(){
 		GetUserScoreRequest getUserScoreRequest = new GetUserScoreRequest();
 		getUserScoreRequest.setUserId(UNIT_TEST_USER_ID);
 		JAXBElement<GetUserScoreRequest> testRequest = new JAXBElement<GetUserScoreRequest>(
@@ -166,7 +169,9 @@ public class TestParkResource extends TestCase {
 		addReportRequest.setSpaceIds(spaceList);
 		JAXBElement<AddUserReportingRequest> testAddReportRequest = new JAXBElement<AddUserReportingRequest>(
 				new QName("Test"), AddUserReportingRequest.class, addReportRequest);
-		parkResource.addUserReporting(testAddReportRequest);
+		AddUserReportingResponse addScoreResponse = parkResource.addUserReporting(testAddReportRequest);
+		assertEquals("OK", addScoreResponse.getResp());
+		assertEquals(0, addScoreResponse.getStatusCode());
 
 		// get the new score
 		GetUserScoreRequest getUserScoreRequestNew = new GetUserScoreRequest();
@@ -176,6 +181,38 @@ public class TestParkResource extends TestCase {
 		GetUserScoreResponse newScoreResponse = parkResource.getUserScore(newScoreRequest);
 		
 		assertEquals(oldScoreResponse.getScore1() + 60, newScoreResponse.getScore1());
+		assertEquals(oldScoreResponse.getScore2(), newScoreResponse.getScore2());
+		assertEquals(oldScoreResponse.getScore3(), newScoreResponse.getScore3());
+		assertEquals(oldScoreResponse.getUserId(), newScoreResponse.getUserId());
+		
+		// do it again
+		oldScoreResponse = newScoreResponse;
+		addScoreResponse = parkResource.addUserReporting(testAddReportRequest);
+		assertEquals("OK", addScoreResponse.getResp());
+		assertEquals(0, addScoreResponse.getStatusCode());
+		
+		getUserScoreRequestNew = new GetUserScoreRequest();
+		getUserScoreRequestNew.setUserId(UNIT_TEST_USER_ID);
+		newScoreRequest = new JAXBElement<GetUserScoreRequest>(
+				new QName("Test"), GetUserScoreRequest.class, getUserScoreRequestNew);
+		newScoreResponse = parkResource.getUserScore(newScoreRequest);
+		assertEquals(oldScoreResponse.getScore1() + 60, newScoreResponse.getScore1());
+		assertEquals(oldScoreResponse.getScore2(), newScoreResponse.getScore2());
+		assertEquals(oldScoreResponse.getScore3(), newScoreResponse.getScore3());
+		assertEquals(oldScoreResponse.getUserId(), newScoreResponse.getUserId());
+		
+		// do it the third time make sure that the user is not allowed to update
+		oldScoreResponse = newScoreResponse;
+		addScoreResponse = parkResource.addUserReporting(testAddReportRequest);
+		assertEquals("USER_REPORTED_TWICE_ALREDY", addScoreResponse.getResp());
+		assertEquals(-5, addScoreResponse.getStatusCode());
+		
+		getUserScoreRequestNew = new GetUserScoreRequest();
+		getUserScoreRequestNew.setUserId(UNIT_TEST_USER_ID);
+		newScoreRequest = new JAXBElement<GetUserScoreRequest>(
+				new QName("Test"), GetUserScoreRequest.class, getUserScoreRequestNew);
+		newScoreResponse = parkResource.getUserScore(newScoreRequest);
+		assertEquals(oldScoreResponse.getScore1(), newScoreResponse.getScore1());
 		assertEquals(oldScoreResponse.getScore2(), newScoreResponse.getScore2());
 		assertEquals(oldScoreResponse.getScore3(), newScoreResponse.getScore3());
 		assertEquals(oldScoreResponse.getUserId(), newScoreResponse.getUserId());

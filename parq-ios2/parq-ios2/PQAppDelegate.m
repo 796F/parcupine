@@ -33,7 +33,7 @@
 
     //prepare the RK client for server calls upon load
     [RKClient clientWithBaseURL:[NSURL URLWithString:@"http://75.101.132.219/"]];
-
+    //[RKClient clientWithBaseURL:[NSURL URLWithString:@"http://localhost:8080/"]];
     //set up data layer
     dataLayer = [[DataLayer alloc] init];
 

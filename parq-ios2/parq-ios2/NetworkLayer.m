@@ -491,6 +491,7 @@
     return [emailTest evaluateWithObject:candidate];
 }
 -(User*) loginEmail:(NSString*) email AndPassword:(NSString*) pass{
+    return [dataLayer saveUserWithEmail:@"m@m.com" Pass:@"a" License:@"license" UID:@(2) Balance:0];
     //send info to server.  
     
     //initial check of email.
@@ -629,7 +630,7 @@
     RKResponse* response = [request sendSynchronously];
     NSDictionary* parkResults = [Parser parseParkResponse:[response bodyAsString]];
     if(parkResults!=nil){
-        [dataLayer setEndTime:[NSDate dateWithTimeIntervalSince1970:[[parkResults objectForKey:@"endTime"] longValue]]];
+        [DataLayer setEndTime:[NSDate dateWithTimeIntervalSince1970:[[parkResults objectForKey:@"endTime"] longValue]]];
         [DataLayer setParkingReference:[parkResults objectForKey:@"parkingReferenceNumber"]];
         return YES;
     }else{
@@ -662,6 +663,42 @@
     return [dataLayer userDecPoints:lostPoints];
 }
 
++ (void)parkPaygWithSpotId:(unsigned long long)spotId delegate:(id<PQNetworkLayerDelegate>)delegate {
+    User *user = [DataLayer fetchUser];
+
+    NSDictionary *info =
+        @{ @"uid" : user.uid,
+            @"userInfo" :
+                @{ @"email"    : user.email,
+                   @"password" : user.password
+                },
+            @"durationMinutes" : @(120),
+            @"spotId"          : @(spotId)
+        };
+
+    NSError *error;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
+    [[self requestWithResourcePath:@"/parkservice.park/pilotpark" delegate:delegate httpBody:jsonData] send];
+}
+
++ (void)parkPrepaidWithDuration:(NSTimeInterval)durationMinutes spotId:(unsigned long long)spotId delegate:(id<PQNetworkLayerDelegate>)delegate {
+    User *user = [DataLayer fetchUser];
+
+    NSDictionary *info =
+        @{ @"uid" : user.uid,
+           @"userInfo" :
+               @{ @"email"    : user.email,
+                  @"password" : user.password
+               },
+           @"durationMinutes" : @(durationMinutes/60),
+           @"spotId"          : @(spotId)
+        };
+
+    NSError *error;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
+    [[self requestWithResourcePath:@"/parkservice.park/pilotpark" delegate:delegate httpBody:jsonData] send];
+}
+
 + (void)unparkWithDelegate:(id<PQNetworkLayerDelegate>)delegate {
     User *user = [DataLayer fetchUser];
 
@@ -672,10 +709,10 @@
     [[self requestWithResourcePath:@"/parkservice.park/pilotunpark" delegate:delegate httpBody:jsonData] send];
 }
 
-+ (void)extendWithDuration:(NSInteger)durationMinutes andDelegate:(id<PQNetworkLayerDelegate>)delegate {
++ (void)extendWithDuration:(NSTimeInterval)durationMinutes andDelegate:(id<PQNetworkLayerDelegate>)delegate {
     User *user = [DataLayer fetchUser];
 
-    NSDictionary *info = [NSDictionary dictionaryWithObjects:@[user.uid, @{@"email" : user.email, @"password" : user.password}, [DataLayer parkingReference], [NSNumber numberWithInt:durationMinutes]] forKeys:@[@"uid", @"userInfo", @"parkingReferenceNumber", @"durationMinutes"]];
+    NSDictionary *info = [NSDictionary dictionaryWithObjects:@[user.uid, @{@"email" : user.email, @"password" : user.password}, [DataLayer parkingReference], @(durationMinutes)] forKeys:@[@"uid", @"userInfo", @"parkingReferenceNumber", @"durationMinutes"]];
 
     NSError *error;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
@@ -692,21 +729,34 @@
 
 - (void)request:(RKRequest *)request didLoadResponse:(RKResponse *)response {
     NSString *endpoint = response.URL.lastPathComponent;
-    if ([endpoint isEqualToString:@"GetUserScoreRequest"]) {
-        [request.userData afterFetchUserPointsBalance:[Parser parseFetchUserPointsResponse:[response bodyAsString]]];
-    } else if ([endpoint isEqualToString:@"pilotunpark"]) {
-        [request.userData afterUnparking:(response.isSuccessful && [Parser parseUnparkResponse:[response bodyAsString]])];
-    } else if ([endpoint isEqualToString:@"pilotrefill"]) {
+    if ([endpoint isEqualToString:@"pilotpark"]) {
+        id endTime = nil, parkingReference = nil;
         BOOL success = response.isSuccessful;
-        id endTime = nil;
-        id parkingReference = nil;
         if (success) {
-            NSDictionary *result = [Parser parseExtendResponse:[response bodyAsString]];
+            NSDictionary *result = [[response bodyAsString] objectFromJSONString];
             endTime = result[@"endTime"];
             parkingReference = result[@"parkingReferenceNumber"];
-            success = endTime != [NSNull null] && parkingReference != [NSNull null];
+            success = [result[@"resp"] isEqualToString:@"OK"]
+                && endTime != nil && parkingReference != nil;
         }
-        [request.userData afterExtending:success toTime:[NSDate dateWithTimeIntervalSince1970:[endTime doubleValue]/1000] withParkingRef:parkingReference];
+        [request.userData afterParking:success endTime:[NSDate dateWithTimeIntervalSince1970:[endTime doubleValue]/1000] parkingReference:parkingReference];
+    } else if ([endpoint isEqualToString:@"pilotrefill"]) {
+        id endTime = nil, parkingReference = nil;
+        BOOL success = response.isSuccessful;
+        if (success) {
+            NSDictionary *result = [[response bodyAsString] objectFromJSONString];
+            endTime = result[@"endTime"];
+            parkingReference = result[@"parkingReferenceNumber"];
+            success = [result[@"resp"] isEqualToString:@"OK"]
+                && endTime != nil && parkingReference != nil;
+        }
+        [request.userData afterExtending:success endTime:[NSDate dateWithTimeIntervalSince1970:[endTime doubleValue]/1000] parkingReference:parkingReference];
+    } else if ([endpoint isEqualToString:@"pilotunpark"]) {
+        NSDictionary *result = [[response bodyAsString] objectFromJSONString];
+        [request.userData afterUnparking:(response.isSuccessful && [result[@"resp"] isEqualToString:@"OK"])];
+    } else if ([endpoint isEqualToString:@"GetUserScoreRequest"]) {
+        NSDictionary *result = [[response bodyAsString] objectFromJSONString];
+        [request.userData afterFetchUserPointsBalance:[result[@"score1"] integerValue]];
     }
 }
 

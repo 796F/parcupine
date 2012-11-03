@@ -4,6 +4,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import parkservice.model.ParkSync;
+
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlRootElement
 public class UserLoginResponse {
@@ -13,7 +15,19 @@ public class UserLoginResponse {
 	private long uid;
 	private int balance;
 	private boolean autherized;
-
+	ParkSync sync;
+	/**
+	 * @return the sync
+	 */
+	public ParkSync getSync() {
+		return sync;
+	}
+	/**
+	 * @param sync the sync to set
+	 */
+	public void setSync(ParkSync sync) {
+		this.sync = sync;
+	}
 	public String getName() {
 		return name;
 	}
