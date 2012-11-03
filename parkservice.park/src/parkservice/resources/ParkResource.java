@@ -1010,7 +1010,7 @@ public class ParkResource {
 			boolean hasUserReportTwiceAlready = false;
 			List<UserSelfReporting> userReports = mDao.getUserSelfReportingHistoryForUser(request.getUserId());
 			int todayReport = 0;
-			Date halfDayAgo = new Date(System.currentTimeMillis() - (1000 * 60 * 18));
+			Date halfDayAgo = new Date(System.currentTimeMillis() - (1000 * 60 * 12));
 			
 			for (UserSelfReporting uReport : userReports) {
 				if (uReport.getReportDateTime().after(halfDayAgo)) {
@@ -1042,7 +1042,7 @@ public class ParkResource {
 			}
 			else {
 				response.setUpdateSuccessful(false);
-				response.setResp("USER_REPORTED_TWICE_ALREDY");
+				response.setResp("USER_REPORTED_TWICE_ALREADY");
 				response.setStatusCode(-5);
 			}
 		} else {
