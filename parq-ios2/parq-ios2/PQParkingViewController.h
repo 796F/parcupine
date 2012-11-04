@@ -10,6 +10,8 @@
 #import "PQMapViewController.h"
 #import "SelfReportingViewController.h"
 
+#define ALERTVIEW_EXTEND 12
+
 @interface PQParkingViewController : UITableViewController <UIAlertViewDelegate, UITableViewDelegate, UIActionSheetDelegate, PQNetworkLayerDelegate>{
     DataLayer* dataLayer;
     NetworkLayer* networkLayer;

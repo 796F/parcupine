@@ -71,7 +71,7 @@ typedef enum {
 @synthesize parent;
 @synthesize spotInfo;
 #pragma mark - Park state transitions
-- (void)parkedAfterParking {
+- (void)setParkStateToParkedFromParking {
     parkState = kParkedParkState;
     addressCellView.hidden = NO;
     seeMapCellView.hidden = NO;
@@ -88,7 +88,7 @@ typedef enum {
     datePicker.countDownDuration = 0;
 }
 
-- (void)extendingAfterParked {
+- (void)setParkStateToExtendingFromParked {
     parkState = kExtendingParkState;
     timeRemainingCellView.hidden = NO;
     timeToAddCellView.hidden = NO;
@@ -102,7 +102,7 @@ typedef enum {
     [self activatePicker];
 }
 
-- (void)parkedAfterExtending {
+- (void)setParkStateToParkedFromExtending {
     parkState = kParkedParkState;
     addressCellView.hidden = NO;
     seeMapCellView.hidden = NO;
@@ -125,22 +125,22 @@ typedef enum {
     }
 }
 
-- (void)afterParking:(BOOL)success endTime:(NSDate *)endTime parkingReference:(NSString *)parkingRef {
+- (void)afterParkingOnBackend:(BOOL)success endTime:(NSDate *)endTime parkingReference:(NSString *)parkingRef {
     if (success) {
         [DataLayer setParkingReference:parkingRef];
         if (!prepaidFlag.hidden) { // Prepaid
             [DataLayer setEndTime:endTime];
             [DataLayer setSpotInfo:self.spotInfo];
             [DataLayer setParkingMode:kPrepaidParkMode];
-            [self parkingAsPrepaidWithEndTime:endTime];
+            [self startCountingDownToEndTime:endTime];
         } else { // Pay as you go
             NSDate *startTime = [NSDate date];
             [DataLayer setStartTime:startTime];
             [DataLayer setSpotInfo:self.spotInfo];
             [DataLayer setParkingMode:kPaygParkMode];
-            [self parkingAsPaygWithStartTime:startTime];
+            [self startCountingUpFromStartTime:startTime];
         }
-        [self parkedAfterParking];
+        [self setParkStateToParkedFromParking];
         UIAlertView* askToHelpAlert = [[UIAlertView alloc] initWithTitle:@"Earn Parcupine Points" message:@"By telling us which spots around you are taken" delegate:self cancelButtonTitle:@"No thanks" otherButtonTitles:@"Sure", nil];
         askToHelpAlert.tag = ALERTVIEW_REPORT;
         [askToHelpAlert show];
@@ -159,7 +159,7 @@ typedef enum {
 }
 
 - (IBAction)extend:(id)sender {
-    [self extendingAfterParked];
+    [self setParkStateToExtendingFromParked];
 }
 
 - (void)infoButtonPressed {
@@ -168,19 +168,46 @@ typedef enum {
     [infoAlert show];
 }
 
-#pragma mark - Parked state transitions
-- (void)parkingAsPrepaidWithEndTime:(NSDate *)endTime {
+#pragma mark - Starting main timer
+- (void)startCountingDownToEndTime:(NSDate *)endTime {
     prepaidEndTime = endTime;
     [expiresAtTimer invalidate];
+    expiresAtTime.text = [dateFormatter stringFromDate:endTime];
     [self scheduleLocalNotification:endTime];
     
     timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updatePrepaidTimer) userInfo:nil repeats:YES];
     [self updatePrepaidTimer];
 }
 
-- (void)parkingAsPaygWithStartTime:(NSDate *)startTime {
+- (void)startCountingUpFromStartTime:(NSDate *)startTime {
     timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updatePaygTimer:) userInfo:startTime repeats:YES];
     [self updatePaygTimer:timer];
+}
+
+#pragma mark - UILocalNotification
+- (void)scheduleLocalNotification:(NSDate*)endDate {
+    UIApplication* myApp = [UIApplication sharedApplication];
+    [myApp cancelAllLocalNotifications];
+
+    UILocalNotification* lowTimeAlert = [[UILocalNotification alloc] init];
+    lowTimeAlert.fireDate = [NSDate dateWithTimeInterval:-300 sinceDate:endDate];
+    lowTimeAlert.alertBody = @"You have 5 minutes remaining";
+    lowTimeAlert.userInfo = @{@"timeLeft" : @(5)};
+    lowTimeAlert.soundName = UILocalNotificationDefaultSoundName;
+
+    UILocalNotification* endingAlert = [[UILocalNotification alloc] init];
+    endingAlert.applicationIconBadgeNumber=1;
+    endingAlert.fireDate = endDate;
+    endingAlert.alertBody = @"You have run out of time!";
+    endingAlert.userInfo = @{@"timeLeft" : @(0)};
+    endingAlert.soundName = UILocalNotificationDefaultSoundName;
+
+    [myApp scheduleLocalNotification:lowTimeAlert];
+    [myApp scheduleLocalNotification:endingAlert];
+}
+
+- (void)cancelLocalNotifications {
+    [[UIApplication sharedApplication] cancelAllLocalNotifications];
 }
 
 #pragma mark - Timer update methods
@@ -189,7 +216,7 @@ typedef enum {
     
     if (remainingSeconds < 1) {
         //out of time.
-        [self afterUnparking:YES];
+        [self afterUnparkingOnBackend:YES];
     }
     
     if (parkState == kParkedParkState) {
@@ -227,16 +254,16 @@ typedef enum {
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (actionSheet.tag == ACTIONSHEET_UNPARK && buttonIndex == actionSheet.destructiveButtonIndex) {
         [NetworkLayer unparkWithDelegate:nil];
-        [self afterUnparking:YES];
+        [self afterUnparkingOnBackend:YES];
     } else if (actionSheet.tag == ACTIONSHEET_EXTEND && buttonIndex == actionSheet.firstOtherButtonIndex) {
         [dataLayer logString:[NSString stringWithFormat:@"EXTEND %s", __PRETTY_FUNCTION__]];
-        [NetworkLayer extendWithDuration:datePicker.countDownDuration/60 andDelegate:self];
+        [NetworkLayer extendWithDuration:datePicker.countDownDuration andDelegate:self];
         // TODO: Show progress indicator
     }
     [networkLayer sendLogs];
 }
 
-- (void)afterExtending:(BOOL)success endTime:(NSDate *)endTime parkingReference:(NSString *)parkingReference {
+- (void)afterExtendingOnBackend:(BOOL)success endTime:(NSDate *)endTime parkingReference:(NSString *)parkingReference {
     // TODO: Dismiss progress indicator
     if (success) {
         prepaidEndTime = endTime;
@@ -248,12 +275,12 @@ typedef enum {
         hours.text = [NSString stringWithFormat:@"%02d", totalMinutes/60];
         minutes.text = [NSString stringWithFormat:@"%02d", totalMinutes%60];
         expiresAtTime.text = [dateFormatter stringFromDate:endTime];
-        [self scheduleLocalNotification:endTime];
-        [self parkedAfterExtending];
+        [self startCountingDownToEndTime:endTime];
+        [self setParkStateToParkedFromExtending];
     }
 }
 
-- (void)afterUnparking:(BOOL)success {
+- (void)afterUnparkingOnBackend:(BOOL)success {
     if (success) {
         [dataLayer logString:[NSString stringWithFormat:@"%@ %s",@"unpark", __PRETTY_FUNCTION__]];
         [timer invalidate];
@@ -262,33 +289,6 @@ typedef enum {
         [DataLayer setEndTime:[NSDate distantPast]];
         [self dismissModalViewControllerAnimated:YES];
     }
-}
-
-#pragma mark - UILocalNotification
-- (void)scheduleLocalNotification:(NSDate*)endDate {
-    UIApplication* myApp = [UIApplication sharedApplication];
-    [myApp cancelAllLocalNotifications];
-
-    UILocalNotification* lowTimeAlert = [[UILocalNotification alloc] init];
-    lowTimeAlert.fireDate = [NSDate dateWithTimeInterval:-300 sinceDate:endDate];
-    lowTimeAlert.timeZone = [NSTimeZone defaultTimeZone];
-    lowTimeAlert.alertBody = @"You have 5 minutes remaining!";
-    
-    UILocalNotification* endingAlert = [[UILocalNotification alloc] init];
-    endingAlert.applicationIconBadgeNumber=1;
-    endingAlert.fireDate = endDate;
-    endingAlert.timeZone = [NSTimeZone defaultTimeZone];
-    endingAlert.alertBody = @"You have run out of time!";
-    
-    lowTimeAlert.soundName = UILocalNotificationDefaultSoundName;
-    endingAlert.soundName = UILocalNotificationDefaultSoundName;
-    
-    [myApp scheduleLocalNotification:endingAlert];
-    [myApp scheduleLocalNotification:lowTimeAlert];
-}
-
-- (void)cancelLocalNotifications {
-    [[UIApplication sharedApplication] cancelAllLocalNotifications];
 }
 
 #pragma mark - UIAlertViewDelegate
@@ -303,6 +303,8 @@ typedef enum {
         [vc setParent:self];
         [vc setModalPresentationStyle:UIModalPresentationFullScreen];
         [self presentModalViewController:vc animated:YES];
+    } else if (alertView.tag == ALERTVIEW_EXTEND && buttonIndex == alertView.firstOtherButtonIndex) {
+        [self setParkStateToExtendingFromParked];
     }
 }
 
@@ -434,7 +436,7 @@ typedef enum {
             [self dismissModalViewControllerAnimated:YES];
         }
     } else { // parkState == kExtendingParkState
-        [self parkedAfterExtending];
+        [self setParkStateToParkedFromExtending];
     }
     [networkLayer sendLogs];
 }
@@ -584,14 +586,13 @@ typedef enum {
         NSDate* endTime = [DataLayer endTime];
         if ([endTime compare:[NSDate date]] == NSOrderedDescending) {
             spotInfo = [DataLayer spotInfo];
-            [self parkedAfterParking];
-            [self parkingAsPrepaidWithEndTime:endTime];
-            expiresAtTime.text = [dateFormatter stringFromDate:endTime];
+            [self setParkStateToParkedFromParking];
+            [self startCountingDownToEndTime:endTime];
         }
     } else if (parkingMode == kPaygParkMode) {
         spotInfo = [DataLayer spotInfo];
-        [self parkedAfterParking];
-        [self parkingAsPaygWithStartTime:[DataLayer startTime]];
+        [self setParkStateToParkedFromParking];
+        [self startCountingUpFromStartTime:[DataLayer startTime]];
     }
 
     self.navigationItem.title =[NSString stringWithFormat:@"%@, #%d", spotInfo.streetName, spotInfo.spotNumber.intValue];
