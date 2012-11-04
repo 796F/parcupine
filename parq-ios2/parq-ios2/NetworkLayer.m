@@ -683,7 +683,7 @@
     [[self requestWithResourcePath:@"/parkservice.park/pilotpark" delegate:delegate httpBody:jsonData] send];
 }
 
-+ (void)parkPrepaidWithDuration:(NSTimeInterval)durationMinutes spotId:(unsigned long long)spotId delegate:(id<PQNetworkLayerDelegate>)delegate {
++ (void)parkPrepaidWithDuration:(NSTimeInterval)durationSeconds spotId:(unsigned long long)spotId delegate:(id<PQNetworkLayerDelegate>)delegate {
     User *user = [DataLayer fetchUser];
 
     NSDictionary *info =
@@ -692,7 +692,7 @@
                @{ @"email"    : user.email,
                   @"password" : user.password
                },
-           @"durationMinutes" : @(durationMinutes/60),
+           @"durationMinutes" : @(durationSeconds/60),
            @"spotId"          : @(spotId)
         };
 
@@ -711,10 +711,10 @@
     [[self requestWithResourcePath:@"/parkservice.park/pilotunpark" delegate:delegate httpBody:jsonData] send];
 }
 
-+ (void)extendWithDuration:(NSTimeInterval)durationMinutes andDelegate:(id<PQNetworkLayerDelegate>)delegate {
++ (void)extendWithDuration:(NSTimeInterval)durationSeconds andDelegate:(id<PQNetworkLayerDelegate>)delegate {
     User *user = [DataLayer fetchUser];
 
-    NSDictionary *info = [NSDictionary dictionaryWithObjects:@[user.uid, @{@"email" : user.email, @"password" : user.password}, [DataLayer parkingReference], @(durationMinutes)] forKeys:@[@"uid", @"userInfo", @"parkingReferenceNumber", @"durationMinutes"]];
+    NSDictionary *info = [NSDictionary dictionaryWithObjects:@[user.uid, @{@"email" : user.email, @"password" : user.password}, [DataLayer parkingReference], @(durationSeconds/60)] forKeys:@[@"uid", @"userInfo", @"parkingReferenceNumber", @"durationMinutes"]];
 
     NSError *error;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
@@ -741,7 +741,7 @@
             success = [result[@"resp"] isEqualToString:@"OK"]
                 && endTime != nil && parkingReference != nil;
         }
-        [request.userData afterParking:success endTime:[NSDate dateWithTimeIntervalSince1970:[endTime doubleValue]/1000] parkingReference:parkingReference];
+        [request.userData afterParkingOnBackend:success endTime:[NSDate dateWithTimeIntervalSince1970:[endTime doubleValue]/1000] parkingReference:parkingReference];
     } else if ([endpoint isEqualToString:@"pilotrefill"]) {
         id endTime = nil, parkingReference = nil;
         BOOL success = response.isSuccessful;
@@ -752,13 +752,13 @@
             success = [result[@"resp"] isEqualToString:@"OK"]
                 && endTime != nil && parkingReference != nil;
         }
-        [request.userData afterExtending:success endTime:[NSDate dateWithTimeIntervalSince1970:[endTime doubleValue]/1000] parkingReference:parkingReference];
+        [request.userData afterExtendingOnBackend:success endTime:[NSDate dateWithTimeIntervalSince1970:[endTime doubleValue]/1000] parkingReference:parkingReference];
     } else if ([endpoint isEqualToString:@"pilotunpark"]) {
         NSDictionary *result = [[response bodyAsString] objectFromJSONString];
-        [request.userData afterUnparking:(response.isSuccessful && [result[@"resp"] isEqualToString:@"OK"])];
+        [request.userData afterUnparkingOnBackend:(response.isSuccessful && [result[@"resp"] isEqualToString:@"OK"])];
     } else if ([endpoint isEqualToString:@"GetUserScoreRequest"]) {
         NSDictionary *result = [[response bodyAsString] objectFromJSONString];
-        [request.userData afterFetchUserPointsBalance:[result[@"score1"] integerValue]];
+        [request.userData afterFetchingBalanceOnBackend:[result[@"score1"] integerValue]];
     }
 }
 
