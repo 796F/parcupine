@@ -7,6 +7,7 @@
 //
 
 #import "PQAppDelegate.h"
+#import "PQParkingViewController.h"
 #import "DataLayer.h"
 #import "NetworkLayer.h"
 
@@ -19,6 +20,27 @@
 @synthesize dataLayer;    
 @synthesize networkLayer;
 @synthesize locationManager;
+
+- (void)application:(UIApplication *)application
+didReceiveLocalNotification:(UILocalNotification *)notification
+{
+    UIAlertView *alertView;
+    switch ([notification.userInfo[@"timeLeft"] intValue]) {
+        case 5:
+        {
+            PQParkingViewController *delegate = (PQParkingViewController *)[(UINavigationController *)[[[application keyWindow] rootViewController] presentedViewController] topViewController];
+            alertView = [[UIAlertView alloc] initWithTitle:@"5 minute warning" message:@"You have 5 minutes left before your parking expires. Do you want to extend now?" delegate:delegate cancelButtonTitle:@"Nah" otherButtonTitles:@"Extend", nil];
+            alertView.tag = ALERTVIEW_EXTEND;
+            break;
+        }
+        case 0:
+        {
+            alertView = [[UIAlertView alloc] initWithTitle:@"Parking expired" message:@"Your parking has expired. Select your spot again to repark." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            break;
+        }
+    }
+    [alertView show];
+}
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -80,7 +102,8 @@
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
     //clear alert badges
-    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+    [application setApplicationIconBadgeNumber:0];
+    [application cancelAllLocalNotifications];
     [locationManager startUpdatingLocation];
     [dataLayer logString:[NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__]];
     /*

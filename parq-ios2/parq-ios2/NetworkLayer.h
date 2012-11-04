@@ -21,10 +21,10 @@
 @protocol PQNetworkLayerDelegate <NSObject>
 
 @optional
-- (void)afterFetchUserPointsBalance:(NSInteger)balance;
-- (void)afterParking:(BOOL)success endTime:(NSDate *)endTime parkingReference:(NSString *)parkingRef;
-- (void)afterUnparking:(BOOL)success;
-- (void)afterExtending:(BOOL)success endTime:(NSDate *)endTime parkingReference:(NSString *)parkingReference;
+- (void)afterFetchingBalanceOnBackend:(NSInteger)balance;
+- (void)afterParkingOnBackend:(BOOL)success endTime:(NSDate *)endTime parkingReference:(NSString *)parkingRef;
+- (void)afterUnparkingOnBackend:(BOOL)success;
+- (void)afterExtendingOnBackend:(BOOL)success endTime:(NSDate *)endTime parkingReference:(NSString *)parkingReference;
 
 @end
 
@@ -56,7 +56,7 @@
 -(BOOL) userEarnedPoints:(NSNumber*) earnedPoints;
 -(BOOL) userLostPoints:(NSNumber*) lostPoints;
 + (void)parkPaygWithSpotId:(unsigned long long)spotId delegate:(id<PQNetworkLayerDelegate>)delegate;
-+ (void)parkPrepaidWithDuration:(NSTimeInterval) durationMinutes spotId:(unsigned long long)spotId delegate:(id<PQNetworkLayerDelegate>)delegate;
++ (void)parkPrepaidWithDuration:(NSTimeInterval) durationSeconds spotId:(unsigned long long)spotId delegate:(id<PQNetworkLayerDelegate>)delegate;
 + (void)unparkWithDelegate:(id<PQNetworkLayerDelegate>)delegate;
 + (void)extendWithDuration:(NSTimeInterval)durationMinutes andDelegate:(id<PQNetworkLayerDelegate>)delegate;
 

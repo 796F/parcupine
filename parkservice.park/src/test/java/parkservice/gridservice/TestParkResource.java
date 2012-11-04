@@ -22,7 +22,7 @@ import parkservice.userscore.model.UpdateUserScoreRequest;
 public class TestParkResource extends TestCase {
 	
 	private static final long UNIT_TEST_USER_ID = 14L;
-	private static String PARKING_INST_REF_NUM = "14:111:1350181073";
+	private static String PARKING_INST_REF_NUM = "0";
 	private ParkResource parkResource = null;
 	
 	@Override
@@ -216,6 +216,5 @@ public class TestParkResource extends TestCase {
 		assertEquals(oldScoreResponse.getScore2(), newScoreResponse.getScore2());
 		assertEquals(oldScoreResponse.getScore3(), newScoreResponse.getScore3());
 		assertEquals(oldScoreResponse.getUserId(), newScoreResponse.getUserId());
-	}
-	
+	}	
 }

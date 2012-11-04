@@ -163,7 +163,7 @@
 }
 
 #pragma mark - PQNetworkLayerDelegate
-- (void)afterFetchUserPointsBalance:(NSInteger)balance {
+- (void)afterFetchingBalanceOnBackend:(NSInteger)balance {
     balanceLabel.text = [NSString stringWithFormat:@"%ld", (long)balance];
     [DataLayer fetchUser].balance = [NSNumber numberWithInteger:balance];
 }
