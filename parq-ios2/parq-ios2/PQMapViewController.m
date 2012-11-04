@@ -2298,6 +2298,8 @@ typedef struct{
         self.view.hidden = YES; //not logged in?  hide map.
     }
     
+    [self clearCallouts];
+    
     CLLocationCoordinate2D pilot_street = CLLocationCoordinate2DMake(42.357835,-71.094333);
     user_loc = pilot_street;
     user_loc_isGood = true;
@@ -2322,18 +2324,7 @@ typedef struct{
 //    locationManager.delegate=self;
 //    locationManager.desiredAccuracy=kCLLocationAccuracyNearestTenMeters;
     
-//    [locationManager startUpdatingLocation];
-    
-//    CLLocationCoordinate2D pilot_street = CLLocationCoordinate2DMake(42.357835,-71.094333);
-//    user_loc = pilot_street;
-//    user_loc_isGood = true;
-//    
-//    [map setRegion:MKCoordinateRegionMakeWithDistance(pilot_street, SPOT_LEVEL_REGION_METERS, SPOT_LEVEL_REGION_METERS) animated:YES];
-//    
-//    [self showStreetLevelWithCoordinates:&pilot_street];
-//    isDroppingPin = false;
-//    [self mapView:map regionDidChangeAnimated:NO];
-    
+//    [locationManager startUpdatingLocation];    
 }
 
 - (void)viewWillDisappear:(BOOL)animated

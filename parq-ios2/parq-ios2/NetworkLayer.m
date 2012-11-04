@@ -59,6 +59,7 @@
     [request setHTTPBody:jsonData];
     [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
     NSDictionary* result = [[[request sendSynchronously] bodyAsString] objectFromJSONString];
+    NSLog(@"Reporting result: %@", result);
     return [[result objectForKey:@"updateSuccessful"] boolValue];
 }
 
@@ -490,9 +491,10 @@
     
     return [emailTest evaluateWithObject:candidate];
 }
+
 -(User*) loginEmail:(NSString*) email AndPassword:(NSString*) pass{
-    return [dataLayer saveUserWithEmail:@"m@m.com" Pass:@"a" License:@"license" UID:@(2) Balance:0];
-    //send info to server.  
+//    return [dataLayer saveUserWithEmail:@"m@m.com" Pass:@"a" License:@"license" UID:@(2) Balance:0];
+    //send info to server.
     
     //initial check of email.
     if(![self validateEmail:email]){ //) || pass.length < 8){
