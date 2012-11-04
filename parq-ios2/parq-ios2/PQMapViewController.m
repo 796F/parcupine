@@ -1785,7 +1785,7 @@ typedef struct{
     [networkLayer sendLogs];
 }
 
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {   
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
     return YES;
 }
 
@@ -1863,12 +1863,17 @@ typedef struct{
 }
 
 - (void)searchBarBookmarkButtonClicked:(UISearchBar *)searchBar {
-    [dataLayer logString:[NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__]];
-    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
-    PQBookmarksViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"BookmarksController"];
-    [vc setParent:self]; //assignt he parent to be self.  
-    [vc setModalPresentationStyle:UIModalPresentationFullScreen];
-    [self presentModalViewController:vc animated:YES];
+    // TODO(PILOT) Prevent users from using bookmark: Tell will be implemented later.
+    
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Coming soon!" message:@"This feature is not yet available during the Parcupine pilot." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+    [alert show];
+    
+//    [dataLayer logString:[NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__]];
+//    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
+//    PQBookmarksViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"BookmarksController"];
+//    [vc setParent:self]; //assignt he parent to be self.  
+//    [vc setModalPresentationStyle:UIModalPresentationFullScreen];
+//    [self presentModalViewController:vc animated:YES];
 }
 
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
@@ -2157,7 +2162,6 @@ typedef struct{
 #pragma mark - View lifecycle
 
 - (void)viewDidLoad{
-
     [super viewDidLoad];
     
 
@@ -2309,6 +2313,16 @@ typedef struct{
 //    locationManager.desiredAccuracy=kCLLocationAccuracyNearestTenMeters;
     
 //    [locationManager startUpdatingLocation];
+    
+    CLLocationCoordinate2D pilot_street = CLLocationCoordinate2DMake(42.357835,-71.094333);
+    user_loc = pilot_street;
+    user_loc_isGood = true;
+    
+    [map setRegion:MKCoordinateRegionMakeWithDistance(pilot_street, SPOT_LEVEL_REGION_METERS, SPOT_LEVEL_REGION_METERS) animated:YES];
+    
+    [self showStreetLevelWithCoordinates:&pilot_street];
+    isDroppingPin = false;
+    [self mapView:map regionDidChangeAnimated:NO];
     
 }
 
