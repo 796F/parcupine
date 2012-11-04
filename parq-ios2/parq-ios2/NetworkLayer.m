@@ -193,7 +193,7 @@
         [request setHTTPBody:jsonData];
         [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
         response = [request sendSynchronously];
-        NSLog(@"\nREQUEST >>> %@", [info description]);
+        NSLog(@"\nupdateOverlay REQUEST >>> %@", [info description]);
     }else{
         //error
         return;
