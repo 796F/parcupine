@@ -967,6 +967,15 @@ public class ParkResource {
 		String status = "AVAILABLE";
 		Date curTime = new Date(System.currentTimeMillis());
 		
+		AddUserReportingResponse response = new AddUserReportingResponse();
+		// check to make sure that the user can only report between 8am and 6pm
+		if (curTime.getHours() < 7 || curTime.getHours() >= 17) {
+			response.setUpdateSuccessful(false);
+			response.setResp("ONLY_ALLOW_TO_REPORT_BETWEEN_8AM_AND_6PM");
+			response.setStatusCode(-10);
+			return response;
+		}
+		
 		long[] spaceIds =  new long[request.getSpaceIds().size()];
 		for (int i = 0; i < request.getSpaceIds().size(); i ++) {
 			spaceIds[i] = request.getSpaceIds().get(i);
@@ -990,7 +999,6 @@ public class ParkResource {
 			statuses.add(status);
 		}
 		
-		
 		UserSelfReporting report = new UserSelfReporting();
 		report.setReportDateTime(curTime);
 		report.setUserId(request.getUserId());
@@ -1004,10 +1012,10 @@ public class ParkResource {
 		report.setScore6(request.getScore6());
 		
 		boolean isSucccessful = mDao.insertUserSelfReporting(report);
-		AddUserReportingResponse response = new AddUserReportingResponse();
 		
 		if (isSucccessful) {
 			boolean hasUserReportTwiceAlready = false;
+			boolean oneMinBetweenReportCheck = true;
 			List<UserSelfReporting> userReports = mDao.getUserSelfReportingHistoryForUser(request.getUserId());
 			int todayReport = 0;
 			Date halfDayAgo = new Date(System.currentTimeMillis() - (1000 * 60 * 12));
@@ -1015,11 +1023,14 @@ public class ParkResource {
 			for (UserSelfReporting uReport : userReports) {
 				if (uReport.getReportDateTime().after(halfDayAgo)) {
 					todayReport++;
+					long timeDiff = (curTime.getTime() - uReport.getReportDateTime().getTime());
+					// make sure that user have at least 1 minute difference between 2 back to back reports
+					oneMinBetweenReportCheck &= (timeDiff > 60000L);
 				}
 			}
 			hasUserReportTwiceAlready = todayReport >= 3;
 			
-			if (!hasUserReportTwiceAlready) {
+			if (!hasUserReportTwiceAlready && oneMinBetweenReportCheck) {
 				// update the user scores
 				GetUserScoreRequest getRequest = new GetUserScoreRequest();
 				getRequest.setUserId(request.getUserId());
