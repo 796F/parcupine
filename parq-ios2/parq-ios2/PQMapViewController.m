@@ -2297,6 +2297,16 @@ typedef struct{
         NSLog(@"hide the map\n");
         self.view.hidden = YES; //not logged in?  hide map.
     }
+    
+    CLLocationCoordinate2D pilot_street = CLLocationCoordinate2DMake(42.357835,-71.094333);
+    user_loc = pilot_street;
+    user_loc_isGood = true;
+    
+    [map setRegion:MKCoordinateRegionMakeWithDistance(pilot_street, SPOT_LEVEL_REGION_METERS, SPOT_LEVEL_REGION_METERS) animated:YES];
+    
+    [self showStreetLevelWithCoordinates:&pilot_street];
+    isDroppingPin = false;
+    [self mapView:map regionDidChangeAnimated:NO];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -2314,15 +2324,15 @@ typedef struct{
     
 //    [locationManager startUpdatingLocation];
     
-    CLLocationCoordinate2D pilot_street = CLLocationCoordinate2DMake(42.357835,-71.094333);
-    user_loc = pilot_street;
-    user_loc_isGood = true;
-    
-    [map setRegion:MKCoordinateRegionMakeWithDistance(pilot_street, SPOT_LEVEL_REGION_METERS, SPOT_LEVEL_REGION_METERS) animated:YES];
-    
-    [self showStreetLevelWithCoordinates:&pilot_street];
-    isDroppingPin = false;
-    [self mapView:map regionDidChangeAnimated:NO];
+//    CLLocationCoordinate2D pilot_street = CLLocationCoordinate2DMake(42.357835,-71.094333);
+//    user_loc = pilot_street;
+//    user_loc_isGood = true;
+//    
+//    [map setRegion:MKCoordinateRegionMakeWithDistance(pilot_street, SPOT_LEVEL_REGION_METERS, SPOT_LEVEL_REGION_METERS) animated:YES];
+//    
+//    [self showStreetLevelWithCoordinates:&pilot_street];
+//    isDroppingPin = false;
+//    [self mapView:map regionDidChangeAnimated:NO];
     
 }
 
