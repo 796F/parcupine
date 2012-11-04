@@ -44,17 +44,13 @@
 //calculates MID's based on lat/long. 
 -(NSMutableArray*) getMBIDsWithType:(EntityType) entityType NE:(CLLocationCoordinate2D*) topRight SW:(CLLocationCoordinate2D*) botLeft;
 -(SpotInfo*) getSpotInfoForId:(NSNumber*)spotId SpotNumber:(NSNumber*)spotNum GPS:(CLLocationCoordinate2D*)coord;
--(BOOL) parkUserWithSpotInfo:(SpotInfo*) spotInfo AndDuration:(int)duration;
 
 -(BOOL)submitAvailablilityInformation:(NSArray*)value;
 
 -(User*) loginEmail:(NSString*) email AndPassword:(NSString*) pass;
 -(User*) registerEmail:(NSString*) email AndPassword:(NSString*) pass AndPlate:(NSString*) plate;
 
-//user points
 + (void)fetchUserPointsBalanceWithUid:(unsigned long long)uid andDelegate:(id<PQNetworkLayerDelegate>)delegate;
--(BOOL) userEarnedPoints:(NSNumber*) earnedPoints;
--(BOOL) userLostPoints:(NSNumber*) lostPoints;
 + (void)parkPaygWithSpotId:(unsigned long long)spotId delegate:(id<PQNetworkLayerDelegate>)delegate;
 + (void)parkPrepaidWithDuration:(NSTimeInterval) durationSeconds spotId:(unsigned long long)spotId delegate:(id<PQNetworkLayerDelegate>)delegate;
 + (void)unparkWithDelegate:(id<PQNetworkLayerDelegate>)delegate;
