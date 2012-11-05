@@ -15,6 +15,10 @@
 #import "SpotInfo.h"
 #import "User.h"
 
+#define STATUSCODE_REPORTING_SUCCESS 0
+#define STATUSCODE_REPORTING_TWICE -5
+#define STATUSCODE_REPORTING_BAD_TIME -10
+
 //using @class to avoid cycle, which breaks the compiler.  sigh
 @class PQMapViewController;
 
@@ -24,6 +28,7 @@
 - (void)afterFetchingBalanceOnBackend:(NSInteger)balance;
 - (void)afterParkingOnBackend:(BOOL)success endTime:(NSDate *)endTime parkingReference:(NSString *)parkingRef;
 - (void)afterUnparkingOnBackend:(BOOL)success;
+- (void)afterReportingOnBackend:(NSInteger)statusCode;
 - (void)afterExtendingOnBackend:(BOOL)success endTime:(NSDate *)endTime parkingReference:(NSString *)parkingReference;
 
 @end
@@ -55,6 +60,7 @@
 + (void)parkPrepaidWithDuration:(NSTimeInterval) durationSeconds spotId:(unsigned long long)spotId delegate:(id<PQNetworkLayerDelegate>)delegate;
 + (void)unparkWithDelegate:(id<PQNetworkLayerDelegate>)delegate;
 + (void)extendWithDuration:(NSTimeInterval)durationMinutes andDelegate:(id<PQNetworkLayerDelegate>)delegate;
++ (void)reportAvailability:(NSDictionary *)availability delegate:(id<PQNetworkLayerDelegate>)delegate;
 
 //network status
 -(BOOL) isRecheableViaWifi;

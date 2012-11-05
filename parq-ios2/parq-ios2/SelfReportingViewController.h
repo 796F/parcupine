@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <MapKit/MapKit.h>
 #import "NetworkLayer.h"
-@interface SelfReportingViewController : UIViewController <MKMapViewDelegate, UIGestureRecognizerDelegate, UIAlertViewDelegate>{
+@interface SelfReportingViewController : UIViewController <MKMapViewDelegate, UIGestureRecognizerDelegate, UIAlertViewDelegate, PQNetworkLayerDelegate>{
     
 }
 
