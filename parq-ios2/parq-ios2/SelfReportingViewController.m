@@ -9,7 +9,6 @@
 #import "SelfReportingViewController.h"
 
 #import "PQParkingViewController.h"
-#define ALERTVIEW_THANKS 1
 
 @implementation SelfReportingViewController
 @synthesize mapView;
@@ -79,38 +78,45 @@
     [self dismissModalViewControllerAnimated:YES];
 }
 -(IBAction)submitButtonPressed:(id)sender{
-    NSArray* sortedAnno = [[NSArray arrayWithArray:mapView.annotations] sortedArrayUsingComparator:^NSComparisonResult(PQParkedCarAnnotation* obj1, PQParkedCarAnnotation* obj2) {
-        int id1 = [[[obj1.title componentsSeparatedByString:@":"] objectAtIndex:0] intValue];
-        int id2 = [[[obj2.title componentsSeparatedByString:@":"] objectAtIndex:0] intValue];
-        if(id1 < id2){
-            return -1;
-        } else {
-            return 1;
-        }
-    }];
-    NSMutableArray* orderedAvailability = [[NSMutableArray alloc] initWithCapacity:6];
-    for(PQParkedCarAnnotation* anno in sortedAnno){
-        if([anno.title hasSuffix:@"Open"]){
-            [orderedAvailability addObject:[NSNumber numberWithInt:1]];
-        }else if([anno.title hasSuffix:@"Taken"]){
-            [orderedAvailability addObject:[NSNumber numberWithInt:0]];
-        }
+    NSMutableDictionary *availability = [[NSMutableDictionary alloc] init];
+    for (PQParkedCarAnnotation *annotation in mapView.annotations) {
+        availability[[annotation.title substringToIndex:2]] = [annotation.title hasSuffix:@"Open"] ? @(1) : @(0);
     }
-    BOOL reportOutcome = [networkLayer submitAvailablilityInformation:orderedAvailability];
-    if(reportOutcome){
-        //server got report
-        DataLayer* dataLayer = ((PQAppDelegate*)[[UIApplication sharedApplication] delegate]).dataLayer;
-        [dataLayer setLastReportTime:[NSDate date]];
-        UIAlertView* thanksAlert = [[UIAlertView alloc] initWithTitle:@"Thanks for your help" message:@"Users like you help keep our data up-to-date. For that, you've earned 60 Parcupine Points!" delegate:self cancelButtonTitle:nil otherButtonTitles:@"OK", nil ];
-        thanksAlert.tag = ALERTVIEW_THANKS;
-        [thanksAlert show];
+    [NetworkLayer reportAvailability:availability delegate:self];
+}
+
+- (void)afterReportingOnBackend:(NSInteger)statusCode {
+    switch (statusCode) {
+        case STATUSCODE_REPORTING_SUCCESS:
+        {
+            DataLayer* dataLayer = ((PQAppDelegate*)[[UIApplication sharedApplication] delegate]).dataLayer;
+            [dataLayer setLastReportTime:[NSDate date]];
+            UIAlertView* thanksAlert = [[UIAlertView alloc] initWithTitle:@"Thanks for your help" message:@"Users like you help keep our data up-to-date. For that, you've earned 60 Parcupine Points!" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [thanksAlert show];
+            break;
+        }
+        case STATUSCODE_REPORTING_TWICE:
+        {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Thanks for your help" message:@"Unfortuately we can only give points for the first two reports per day. Come back tomorrow!" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [alert show];
+            break;
+        }
+        case STATUSCODE_REPORTING_BAD_TIME:
+        {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Thanks for your help" message:@"You can only earn points from 8am to 6pm. Come back tomorrow!" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [alert show];
+            break;
+        }
+        default:
+        {
+            [self dismissModalViewControllerAnimated:YES];
+            break;
+        }
     }
 }
 
--(void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
-    if (alertView.tag == ALERTVIEW_THANKS) {
-        [self dismissModalViewControllerAnimated:YES];
-    }
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    [self dismissModalViewControllerAnimated:YES];
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil

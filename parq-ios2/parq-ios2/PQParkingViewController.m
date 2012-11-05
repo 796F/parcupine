@@ -308,6 +308,8 @@ typedef enum {
         [vc setModalPresentationStyle:UIModalPresentationFullScreen];
         [self presentModalViewController:vc animated:YES];
     } else if (alertView.tag == ALERTVIEW_EXTEND && buttonIndex == alertView.firstOtherButtonIndex) {
+        if (self.modalViewController != nil)
+            [self dismissModalViewControllerAnimated:YES];
         [self setParkStateToExtendingFromParked];
     }
 }

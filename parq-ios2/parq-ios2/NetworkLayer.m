@@ -610,36 +610,6 @@
     
 }
 
--(BOOL) parkUserWithSpotInfo:(SpotInfo*) spotInfo AndDuration:(int)duration{
-    NSArray* keys = [NSArray arrayWithObjects:@"userInfo", @"paymentType", @"chargeAmount",@"durationMinutes",@"uid",@"spotId", nil];
-    User* user = [DataLayer fetchUser];
-    
-    NSDictionary* userInfo = [[NSDictionary alloc] initWithObjectsAndKeys:user.email,@"email", user.password,@"password",nil];
-    NSLog(@"userInfo: %@", userInfo.description);
-    NSNumber* paymentType = [NSNumber numberWithInt:0];
-    NSNumber* chargeAmount = [NSNumber numberWithInt:spotInfo.rateCents.integerValue*duration/spotInfo.minuteInterval.integerValue];
-    NSNumber* durationMinutes = [NSNumber numberWithInt:duration/60];
-    
-    NSArray* value = [NSArray arrayWithObjects:userInfo,paymentType , chargeAmount, durationMinutes, user.uid,spotInfo.spotId, nil];
-    
-    NSDictionary* info = [NSDictionary dictionaryWithObjects:value forKeys:keys];
-    NSError *error;
-    NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
-    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/parkservice.park/pilotpark"];
-    [request setMethod:RKRequestMethodPOST];
-    [request setHTTPBody:jsonData];
-    [request setAdditionalHTTPHeaders:[NSDictionary dictionaryWithObject:@"application/json" forKey:@"content-type"]];
-    RKResponse* response = [request sendSynchronously];
-    NSDictionary* parkResults = [Parser parseParkResponse:[response bodyAsString]];
-    if(parkResults!=nil){
-        [DataLayer setEndTime:[NSDate dateWithTimeIntervalSince1970:[[parkResults objectForKey:@"endTime"] longValue]]];
-        [DataLayer setParkingReference:[parkResults objectForKey:@"parkingReferenceNumber"]];
-        return YES;
-    }else{
-        return NO;
-    }
-}
-
 + (RKRequest *)requestWithResourcePath:(NSString *)resourcePath delegate:(id<PQNetworkLayerDelegate>)delegate httpBody:(NSData *)data {
     RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:resourcePath];
     request.delegate = [[self class] requestDelegate];
@@ -657,19 +627,11 @@
     [[self requestWithResourcePath:@"/parkservice.park/GetUserScoreRequest" delegate:delegate httpBody:jsonData] send];
 }
 
--(BOOL) userEarnedPoints:(NSNumber*) earnedPoints{
-    //some network call.  if responds well, then change user's points.  
-    return [dataLayer userAddPoints:earnedPoints];
-}
--(BOOL) userLostPoints:(NSNumber*) lostPoints{
-    return [dataLayer userDecPoints:lostPoints];
-}
-
 + (void)parkPaygWithSpotId:(unsigned long long)spotId delegate:(id<PQNetworkLayerDelegate>)delegate {
     User *user = [DataLayer fetchUser];
 
     NSDictionary *info =
-        @{ @"uid" : user.uid,
+        @{  @"uid" : user.uid,
             @"userInfo" :
                 @{ @"email"    : user.email,
                    @"password" : user.password
@@ -687,13 +649,13 @@
     User *user = [DataLayer fetchUser];
 
     NSDictionary *info =
-        @{ @"uid" : user.uid,
-           @"userInfo" :
-               @{ @"email"    : user.email,
-                  @"password" : user.password
-               },
-           @"durationMinutes" : @(durationSeconds/60),
-           @"spotId"          : @(spotId)
+        @{  @"uid" : user.uid,
+            @"userInfo" :
+                @{  @"email"    : user.email,
+                    @"password" : user.password
+                },
+            @"durationMinutes" : @(durationSeconds/60),
+            @"spotId"          : @(spotId)
         };
 
     NSError *error;
@@ -719,6 +681,26 @@
     NSError *error;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
     [[self requestWithResourcePath:@"/parkservice.park/pilotrefill" delegate:delegate httpBody:jsonData] send];
+}
+
+// Assuming that availability will always contain exactly six spots to report.
+// If this assumption no longer holds then more checking will have to be done.
++ (void)reportAvailability:(NSDictionary *)availability delegate:(id<PQNetworkLayerDelegate>)delegate {
+    NSArray *spaces = availability.allKeys;
+    NSDictionary *info =
+        @{  @"userId"   : [DataLayer fetchUser].uid,
+            @"spaceIds" : spaces,
+            @"score1"   : availability[spaces[0]],
+            @"score2"   : availability[spaces[1]],
+            @"score3"   : availability[spaces[2]],
+            @"score4"   : availability[spaces[3]],
+            @"score5"   : availability[spaces[4]],
+            @"score6"   : availability[spaces[5]]
+        };
+
+    NSError *error;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
+    [[self requestWithResourcePath:@"/parkservice.park/AddUserReportingRequest" delegate:delegate httpBody:jsonData] send];
 }
 
 #pragma mark - RKRequestDelegate
@@ -756,6 +738,9 @@
     } else if ([endpoint isEqualToString:@"pilotunpark"]) {
         NSDictionary *result = [[response bodyAsString] objectFromJSONString];
         [request.userData afterUnparkingOnBackend:(response.isSuccessful && [result[@"resp"] isEqualToString:@"OK"])];
+    } else if ([endpoint isEqualToString:@"AddUserReportingRequest"]) {
+        NSDictionary *result = [[response bodyAsString] objectFromJSONString];
+        [request.userData afterReportingOnBackend:[result[@"statusCode"] integerValue]];
     } else if ([endpoint isEqualToString:@"GetUserScoreRequest"]) {
         NSDictionary *result = [[response bodyAsString] objectFromJSONString];
         [request.userData afterFetchingBalanceOnBackend:[result[@"score1"] integerValue]];

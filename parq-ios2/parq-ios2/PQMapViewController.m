@@ -571,7 +571,7 @@ typedef struct{
     if (actionSheet.tag == GPS_LAUNCH_ALERT) {
         switch (buttonIndex) {
             case 0:
-                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://maps.apple.com/maps?daddr=%f,%f&saddr=%f,%f", desired_spot.coordinate.latitude, desired_spot.coordinate.longitude,user_loc.latitude, user_loc.longitude]]];
+                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://maps.apple.com/maps?saddr=%f,%f&daddr=%f,%f&dirflg=w", user_loc.latitude, user_loc.longitude, desired_spot.coordinate.latitude, desired_spot.coordinate.longitude]]];
                 break;
             case 1:
                 [self parkNow];

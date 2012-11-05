@@ -12,10 +12,6 @@
 // Span distance in meters
 #define SPAN_DISTANCE 100
 
-@interface PQParkedCarMapViewController ()
-
-@end
-
 @implementation PQParkedCarMapViewController
 @synthesize parent;
 @synthesize map;
@@ -32,7 +28,7 @@
 
 - (void)launchMaps
 {
-    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://maps.apple.com/maps?daddr=%@,%@&saddr=%f,%f", spotInfo.latitude, spotInfo.longitude, parent.user_loc.latitude, parent.user_loc.longitude]]];
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://maps.apple.com/maps?saddr=%f,%f&daddr=%@,%@&dirflg=w", parent.user_loc.latitude, parent.user_loc.longitude, spotInfo.latitude, spotInfo.longitude]]];
 
     [self.navigationController popToRootViewControllerAnimated:NO];
 }

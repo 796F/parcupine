@@ -15,6 +15,10 @@
 #import "SpotInfo.h"
 #import "User.h"
 
+#define STATUSCODE_REPORTING_SUCCESS 0
+#define STATUSCODE_REPORTING_TWICE -5
+#define STATUSCODE_REPORTING_BAD_TIME -10
+
 //using @class to avoid cycle, which breaks the compiler.  sigh
 @class PQMapViewController;
 
@@ -24,6 +28,7 @@
 - (void)afterFetchingBalanceOnBackend:(NSInteger)balance;
 - (void)afterParkingOnBackend:(BOOL)success endTime:(NSDate *)endTime parkingReference:(NSString *)parkingRef;
 - (void)afterUnparkingOnBackend:(BOOL)success;
+- (void)afterReportingOnBackend:(NSInteger)statusCode;
 - (void)afterExtendingOnBackend:(BOOL)success endTime:(NSDate *)endTime parkingReference:(NSString *)parkingReference;
 
 @end
@@ -44,21 +49,18 @@
 //calculates MID's based on lat/long. 
 -(NSMutableArray*) getMBIDsWithType:(EntityType) entityType NE:(CLLocationCoordinate2D*) topRight SW:(CLLocationCoordinate2D*) botLeft;
 -(SpotInfo*) getSpotInfoForId:(NSNumber*)spotId SpotNumber:(NSNumber*)spotNum GPS:(CLLocationCoordinate2D*)coord;
--(BOOL) parkUserWithSpotInfo:(SpotInfo*) spotInfo AndDuration:(int)duration;
 
 -(BOOL)submitAvailablilityInformation:(NSArray*)value;
 
 -(User*) loginEmail:(NSString*) email AndPassword:(NSString*) pass;
 -(User*) registerEmail:(NSString*) email AndPassword:(NSString*) pass AndPlate:(NSString*) plate;
 
-//user points
 + (void)fetchUserPointsBalanceWithUid:(unsigned long long)uid andDelegate:(id<PQNetworkLayerDelegate>)delegate;
--(BOOL) userEarnedPoints:(NSNumber*) earnedPoints;
--(BOOL) userLostPoints:(NSNumber*) lostPoints;
 + (void)parkPaygWithSpotId:(unsigned long long)spotId delegate:(id<PQNetworkLayerDelegate>)delegate;
 + (void)parkPrepaidWithDuration:(NSTimeInterval) durationSeconds spotId:(unsigned long long)spotId delegate:(id<PQNetworkLayerDelegate>)delegate;
 + (void)unparkWithDelegate:(id<PQNetworkLayerDelegate>)delegate;
 + (void)extendWithDuration:(NSTimeInterval)durationMinutes andDelegate:(id<PQNetworkLayerDelegate>)delegate;
++ (void)reportAvailability:(NSDictionary *)availability delegate:(id<PQNetworkLayerDelegate>)delegate;
 
 //network status
 -(BOOL) isRecheableViaWifi;
