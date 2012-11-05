@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <MapKit/MapKit.h>
 #import "NetworkLayer.h"
-@interface SelfReportingStaticViewController : UIViewController <UIGestureRecognizerDelegate, UIAlertViewDelegate>{
+@interface SelfReportingStaticViewController : UIViewController <UIGestureRecognizerDelegate, UIAlertViewDelegate, PQNetworkLayerDelegate>{
     
 }
 
