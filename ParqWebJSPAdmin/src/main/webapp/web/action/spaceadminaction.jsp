@@ -20,22 +20,22 @@
 		List<WebParkingSpot> updatedSpot = new ArrayList<WebParkingSpot>();
 		
 		for (WebParkingSpot ploc : parkingLocations) {
-			if (ploc.getSpotName().contains("1") && !status0.isEmpty()) {
+			if (ploc.getSpotName().equals("101") && !status0.isEmpty()) {
 				ploc.setAvailable(status0.equalsIgnoreCase(freeStatus));
 				updatedSpot.add(ploc);
-			} else if (ploc.getSpotName().contains("2") && !status1.isEmpty()) {
+			} else if (ploc.getSpotName().equals("102") && !status1.isEmpty()) {
 				ploc.setAvailable(status1.equalsIgnoreCase(freeStatus));
 				updatedSpot.add(ploc);
-			} else if (ploc.getSpotName().contains("3") && !status2.isEmpty()) {
+			} else if (ploc.getSpotName().equals("103") && !status2.isEmpty()) {
 				ploc.setAvailable(status2.equalsIgnoreCase(freeStatus));
 				updatedSpot.add(ploc);
-			} else if (ploc.getSpotName().contains("4") && !status3.isEmpty()) {
+			} else if (ploc.getSpotName().equals("104") && !status3.isEmpty()) {
 				ploc.setAvailable(status3.equalsIgnoreCase(freeStatus));
 				updatedSpot.add(ploc);
-			} else if (ploc.getSpotName().contains("5") && !status4.isEmpty()) {
+			} else if (ploc.getSpotName().equals("105") && !status4.isEmpty()) {
 				ploc.setAvailable(status4.equalsIgnoreCase(freeStatus));
 				updatedSpot.add(ploc);
-			} else if (ploc.getSpotName().contains("6") && !status5.isEmpty()) {
+			} else if (ploc.getSpotName().equals("106") && !status5.isEmpty()) {
 				ploc.setAvailable(status5.equalsIgnoreCase(freeStatus));
 				updatedSpot.add(ploc);
 			}

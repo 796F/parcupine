@@ -966,15 +966,7 @@ public class ParkResource {
 		
 		String status = "AVAILABLE";
 		Date curTime = new Date(System.currentTimeMillis());
-		
-		AddUserReportingResponse response = new AddUserReportingResponse();
-		// check to make sure that the user can only report between 8am and 6pm
-		if (curTime.getHours() < 7 || curTime.getHours() >= 17) {
-			response.setUpdateSuccessful(false);
-			response.setResp("ONLY_ALLOW_TO_REPORT_BETWEEN_8AM_AND_6PM");
-			response.setStatusCode(-10);
-			return response;
-		}
+	
 		
 		long[] spaceIds =  new long[request.getSpaceIds().size()];
 		for (int i = 0; i < request.getSpaceIds().size(); i ++) {
@@ -1013,6 +1005,15 @@ public class ParkResource {
 		
 		boolean isSucccessful = mDao.insertUserSelfReporting(report);
 		
+		AddUserReportingResponse response = new AddUserReportingResponse();
+		// check to make sure that the user can only report between 8am and 6pm
+		if (curTime.getHours() < 7 || curTime.getHours() >= 17) {
+			response.setUpdateSuccessful(false);
+			response.setResp("ONLY_ALLOW_TO_REPORT_BETWEEN_8AM_AND_6PM");
+			response.setStatusCode(-10);
+			return response;
+		}
+		
 		if (isSucccessful) {
 			boolean hasUserReportTwiceAlready = false;
 			boolean oneMinBetweenReportCheck = true;
@@ -1050,8 +1051,7 @@ public class ParkResource {
 				if (!updateResponse.isUpdateSuccessful()){
 					System.out.println("failed to give user points for reporting");
 				}
-			}
-			else {
+			} else {
 				response.setUpdateSuccessful(false);
 				response.setResp("USER_REPORTED_TWICE_ALREADY");
 				response.setStatusCode(-5);
@@ -1136,23 +1136,24 @@ public class ParkResource {
 					// user is currently parked.
 					ParkingRateDao prd = new ParkingRateDao();
 					ParkSync sync = new ParkSync();
-					ParkingRate pr = prd.getParkingRateBySpaceId(pi.getSpaceId());
+					// ParkingRate pr = prd.getParkingRateBySpaceId(pi.getSpaceId());
+					// TODO for the pilot the above call return null value. so disabled it for now.
 					ParkingSpaceDao psdao = new ParkingSpaceDao();
 					ParkingSpace pspace = psdao.getParkingSpaceBySpaceId(pi.getSpaceId());
 					sync.setLocation(pspace.getSpaceName());
 					sync.setSpotNumber(pspace.getSpaceIdentifier());
 					sync.setEndTime(endTime.getTime());
 					sync.setParkingReferenceNumber(pi.getParkingRefNumber());
-					sync.setDefaultRate(pr.getParkingRateCents());
-					sync.setMaxTime(pr.getMaxParkMins());
-					sync.setMinIncrement(pr.getTimeIncrementsMins());
-					sync.setMinTime(pr.getMinParkMins());
+					sync.setDefaultRate(1);
+					sync.setMaxTime(120);
+					sync.setMinIncrement(1);
+					sync.setMinTime(15);
 					sync.setSpotId(pi.getSpaceId());
 					response.setSync(sync);
 					//else, user was parked and endTime has passed.
 				}
 			}catch(Exception e){
-				//DAO ERROR.  
+				e.printStackTrace(System.out); 
 			}
 			
 		} else {

@@ -43,7 +43,7 @@
 			<groupId>PARQ_Server</groupId>
 			<artifactId>ParqDaoLayer</artifactId>
 			<version>1.0</version>
-			<scope>compile</scope>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.ehcache</groupId>
