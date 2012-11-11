@@ -46,7 +46,7 @@ public class UserDao extends AbstractParqDaoParent {
 	private static final String sqlCreateUserPrepaidAccount = 
 		"INSERT INTO prepaidaccountbalance (user_id, account_balance) VALUES (?, 0)";
 	
-	private static final String sqlCreateUserScore = "INSERT INTO score (user_id) VALUES (?)";
+	private static final String sqlCreateUserScore = "INSERT INTO score (user_id, score_1) VALUES (?, ?)";
 	private static final String sqlUpdateUserScore = "INSERT INTO score (user_id, score_1, score_2, score_3) " 
 			+ " VALUES (?, ?, ?, ?)";
 	private static final String sqlGetUserScoreForUser = 
@@ -398,6 +398,7 @@ public class UserDao extends AbstractParqDaoParent {
 			con = getConnection();
 			pstmt = con.prepareStatement(sqlCreateUserScore);
 			pstmt.setLong(1, userId);
+			pstmt.setLong(2, MIT_PILOT_USER_INITIAL_SCORE);
 			userScoreTableCreated = pstmt.executeUpdate() == 1;
 		} catch (SQLException sqle) {
 			System.out.println("SQL statement is invalid: " + pstmt);

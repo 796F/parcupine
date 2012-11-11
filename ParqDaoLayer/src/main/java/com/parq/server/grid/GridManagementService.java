@@ -40,7 +40,7 @@ public class GridManagementService implements Runnable{
 	
 	private static ScheduledThreadPoolExecutor refreshTimer;
 	// how often the timer refresh parking status in seconds
-	private static final int parkingStatusUpdateRate = 30;
+	private static final int parkingStatusUpdateRate = 10;
 	
 	// set how much to enlarge the search radius, when searching for streets within a grid
 	// this value should be the size of at least 1 grid length or width
