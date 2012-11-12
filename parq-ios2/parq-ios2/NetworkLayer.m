@@ -42,6 +42,31 @@
 @synthesize dataLayer;
 @synthesize mapController;
 
+-(BOOL) needUpdate{
+    RKRequest* request = [[RKClient sharedClient] requestWithResourcePath:@"/update.html"];
+    [request setMethod:RKRequestMethodGET];
+    RKResponse* response = [request sendSynchronously];
+    NSString* result = [response bodyAsString];
+    NSNumber* appver = [dataLayer getAppVersion];
+    NSNumberFormatter* f = [[NSNumberFormatter alloc] init];
+    switch (response.statusCode) {
+        case 200:{
+                NSNumber* newver = [f numberFromString:[result substringToIndex:1]];
+                if(newver.longValue > appver.longValue){
+                    //new version exists
+                    return YES;
+                }else{
+                    return NO;
+                }
+            }
+            break;
+        case 304: //file not modified.
+            return NO;
+            break;
+        default:
+            return NO;
+    }
+}
 
 -(BOOL)submitAvailablilityInformation:(NSArray*)value{
     NSArray* keys = [NSArray arrayWithObjects:@"userId",@"spaceIds", @"score1",@"score2", @"score3", @"score4", @"score5", @"score6", nil];
@@ -254,7 +279,7 @@
         }
         botLeftId+=colLength;
     }
-    //by generating blocks in increasing order, the array is inherently sorted.  
+    //by generating blocks in increasing order, the array is inherently sorted.
     return microBlockIds;
 }
 

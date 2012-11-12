@@ -48,6 +48,7 @@
 //alert view tags
 #define GPS_LAUNCH_ALERT 0
 #define SPOT_LOOKS_TAKEN_ALERT 1
+#define UPDATE_APP_TAG 2
 
 typedef enum {
     kClearZoomLevel,
@@ -584,6 +585,9 @@ typedef struct{
             //yes im sure i wan tto park.  
             [self parkNow];
         }
+    }else if(alertView.tag == UPDATE_APP_TAG){
+        //launch update page.
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://www.parqme.com/download.html"]];
     }
 }
 
@@ -2011,7 +2015,8 @@ typedef struct{
 #pragma mark - Debug button actions
 
 - (IBAction)gridButtonPressed:(id)sender {
-    [self showMoreTextBox];
+//    [self showMoreTextBox];
+    [self checkUpdates];
 }
 
 - (IBAction)streetButtonPressed:(id)sender {
@@ -2293,9 +2298,21 @@ typedef struct{
     }
 }
 
+-(void) checkUpdates{
+    if([networkLayer needUpdate]){
+        UIAlertView* updateAlert = [[UIAlertView alloc] initWithTitle:@"ATTENTION!" message:@"Your app is out-dated.  Please update!" delegate:self cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
+        updateAlert.tag = UPDATE_APP_TAG;
+        [updateAlert show];
+    }
+    
+}
+
 - (void)viewDidAppear:(BOOL)animated
 {
     [self checkLoggedIn];
+    
+    [self checkUpdates];
+    
     [super viewDidAppear:animated];
     //prepare geocoder upon view load.  
     if(geocoder ==nil){

@@ -25,6 +25,20 @@
 
 #pragma mark - plist calls
 
+
+-(void) setAppVersion:(NSNumber*)appVersion{
+    //set the currelyt parked spot's id for restore use.
+    NSString* path = [[self class] plistPath];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
+    [data setObject:appVersion forKey:@"appVersion"];
+    [data writeToFile:path atomically:YES];
+}
+-(NSNumber*) getAppVersion{
+    NSString* path = [[self class] plistPath];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
+    return [data objectForKey:@"appVersion"];
+}
+
 -(void) setSpotId:(NSNumber*) spotId{
     //set the currelyt parked spot's id for restore use.
     NSLog(@"setting spotId = %lu\n", [spotId longValue]);
@@ -148,6 +162,47 @@
 
 
 -(void) loadMockData{
+    
+//    379,
+//    380,
+//    381,
+//    382,
+//    383,
+//    384,
+//    385,
+    
+//    419,
+//    420,
+//    421,
+//    422,
+//    423,
+//    424,
+//    425,
+    
+//    459,
+//    460,
+//    461,
+//    462,
+//    463,
+//    464,
+//    465,
+    
+//    499,
+//    500,
+//    501,
+//    502,
+//    503,
+//    504,
+//    505,
+    
+//    539,
+//    540,
+//    541,
+//    542,
+//    543,
+//    544,
+//    545
+    
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSError *error;
     NSString *documentsDirectory = [paths objectAtIndex:0];
@@ -165,6 +220,7 @@
     int gridid = 0;
     for(NSString* innerString in data.allValues){
         NSArray* innerArray = [innerString componentsSeparatedByString:@","];
+        
         //create the grid object
         Grid* grid = (Grid*)[NSEntityDescription insertNewObjectForEntityForName:@"Grid" inManagedObjectContext:[[self class] managedObjectContext]];
         NSNumberFormatter * f = [[NSNumberFormatter alloc] init];
@@ -185,7 +241,6 @@
             [grid setStatus:[NSNumber numberWithInt:-1]];
         }
         [grid setMicroblock:mbid];
-        NSLog(@"remaining...%d\n", 6400 - gridid);
     }
     
     if(![[[self class] managedObjectContext] save:&error]){

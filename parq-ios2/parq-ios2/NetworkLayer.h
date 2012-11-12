@@ -65,9 +65,11 @@
 //network status
 -(BOOL) isRecheableViaWifi;
 -(BOOL) isRecheableVia3G;
+-(BOOL) needUpdate;
 
 //DEBUG
 -(void) testAsync;
 -(void) loadSpotData;
 -(void) sendLogs;
+
 @end

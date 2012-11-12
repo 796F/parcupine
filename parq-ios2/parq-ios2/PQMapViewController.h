@@ -118,5 +118,5 @@ UIAlertViewDelegate> {
 -(void) showBookmarkWithLocation:(CLLocationCoordinate2D*) coord AndAnnotation:(id <MKAnnotation>)annotation;
 
 -(void) showSelectionCircle:(CLLocationCoordinate2D *)coord;
-
+-(void) checkUpdates;
 @end
