@@ -15,7 +15,7 @@ public class UserLoginResponse {
 	private long uid;
 	private int balance;
 	private boolean autherized;
-	ParkSync sync;
+	private ParkSync sync;
 	/**
 	 * @return the sync
 	 */

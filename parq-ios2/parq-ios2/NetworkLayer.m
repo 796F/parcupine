@@ -519,12 +519,6 @@
     return [dataLayer saveUserWithEmail:@"m@m.com" Pass:@"a" License:@"license" UID:@(2) Balance:0];
     //send info to server.  
     
-    //initial check of email.
-    if(![self validateEmail:email]){ //) || pass.length < 8){
-        //password was too short, o|| pass.length < 8r email did not validate.
-        return nil;
-    }
-    
     NSArray* keys = [NSArray arrayWithObjects:@"email", @"password", nil];
     NSArray* value = [NSArray arrayWithObjects:email, pass, nil];
     NSDictionary* info = [NSDictionary dictionaryWithObjects:value forKeys:keys];

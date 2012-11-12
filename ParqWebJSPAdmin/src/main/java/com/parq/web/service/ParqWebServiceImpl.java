@@ -85,7 +85,8 @@ public class ParqWebServiceImpl implements ParqWebService{
 				newPark.setPaidParking(true);
 				newPark.setParkingBeganTime(start);
 				newPark.setParkingEndTime(end);
-				newPark.setUserId(userId);
+				// user id is equals to spot id for the demo
+				newPark.setUserId(spot.getSpotId());
 				newPark.setSpaceId(spot.getSpotId());
 				newPark.setPaymentInfo(pilotPayment);
 				statusDao.addNewParkingAndPayment(newPark);

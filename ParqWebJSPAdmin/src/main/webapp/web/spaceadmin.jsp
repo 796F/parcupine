@@ -22,15 +22,15 @@
 		WebParkingSpot space5 = null;
 			
 		for (WebParkingSpot ploc : parkingLocations) {
-			if (ploc.getSpotName().contains("1")) {
+			if (ploc.getSpotName().equals("101")) {
 				space0 = ploc;
-			} else if (ploc.getSpotName().contains("2")) {
+			} else if (ploc.getSpotName().equals("102")) {
 				space1 = ploc;
-			} else if (ploc.getSpotName().contains("3")) {
+			} else if (ploc.getSpotName().equals("103")) {
 				space2 = ploc;
-			} else if (ploc.getSpotName().contains("4")) {
+			} else if (ploc.getSpotName().equals("104")) {
 				space3 = ploc;
-			} else if (ploc.getSpotName().contains("5")) {
+			} else if (ploc.getSpotName().equals("105")) {
 				space4 = ploc;
 			} else {
 				space5 = ploc;

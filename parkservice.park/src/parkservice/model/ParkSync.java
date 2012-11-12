@@ -1,5 +1,8 @@
 package parkservice.model;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
 public class ParkSync {
 
 	//THE FOLLOWING ARE FOR TIME DISPLAY

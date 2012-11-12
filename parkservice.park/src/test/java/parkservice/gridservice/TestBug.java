@@ -1,6 +1,7 @@
 package parkservice.gridservice;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.xml.bind.JAXBElement;
@@ -15,7 +16,7 @@ import parkservice.resources.ParkResource;
 
 public class TestBug extends TestCase {
 	
-	public void testGetUpdatedSpotLevelInfoResponse() {
+	public void _testGetUpdatedSpotLevelInfoResponse() {
 		// search for streets in gps coor
 		ParkResource parkResource = new ParkResource();
 		GpsCoordinate northEast = new GpsCoordinate();
@@ -41,5 +42,9 @@ public class TestBug extends TestCase {
 		// assertFalse(responseStreet.length == 0);
 		// assertNotNull(responseStreet[0].getParkingSpace());
 		// assertFalse(responseStreet[0].getParkingSpace().size() == 0);
+	}
+	
+	public void testTime() {
+		System.out.println(new Date().getTime());
 	}
 }
