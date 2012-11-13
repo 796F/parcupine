@@ -471,7 +471,6 @@
     return [emailTest evaluateWithObject:candidate];
 }
 -(User*) loginEmail:(NSString*) email AndPassword:(NSString*) pass{
-    return [dataLayer saveUserWithEmail:@"m@m.com" Pass:@"a" License:@"license" UID:@(2) Balance:0];
     //send info to server.  
     
     NSArray* keys = [NSArray arrayWithObjects:@"email", @"password", nil];
