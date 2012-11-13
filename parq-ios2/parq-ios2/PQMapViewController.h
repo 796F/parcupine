@@ -34,7 +34,8 @@ UISearchBarDelegate,
 UIGestureRecognizerDelegate, 
 UITableViewDelegate, 
 UIActionSheetDelegate,
-UIAlertViewDelegate> {
+UIAlertViewDelegate,
+PQNetworkLayerDelegate> {
     DataLayer * dataLayer;
     NetworkLayer* networkLayer;
     NSManagedObjectContext* managedObjectContext;

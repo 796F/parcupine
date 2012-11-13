@@ -1085,7 +1085,7 @@ typedef struct{
         [gridMicroBlockMap removeObjectForKey:old];
     }
     //add the grids that are missing, and update the rest.  
-    [networkLayer addOverlayOfType:kGridEntity ToMapForIDs:newMicroBlockIds AndUpdateForIDs:updateMicroBlockIds];
+    [self addOverlayOfType:kGridEntity ToMapForIDs:newMicroBlockIds AndUpdateForIDs:updateMicroBlockIds];
     
     //assign old to be a combination of new and update.  
     [newMicroBlockIds addObjectsFromArray:updateMicroBlockIds];
@@ -1190,7 +1190,7 @@ typedef struct{
         [spotMicroBlockMap removeObjectForKey:old];
     }
     //add the spots that are missing, and update the rest.  
-    [networkLayer addOverlayOfType:kSpotEntity ToMapForIDs:newMicroBlockIds AndUpdateForIDs:updateMicroBlockIds];
+    [self addOverlayOfType:kSpotEntity ToMapForIDs:newMicroBlockIds AndUpdateForIDs:updateMicroBlockIds];
     
     //assign old to be a combination of new and update.  
     [newMicroBlockIds addObjectsFromArray:updateMicroBlockIds];
@@ -1202,6 +1202,35 @@ typedef struct{
         }
     }];
     currentMicroBlockIds = [NSMutableArray arrayWithArray:newMicroBlockIds];
+}
+
+-(void) addOverlayOfType:(EntityType) entityType ToMapForIDs:(NSArray*) newIDs AndUpdateForIDs:(NSArray*) updateIDs{
+    NSMutableArray* IDsToRequest = [[NSMutableArray alloc] init];
+    NSMutableArray* tempNewIDs = [[NSMutableArray alloc] initWithArray:newIDs];
+    //go through the newIDs and check if any aren't in Core Data.
+    for(NSNumber* mbid in newIDs){
+        if (![dataLayer mbIdExistsInCoreData:mbid EntityType:entityType]){
+            //if doesn't exist in core data, make a note to request from server
+            [IDsToRequest addObject:mbid];
+            [tempNewIDs removeObject:mbid];
+        }
+    }
+    //tell the data layer to provide map with overlays it has.
+    [dataLayer fetch:entityType ForIDs:tempNewIDs];
+
+    CLLocationCoordinate2D NE = [self topRightOfMap];
+    CLLocationCoordinate2D SW = [self botLeftOfMap];
+
+    if (entityType == kSpotEntity)
+        [NetworkLayer fetchSpotStatusesWithRegion:map.region delegate:self];
+    else
+        [networkLayer updateOverlayOfType:entityType WithNE:&NE SW:&SW];
+}
+
+- (void)afterFetchingSpotStatusesOnBackend:(BOOL)success spotsToUpdate:(NSDictionary *)spotsToUpdate {
+    if (success) {
+        [self updateOverlays:spotsToUpdate OfType:kSpotEntity];
+    }
 }
 
 - (void)showAvailabilitySelectionView {

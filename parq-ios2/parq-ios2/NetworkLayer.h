@@ -26,6 +26,7 @@
 
 @optional
 - (void)afterFetchingBalanceOnBackend:(NSInteger)balance;
+- (void)afterFetchingSpotStatusesOnBackend:(BOOL)success spotsToUpdate:(NSDictionary *)spotsToUpdate;
 - (void)afterParkingOnBackend:(BOOL)success endTime:(NSDate *)endTime parkingReference:(NSString *)parkingRef;
 - (void)afterUnparkingOnBackend:(BOOL)success;
 - (void)afterReportingOnBackend:(NSInteger)statusCode;
@@ -40,9 +41,6 @@
 @property (nonatomic,retain) DataLayer* dataLayer;
 @property (nonatomic,retain) PQMapViewController* mapController;
 
-//returns two dictionaries nested, one for updates the other for adding.  
--(void) addOverlayOfType:(EntityType) entityType ToMapForIDs:(NSArray*) newIDs AndUpdateForIDs:(NSArray*) updateIDs;
-
 //gets updates for overlays already on map
 -(void) updateOverlayOfType:(EntityType) entityType WithNE:(CLLocationCoordinate2D*) topRight SW:(CLLocationCoordinate2D*) botLeft;
 
@@ -56,6 +54,7 @@
 -(User*) registerEmail:(NSString*) email AndPassword:(NSString*) pass AndPlate:(NSString*) plate;
 
 + (void)fetchUserPointsBalanceWithUid:(unsigned long long)uid andDelegate:(id<PQNetworkLayerDelegate>)delegate;
++ (void)fetchSpotStatusesWithRegion:(MKCoordinateRegion)region delegate:(id<PQNetworkLayerDelegate>)delegate;
 + (void)parkPaygWithSpotId:(unsigned long long)spotId delegate:(id<PQNetworkLayerDelegate>)delegate;
 + (void)parkPrepaidWithDuration:(NSTimeInterval) durationSeconds spotId:(unsigned long long)spotId delegate:(id<PQNetworkLayerDelegate>)delegate;
 + (void)unparkWithDelegate:(id<PQNetworkLayerDelegate>)delegate;

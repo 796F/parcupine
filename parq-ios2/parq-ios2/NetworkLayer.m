@@ -126,28 +126,6 @@
     
 }
 
--(void) request:(EntityType) entityType WithIDs:(NSArray*)IDsToRequest{
-    if(IDsToRequest.count>0){
-        
-        //*debug DO NOTHING
-        return;
-        //end debug
-        
-        //request from the server overlay information like lat/long etc.  
-        NSArray* boundingBoxes = [self convertGridLevelIDs:IDsToRequest];
-        NSNumber* lastUpdateTimeLong = [NSNumber numberWithLong:[[NSDate date] timeIntervalSince1970]];
-        NSDictionary* requestDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:boundingBoxes, @"boxes",lastUpdateTimeLong, @"lastUpdateTime", nil];
-        
-        //NSLog(@"bounding boxes: %s\n", requestDictionary.description.UTF8String);
-        NSError *error;
-        NSData* jsonData = [NSJSONSerialization dataWithJSONObject:requestDictionary options:0 error:&error];
-        AbstractRequestObject* abs = [[AbstractRequestObject alloc] init];
-        [abs setBody:jsonData];
-        [abs setContentType:@"application/json"];
-        [[RKClient sharedClient] post:@"/parkservice.auth" params:abs delegate:self];
-    }
-}
-
 -(SpotInfo*) getSpotInfoForId:(NSNumber*)spotId SpotNumber:(NSNumber*)spotNum GPS:(CLLocationCoordinate2D*)coord{
     //depending on which pieces we're given, we will submit different network responses.  
     
@@ -163,29 +141,6 @@
     [spot setSpotNumber:spotNum]; //this should come from server, act as a check.  
     
     return spot;
-}
--(void) addOverlayOfType:(EntityType) entityType ToMapForIDs:(NSArray*) newIDs AndUpdateForIDs:(NSArray*) updateIDs{
-    
-    NSMutableArray* IDsToRequest = [[NSMutableArray alloc] init];
-    NSMutableArray* tempNewIDs = [[NSMutableArray alloc] initWithArray:newIDs];
-    //go through the newIDs and check if any aren't in Core Data.  
-    for(NSNumber* mbid in newIDs){
-        if (![dataLayer mbIdExistsInCoreData:mbid EntityType:entityType]){
-            //if doesn't exist in core data, make a note to request from server
-            [IDsToRequest addObject:mbid];
-            [tempNewIDs removeObject:mbid];
-        }
-    }
-    //tell the data layer to provide map with overlays it has.  
-    [dataLayer fetch:entityType ForIDs:tempNewIDs];
-    //request for those that aren't to fill in the holes.  
-    [self request:entityType WithIDs:IDsToRequest];
-
-    //call update on whole map
-    CLLocationCoordinate2D NE = [mapController topRightOfMap];
-    CLLocationCoordinate2D SW = [mapController botLeftOfMap];
-    
-    [self updateOverlayOfType:entityType WithNE:&NE SW:&SW];
 }
 
 
@@ -644,6 +599,25 @@
     [[self requestWithResourcePath:@"/parkservice.park/GetUserScoreRequest" delegate:delegate httpBody:jsonData] send];
 }
 
++ (void)fetchSpotStatusesWithRegion:(MKCoordinateRegion)region delegate:(id<PQNetworkLayerDelegate>)delegate {
+    NSDictionary *info = @{  @"searchArea" :
+                             @[
+                                 @{  @"southWestCorner" :
+                                     @{  @"latitude"  : @(region.center.latitude - region.span.latitudeDelta/2),
+                                         @"longitude" : @(region.center.longitude - region.span.longitudeDelta/2)
+                                     },
+                                     @"northEastCorner" :
+                                     @{  @"latitude"  : @(region.center.latitude + region.span.latitudeDelta/2),
+                                         @"longitude" : @(region.center.longitude + region.span.longitudeDelta/2)
+                                     }
+                                 }
+                             ]
+                         };
+    NSError *error;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:info options:0 error:&error];
+    [[self requestWithResourcePath:@"/parkservice.park/GetUpdatedSpotLevelInfoRequest" delegate:delegate httpBody:jsonData] send];
+}
+
 + (void)parkPaygWithSpotId:(unsigned long long)spotId delegate:(id<PQNetworkLayerDelegate>)delegate {
     User *user = [DataLayer fetchUser];
 
@@ -761,6 +735,9 @@
     } else if ([endpoint isEqualToString:@"GetUserScoreRequest"]) {
         NSDictionary *result = [[response bodyAsString] objectFromJSONString];
         [request.userData afterFetchingBalanceOnBackend:[result[@"score1"] integerValue]];
+    } else if ([endpoint isEqualToString:@"GetUpdatedSpotLevelInfoRequest"]) {
+        NSDictionary *overlayUpdates = [Parser parseUpdateSpotsResponse:[response bodyAsString]];
+        [request.userData afterFetchingSpotStatusesOnBackend:(overlayUpdates != nil) spotsToUpdate:overlayUpdates];
     }
 }
 
