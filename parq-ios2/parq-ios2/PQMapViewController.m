@@ -50,6 +50,7 @@
 //alert view tags
 #define GPS_LAUNCH_ALERT 0
 #define SPOT_LOOKS_TAKEN_ALERT 1
+#define UPDATE_APP_TAG 2
 
 typedef enum {
     kClearZoomLevel,
@@ -587,6 +588,9 @@ typedef struct{
             //yes im sure i wan tto park.  
             [self parkNow];
         }
+    }else if(alertView.tag == UPDATE_APP_TAG){
+        //launch update page.
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://www.parqme.com/download.html"]];
     }
 }
 
@@ -1084,7 +1088,7 @@ typedef struct{
         [gridMicroBlockMap removeObjectForKey:old];
     }
     //add the grids that are missing, and update the rest.  
-    [networkLayer addOverlayOfType:kGridEntity ToMapForIDs:newMicroBlockIds AndUpdateForIDs:updateMicroBlockIds];
+    [self addOverlayOfType:kGridEntity ToMapForIDs:newMicroBlockIds AndUpdateForIDs:updateMicroBlockIds];
     
     //assign old to be a combination of new and update.  
     [newMicroBlockIds addObjectsFromArray:updateMicroBlockIds];
@@ -1189,7 +1193,7 @@ typedef struct{
         [spotMicroBlockMap removeObjectForKey:old];
     }
     //add the spots that are missing, and update the rest.  
-    [networkLayer addOverlayOfType:kSpotEntity ToMapForIDs:newMicroBlockIds AndUpdateForIDs:updateMicroBlockIds];
+    [self addOverlayOfType:kSpotEntity ToMapForIDs:newMicroBlockIds AndUpdateForIDs:updateMicroBlockIds];
     
     //assign old to be a combination of new and update.  
     [newMicroBlockIds addObjectsFromArray:updateMicroBlockIds];
@@ -1201,6 +1205,35 @@ typedef struct{
         }
     }];
     currentMicroBlockIds = [NSMutableArray arrayWithArray:newMicroBlockIds];
+}
+
+-(void) addOverlayOfType:(EntityType) entityType ToMapForIDs:(NSArray*) newIDs AndUpdateForIDs:(NSArray*) updateIDs{
+    NSMutableArray* IDsToRequest = [[NSMutableArray alloc] init];
+    NSMutableArray* tempNewIDs = [[NSMutableArray alloc] initWithArray:newIDs];
+    //go through the newIDs and check if any aren't in Core Data.
+    for(NSNumber* mbid in newIDs){
+        if (![dataLayer mbIdExistsInCoreData:mbid EntityType:entityType]){
+            //if doesn't exist in core data, make a note to request from server
+            [IDsToRequest addObject:mbid];
+            [tempNewIDs removeObject:mbid];
+        }
+    }
+    //tell the data layer to provide map with overlays it has.
+    [dataLayer fetch:entityType ForIDs:tempNewIDs];
+
+    CLLocationCoordinate2D NE = [self topRightOfMap];
+    CLLocationCoordinate2D SW = [self botLeftOfMap];
+
+    if (entityType == kSpotEntity)
+        [NetworkLayer fetchSpotStatusesWithRegion:map.region delegate:self];
+    else
+        [networkLayer updateOverlayOfType:entityType WithNE:&NE SW:&SW];
+}
+
+- (void)afterFetchingSpotStatusesOnBackend:(BOOL)success spotsToUpdate:(NSDictionary *)spotsToUpdate {
+    if (success) {
+        [self updateOverlays:spotsToUpdate OfType:kSpotEntity];
+    }
 }
 
 - (void)showAvailabilitySelectionView {
@@ -2019,7 +2052,8 @@ typedef struct{
 #pragma mark - Debug button actions
 
 - (IBAction)gridButtonPressed:(id)sender {
-    [self showMoreTextBox];
+//    [self showMoreTextBox];
+    [self checkUpdates];
 }
 
 - (IBAction)streetButtonPressed:(id)sender {
@@ -2311,9 +2345,21 @@ typedef struct{
     [self mapView:map regionDidChangeAnimated:NO];
 }
 
+-(void) checkUpdates{
+    if([networkLayer needUpdate]){
+        UIAlertView* updateAlert = [[UIAlertView alloc] initWithTitle:@"ATTENTION!" message:@"Your app is out-dated.  Please update!" delegate:self cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
+        updateAlert.tag = UPDATE_APP_TAG;
+        [updateAlert show];
+    }
+    
+}
+
 - (void)viewDidAppear:(BOOL)animated
 {
     [self checkLoggedIn];
+    
+    [self checkUpdates];
+    
     [super viewDidAppear:animated];
     //prepare geocoder upon view load.  
     if(geocoder ==nil){

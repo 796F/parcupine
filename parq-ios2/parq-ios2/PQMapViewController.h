@@ -34,7 +34,8 @@ UISearchBarDelegate,
 UIGestureRecognizerDelegate, 
 UITableViewDelegate, 
 UIActionSheetDelegate,
-UIAlertViewDelegate> {
+UIAlertViewDelegate,
+PQNetworkLayerDelegate> {
     DataLayer * dataLayer;
     NetworkLayer* networkLayer;
     NSManagedObjectContext* managedObjectContext;
@@ -118,5 +119,5 @@ UIAlertViewDelegate> {
 -(void) showBookmarkWithLocation:(CLLocationCoordinate2D*) coord AndAnnotation:(id <MKAnnotation>)annotation;
 
 -(void) showSelectionCircle:(CLLocationCoordinate2D *)coord;
-
+-(void) checkUpdates;
 @end

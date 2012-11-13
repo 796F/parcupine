@@ -46,6 +46,8 @@ typedef enum {
 
 //settings stuff using plist
 -(BOOL) isFirstLaunch;
+
+
 -(BOOL) isLoggedIn;
 -(void) setLoggedIn:(BOOL) yesORno;
 -(void) setLastReportTime:(NSDate*) lastReportTime;
@@ -63,6 +65,9 @@ typedef enum {
 + (void)clearSavedParkingSession;
 -(NSNumber*) getSpotId;
 -(void) setSpotId:(NSNumber*) spotId;
+-(NSNumber*) getAppVersion;
+-(void) setAppVersion:(NSNumber*)appVersion;
+
 -(void) logString:(NSString*) string;
 //debug
 -(void) testFetch:(EntityType)entityType Microblocks:(NSArray*) microBlockIDs;
