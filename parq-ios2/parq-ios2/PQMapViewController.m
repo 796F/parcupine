@@ -2358,7 +2358,7 @@ typedef struct{
 {
     [self checkLoggedIn];
     
-    [self checkUpdates];
+//    [self checkUpdates];
     
     [super viewDidAppear:animated];
     //prepare geocoder upon view load.  
